@@ -1,0 +1,41 @@
+{
+  "description": "Validation-Tuned Ensemble of Federated Champion LSTM and Tabular LightGBM Baseline",
+  "validation_optimization": {
+    "val_pr_auc_champion": 0.242083,
+    "val_pr_auc_lightgbm": 0.367784,
+    "optimal_alpha": 0.59,
+    "val_pr_auc_optimal_blend": 0.389323
+  },
+  "convex_blend_test_metrics": {
+    "formula": "0.59 * p_champion + 0.41 * p_lgb",
+    "test_pr_auc": 0.448498,
+    "test_pr_auc_ci_lower": 0.625821,
+    "test_pr_auc_ci_upper": 0.653913,
+    "test_roc_auc": 0.955046,
+    "test_roc_auc_ci_lower": 0.952613,
+    "test_roc_auc_ci_upper": 0.958366,
+    "test_f1_canonical_thr": 0.0766,
+    "test_precision_canonical_thr": 0.0414,
+    "test_recall_canonical_thr": 0.5036,
+    "alerts_per_10k": 214.99,
+    "delta_vs_standalone_champion": -0.027479,
+    "improves_over_champion": false
+  },
+  "stacked_meta_learner_test_metrics": {
+    "weights": {
+      "weight_champion": 0.5525,
+      "weight_lightgbm": 0.4655,
+      "intercept": 6.5769
+    },
+    "test_pr_auc": 0.435043,
+    "test_pr_auc_ci_lower": 0.694824,
+    "test_pr_auc_ci_upper": 0.729007,
+    "test_roc_auc": 0.958142,
+    "test_f1_canonical_thr": 0.0145
+  },
+  "standalone_benchmarks": {
+    "standalone_champion_pr_auc": 0.475977,
+    "standalone_lightgbm_pr_auc": 0.247554
+  },
+  "honest_assessment": "Standalone Champion test PR-AUC: 0.4760. Standalone LightGBM test PR-AUC: 0.2476. Optimal validation blend (alpha*=0.59) test PR-AUC: 0.4485 (delta: -0.027479). Ensemble does not improve over the standalone recurrent champion because sequence temporal patterns are already captured with higher capacity by LSTM."
+}

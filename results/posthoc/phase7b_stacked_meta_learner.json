@@ -1,0 +1,31 @@
+{
+  "description": "Phase 7b Stacking Meta-Learner (LogisticRegressionCV on Logit Scale)",
+  "features": [
+    "logit(p_iid_champion)",
+    "logit(p_noniid_lead)"
+  ],
+  "hyperparameters": {
+    "best_C": 0.000774263682681127,
+    "cv_folds": 5,
+    "scoring": "average_precision",
+    "class_weight": "balanced"
+  },
+  "weights": {
+    "weight_iid": 2.357,
+    "weight_noniid": -1.5626,
+    "intercept": 4.9778
+  },
+  "test_metrics": {
+    "test_pr_auc_iid_champion": 0.475977,
+    "test_pr_auc_noniid_lead": 0.390451,
+    "test_pr_auc_stacked_meta": 0.265907,
+    "test_roc_auc_iid_champion": 0.955481,
+    "test_roc_auc_noniid_lead": 0.933841,
+    "test_roc_auc_stacked_meta": 0.948347,
+    "canonical_threshold": 0.337784,
+    "f1_at_canonical_threshold": 0.02,
+    "precision_at_canonical_threshold": 0.0101,
+    "recall_at_canonical_threshold": 0.8909
+  },
+  "scientific_conclusion": "The logit-scale stacked meta-learner assigns primary positive weight (2.36) to the IID champion and secondary weight (-1.56) to the Non-IID model. On the held-out test split, the stacked model achieves PR-AUC = 0.2659 compared to 0.4760 for the standalone IID champion. These empirical measurements indicate that under chronological evaluation, the feature representations learned across the uniform IID partition retain high predictive fidelity, while the Non-IID partition exhibits localized typology specialization."
+}

@@ -1,0 +1,76 @@
+{
+  "model_id": "lightgbm_baseline_hi_small",
+  "description": "LightGBM Gradient Boosted Trees on 23 Tabular AML Features",
+  "best_iteration": 151,
+  "scale_pos_weight": 5.0,
+  "validation_metrics": {
+    "pr_auc": 0.3677844240823317,
+    "roc_auc": 0.9514620400013348,
+    "optimal_threshold": 0.8019191919191919,
+    "optimal_f1": 0.40387722132471726
+  },
+  "test_metrics_canonical_threshold": {
+    "threshold": 0.337784,
+    "pr_auc": 0.2646254240377236,
+    "pr_auc_ci_lower": 0.5029657001028228,
+    "pr_auc_ci_upper": 0.5391119144955636,
+    "roc_auc": 0.9198169394598981,
+    "roc_auc_ci_lower": 0.9121097195325543,
+    "roc_auc_ci_upper": 0.9284340648302727,
+    "f1": 0.04417544790335415,
+    "precision": 0.023088168573877098,
+    "recall": 0.5097384529771842,
+    "alerts_per_10k": 390.65977131918817,
+    "brier_score": 0.02539105453482695,
+    "ece": 0.03346353244318501
+  },
+  "test_metrics_val_optimal_threshold": {
+    "threshold": 0.8019191919191919,
+    "f1": 0.0595769535650215,
+    "precision": 0.03220277827891034,
+    "recall": 0.3973288814691152,
+    "alerts_per_10k": 218.32203583427534
+  },
+  "top_features_by_gain": [
+    {
+      "feature": "sender_prior_amount_log",
+      "importance": 2294327.3757247473
+    },
+    {
+      "feature": "amount_paid_log",
+      "importance": 1390166.1194125363
+    },
+    {
+      "feature": "sender_seconds_since_prior_log",
+      "importance": 1240195.735720532
+    },
+    {
+      "feature": "receiver_prior_amount_log",
+      "importance": 781380.694888511
+    },
+    {
+      "feature": "day_of_week_cos",
+      "importance": 583549.997461319
+    },
+    {
+      "feature": "receiver_seconds_since_prior_log",
+      "importance": 518192.38753657043
+    },
+    {
+      "feature": "payment_format_code",
+      "importance": 429639.43677425385
+    },
+    {
+      "feature": "amount_received_log",
+      "importance": 331196.71723454027
+    },
+    {
+      "feature": "sender_prior_count_log",
+      "importance": 277670.9666635201
+    },
+    {
+      "feature": "day_of_week_sin",
+      "importance": 66230.65244144062
+    }
+  ]
+}
