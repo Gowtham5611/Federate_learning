@@ -26,11 +26,19 @@ import torch
 from sklearn.metrics import average_precision_score, log_loss, roc_auc_score
 
 try:
-    from evaluation.metrics import evaluate as run_robust_evaluate
+    from evaluation.metrics import (
+        evaluate as run_robust_evaluate,
+        compute_operating_points,
+        compute_metrics_at_threshold,
+    )
 except ModuleNotFoundError:
     import sys
     sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
-    from evaluation.metrics import evaluate as run_robust_evaluate
+    from evaluation.metrics import (
+        evaluate as run_robust_evaluate,
+        compute_operating_points,
+        compute_metrics_at_threshold,
+    )
 
 try:
     from config.threshold_config import get_canonical_threshold
@@ -666,8 +674,18 @@ class CsvEvaluationService:
                 f"Non-Contiguous Slice: {' and '.join(reason_parts)}. This file reflects scattered independent rows rather than contiguous chronological account activity."
             )
 
-        if has_labels and positives_cnt is not None and positives_cnt < 30:
-            validity_flags.append("SMALL_SAMPLE")
+        expected_positives = round(float(total_uploaded_rows * pi_train), 2)
+        if total_uploaded_rows < 5000:
+            if "SMALL_SAMPLE" not in validity_flags:
+                validity_flags.append("SMALL_SAMPLE")
+            validity_reasons.append(
+                f"Small Sample Size: file contains only {total_uploaded_rows} transactions. "
+                f"At the training distribution prior (~{pi_train:.3%}), this sample is expected to contain only ~{expected_positives:.1f} positives. "
+                f"Evaluation on <5,000 rows exhibits high empirical variance; >=5,000 rows (>=50,000 preferred) recommended for statistically stable benchmarking."
+            )
+        elif has_labels and positives_cnt is not None and positives_cnt < 30:
+            if "SMALL_SAMPLE" not in validity_flags:
+                validity_flags.append("SMALL_SAMPLE")
             validity_reasons.append(
                 f"Small Positive Sample: file contains only {positives_cnt} positive cases (<30). Metric confidence intervals and alert rates have high statistical variance."
             )
@@ -693,6 +711,8 @@ class CsvEvaluationService:
                 "n_rows": total_uploaded_rows,
                 "prevalence": sample_prev,
                 "positives_count": positives_cnt,
+                "expected_positives": expected_positives,
+                "recommended_min_rows": 5000,
                 "unique_sender_ratio": round(unique_sender_ratio, 4),
                 "pct_single_tx_rows": round(single_tx_ratio * 100.0, 2),
                 "mean_history_len": round(avg_seq_len, 2),
@@ -773,7 +793,17 @@ class CsvEvaluationService:
             "cleared_count": len(predictions) - flagged_count,
             "risk_distribution": risk_distribution,
             "has_labels": has_labels,
+            "has_ground_truth": has_labels,
+            "mode": "SUPERVISED_EVALUATION" if has_labels else "SCORE_ONLY",
+            "score_only_message": (
+                "No ground-truth labels detected. Running in Score-Only Operational Inference Mode. "
+                "Transaction scoring, alert flagging, risk distribution, and explainability are available. "
+                "Supervised performance metrics (F1, Recall, PR-AUC) require ground-truth labels."
+                if not has_labels else None
+            ),
             "evaluation_metrics": eval_metrics,
+            "operating_points": eval_metrics.get("operating_points", {}) if eval_metrics else {},
+            "top_risky_transactions": sorted(predictions, key=lambda x: x["predicted_probability"], reverse=True)[:10],
             "validity_banner": validity_banner,
             "sequence_context_diagnostics": sequence_context_diagnostics,
             "sequence_diagnostics": sequence_diagnostics,
@@ -962,9 +992,20 @@ class CsvEvaluationService:
             "flagged_laundering_count": flagged_count,
             "cleared_count": total_rows - flagged_count,
             "predictions": predictions,
+            "has_labels": has_labels,
             "has_ground_truth": has_labels,
+            "mode": "SUPERVISED_EVALUATION" if has_labels else "SCORE_ONLY",
+            "score_only_message": (
+                "No ground-truth labels detected. Running in Score-Only Operational Inference Mode. "
+                "Transaction scoring, alert flagging, risk distribution, and explainability are available. "
+                "Supervised performance metrics (F1, Recall, PR-AUC) require ground-truth labels."
+                if not has_labels else None
+            ),
             "evaluation_metrics": eval_metrics,
+            "operating_points": eval_metrics.get("operating_points", {}) if eval_metrics else {},
             "threshold_metrics": eval_metrics,
+            "risk_distribution": self._calculate_risk_distribution(probs),
+            "top_risky_transactions": sorted(predictions, key=lambda x: x["predicted_probability"], reverse=True)[:10],
             "elapsed_seconds": round(time.perf_counter() - t0, 3),
         }
 
@@ -1589,26 +1630,23 @@ class CsvEvaluationService:
         total = len(labels)
         accuracy = (tp + tn) / total if total > 0 else 0.0
 
-        # When zero positive predictions are made, precision and F-scores are undefined (0/0)
+        # When zero alerts are generated, only Precision and FDR have 0/0 division.
+        # F1, F2, and Recall have non-zero denominators whenever positives > 0.
         zero_alerts_note: Optional[str] = None
         if (tp + fp) == 0:
             precision: Optional[float] = None
-            f1: Optional[float] = None
-            f2: Optional[float] = None
+            f1: Optional[float] = 0.0 if (tp + fn) > 0 else None
+            f2: Optional[float] = 0.0 if (tp + fn) > 0 else None
             zero_alerts_note = (
                 "Zero transactions exceeded decision threshold (0 alerts generated). "
-                "Precision and F-scores are mathematically undefined (0/0) when no positive predictions are made."
+                "Precision is mathematically undefined (0/0); F1, F2, and Recall are 0.0000."
             )
         else:
             precision = float(tp / (tp + fp))
-            rec_denom = tp + fn
-            rec_val = float(tp / rec_denom) if rec_denom > 0 else 0.0
-            
-            p_val = precision
-            f1_denom = p_val + rec_val
-            f1 = float(2.0 * p_val * rec_val / f1_denom) if f1_denom > 0 else 0.0
-            f2_denom = 4.0 * p_val + rec_val
-            f2 = float(5.0 * p_val * rec_val / f2_denom) if f2_denom > 0 else 0.0
+            f1_denom = 2 * tp + fp + fn
+            f1 = float(2.0 * tp / f1_denom) if f1_denom > 0 else 0.0
+            f2_denom = 5 * tp + 4 * fn + fp
+            f2 = float(5.0 * tp / f2_denom) if f2_denom > 0 else 0.0
 
         recall = float(tp / (tp + fn)) if (tp + fn) > 0 else 0.0
 
@@ -1721,11 +1759,22 @@ class CsvEvaluationService:
             logger.warning("Robust metrics computation fallback: %s", e)
             robust_res = {}
 
+        operating_points = robust_res.get("operating_points")
+        if not operating_points and len(unique_labels) > 0:
+            try:
+                operating_points = compute_operating_points(labels, probs, frozen_thr=threshold)
+            except Exception:
+                operating_points = {}
+
         return {
             "total_samples": total,
             "positive_samples": positive_count,
             "negative_samples": negative_count,
             "prevalence": robust_res.get("prevalence", float(positive_count / total) if total > 0 else 0.0),
+            "tp": tp,
+            "fp": fp,
+            "fn": fn,
+            "tn": tn,
             "accuracy": round(accuracy, 6),
             "precision": round(precision, 6) if precision is not None else None,
             "recall": round(recall, 6),
@@ -1740,10 +1789,12 @@ class CsvEvaluationService:
             "average_precision": round(pr_auc, 6) if pr_auc is not None else None,
             "pr_auc_ci_lower": robust_res.get("pr_auc_ci_lower"),
             "pr_auc_ci_upper": robust_res.get("pr_auc_ci_upper"),
+            "pr_auc_ci_reason": robust_res.get("pr_auc_ci_reason"),
             "pr_auc_lift": robust_res.get("pr_auc_lift"),
             "random_baseline_pr_auc": robust_res.get("random_baseline_pr_auc"),
             "recall_at_alerts": robust_res.get("recall_at_alerts"),
             "evaluation_warnings": robust_res.get("warnings", []),
+            "operating_points": operating_points or {},
             "roc_auc": round(roc_auc, 6) if roc_auc is not None else None,
             "log_loss": round(log_loss_val, 6) if log_loss_val is not None else None,
             "brier_score": round(brier, 6),

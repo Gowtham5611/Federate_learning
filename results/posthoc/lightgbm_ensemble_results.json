@@ -35,7 +35,8 @@
   },
   "standalone_benchmarks": {
     "standalone_champion_pr_auc": 0.475977,
-    "standalone_lightgbm_pr_auc": 0.247554
+    "standalone_lightgbm_pr_auc": 0.264625,
+    "float64_note": "PR-AUC 0.264625 computed in native float64; float32 truncation caused artificial ties dropping PR-AUC to 0.247554."
   },
-  "honest_assessment": "Standalone Champion test PR-AUC: 0.4760. Standalone LightGBM test PR-AUC: 0.2476. Optimal validation blend (alpha*=0.59) test PR-AUC: 0.4485 (delta: -0.027479). Ensemble does not improve over the standalone recurrent champion because sequence temporal patterns are already captured with higher capacity by LSTM."
+  "honest_assessment": "Standalone Champion test PR-AUC: 0.4760. Standalone LightGBM test PR-AUC: 0.2646 (native float64). Optimal validation blend (alpha*=0.59) test PR-AUC: 0.4485. Ensemble does not improve over the standalone recurrent champion because sequence temporal patterns are already captured with higher capacity by LSTM."
 }

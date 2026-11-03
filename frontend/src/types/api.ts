@@ -151,6 +151,36 @@ export interface RiskBinData {
   percentage: number;
 }
 
+export interface OperatingPointMetrics {
+  name: string;
+  threshold: number;
+  alerts: number;
+  alerts_per_10k: number;
+  tp: number;
+  fp: number;
+  fn: number;
+  tn: number;
+  accuracy: number;
+  precision: number | null;
+  recall: number | null;
+  specificity: number | null;
+  balanced_accuracy: number | null;
+  f1_score: number | null;
+  f2_score?: number | null;
+  mcc?: number | null;
+  cohen_kappa?: number | null;
+  description?: string;
+  budget_per_10k?: number;
+  target_alerts?: number;
+  label?: string;
+}
+
+export interface OperatingPointsMap {
+  frozen?: OperatingPointMetrics;
+  alert_budgets?: Record<string, OperatingPointMetrics>;
+  best_f1_on_file?: OperatingPointMetrics;
+}
+
 export interface EvaluationMetrics {
   total_samples: number;
   positive_samples: number;
@@ -197,6 +227,8 @@ export interface EvaluationMetrics {
   pr_curve?: CurveDatapoint[];
   roc_curve?: CurveDatapoint[];
   confusion_matrix: ConfusionMatrixData;
+  pr_auc_ci_reason?: string | null;
+  operating_points?: OperatingPointsMap;
   ranking_vs_classification?: {
     pr_auc?: number | null;
     roc_auc?: number | null;
@@ -238,6 +270,8 @@ export interface ValidityBannerDiagnostics {
   n_rows: number;
   prevalence: number | null;
   positives_count: number | null;
+  expected_positives?: number;
+  recommended_min_rows?: number;
   unique_sender_ratio: number;
   pct_single_tx_rows: number;
   mean_history_len: number;
@@ -284,7 +318,12 @@ export interface CsvEvaluateResponse {
   cleared_count: number;
   risk_distribution?: RiskBinData[];
   has_labels: boolean;
+  has_ground_truth?: boolean;
+  mode?: 'SUPERVISED_EVALUATION' | 'SCORE_ONLY';
+  score_only_message?: string | null;
   evaluation_metrics: EvaluationMetrics | null;
+  operating_points?: OperatingPointsMap;
+  top_risky_transactions?: TransactionPredictionItem[];
   validity_banner?: ValidityBanner;
   sequence_context_diagnostics?: SequenceContextDiagnostics;
   suggested_models?: Array<{ model_id: string; model_name: string; model_type?: string; reason?: string }>;

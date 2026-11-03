@@ -78,6 +78,46 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const pageSize = 20;
 
+  // Operating point selection state ('frozen' | 'budget_10' | 'budget_50' | 'budget_100' | 'best_f1')
+  const [selectedOperatingPoint, setSelectedOperatingPoint] = useState<
+    'frozen' | 'budget_10' | 'budget_50' | 'budget_100' | 'best_f1'
+  >('frozen');
+
+  // Active operating point helper
+  const activeOp = React.useMemo(() => {
+    if (!result) return null;
+    const ops = result.operating_points || result.evaluation_metrics?.operating_points;
+    if (!ops) return null;
+
+    if (selectedOperatingPoint === 'budget_10') {
+      return ops.alert_budgets?.['10'] || null;
+    }
+    if (selectedOperatingPoint === 'budget_50') {
+      return ops.alert_budgets?.['50'] || null;
+    }
+    if (selectedOperatingPoint === 'budget_100') {
+      return ops.alert_budgets?.['100'] || null;
+    }
+    if (selectedOperatingPoint === 'best_f1') {
+      return ops.best_f1_on_file || null;
+    }
+    return ops.frozen || null;
+  }, [result, selectedOperatingPoint]);
+
+  const displayedThreshold = activeOp?.threshold ?? result?.decision_threshold ?? 0.337784;
+  const displayedF1 = activeOp?.f1_score ?? result?.evaluation_metrics?.f1_score;
+  const displayedPrecision = activeOp?.precision ?? result?.evaluation_metrics?.precision;
+  const displayedRecall = activeOp?.recall ?? result?.evaluation_metrics?.recall;
+  const displayedAccuracy = activeOp?.accuracy ?? result?.evaluation_metrics?.accuracy;
+  const displayedSpecificity = activeOp?.specificity ?? result?.evaluation_metrics?.specificity;
+  const displayedBalancedAcc = activeOp?.balanced_accuracy ?? result?.evaluation_metrics?.balanced_accuracy;
+  const displayedMcc = activeOp?.mcc ?? result?.evaluation_metrics?.mcc;
+  const displayedKappa = activeOp?.cohen_kappa ?? result?.evaluation_metrics?.cohen_kappa;
+
+  const displayedConfusion = activeOp
+    ? { tp: activeOp.tp, fp: activeOp.fp, fn: activeOp.fn, tn: activeOp.tn }
+    : result?.evaluation_metrics?.confusion_matrix ?? { tp: 0, fp: 0, fn: 0, tn: 0 };
+
   // Validate CSV text locally before submitting
   const validateCsvString = (text: string): boolean => {
     setValidationError(null);
@@ -728,14 +768,112 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
                     <span>Supervised AML Evaluation Metrics (Ground-Truth Verified)</span>
                   </h3>
                   <p className="text-xs text-slate-400">
-                    Evaluated using frozen threshold{' '}
-                    <strong className="text-amber-400 font-mono">{result.decision_threshold.toFixed(4)}</strong> on positive class (Is Laundering = 1).
+                    Decision threshold: <strong className="text-amber-400 font-mono">{displayedThreshold.toFixed(4)}</strong> on positive class (Is Laundering = 1).
                   </p>
                 </div>
-                <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-800">
-                  LABEL-AWARE
-                </span>
+                <div className="flex items-center space-x-2">
+                  <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-800">
+                    LABEL-AWARE
+                  </span>
+                  <span className="px-2.5 py-1 rounded-full text-[11px] font-mono text-slate-400 bg-slate-950 border border-slate-800">
+                    {activeOp?.name || 'Frozen Canonical'}
+                  </span>
+                </div>
               </div>
+
+              {/* Operating Points Selector */}
+              {result.operating_points && (
+                <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2.5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <span className="text-xs font-mono font-bold text-slate-300 flex items-center space-x-1.5">
+                      <span>Operational Operating Points:</span>
+                    </span>
+                    <span className="text-[11px] text-slate-400 font-mono">
+                      Active Cutoff Score: <strong className="text-amber-400">{displayedThreshold.toFixed(4)}</strong>
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedOperatingPoint('frozen')}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition border cursor-pointer ${
+                        selectedOperatingPoint === 'frozen'
+                          ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30'
+                          : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
+                      }`}
+                    >
+                      Frozen Canonical ({result.decision_threshold.toFixed(4)})
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setSelectedOperatingPoint('budget_10')}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition border cursor-pointer ${
+                        selectedOperatingPoint === 'budget_10'
+                          ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30'
+                          : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
+                      }`}
+                    >
+                      Alert Budget (10 / 10k)
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setSelectedOperatingPoint('budget_50')}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition border cursor-pointer ${
+                        selectedOperatingPoint === 'budget_50'
+                          ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30'
+                          : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
+                      }`}
+                    >
+                      Alert Budget (50 / 10k)
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setSelectedOperatingPoint('budget_100')}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition border cursor-pointer ${
+                        selectedOperatingPoint === 'budget_100'
+                          ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30'
+                          : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
+                      }`}
+                    >
+                      Alert Budget (100 / 10k)
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setSelectedOperatingPoint('best_f1')}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition border cursor-pointer ${
+                        selectedOperatingPoint === 'best_f1'
+                          ? 'bg-amber-600 text-white border-amber-500 shadow-md shadow-amber-600/30'
+                          : 'bg-slate-900 text-amber-400/80 border-slate-800 hover:text-amber-300'
+                      }`}
+                    >
+                      Best F1 on File (What-If)
+                    </button>
+                  </div>
+
+                  {selectedOperatingPoint === 'best_f1' && (
+                    <div className="text-[11px] font-sans text-amber-300 bg-amber-950/40 p-2.5 rounded-xl border border-amber-800/60 flex items-center space-x-2">
+                      <Info className="w-4 h-4 shrink-0 text-amber-400" />
+                      <span>
+                        <strong>What-If Tuned Threshold:</strong> Cutoff {displayedThreshold.toFixed(4)} yields maximum F1 ({formatMetric(displayedF1, 4)}) on this specific uploaded batch. This represents an exploratory upper-bound what-if tuning, not an out-of-sample performance claim.
+                      </span>
+                    </div>
+                  )}
+
+                  {selectedOperatingPoint.startsWith('budget_') && (
+                    <div className="text-[11px] font-sans text-slate-300 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 flex items-center space-x-2">
+                      <Info className="w-4 h-4 shrink-0 text-indigo-400" />
+                      <span>
+                        <strong>Fixed Alert Capacity:</strong> Evaluates top-ranked transactions targeting {activeOp?.alerts_per_10k ?? 0} alerts per 10k transactions ({activeOp?.alerts ?? 0} alerts total) at cutoff score {displayedThreshold.toFixed(4)}.
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Edge Case Warning if any */}
               {result.evaluation_metrics.edge_case_note && (
@@ -745,50 +883,86 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
                 </div>
               )}
 
-              {/* Metrics Grid */}
+              {/* Complete 8-Metrics Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
                   <span className="text-xs text-slate-400 block font-mono">F1-Score</span>
                   <span className="text-2xl font-bold font-mono text-white mt-1 block">
-                    {formatMetric(result.evaluation_metrics.f1_score, 4, 'Undefined (0 Alerts)')}
+                    {formatMetric(displayedF1, 4, '0.0000')}
                   </span>
                   <span className="text-[10px] text-slate-500 font-mono">Harmonic Precision & Recall</span>
                 </div>
+
                 <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
                   <span className="text-xs text-slate-400 block font-mono">Precision</span>
                   <span className="text-2xl font-bold font-mono text-white mt-1 block">
-                    {formatMetric(result.evaluation_metrics.precision, 4, 'Undefined (0 Alerts)')}
+                    {formatMetric(displayedPrecision, 4, 'Undefined (0 Alerts)')}
                   </span>
                   <span className="text-[10px] text-slate-500 font-mono">TP / (TP + FP)</span>
                 </div>
+
                 <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <span className="text-xs text-slate-400 block font-mono">Recall</span>
+                  <span className="text-xs text-slate-400 block font-mono">Recall / Sensitivity</span>
                   <span className="text-2xl font-bold font-mono text-white mt-1 block">
-                    {formatMetric(result.evaluation_metrics.recall, 4)}
+                    {formatMetric(displayedRecall, 4, '0.0000')}
                   </span>
                   <span className="text-[10px] text-slate-500 font-mono">TP / (TP + FN)</span>
                 </div>
+
                 <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <span className="text-xs text-slate-400 block font-mono">Accuracy</span>
+                  <span className="text-xs text-slate-400 block font-mono">Specificity</span>
                   <span className="text-2xl font-bold font-mono text-white mt-1 block">
-                    {result.evaluation_metrics.accuracy.toFixed(4)}
+                    {formatMetric(displayedSpecificity, 4, '1.0000')}
+                  </span>
+                  <span className="text-[10px] text-slate-500 font-mono">TN / (TN + FP)</span>
+                </div>
+
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <span className="text-xs text-slate-400 block font-mono">Balanced Accuracy</span>
+                  <span className="text-2xl font-bold font-mono text-white mt-1 block">
+                    {formatMetric(displayedBalancedAcc, 4, '0.5000')}
+                  </span>
+                  <span className="text-[10px] text-slate-500 font-mono">(Recall + Specificity) / 2</span>
+                </div>
+
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <span className="text-xs text-slate-400 block font-mono">Overall Accuracy</span>
+                  <span className="text-2xl font-bold font-mono text-white mt-1 block">
+                    {formatMetric(displayedAccuracy, 4, '0.0000')}
                   </span>
                   <span className="text-[10px] text-slate-500 font-mono">(TP + TN) / Total</span>
+                </div>
+
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <span className="text-xs text-slate-400 block font-mono">Matthews Corr (MCC)</span>
+                  <span className="text-2xl font-bold font-mono text-white mt-1 block">
+                    {formatMetric(displayedMcc, 4, '0.0000')}
+                  </span>
+                  <span className="text-[10px] text-slate-500 font-mono">Binary Correlation [-1, +1]</span>
+                </div>
+
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <span className="text-xs text-slate-400 block font-mono">Cohen's Kappa</span>
+                  <span className="text-2xl font-bold font-mono text-white mt-1 block">
+                    {formatMetric(displayedKappa, 4, '0.0000')}
+                  </span>
+                  <span className="text-[10px] text-slate-500 font-mono">Chance-Corrected Agreement</span>
                 </div>
               </div>
 
               {/* Confusion Matrix and Probability Metrics */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                {/* 2x2 Confusion Matrix */}
+                {/* 2x2 Confusion Matrix at active operating point */}
                 <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
-                  <div className="text-xs font-mono font-bold text-slate-300 uppercase">
-                    Confusion Matrix (Threshold: {result.decision_threshold.toFixed(4)})
+                  <div className="flex items-center justify-between text-xs font-mono font-bold text-slate-300 uppercase">
+                    <span>Confusion Matrix</span>
+                    <span className="text-amber-400 font-normal">Threshold: {displayedThreshold.toFixed(4)}</span>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-center text-xs font-mono">
                     <div className="bg-emerald-950/40 border border-emerald-800/60 p-3 rounded-xl">
                       <span className="text-[10px] text-emerald-400 font-bold block">TRUE POSITIVES (TP)</span>
                       <span className="text-2xl font-black text-white mt-1 block">
-                        {result.evaluation_metrics.confusion_matrix.tp}
+                        {displayedConfusion.tp}
                       </span>
                       <span className="text-[10px] text-slate-400">Laundering Caught</span>
                     </div>
@@ -796,7 +970,7 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
                     <div className="bg-amber-950/40 border border-amber-800/60 p-3 rounded-xl">
                       <span className="text-[10px] text-amber-400 font-bold block">FALSE POSITIVES (FP)</span>
                       <span className="text-2xl font-black text-white mt-1 block">
-                        {result.evaluation_metrics.confusion_matrix.fp}
+                        {displayedConfusion.fp}
                       </span>
                       <span className="text-[10px] text-slate-400">False Alarms</span>
                     </div>
@@ -804,7 +978,7 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
                     <div className="bg-rose-950/40 border border-rose-800/60 p-3 rounded-xl">
                       <span className="text-[10px] text-rose-400 font-bold block">FALSE NEGATIVES (FN)</span>
                       <span className="text-2xl font-black text-white mt-1 block">
-                        {result.evaluation_metrics.confusion_matrix.fn}
+                        {displayedConfusion.fn}
                       </span>
                       <span className="text-[10px] text-slate-400">Missed Laundering</span>
                     </div>
@@ -812,7 +986,7 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
                     <div className="bg-slate-900 border border-slate-800 p-3 rounded-xl">
                       <span className="text-[10px] text-slate-400 font-bold block">TRUE NEGATIVES (TN)</span>
                       <span className="text-2xl font-black text-white mt-1 block">
-                        {result.evaluation_metrics.confusion_matrix.tn}
+                        {displayedConfusion.tn}
                       </span>
                       <span className="text-[10px] text-slate-400">Legitimate Cleared</span>
                     </div>
@@ -853,12 +1027,17 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
                           </span>
                         </div>
                       )}
-                      {result.evaluation_metrics.pr_auc_ci_lower !== undefined && result.evaluation_metrics.pr_auc_ci_lower !== null && (
+                      {result.evaluation_metrics.pr_auc_ci_lower !== undefined && result.evaluation_metrics.pr_auc_ci_lower !== null ? (
                         <div className="flex items-center justify-between text-[11px] text-slate-400">
                           <span>Bootstrap 95% CI:</span>
                           <span className="text-slate-300">[{result.evaluation_metrics.pr_auc_ci_lower.toFixed(4)}, {result.evaluation_metrics.pr_auc_ci_upper?.toFixed(4)}]</span>
                         </div>
-                      )}
+                      ) : result.evaluation_metrics.pr_auc_ci_reason ? (
+                        <div className="flex items-center justify-between text-[11px] text-slate-400">
+                          <span>Bootstrap 95% CI:</span>
+                          <span className="text-slate-400 italic">N/A ({result.evaluation_metrics.pr_auc_ci_reason})</span>
+                        </div>
+                      ) : null}
                     </div>
                     <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
                       <span className="text-slate-400">ROC-AUC:</span>
@@ -874,7 +1053,9 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-slate-400">Alerts per 10,000 Transactions:</span>
-                      <span className="font-bold text-amber-400">{result.evaluation_metrics.alerts_per_10k.toFixed(1)}</span>
+                      <span className="font-bold text-amber-400">
+                        {activeOp ? activeOp.alerts_per_10k.toFixed(1) : result.evaluation_metrics.alerts_per_10k.toFixed(1)}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -915,7 +1096,7 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
 
                         {/* PR Path */}
                         {(() => {
-                          const pts = result.evaluation_metrics.pr_curve || [];
+                          const pts = result.evaluation_metrics?.pr_curve || [];
                           if (pts.length < 2) return null;
                           const pathStr = pts
                             .map((p, idx) => {
@@ -937,8 +1118,8 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
 
                         {/* Operating Point */}
                         {(() => {
-                          const prec = result.evaluation_metrics.precision ?? 0;
-                          const rec = result.evaluation_metrics.recall;
+                          const prec = displayedPrecision ?? 0;
+                          const rec = displayedRecall ?? 0;
                           const x = 40 + rec * 300;
                           const y = 150 - prec * 130;
                           return (
@@ -951,7 +1132,7 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
                       </svg>
                     </div>
                     <div className="text-[10px] text-slate-500 font-mono text-center">
-                      Amber point represents operating threshold ({result.decision_threshold.toFixed(4)})
+                      Amber point represents operating threshold ({displayedThreshold.toFixed(4)})
                     </div>
                   </div>
 
@@ -986,7 +1167,7 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
 
                         {/* ROC Path */}
                         {(() => {
-                          const pts = result.evaluation_metrics.roc_curve || [];
+                          const pts = result.evaluation_metrics?.roc_curve || [];
                           if (pts.length < 2) return null;
                           const pathStr = pts
                             .map((p, idx) => {
@@ -1015,11 +1196,127 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
               )}
             </div>
           ) : (
-            <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl flex items-center space-x-3 text-xs text-slate-300">
-              <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
-              <div>
-                <span className="font-bold text-white">Unlabeled Transaction Batch: </span>
-                Ground-truth labels were not provided. Evaluation metrics cannot be calculated. Transaction-level probabilities and risk decisions are displayed below.
+            /* Score-Only Mode Panel (Unlabeled Transaction Batch) */
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                <div>
+                  <h3 className="text-lg font-bold text-white flex items-center space-x-2">
+                    <BarChart2 className="w-5 h-5 text-indigo-400" />
+                    <span>Operational Risk Scoring & Suspicious Transaction Screening</span>
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Unlabeled batch evaluated with canonical threshold <strong className="text-amber-400 font-mono">{result.decision_threshold.toFixed(4)}</strong>.
+                  </p>
+                </div>
+                <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-indigo-950/80 text-indigo-300 border border-indigo-800">
+                  SCORE-ONLY MODE
+                </span>
+              </div>
+
+              <div className="p-3.5 bg-indigo-950/40 border border-indigo-800/60 rounded-2xl flex items-start space-x-3 text-xs text-indigo-200">
+                <Info className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <span className="font-bold text-indigo-300">Production Operational Scoring:</span>
+                  <p className="text-slate-300 font-sans leading-relaxed">
+                    No ground-truth labels detected in this file. Model inference, probability scoring, risk categorizations, decile distributions, and explainability features are fully operational. Supervised performance metrics (F1, Precision, Recall, PR-AUC) require ground-truth labels.
+                  </p>
+                </div>
+              </div>
+
+              {/* Operational KPI Strip */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div className="bg-slate-950 border border-slate-800 rounded-2xl p-3.5 shadow-md">
+                  <span className="text-[10px] text-slate-400 font-mono uppercase block">Scored Rows</span>
+                  <span className="text-xl font-bold font-mono text-white mt-1 block">{result.evaluated_sequences}</span>
+                </div>
+                <div className="bg-slate-950 border border-slate-800 rounded-2xl p-3.5 shadow-md">
+                  <span className="text-[10px] text-slate-400 font-mono uppercase block">Flagged Alerts</span>
+                  <span className="text-xl font-bold font-mono text-rose-400 mt-1 block">{result.flagged_laundering_count}</span>
+                </div>
+                <div className="bg-slate-950 border border-slate-800 rounded-2xl p-3.5 shadow-md">
+                  <span className="text-[10px] text-slate-400 font-mono uppercase block">Cleared Legitimate</span>
+                  <span className="text-xl font-bold font-mono text-emerald-400 mt-1 block">{result.cleared_count}</span>
+                </div>
+                <div className="bg-slate-950 border border-slate-800 rounded-2xl p-3.5 shadow-md">
+                  <span className="text-[10px] text-slate-400 font-mono uppercase block">Alert Rate</span>
+                  <span className="text-xl font-bold font-mono text-amber-400 mt-1 block">
+                    {((result.flagged_laundering_count / (result.evaluated_sequences || 1)) * 100).toFixed(2)}%
+                  </span>
+                </div>
+                <div className="bg-slate-950 border border-slate-800 rounded-2xl p-3.5 shadow-md">
+                  <span className="text-[10px] text-slate-400 font-mono uppercase block">Max Risk Probability</span>
+                  <span className="text-xl font-bold font-mono text-white mt-1 block">
+                    {result.predictions.length > 0
+                      ? Math.max(...result.predictions.map((p) => p.predicted_probability)).toFixed(4)
+                      : '0.0000'}
+                  </span>
+                </div>
+                <div className="bg-slate-950 border border-slate-800 rounded-2xl p-3.5 shadow-md">
+                  <span className="text-[10px] text-slate-400 font-mono uppercase block">Mean Risk Probability</span>
+                  <span className="text-xl font-bold font-mono text-white mt-1 block">
+                    {result.predictions.length > 0
+                      ? (result.predictions.reduce((acc, p) => acc + p.predicted_probability, 0) / result.predictions.length).toFixed(4)
+                      : '0.0000'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Top Risky Suspect Transactions Spotlight Table */}
+              <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
+                <div className="flex items-center justify-between text-xs font-mono font-bold text-slate-300 uppercase">
+                  <span>Top Risk Suspect Transactions Spotlight</span>
+                  <span className="text-[10px] text-slate-400 font-normal">Ranked by Model Probability</span>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs font-mono">
+                    <thead>
+                      <tr className="border-b border-slate-800 text-slate-400 uppercase text-[10px]">
+                        <th className="py-2 px-3">Row</th>
+                        <th className="py-2 px-3">Timestamp</th>
+                        <th className="py-2 px-3">From Account</th>
+                        <th className="py-2 px-3">To Account</th>
+                        <th className="py-2 px-3 text-right">Amount</th>
+                        <th className="py-2 px-3">Risk Probability</th>
+                        <th className="py-2 px-3 text-center">Risk Tier</th>
+                        <th className="py-2 px-3 text-center">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800/60">
+                      {(result.top_risky_transactions || [...result.predictions].sort((a, b) => b.predicted_probability - a.predicted_probability).slice(0, 5)).map((tx) => (
+                        <tr key={tx.row_id} className="hover:bg-slate-900/60 transition">
+                          <td className="py-2 px-3 text-slate-300">{tx.row_id}</td>
+                          <td className="py-2 px-3 text-slate-400 text-[11px]">{tx.timestamp}</td>
+                          <td className="py-2 px-3 text-indigo-400">{tx.from_account}</td>
+                          <td className="py-2 px-3 text-slate-300">{tx.to_account}</td>
+                          <td className="py-2 px-3 text-right text-slate-200">${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                          <td className="py-2 px-3">
+                            <span className={`font-bold ${tx.predicted_probability >= result.decision_threshold ? 'text-rose-400' : 'text-amber-400'}`}>
+                              {(tx.predicted_probability * 100).toFixed(2)}%
+                            </span>
+                          </td>
+                          <td className="py-2 px-3 text-center">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                              tx.predicted_probability >= result.decision_threshold
+                                ? 'bg-rose-950 text-rose-300 border border-rose-800'
+                                : 'bg-amber-950 text-amber-300 border border-amber-800'
+                            }`}>
+                              {tx.predicted_probability >= result.decision_threshold ? 'HIGH RISK' : 'MEDIUM RISK'}
+                            </span>
+                          </td>
+                          <td className="py-2 px-3 text-center">
+                            <button
+                              type="button"
+                              onClick={() => onExplainTransaction(tx, selectedDataset)}
+                              className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-sans transition cursor-pointer"
+                            >
+                              Explain
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
