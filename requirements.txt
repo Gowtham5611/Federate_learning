@@ -1,0 +1,17 @@
+# Pinned, reproducible dependencies for FedSecureAI
+fastapi==0.162.0
+uvicorn==0.54.0
+pydantic==2.14.1
+torch==2.14.0
+numpy==2.5.2
+pandas==3.0.5
+scikit-learn==1.9.0
+scipy==1.18.1
+matplotlib==3.11.2
+PyYAML==6.0.3
+pytest==9.1.1
+pytest-cov==7.1.0
+httpx==0.28.1
+requests==2.34.2
+tqdm==4.70.0
+
