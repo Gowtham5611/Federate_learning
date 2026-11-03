@@ -61,6 +61,8 @@ experiments/results/*
 !experiments/results/.gitkeep
 evaluation/metrics/*
 !evaluation/metrics/.gitkeep
+!evaluation/metrics/*.py
+!evaluation/metrics/__init__.py
 evaluation/reports/*
 !evaluation/reports/.gitkeep
 evaluation/visualizations/*
@@ -101,6 +103,14 @@ reports/*
 
 # Small curated test inputs are the one exception - review before adding.
 !backend/tests/fixtures/**/*.csv
+
+# =============================================================================
+# Node / Frontend
+# =============================================================================
+node_modules/
+frontend/node_modules/
+frontend/dist/
+.npm/
 
 # =============================================================================
 # Tooling caches
