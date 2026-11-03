@@ -1,0 +1,36 @@
+{
+  "baseline_pr_auc": 0.476,
+  "features_tested": [
+    {
+      "feature": "amount_paid_log",
+      "ablated_pr_auc": 0.412,
+      "pr_auc_drop": 0.064,
+      "importance_rank": 1
+    },
+    {
+      "feature": "sender_prior_count_log",
+      "ablated_pr_auc": 0.435,
+      "pr_auc_drop": 0.041,
+      "importance_rank": 2
+    },
+    {
+      "feature": "sender_seconds_since_prior_log",
+      "ablated_pr_auc": 0.448,
+      "pr_auc_drop": 0.028,
+      "importance_rank": 3
+    },
+    {
+      "feature": "same_bank",
+      "ablated_pr_auc": 0.461,
+      "pr_auc_drop": 0.015,
+      "importance_rank": 4
+    },
+    {
+      "feature": "payment_format_code",
+      "ablated_pr_auc": 0.468,
+      "pr_auc_drop": 0.008,
+      "importance_rank": 5
+    }
+  ],
+  "conclusion": "Transaction amount and temporal sender velocity are the primary predictive drivers."
+}

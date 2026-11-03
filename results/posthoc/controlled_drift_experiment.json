@@ -1,0 +1,23 @@
+{
+  "experiment": "Controlled Feature Distribution Shift in Held-Out Window 5",
+  "drift_injection": "1.35x log-amount scale + 0.5 shift in amount_paid_log and amount_received_log",
+  "detection_metrics": {
+    "psi": 0.2699,
+    "psi_alert_status": "SIGNIFICANT_DRIFT",
+    "ks_statistic": 0.2139,
+    "ks_pvalue": 0.0,
+    "detected_by_drift_monitor": true
+  },
+  "performance_impact": {
+    "clean_window5_pr_auc": 0.523484,
+    "drifted_window5_pr_auc": 0.383454,
+    "pr_auc_drop_pct": 26.75
+  },
+  "recalibration_recovery": {
+    "recalibrated_threshold": 0.9316,
+    "recovered_f1": 0.4431,
+    "recovered_precision": 0.7158,
+    "recovered_recall": 0.3209,
+    "recovery_status": "Successful recovery of detection F1 via dynamic threshold recalibration."
+  }
+}

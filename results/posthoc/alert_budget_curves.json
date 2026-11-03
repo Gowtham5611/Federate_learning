@@ -1,0 +1,346 @@
+{
+  "Federated Champion (IID LSTM FedAvg)": [
+    {
+      "alerts_per_10k": 5,
+      "review_cutoff_k": 508,
+      "recall": 0.2649,
+      "precision": 0.937,
+      "positives_captured": 476
+    },
+    {
+      "alerts_per_10k": 10,
+      "review_cutoff_k": 1016,
+      "recall": 0.4224,
+      "precision": 0.747,
+      "positives_captured": 759
+    },
+    {
+      "alerts_per_10k": 20,
+      "review_cutoff_k": 2031,
+      "recall": 0.4858,
+      "precision": 0.4298,
+      "positives_captured": 873
+    },
+    {
+      "alerts_per_10k": 30,
+      "review_cutoff_k": 3047,
+      "recall": 0.517,
+      "precision": 0.3049,
+      "positives_captured": 929
+    },
+    {
+      "alerts_per_10k": 50,
+      "review_cutoff_k": 5078,
+      "recall": 0.557,
+      "precision": 0.1971,
+      "positives_captured": 1001
+    },
+    {
+      "alerts_per_10k": 75,
+      "review_cutoff_k": 7617,
+      "recall": 0.5982,
+      "precision": 0.1411,
+      "positives_captured": 1075
+    },
+    {
+      "alerts_per_10k": 100,
+      "review_cutoff_k": 10156,
+      "recall": 0.6272,
+      "precision": 0.111,
+      "positives_captured": 1127
+    },
+    {
+      "alerts_per_10k": 150,
+      "review_cutoff_k": 15233,
+      "recall": 0.6711,
+      "precision": 0.0792,
+      "positives_captured": 1206
+    },
+    {
+      "alerts_per_10k": 200,
+      "review_cutoff_k": 20311,
+      "recall": 0.7062,
+      "precision": 0.0625,
+      "positives_captured": 1269
+    },
+    {
+      "alerts_per_10k": 300,
+      "review_cutoff_k": 30467,
+      "recall": 0.7474,
+      "precision": 0.0441,
+      "positives_captured": 1343
+    },
+    {
+      "alerts_per_10k": 500,
+      "review_cutoff_k": 50778,
+      "recall": 0.7824,
+      "precision": 0.0277,
+      "positives_captured": 1406
+    },
+    {
+      "alerts_per_10k": 1000,
+      "review_cutoff_k": 101556,
+      "recall": 0.8353,
+      "precision": 0.0148,
+      "positives_captured": 1501
+    }
+  ],
+  "Federated IID BiLSTM FedAvg": [
+    {
+      "alerts_per_10k": 5,
+      "review_cutoff_k": 508,
+      "recall": 0.2582,
+      "precision": 0.9134,
+      "positives_captured": 464
+    },
+    {
+      "alerts_per_10k": 10,
+      "review_cutoff_k": 1016,
+      "recall": 0.3662,
+      "precision": 0.6476,
+      "positives_captured": 658
+    },
+    {
+      "alerts_per_10k": 20,
+      "review_cutoff_k": 2031,
+      "recall": 0.4201,
+      "precision": 0.3717,
+      "positives_captured": 755
+    },
+    {
+      "alerts_per_10k": 30,
+      "review_cutoff_k": 3047,
+      "recall": 0.463,
+      "precision": 0.2731,
+      "positives_captured": 832
+    },
+    {
+      "alerts_per_10k": 50,
+      "review_cutoff_k": 5078,
+      "recall": 0.517,
+      "precision": 0.1829,
+      "positives_captured": 929
+    },
+    {
+      "alerts_per_10k": 75,
+      "review_cutoff_k": 7617,
+      "recall": 0.5576,
+      "precision": 0.1315,
+      "positives_captured": 1002
+    },
+    {
+      "alerts_per_10k": 100,
+      "review_cutoff_k": 10156,
+      "recall": 0.5893,
+      "precision": 0.1043,
+      "positives_captured": 1059
+    },
+    {
+      "alerts_per_10k": 150,
+      "review_cutoff_k": 15233,
+      "recall": 0.6344,
+      "precision": 0.0748,
+      "positives_captured": 1140
+    },
+    {
+      "alerts_per_10k": 200,
+      "review_cutoff_k": 20311,
+      "recall": 0.6689,
+      "precision": 0.0592,
+      "positives_captured": 1202
+    },
+    {
+      "alerts_per_10k": 300,
+      "review_cutoff_k": 30467,
+      "recall": 0.7112,
+      "precision": 0.0419,
+      "positives_captured": 1278
+    },
+    {
+      "alerts_per_10k": 500,
+      "review_cutoff_k": 50778,
+      "recall": 0.749,
+      "precision": 0.0265,
+      "positives_captured": 1346
+    },
+    {
+      "alerts_per_10k": 1000,
+      "review_cutoff_k": 101556,
+      "recall": 0.7908,
+      "precision": 0.014,
+      "positives_captured": 1421
+    }
+  ],
+  "Federated Non-IID BiLSTM FedAvg": [
+    {
+      "alerts_per_10k": 5,
+      "review_cutoff_k": 508,
+      "recall": 0.2565,
+      "precision": 0.9075,
+      "positives_captured": 461
+    },
+    {
+      "alerts_per_10k": 10,
+      "review_cutoff_k": 1016,
+      "recall": 0.3461,
+      "precision": 0.6122,
+      "positives_captured": 622
+    },
+    {
+      "alerts_per_10k": 20,
+      "review_cutoff_k": 2031,
+      "recall": 0.3984,
+      "precision": 0.3525,
+      "positives_captured": 716
+    },
+    {
+      "alerts_per_10k": 30,
+      "review_cutoff_k": 3047,
+      "recall": 0.4374,
+      "precision": 0.258,
+      "positives_captured": 786
+    },
+    {
+      "alerts_per_10k": 50,
+      "review_cutoff_k": 5078,
+      "recall": 0.4958,
+      "precision": 0.1755,
+      "positives_captured": 891
+    },
+    {
+      "alerts_per_10k": 75,
+      "review_cutoff_k": 7617,
+      "recall": 0.537,
+      "precision": 0.1267,
+      "positives_captured": 965
+    },
+    {
+      "alerts_per_10k": 100,
+      "review_cutoff_k": 10156,
+      "recall": 0.5726,
+      "precision": 0.1013,
+      "positives_captured": 1029
+    },
+    {
+      "alerts_per_10k": 150,
+      "review_cutoff_k": 15233,
+      "recall": 0.6199,
+      "precision": 0.0731,
+      "positives_captured": 1114
+    },
+    {
+      "alerts_per_10k": 200,
+      "review_cutoff_k": 20311,
+      "recall": 0.6539,
+      "precision": 0.0579,
+      "positives_captured": 1175
+    },
+    {
+      "alerts_per_10k": 300,
+      "review_cutoff_k": 30467,
+      "recall": 0.6923,
+      "precision": 0.0408,
+      "positives_captured": 1244
+    },
+    {
+      "alerts_per_10k": 500,
+      "review_cutoff_k": 50778,
+      "recall": 0.7301,
+      "precision": 0.0258,
+      "positives_captured": 1312
+    },
+    {
+      "alerts_per_10k": 1000,
+      "review_cutoff_k": 101556,
+      "recall": 0.7763,
+      "precision": 0.0137,
+      "positives_captured": 1395
+    }
+  ],
+  "Federated Non-IID BiLSTM FedProx": [
+    {
+      "alerts_per_10k": 5,
+      "review_cutoff_k": 508,
+      "recall": 0.2165,
+      "precision": 0.7657,
+      "positives_captured": 389
+    },
+    {
+      "alerts_per_10k": 10,
+      "review_cutoff_k": 1016,
+      "recall": 0.266,
+      "precision": 0.4705,
+      "positives_captured": 478
+    },
+    {
+      "alerts_per_10k": 20,
+      "review_cutoff_k": 2031,
+      "recall": 0.3027,
+      "precision": 0.2678,
+      "positives_captured": 544
+    },
+    {
+      "alerts_per_10k": 30,
+      "review_cutoff_k": 3047,
+      "recall": 0.3322,
+      "precision": 0.1959,
+      "positives_captured": 597
+    },
+    {
+      "alerts_per_10k": 50,
+      "review_cutoff_k": 5078,
+      "recall": 0.3779,
+      "precision": 0.1337,
+      "positives_captured": 679
+    },
+    {
+      "alerts_per_10k": 75,
+      "review_cutoff_k": 7617,
+      "recall": 0.4201,
+      "precision": 0.0991,
+      "positives_captured": 755
+    },
+    {
+      "alerts_per_10k": 100,
+      "review_cutoff_k": 10156,
+      "recall": 0.4619,
+      "precision": 0.0817,
+      "positives_captured": 830
+    },
+    {
+      "alerts_per_10k": 150,
+      "review_cutoff_k": 15233,
+      "recall": 0.5181,
+      "precision": 0.0611,
+      "positives_captured": 931
+    },
+    {
+      "alerts_per_10k": 200,
+      "review_cutoff_k": 20311,
+      "recall": 0.5515,
+      "precision": 0.0488,
+      "positives_captured": 991
+    },
+    {
+      "alerts_per_10k": 300,
+      "review_cutoff_k": 30467,
+      "recall": 0.6004,
+      "precision": 0.0354,
+      "positives_captured": 1079
+    },
+    {
+      "alerts_per_10k": 500,
+      "review_cutoff_k": 50778,
+      "recall": 0.6388,
+      "precision": 0.0226,
+      "positives_captured": 1148
+    },
+    {
+      "alerts_per_10k": 1000,
+      "review_cutoff_k": 101556,
+      "recall": 0.6973,
+      "precision": 0.0123,
+      "positives_captured": 1253
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "attack_type": "Shadow-Free Loss-Threshold Membership Inference Attack (Yeom et al.)",
+  "federated_champion_mia_auc": 0.5041,
+  "federated_champion_ci_95": [
+    0.4979,
+    0.5122
+  ],
+  "centralized_baseline_mia_auc": 0.584,
+  "empirical_leakage_advantage": 0.0799,
+  "interpretation": "The federated champion exhibits a measured membership inference attack AUC of 0.5041 (95% CI: [0.4979, 0.5122]), indicating lower measured leakage under this attack compared to the centralized model (0.5840).",
+  "caveat": "This empirical assessment measures lower empirical leakage under a shadow-free loss-threshold attack. It is NOT a formal mathematical differential privacy guarantee (e.g., (epsilon, delta)-DP). Formal differential privacy requires explicit gradient perturbation (DP-SGD) or secure aggregation protocols."
+}

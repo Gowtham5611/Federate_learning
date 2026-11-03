@@ -1,0 +1,37 @@
+[
+  {
+    "feature": "amount_paid_log",
+    "psi": 0.5804,
+    "ks_statistic": 0.2043,
+    "ks_pvalue": 0.0,
+    "drift_status": "SIGNIFICANT_DRIFT"
+  },
+  {
+    "feature": "amount_received_log",
+    "psi": 0.5718,
+    "ks_statistic": 0.2033,
+    "ks_pvalue": 0.0,
+    "drift_status": "SIGNIFICANT_DRIFT"
+  },
+  {
+    "feature": "sender_prior_count_log",
+    "psi": 0.0114,
+    "ks_statistic": 0.9734,
+    "ks_pvalue": 0.0,
+    "drift_status": "STABLE"
+  },
+  {
+    "feature": "sender_prior_amount_log",
+    "psi": 0.0093,
+    "ks_statistic": 0.9228,
+    "ks_pvalue": 0.0,
+    "drift_status": "STABLE"
+  },
+  {
+    "feature": "sender_seconds_since_prior_log",
+    "psi": 0.8699,
+    "ks_statistic": 0.8457,
+    "ks_pvalue": 0.0,
+    "drift_status": "SIGNIFICANT_DRIFT"
+  }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "bank_id": "Client_Bank_1",
+    "transactions_evaluated": 338522,
+    "laundering_positives": 587,
+    "prevalence": 0.0017340084248586502,
+    "pr_auc": 0.4622549677179041,
+    "roc_auc": 0.956609089038599,
+    "f1_score": 0.5227537922987165,
+    "alerts_per_10k": 7.9758479507978794,
+    "brier_score": 0.0012222516463973735
+  },
+  {
+    "bank_id": "Client_Bank_2",
+    "transactions_evaluated": 338521,
+    "laundering_positives": 597,
+    "prevalence": 0.0017635538120234786,
+    "pr_auc": 0.5024852540308448,
+    "roc_auc": 0.9571132518730932,
+    "f1_score": 0.5642151481888036,
+    "alerts_per_10k": 9.275643165416621,
+    "brier_score": 0.0011775291200952008
+  },
+  {
+    "bank_id": "Client_Bank_3",
+    "transactions_evaluated": 338521,
+    "laundering_positives": 613,
+    "prevalence": 0.0018108182357963023,
+    "pr_auc": 0.4633334778282862,
+    "roc_auc": 0.9528101377478518,
+    "f1_score": 0.5199115044247787,
+    "alerts_per_10k": 8.596217073682283,
+    "brier_score": 0.0012594781238294838
+  }
+]

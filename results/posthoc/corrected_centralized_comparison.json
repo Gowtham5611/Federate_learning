@@ -1,0 +1,28 @@
+{
+  "federated_champion": {
+    "model_id": "hi_small_lstm_fedavg_iid_seed42",
+    "test_pr_auc": 0.476,
+    "test_roc_auc": 0.9348,
+    "test_f1": 0.5512
+  },
+  "centralized_comparisons": [
+    {
+      "baseline_type": "Best Centralized Baseline (Centralized LSTM)",
+      "centralized_pr_auc": 0.4771,
+      "centralized_roc_auc": 0.9354,
+      "centralized_f1": 0.5529,
+      "retention_pct": 99.77,
+      "delta_pr_auc": -0.0011,
+      "scientific_status": "Parity achieved (99.77% retention of peak centralized performance with zero raw transaction pooling)."
+    },
+    {
+      "baseline_type": "Mean Centralized Baselines (Average across GRU, LSTM, BiLSTM)",
+      "centralized_pr_auc": 0.4119,
+      "centralized_roc_auc": 0.9226,
+      "centralized_f1": 0.4973,
+      "retention_pct": 115.56,
+      "delta_pr_auc": 0.0641,
+      "scientific_status": "Outperforms average centralized model (+15.56% relative lift due to GRU underperformance in centralized setting)."
+    }
+  ]
+}

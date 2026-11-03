@@ -1,0 +1,67 @@
+[
+  {
+    "window_index": 1,
+    "start_row": 0,
+    "end_row": 203112,
+    "window_samples": 203112,
+    "positives": 203,
+    "prevalence": 0.0009994485800937415,
+    "pr_auc": 0.16291038383658318,
+    "roc_auc": 0.917450825525976,
+    "f1_score": 0.21862348178137653,
+    "alerts_per_10k": 2.166292488873134,
+    "brier_score": 0.001037340785518258
+  },
+  {
+    "window_index": 2,
+    "start_row": 203112,
+    "end_row": 406224,
+    "window_samples": 203112,
+    "positives": 142,
+    "prevalence": 0.0006991216668636023,
+    "pr_auc": 0.1184631830886669,
+    "roc_auc": 0.9169569567971955,
+    "f1_score": 0.18461538461538463,
+    "alerts_per_10k": 2.6093977706880933,
+    "brier_score": 0.0007556994609262147
+  },
+  {
+    "window_index": 3,
+    "start_row": 406224,
+    "end_row": 609336,
+    "window_samples": 203112,
+    "positives": 198,
+    "prevalence": 0.0009748316199929103,
+    "pr_auc": 0.25105525709316767,
+    "roc_auc": 0.9269840444919543,
+    "f1_score": 0.30996309963099633,
+    "alerts_per_10k": 3.594076174721336,
+    "brier_score": 0.0009119529248854813
+  },
+  {
+    "window_index": 4,
+    "start_row": 609336,
+    "end_row": 812448,
+    "window_samples": 203112,
+    "positives": 158,
+    "prevalence": 0.0007778959391862618,
+    "pr_auc": 0.20922790588062815,
+    "roc_auc": 0.9315783410669974,
+    "f1_score": 0.25870646766169153,
+    "alerts_per_10k": 2.117058568671472,
+    "brier_score": 0.0007139212869784782
+  },
+  {
+    "window_index": 5,
+    "start_row": 812448,
+    "end_row": 1015564,
+    "window_samples": 203116,
+    "positives": 1096,
+    "prevalence": 0.005395931388960003,
+    "pr_auc": 0.6737666269711009,
+    "roc_auc": 0.9824013232772357,
+    "f1_score": 0.6860068259385667,
+    "alerts_per_10k": 32.592213316528486,
+    "brier_score": 0.002679821617235558
+  }
+]

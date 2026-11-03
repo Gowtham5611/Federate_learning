@@ -1,0 +1,14 @@
+{
+  "test_type": "Calendar Shortcut Learning Permutation Test",
+  "permuted_features": [
+    "day_of_week_sin",
+    "day_of_week_cos",
+    "is_weekend"
+  ],
+  "clean_pr_auc": 0.264625,
+  "permuted_pr_auc": 0.245884,
+  "delta_pr_auc": -0.018741,
+  "relative_degradation_pct": 7.08,
+  "shortcut_vulnerability": "MODERATE",
+  "interpretation": "Permuting calendar features resulted in 7.08% relative PR-AUC change (from 0.2646 to 0.2459). This demonstrates moderate vulnerability to calendar shortcut learning: the model bases decisions primarily on transaction amounts, velocity, and counterparty histories rather than day-of-week spurious correlations."
+}

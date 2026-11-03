@@ -1,0 +1,12 @@
+{
+  "optimal_temperature_T": 0.834,
+  "uncalibrated_ece": 0.001658,
+  "calibrated_ece": 0.000451,
+  "ece_reduction_pct": 72.82,
+  "uncalibrated_brier": 0.00122,
+  "calibrated_brier": 0.001169,
+  "brier_reduction_pct": 4.19,
+  "uncalibrated_pr_auc": 0.475977,
+  "calibrated_pr_auc": 0.475977,
+  "ranking_parity_verified": true
+}

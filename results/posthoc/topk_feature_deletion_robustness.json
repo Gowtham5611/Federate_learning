@@ -1,0 +1,81 @@
+{
+  "baseline_pr_auc": 0.264625,
+  "top_features_ranked": [
+    "sender_prior_amount_log",
+    "amount_paid_log",
+    "sender_seconds_since_prior_log",
+    "receiver_prior_amount_log",
+    "day_of_week_cos",
+    "receiver_seconds_since_prior_log",
+    "payment_format_code",
+    "amount_received_log",
+    "sender_prior_count_log",
+    "day_of_week_sin"
+  ],
+  "deletion_curve": [
+    {
+      "k_deleted": 1,
+      "deleted_features": [
+        "sender_prior_amount_log"
+      ],
+      "pr_auc": 0.217991,
+      "roc_auc": 0.927924,
+      "delta_pr_auc": -0.046634,
+      "relative_drop_pct": 17.62
+    },
+    {
+      "k_deleted": 2,
+      "deleted_features": [
+        "sender_prior_amount_log",
+        "amount_paid_log"
+      ],
+      "pr_auc": 0.065147,
+      "roc_auc": 0.853063,
+      "delta_pr_auc": -0.199478,
+      "relative_drop_pct": 75.38
+    },
+    {
+      "k_deleted": 3,
+      "deleted_features": [
+        "sender_prior_amount_log",
+        "amount_paid_log",
+        "sender_seconds_since_prior_log"
+      ],
+      "pr_auc": 0.045426,
+      "roc_auc": 0.945761,
+      "delta_pr_auc": -0.219199,
+      "relative_drop_pct": 82.83
+    },
+    {
+      "k_deleted": 5,
+      "deleted_features": [
+        "sender_prior_amount_log",
+        "amount_paid_log",
+        "sender_seconds_since_prior_log",
+        "receiver_prior_amount_log",
+        "day_of_week_cos"
+      ],
+      "pr_auc": 0.040764,
+      "roc_auc": 0.946259,
+      "delta_pr_auc": -0.223862,
+      "relative_drop_pct": 84.6
+    },
+    {
+      "k_deleted": 8,
+      "deleted_features": [
+        "sender_prior_amount_log",
+        "amount_paid_log",
+        "sender_seconds_since_prior_log",
+        "receiver_prior_amount_log",
+        "day_of_week_cos",
+        "receiver_seconds_since_prior_log",
+        "payment_format_code",
+        "amount_received_log"
+      ],
+      "pr_auc": 0.003826,
+      "roc_auc": 0.74703,
+      "delta_pr_auc": -0.260799,
+      "relative_drop_pct": 98.55
+    }
+  ]
+}
