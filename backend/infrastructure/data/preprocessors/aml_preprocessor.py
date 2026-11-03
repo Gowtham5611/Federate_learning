@@ -169,14 +169,19 @@ CATEGORICAL_CODE_COLUMNS: tuple[str, ...] = (
 class AmlPreprocessor:
     """Cleans, engineers, fits and transforms IBM AML transaction chunks."""
 
-    def __init__(self) -> None:
+    def __init__(self, history_builder: Optional[AccountHistoryBuilder] = None) -> None:
         """Build the feature pipeline in an unfitted state."""
         self._temporal = TemporalFeatureBuilder()
         self._transaction = TransactionFeatureBuilder()
-        self._history = AccountHistoryBuilder()
+        self._history = history_builder if history_builder is not None else AccountHistoryBuilder()
         self._encoder = OrdinalCategoricalEncoder(CATEGORICAL_COLUMNS)
         self._standardizer = RunningStandardizer(SCALED_COLUMNS)
         self._unknown_categories: Counter[str] = Counter()
+
+    @property
+    def history_builder(self) -> AccountHistoryBuilder:
+        """Access the underlying account history builder."""
+        return self._history
 
     # --- Properties describing the output ------------------------------------
 

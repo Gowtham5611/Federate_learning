@@ -308,6 +308,51 @@ class AccountHistoryBuilder(FeatureBuilder):
         self._received.grow(capacity)
         self._capacity = capacity
 
+    def export_profiles(self) -> dict[str, Any]:
+        """Export current per-account historical state into AccountProfile dictionary."""
+        try:
+            from infrastructure.data.features.account_history_store import AccountProfile
+        except ModuleNotFoundError:
+            from backend.infrastructure.data.features.account_history_store import AccountProfile
+
+        profiles: dict[str, AccountProfile] = {}
+        for acc_id, code in self._index.items():
+            sent_last = float(self._sent.last[code]) if not np.isnan(self._sent.last[code]) else None
+            rec_last = float(self._received.last[code]) if not np.isnan(self._received.last[code]) else None
+            profiles[acc_id] = AccountProfile(
+                account_id=acc_id,
+                sent_count=float(self._sent.count[code]),
+                sent_total=float(self._sent.total[code]),
+                sent_last_epoch=sent_last,
+                received_count=float(self._received.count[code]),
+                received_total=float(self._received.total[code]),
+                received_last_epoch=rec_last,
+            )
+        return profiles
+
+    def import_profiles(self, profiles: dict[str, Any]) -> None:
+        """Seed builder history state with prior AccountProfile records."""
+        if not profiles:
+            return
+        required = len(profiles)
+        self._ensure_capacity(required)
+        for acc_id, prof in profiles.items():
+            if acc_id not in self._index:
+                code = len(self._index)
+                self._index[acc_id] = code
+            else:
+                code = self._index[acc_id]
+
+            self._sent.count[code] = getattr(prof, "sent_count", 0.0)
+            self._sent.total[code] = getattr(prof, "sent_total", 0.0)
+            sent_last = getattr(prof, "sent_last_epoch", None)
+            self._sent.last[code] = sent_last if sent_last is not None else np.nan
+
+            self._received.count[code] = getattr(prof, "received_count", 0.0)
+            self._received.total[code] = getattr(prof, "received_total", 0.0)
+            rec_last = getattr(prof, "received_last_epoch", None)
+            self._received.last[code] = rec_last if rec_last is not None else np.nan
+
     def __repr__(self) -> str:
         """Show the size of the state, which is what bounds memory."""
         return f"AccountHistoryBuilder({self.distinct_accounts} account(s) tracked)"

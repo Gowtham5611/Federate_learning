@@ -57,6 +57,146 @@ MODEL_REGISTRY: Dict[str, Dict[str, Any]] = {
         "expected_sha256": "bded77c75fcf89ea24af295fd7a5c28110744bf226a1c4c0a386f9924d1087d2",
         "frozen_threshold": 0.2384829968214035,
     },
+    "hi_small_gru_fedavg_iid_seed42": {
+        "model_name": "hi_small_gru_fedavg_iid_seed42",
+        "architecture": ModelArchitecture.GRU,
+        "hidden_size": 64,
+        "num_layers": 1,
+        "feature_dimension": 57,
+        "checkpoint_path": BASE_DIR / "results/HI_Small_Results/checkpoints/hi_small_gru_fedavg_iid_seed42/hi_small_gru_fedavg_iid_seed42_global_best.pt",
+        "expected_sha256": "1da9626d3ca24dadd93b6c758d76ede7dfae4b0f245fd4468552e2476b113c04",
+        "frozen_threshold": 0.50,
+    },
+    "hi_small_gru_fedprox_mu0.0001_iid_seed42": {
+        "model_name": "hi_small_gru_fedprox_mu0.0001_iid_seed42",
+        "architecture": ModelArchitecture.GRU,
+        "hidden_size": 64,
+        "num_layers": 1,
+        "feature_dimension": 57,
+        "checkpoint_path": BASE_DIR / "results/HI_Small_Results/checkpoints/hi_small_gru_fedprox_mu0.0001_iid_seed42/hi_small_gru_fedprox_mu0.0001_iid_seed42_global_best.pt",
+        "expected_sha256": "fcd14fa426ed4ddbc6a00f1f5109286be0d7057648654c3c336fd6102f5cd52f",
+        "frozen_threshold": 0.50,
+    },
+    "hi_small_lstm_fedprox_mu0.0001_iid_seed42": {
+        "model_name": "hi_small_lstm_fedprox_mu0.0001_iid_seed42",
+        "architecture": ModelArchitecture.LSTM,
+        "hidden_size": 64,
+        "num_layers": 1,
+        "feature_dimension": 57,
+        "checkpoint_path": BASE_DIR / "results/HI_Small_Results/checkpoints/hi_small_lstm_fedprox_mu0.0001_iid_seed42/hi_small_lstm_fedprox_mu0.0001_iid_seed42_global_best.pt",
+        "expected_sha256": "d9ddeb275aa6b83ef67cf939ecc52f897e491c9ac706c535dfefd02f672a3f74",
+        "frozen_threshold": 0.50,
+    },
+    "hi_small_bilstm_fedavg_iid_seed42": {
+        "model_name": "hi_small_bilstm_fedavg_iid_seed42",
+        "architecture": ModelArchitecture.BILSTM,
+        "hidden_size": 64,
+        "num_layers": 1,
+        "feature_dimension": 57,
+        "checkpoint_path": BASE_DIR / "results/HI_Small_Results/checkpoints/hi_small_bilstm_fedavg_iid_seed42/hi_small_bilstm_fedavg_iid_seed42_global_best.pt",
+        "expected_sha256": "e9a8c43b0952bca7e82810a95ff9c3a3b5c65f02bc0f7ba0d7d9a304e38e68e4",
+        "frozen_threshold": 0.50,
+    },
+    "hi_small_bilstm_fedprox_mu0.0001_iid_seed42": {
+        "model_name": "hi_small_bilstm_fedprox_mu0.0001_iid_seed42",
+        "architecture": ModelArchitecture.BILSTM,
+        "hidden_size": 64,
+        "num_layers": 1,
+        "feature_dimension": 57,
+        "checkpoint_path": BASE_DIR / "results/HI_Small_Results/checkpoints/hi_small_bilstm_fedprox_mu0.0001_iid_seed42/hi_small_bilstm_fedprox_mu0.0001_iid_seed42_global_best.pt",
+        "expected_sha256": "ace199af13d80d19e6eb7c568f61feaaeb44485122718ef86b036577ba694f5b",
+        "frozen_threshold": 0.50,
+    },
+    "hi_small_gru_fedavg_seed42": {
+        "model_name": "hi_small_gru_fedavg_seed42",
+        "architecture": ModelArchitecture.GRU,
+        "hidden_size": 64,
+        "num_layers": 1,
+        "feature_dimension": 57,
+        "checkpoint_path": BASE_DIR / "results/HI_Small_Results/checkpoints/hi_small_gru_fedavg_seed42/hi_small_gru_fedavg_seed42_global_best.pt",
+        "expected_sha256": "d225abce33d027f6cfd95b54634f19989b533db9b977aa892dbe76a6616a69ef",
+        "frozen_threshold": 0.70,
+    },
+    "hi_small_gru_fedprox_mu0.0001_seed42": {
+        "model_name": "hi_small_gru_fedprox_mu0.0001_seed42",
+        "architecture": ModelArchitecture.GRU,
+        "hidden_size": 64,
+        "num_layers": 1,
+        "feature_dimension": 57,
+        "checkpoint_path": BASE_DIR / "results/HI_Small_Results/checkpoints/hi_small_gru_fedprox_mu0.0001_seed42/hi_small_gru_fedprox_mu0.0001_seed42_global_best.pt",
+        "expected_sha256": "70cee297f8ca319cf88755b33100234a9ecdb17112ea744ce09458021c170d1d",
+        "frozen_threshold": 0.69,
+    },
+    "hi_small_lstm_fedavg_seed42": {
+        "model_name": "hi_small_lstm_fedavg_seed42",
+        "architecture": ModelArchitecture.LSTM,
+        "hidden_size": 64,
+        "num_layers": 1,
+        "feature_dimension": 57,
+        "checkpoint_path": BASE_DIR / "results/HI_Small_Results/checkpoints/hi_small_lstm_fedavg_seed42/hi_small_lstm_fedavg_seed42_global_best.pt",
+        "expected_sha256": "1b64f79ddd4dc85d6bad953e93f2679bc102bf5fdbffeaf8b59df69ddd19ab1c",
+        "frozen_threshold": 0.37,
+    },
+    "hi_small_lstm_fedprox_mu0.0001_seed42": {
+        "model_name": "hi_small_lstm_fedprox_mu0.0001_seed42",
+        "architecture": ModelArchitecture.LSTM,
+        "hidden_size": 64,
+        "num_layers": 1,
+        "feature_dimension": 57,
+        "checkpoint_path": BASE_DIR / "results/HI_Small_Results/checkpoints/hi_small_lstm_fedprox_mu0.0001_seed42/hi_small_lstm_fedprox_mu0.0001_seed42_global_best.pt",
+        "expected_sha256": "35bf9029a3f1778f359c67ad7b54b27b7e92bab476d95a505a62914e383f26fd",
+        "frozen_threshold": 0.36,
+    },
+    "hi_small_bilstm_fedavg_seed42": {
+        "model_name": "hi_small_bilstm_fedavg_seed42",
+        "architecture": ModelArchitecture.BILSTM,
+        "hidden_size": 64,
+        "num_layers": 1,
+        "feature_dimension": 57,
+        "checkpoint_path": BASE_DIR / "results/HI_Small_Results/checkpoints/hi_small_bilstm_fedavg_seed42/hi_small_bilstm_fedavg_seed42_global_best.pt",
+        "expected_sha256": "508427bde3564e2978087968dd44c68b7538be29929837c7ce51a7051410ce90",
+        "frozen_threshold": 0.62,
+    },
+    "hi_small_bilstm_fedprox_mu0.0001_seed42": {
+        "model_name": "hi_small_bilstm_fedprox_mu0.0001_seed42",
+        "architecture": ModelArchitecture.BILSTM,
+        "hidden_size": 64,
+        "num_layers": 1,
+        "feature_dimension": 57,
+        "checkpoint_path": BASE_DIR / "results/HI_Small_Results/checkpoints/hi_small_bilstm_fedprox_mu0.0001_seed42/hi_small_bilstm_fedprox_mu0.0001_seed42_global_best.pt",
+        "expected_sha256": "17f1a3f01b78297f0ba7ea920c8188185bbba38f07936a2c0709b1ea6e492ca4",
+        "frozen_threshold": 0.58,
+    },
+    "centralized_lstm": {
+        "model_name": "centralized_lstm_seed42_20260905T132827",
+        "architecture": ModelArchitecture.LSTM,
+        "hidden_size": 64,
+        "num_layers": 1,
+        "feature_dimension": 57,
+        "checkpoint_path": BASE_DIR / "models/checkpoints/centralized_lstm_seed42_20260905T132827/best.pt",
+        "expected_sha256": "382edf4e8ef82d9a00423901bc54fd957ee0821ecfc86d928609e7983c635afa",
+        "frozen_threshold": 0.703287,
+    },
+    "centralized_gru": {
+        "model_name": "centralized_gru_seed42_20260905T131807",
+        "architecture": ModelArchitecture.GRU,
+        "hidden_size": 64,
+        "num_layers": 1,
+        "feature_dimension": 57,
+        "checkpoint_path": BASE_DIR / "models/checkpoints/centralized_gru_seed42_20260905T131807/best.pt",
+        "expected_sha256": "a10e10f73a891db13771d9c8ec02a291e1c1daf231e460760e47a87f768e4095",
+        "frozen_threshold": 0.973227,
+    },
+    "centralized_bilstm": {
+        "model_name": "centralized_bilstm_seed42_20260906T011749",
+        "architecture": ModelArchitecture.BILSTM,
+        "hidden_size": 64,
+        "num_layers": 1,
+        "feature_dimension": 57,
+        "checkpoint_path": BASE_DIR / "models/checkpoints/centralized_bilstm_seed42_20260906T011749/best.pt",
+        "expected_sha256": "2b274cc93546a91c53275f423bb4af5819778cbfb38b9a23c85c805884ccfa49",
+        "frozen_threshold": 0.826391,
+    },
 }
 
 
@@ -97,9 +237,9 @@ class ModelService:
         self._initialized = True
 
     def load_all_models(self) -> None:
-        """Load and verify all models declared in MODEL_REGISTRY."""
+        """Load and verify baseline models declared in MODEL_REGISTRY."""
         with self._inference_lock:
-            for dataset_name in MODEL_REGISTRY:
+            for dataset_name in ("HI-Small", "LI-Medium"):
                 self._load_single_model(dataset_name)
 
     @staticmethod
@@ -179,24 +319,46 @@ class ModelService:
         logger.info("Successfully loaded and verified %s model: %s", dataset, model_name)
 
     def is_ready(self) -> bool:
-        """Check whether all declared models are loaded and ready."""
-        return all(status == "loaded" for status in self._loading_status.values())
+        """Check whether baseline lead models are loaded and ready."""
+        return self._loading_status.get("HI-Small") == "loaded" and self._loading_status.get("LI-Medium") == "loaded"
 
     def get_loaded_models(self) -> List[str]:
         """Return list of loaded model names."""
         return [meta["model_name"] for meta in self._metadata.values()]
 
     def get_model_metadata(self, dataset: str) -> Dict[str, Any]:
-        """Return verified metadata for a dataset model."""
-        if dataset not in self._metadata:
-            raise KeyError(f"Metadata not found for dataset '{dataset}'. Model status: {self._loading_status.get(dataset, 'unknown')}")
-        return dict(self._metadata[dataset])
+        """Return verified metadata for a dataset model, loading on demand if registered."""
+        target = self._resolve_model_key(dataset)
+        if target not in self._metadata:
+            if target in MODEL_REGISTRY:
+                self._load_single_model(target)
+            else:
+                raise KeyError(f"Metadata not found for dataset '{dataset}'. Model status: {self._loading_status.get(dataset, 'unknown')}")
+        return dict(self._metadata[target])
+
+    def _resolve_model_key(self, dataset: str) -> str:
+        """Resolve potential aliases, normalized names, or direct model names to MODEL_REGISTRY keys."""
+        if dataset in MODEL_REGISTRY:
+            return dataset
+        norm = dataset.lower().replace("-", "_").replace(" ", "_")
+        if norm in ("auto", "best", "ensemble_hybrid", "ensemble", "hi_small"):
+            return "HI-Small"
+        if norm in ("li_medium",):
+            return "LI-Medium"
+        for k in MODEL_REGISTRY:
+            if k.lower() == norm or MODEL_REGISTRY[k]["model_name"].lower() == norm:
+                return k
+        return dataset
 
     def get_model(self, dataset: str) -> nn.Module:
-        """Get the PyTorch model for explainability or inspection."""
-        if dataset not in self._models:
-            raise KeyError(f"Model for '{dataset}' is not loaded.")
-        return self._models[dataset]
+        """Get the PyTorch model for sequence inference or explainability, loading on demand if registered."""
+        target = self._resolve_model_key(dataset)
+        if target not in self._models:
+            if target in MODEL_REGISTRY:
+                self._load_single_model(target)
+            else:
+                raise KeyError(f"Model for '{dataset}' is not loaded and not in MODEL_REGISTRY.")
+        return self._models[target]
 
     def predict_sequence(
         self, dataset: str, sequence: SequenceItem

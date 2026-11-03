@@ -3,8 +3,20 @@
 from __future__ import annotations
 
 import logging
+import os
+import sys
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import AsyncGenerator
+
+# Ensure backend and repository root are always on sys.path
+_BACKEND_DIR = Path(__file__).resolve().parents[2]
+if str(_BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(_BACKEND_DIR))
+
+_ROOT_DIR = _BACKEND_DIR.parent
+if str(_ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(_ROOT_DIR))
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,11 +27,15 @@ try:
     from interfaces.api.middleware.request_guards import RequestTimingAndPrivacyMiddleware
     from interfaces.api.routes.health import router as health_router
     from interfaces.api.routes.inference import router as inference_router
+    from interfaces.api.routes.evaluation import router as evaluation_router
+    from interfaces.api.routes.research import router as research_router
     from interfaces.api.services.model_service import ModelService
 except ModuleNotFoundError:
     from backend.interfaces.api.middleware.request_guards import RequestTimingAndPrivacyMiddleware
     from backend.interfaces.api.routes.health import router as health_router
     from backend.interfaces.api.routes.inference import router as inference_router
+    from backend.interfaces.api.routes.evaluation import router as evaluation_router
+    from backend.interfaces.api.routes.research import router as research_router
     from backend.interfaces.api.services.model_service import ModelService
 
 logger = logging.getLogger(__name__)
@@ -63,9 +79,14 @@ def create_app(preload_models: bool = True) -> FastAPI:
     # 2. CORS middleware (restricted to local interfaces)
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+        allow_origins=[
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+        ],
         allow_credentials=True,
-        allow_methods=["GET", "POST"],
+        allow_methods=["GET", "POST", "OPTIONS"],
         allow_headers=["*"],
     )
 
@@ -79,12 +100,16 @@ def create_app(preload_models: bool = True) -> FastAPI:
             content={"detail": "An internal server error occurred. Transaction trace logged securely."},
         )
 
-    # 4. Route registration
-    app.include_router(health_router)
-    app.include_router(inference_router)
+    # 4. Route registration (Root, /v1, /api/v1, and /api aliases for client compatibility)
+    for prefix in ("", "/v1", "/api/v1", "/api"):
+        app.include_router(health_router, prefix=prefix)
+        app.include_router(inference_router, prefix=prefix)
+        app.include_router(evaluation_router, prefix=prefix)
+        app.include_router(research_router, prefix=prefix)
 
     return app
 
 
-# Default app instance for ASGI servers
-app = create_app(preload_models=False)
+# Default app instance for ASGI servers (preloads models by default)
+preload_default = os.getenv("FEDSECUREAI_PRELOAD_MODELS", "true").lower() in ("true", "1")
+app = create_app(preload_models=preload_default)

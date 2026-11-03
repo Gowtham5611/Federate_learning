@@ -16,9 +16,18 @@ SUPPORTED_MODELS_BY_DATASET: dict[str, str] = {
     "LI-Medium": "config_5_bilstm_fedavg_iid",
 }
 
+try:
+    from config.threshold_config import get_canonical_threshold
+except ModuleNotFoundError:
+    try:
+        from backend.config.threshold_config import get_canonical_threshold
+    except ModuleNotFoundError:
+        def get_canonical_threshold(d: str) -> float:
+            return 0.337784 if "hi" in d.lower() else 0.238483
+
 FROZEN_THRESHOLDS: dict[str, float] = {
-    "HI-Small": 0.3377837836742401,
-    "LI-Medium": 0.2384829968214035,
+    "HI-Small": get_canonical_threshold("HI-Small"),
+    "LI-Medium": get_canonical_threshold("LI-Medium"),
 }
 
 FEATURE_DIMENSION: int = 57

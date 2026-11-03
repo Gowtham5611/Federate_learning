@@ -175,6 +175,12 @@ class ExplanationService:
                 )
             )
 
+        is_hist_suff = bool(seq_len >= 3)
+        hist_warn = None if is_hist_suff else (
+            f"Insufficient account sequence history ({seq_len}/10 steps). Attributions reflect isolated static "
+            "features and padding priors rather than learned sequential laundering dynamics."
+        )
+
         return ExplainResponse(
             request_id=f"exp_{uuid.uuid4().hex[:12]}",
             dataset=dataset,
@@ -189,4 +195,6 @@ class ExplanationService:
             top_negative_drivers=top_neg,
             completeness_residual=abs_res,
             explanation_time_ms=latency_ms,
+            is_history_sufficient=is_hist_suff,
+            history_warning=hist_warn,
         )

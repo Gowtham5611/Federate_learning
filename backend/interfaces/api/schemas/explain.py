@@ -99,4 +99,6 @@ class ExplainResponse(BaseModel):
         description="Absolute completeness residual |sum(IG) - (F(x) - F(x0))|.",
     )
     explanation_time_ms: float = Field(..., description="Attribution calculation latency in milliseconds.")
+    is_history_sufficient: bool = Field(default=True, description="Whether sequence has sufficient account history.")
+    history_warning: str | None = Field(default=None, description="Warning if transaction sequence has insufficient history depth (<3 steps).")
 

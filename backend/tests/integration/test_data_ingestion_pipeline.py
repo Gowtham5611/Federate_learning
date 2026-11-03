@@ -421,7 +421,12 @@ def test_the_repository_still_contains_no_fabricated_dataset_files() -> None:
     if not raw.is_dir():
         pytest.skip("data/raw does not exist")
 
-    permitted = {REAL_FILE}
+    permitted = {
+        REAL_FILE,
+        "HI-Small_Patterns.txt",
+        "LI-Medium_Trans.csv",
+        "LI-Medium_Patterns.txt",
+    }
     stray = [
         path.name
         for path in raw.rglob("*")
