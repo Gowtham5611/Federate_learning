@@ -1,0 +1,32 @@
+{
+  "HI-Small": {
+    "dataset": "HI-Small",
+    "model_name": "hi_small_lstm_fedavg_iid_seed42",
+    "architecture": "lstm",
+    "parameter_count": 31553,
+    "checkpoint_path": "results\\HI_Small_Results\\checkpoints\\hi_small_lstm_fedavg_iid_seed42\\hi_small_lstm_fedavg_iid_seed42_global_best.pt",
+    "checkpoint_sha256": "dacfbb62e1e74a58a0c79237f7d0c16aa57df19253af82b8ab38af9bba2d46b4",
+    "expected_sha256": "dacfbb62e1e74a58a0c79237f7d0c16aa57df19253af82b8ab38af9bba2d46b4",
+    "frozen_threshold": 0.3377837836742401,
+    "num_samples_evaluated": 500,
+    "max_absolute_error": 5.960464477539063e-08,
+    "mean_absolute_error": 1.7591810319572687e-09,
+    "tolerance": 1e-05,
+    "parity_passed": true
+  },
+  "LI-Medium": {
+    "dataset": "LI-Medium",
+    "model_name": "config_5_bilstm_fedavg_iid",
+    "architecture": "bilstm",
+    "parameter_count": 63105,
+    "checkpoint_path": "results\\LI_Medium_Results\\checkpoints\\config_5\\global_best.pt",
+    "checkpoint_sha256": "bded77c75fcf89ea24af295fd7a5c28110744bf226a1c4c0a386f9924d1087d2",
+    "expected_sha256": "bded77c75fcf89ea24af295fd7a5c28110744bf226a1c4c0a386f9924d1087d2",
+    "frozen_threshold": 0.2384829968214035,
+    "num_samples_evaluated": 500,
+    "max_absolute_error": 7.450580596923828e-09,
+    "mean_absolute_error": 1.3859380487701856e-10,
+    "tolerance": 1e-05,
+    "parity_passed": true
+  }
+}

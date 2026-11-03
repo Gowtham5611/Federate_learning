@@ -1,0 +1,70 @@
+# =============================================================================
+# FedSecureAI — Production Docker Build Ignore Rules
+# =============================================================================
+# Exclude training data, temporary artifacts, notebooks, and credentials from
+# the inference container build context to ensure minimal image size and zero leakage.
+# =============================================================================
+
+# Version control & IDE
+.git
+.gitignore
+.github
+.vscode
+.idea
+.gemini
+
+# Python bytecode & environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Credentials & secrets
+.env
+.env.*
+kaggle.json
+*.pem
+*.key
+
+# Raw & Processed Datasets (DO NOT BUNDLE IN IMAGE)
+data/raw/
+data/processed/ibm_aml/*/train/
+data/processed/ibm_aml/*/validation/
+data/processed/ibm_aml/*/test/
+data/processed/ibm_aml/*/partitions/
+data/processed/ibm_aml/Combined/
+datasets/
+
+# Jupyter & Scratch Work
+*.ipynb
+scratch/
+archive/
+"colab work and results"/
+"Colab Results"/
+colab_*.ipynb
+colab_*.py
+
+# Test scripts & logs
+logs/
+*.log
+last_user_request*.txt
+*.ps1
+
+# Authoritative historical results (mount checkpoints at runtime, do not bake all results)
+results/authoritative_results/
+results/phase7*/
+results/phase8*/
+results/phase9*/
+results/phase10*/
+results/phase11*/
+results/phase12*/
+results/phase13*/
+results/phase13_1*/
+results/phase14a*/
+

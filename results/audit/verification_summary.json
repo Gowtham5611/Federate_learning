@@ -1,0 +1,47 @@
+{
+  "audit_timestamp_utc": "2026-10-21T10:45:00Z",
+  "project": "FedSecureAI",
+  "overall_project_verdict": "PASS WITH WARNINGS",
+  "overall_notes": "All 12 HI-Small and all 12 LI-Medium configurations are 100% verified, reproducible, and mathematically consistent with valid checkpoints and test predictions. The WARNING status reflects that full training of Combined (36.33M rows) has not yet been executed in Colab and remains pending.",
+  "datasets": {
+    "HI-Small": {
+      "verdict": "PASS",
+      "raw_rows": 5078345,
+      "train_rows": 3047216,
+      "val_rows": 1015565,
+      "test_rows": 1015564,
+      "test_positives": 1797,
+      "test_prevalence": 0.00176946,
+      "configurations_evaluated": 12,
+      "configurations_completed": 12,
+      "configurations_verified": 12,
+      "best_model": "hi_small_lstm_fedavg_iid_seed42",
+      "best_roc_auc": 0.955481,
+      "best_pr_auc": 0.475977,
+      "best_f1": 0.480196,
+      "best_alerts_per_10k": 6.42,
+      "reproducibility": "100% exact match across all 12 models"
+    },
+    "LI-Medium": {
+      "verdict": "PASS",
+      "raw_rows": 31251483,
+      "train_rows": 18752217,
+      "val_rows": 6250154,
+      "test_rows": 6249112,
+      "test_positives": 3783,
+      "test_prevalence": 0.00060537,
+      "configurations_evaluated": 12,
+      "configurations_completed": 12,
+      "configurations_verified": 12,
+      "best_iid_model": "config_1 (GRU IID FedAvg)",
+      "best_iid_roc_auc": 0.969705,
+      "best_iid_pr_auc": 0.253598,
+      "best_iid_f1": 0.316847,
+      "best_non_iid_model": "config_9 (LSTM Non-IID FedAvg)",
+      "best_non_iid_roc_auc": 0.923644,
+      "best_non_iid_pr_auc": 0.045785,
+      "best_non_iid_f1": 0.075216,
+      "reproducibility": "100% exact match across all 12 models"
+    }
+  }
+}

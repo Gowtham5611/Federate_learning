@@ -1,0 +1,107 @@
+# =============================================================================
+# FedSecureAI - Dataset Registry
+# =============================================================================
+# Single source of truth for every dataset the project is allowed to use.
+#
+# RULES
+#   1. Only datasets listed here may be consumed by the pipeline.
+#   2. Facts about a *local copy* (file size, row count, checksum, download
+#      timestamp) are NEVER hand-written. They are filled in by the Dataset
+#      Manager after a real download + validation, and are left null until then.
+#   3. `status` is a DECLARATION, not an observation. The Dataset Manager checks
+#      the filesystem and reports the reconciled state, so a stale entry here can
+#      never cause the project to claim data it does not have.
+#   4. NO CREDENTIALS. This file is committed to Git. Kaggle credentials come
+#      from the environment (KAGGLE_USERNAME / KAGGLE_KEY) only. The registry
+#      loader rejects any credential-like key outright.
+# =============================================================================
+
+registry_version: 2
+updated_at: 2026-08-31
+
+# ---------------------------------------------------------------------------
+# Allowed values for the `status` field of every dataset entry.
+# ---------------------------------------------------------------------------
+status_definitions:
+  configured_not_downloaded: >-
+    The dataset is declared in this registry, but no bytes exist on this
+    machine. `local_path` is a planned destination only.
+  downloading: >-
+    A download is in progress. Any files present must be treated as incomplete.
+  downloaded: >-
+    Every file in `expected_files` is present and non-empty at `local_path`, but
+    no schema or integrity checks have been executed against them yet.
+  validated: >-
+    Raw files are present AND have passed schema, dtype and integrity
+    validation. Checksums and row counts are recorded.
+  processed: >-
+    Validated raw files have been transformed into the processed artefacts
+    consumed by model training.
+  failed: >-
+    The most recent download or validation attempt failed. Any files present
+    must be treated as untrustworthy.
+
+# ---------------------------------------------------------------------------
+# Primary dataset (the only approved dataset for this project).
+# ---------------------------------------------------------------------------
+primary_dataset_id: ibm_transactions_aml
+
+datasets:
+  ibm_transactions_aml:
+    dataset_id: ibm_transactions_aml
+    name: IBM Transactions for Anti-Money Laundering (AML)
+    provider: IBM
+    source: Kaggle
+    source_url: https://www.kaggle.com/datasets/ealtman2019/ibm-transactions-for-anti-money-laundering-aml
+    kaggle_dataset_id: ealtman2019/ibm-transactions-for-anti-money-laundering-aml
+    purpose: Anti-Money Laundering transaction detection
+    status: configured_not_downloaded
+    local_path: data/raw/ibm_aml/
+
+    # Role of this dataset within the project.
+    role: primary
+
+    # -----------------------------------------------------------------------
+    # Variant selection
+    #
+    # The Kaggle distribution ships several size/laundering-ratio variants.
+    # Only HI-Small is declared here, because it is the only variant whose exact
+    # filename has been confirmed for this project. Additional variants are
+    # added ONLY after their filenames have been verified against a real
+    # download - guessing a filename would produce a registry that lies.
+    # -----------------------------------------------------------------------
+    selected_variant: HI-Small
+    supported_variants:
+      - HI-Small
+
+    # Files that must be present and non-empty for `selected_variant` to count
+    # as downloaded. Kept in step with `selected_variant` by hand; the loader
+    # rejects a `selected_variant` that is not in `supported_variants`.
+    expected_files:
+      - HI-Small_Trans.csv
+
+    intended_usage: >-
+      Primary training and evaluation data for the project's centralized
+      baselines and federated experiments. Individual transactions are grouped
+      into per-account sequences for the recurrent models, and partitioned
+      across simulated clients under IID and Non-IID schemes. None of that is
+      implemented yet.
+
+    # -----------------------------------------------------------------------
+    # Populated ONLY by the Dataset Manager after an actual download and a
+    # successful validation run. Do not fill these in by hand.
+    # -----------------------------------------------------------------------
+    local_metadata:
+      downloaded_at: null
+      validated_at: null
+      files: null
+      total_size_bytes: null
+      row_count: null
+      checksum_sha256: null
+
+    notes: >-
+      Approved primary dataset. Substituting it with IBM AMLSim, a credit-card
+      fraud dataset, or any other AML dataset is not permitted. The dataset has
+      NOT been downloaded and no synthetic stand-in has been generated. Unit
+      tests do not require it: they run against an in-memory registry and fake
+      downloaders.

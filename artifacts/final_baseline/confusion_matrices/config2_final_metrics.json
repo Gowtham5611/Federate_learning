@@ -1,0 +1,36 @@
+{
+  "experiment_id": "fedsecureai_iid_fedprox_gru_mu-0.1_seed-42_20261015_202244",
+  "selected_round": 2,
+  "frozen_threshold": 0.023807941004633904,
+  "validation": {
+    "best_pr_auc": 0.0015637286841213558,
+    "round": 2
+  },
+  "test_at_frozen_threshold": {
+    "pr_auc": 0.0017963912795849876,
+    "roc_auc": 0.5282803321684284,
+    "f1": 0.004206795650247754,
+    "precision": 0.0021175641640681217,
+    "recall": 0.3144129104062326,
+    "accuracy": 0.7366163038469264,
+    "tp": 565,
+    "fp": 266251,
+    "tn": 747516,
+    "fn": 1232,
+    "threshold": 0.023807941004633904
+  },
+  "test_at_fixed_0_5": {
+    "pr_auc": 0.0017963912795849876,
+    "roc_auc": 0.5282803321684284,
+    "f1": 0.0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "accuracy": 0.9982305398773489,
+    "tp": 0,
+    "fp": 0,
+    "tn": 1013767,
+    "fn": 1797,
+    "threshold": 0.5
+  },
+  "duration_seconds": 2495.1009913999587
+}

@@ -1,0 +1,13 @@
+{
+  "config_num": 10,
+  "experiment_id": "fedsecureai_li_non_iid_fedprox_lstm_mu-0.1_seed-42",
+  "best_round": 5,
+  "best_val_pr_auc": 0.0008500689545688948,
+  "test_pr_auc": 0.0007543275793815811,
+  "test_roc_auc": 0.4404720811759507,
+  "test_f1": 0.0034482758620689655,
+  "test_precision": 0.0017889087656529517,
+  "test_recall": 0.047619047619047616,
+  "decision_threshold": 0.8065555691719055,
+  "duration_seconds": 72.34369740006514
+}

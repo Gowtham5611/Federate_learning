@@ -1,0 +1,355 @@
+2026-10-17 19:43:08,621 | INFO     | full_data_trainer | ================================================================================
+2026-10-17 19:43:08,622 | INFO     | full_data_trainer | STARTING FEDSECUREAI FULL-DATA RETRAINING & EVALUATION
+2026-10-17 19:43:08,623 | INFO     | full_data_trainer | Mode: FULL | Chunk Size: 500000 | Batch Size: 2048 | Rounds: 1
+2026-10-17 19:43:08,623 | INFO     | full_data_trainer | ================================================================================
+2026-10-17 19:43:08,625 | INFO     | full_data_trainer | 
+################################################################################
+2026-10-17 19:43:08,626 | INFO     | full_data_trainer | STARTING RETRAINING: gru_iid_fedavg_full_data [IID | GRU | FEDAVG | mu=None | loss=unweighted_bce]
+2026-10-17 19:43:08,626 | INFO     | full_data_trainer | ################################################################################
+2026-10-17 19:43:14,639 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 43. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.003600%
+2026-10-17 19:43:14,841 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 6 positives
+2026-10-17 19:43:20,182 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 6 positives
+2026-10-17 19:43:27,569 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 6 positives
+2026-10-17 19:43:37,184 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 44. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.003600%
+2026-10-17 19:43:37,415 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 6 positives
+2026-10-17 19:43:42,175 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 6 positives
+2026-10-17 19:43:47,095 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 6 positives
+2026-10-17 19:43:54,782 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 45. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.015400%
+2026-10-17 19:43:54,969 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 26 positives
+2026-10-17 19:43:59,638 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 26 positives
+2026-10-17 19:44:03,419 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 25 positives
+2026-10-17 19:44:11,698 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 46. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.023000%
+2026-10-17 19:44:11,947 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 39 positives
+2026-10-17 19:44:17,325 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 38 positives
+2026-10-17 19:44:22,669 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 38 positives
+2026-10-17 19:44:30,071 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 47. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.024200%
+2026-10-17 19:44:30,276 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 41 positives
+2026-10-17 19:44:35,063 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 40 positives
+2026-10-17 19:44:39,269 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 40 positives
+2026-10-17 19:44:44,474 | INFO     | full_data_trainer |   [Round 1/1] Processed 2500000/18752217 rows (13.3%) | Running Positives: 349
+2026-10-17 19:44:47,901 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 48. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.029400%
+2026-10-17 19:44:48,134 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 49 positives
+2026-10-17 19:44:53,512 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 49 positives
+2026-10-17 19:44:58,839 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 49 positives
+2026-10-17 19:45:06,605 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 49. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.023000%
+2026-10-17 19:45:06,846 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 39 positives
+2026-10-17 19:45:10,938 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 38 positives
+2026-10-17 19:45:15,093 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 38 positives
+2026-10-17 19:45:23,732 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 50. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.028800%
+2026-10-17 19:45:23,987 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 48 positives
+2026-10-17 19:45:27,940 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 48 positives
+2026-10-17 19:45:32,161 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 48 positives
+2026-10-17 19:45:39,534 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 51. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.022600%
+2026-10-17 19:45:39,715 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 38 positives
+2026-10-17 19:45:44,784 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 38 positives
+2026-10-17 19:45:48,803 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 37 positives
+2026-10-17 19:45:56,214 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 52. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.029400%
+2026-10-17 19:45:56,476 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 49 positives
+2026-10-17 19:46:01,002 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 49 positives
+2026-10-17 19:46:07,138 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 49 positives
+2026-10-17 19:46:13,515 | INFO     | full_data_trainer |   [Round 1/1] Processed 5000000/18752217 rows (26.7%) | Running Positives: 1015
+2026-10-17 19:46:16,871 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 53. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.033800%
+2026-10-17 19:46:17,121 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 57 positives
+2026-10-17 19:46:23,132 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 56 positives
+2026-10-17 19:46:29,683 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 56 positives
+2026-10-17 19:46:39,078 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 54. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.034600%
+2026-10-17 19:46:39,280 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 58 positives
+2026-10-17 19:46:46,377 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 58 positives
+2026-10-17 19:46:54,408 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 57 positives
+2026-10-17 19:47:06,671 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 55. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.031600%
+2026-10-17 19:47:06,907 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 53 positives
+2026-10-17 19:47:15,505 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 53 positives
+2026-10-17 19:47:21,733 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 52 positives
+2026-10-17 19:47:32,024 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 56. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.039400%
+2026-10-17 19:47:32,308 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 66 positives
+2026-10-17 19:47:38,585 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 66 positives
+2026-10-17 19:47:43,125 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 65 positives
+2026-10-17 19:47:50,814 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 57. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.033400%
+2026-10-17 19:47:51,030 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 56 positives
+2026-10-17 19:47:56,851 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 56 positives
+2026-10-17 19:48:02,835 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 55 positives
+2026-10-17 19:48:07,265 | INFO     | full_data_trainer |   [Round 1/1] Processed 7500000/18752217 rows (40.0%) | Running Positives: 1879
+2026-10-17 19:48:10,500 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 58. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.098400%
+2026-10-17 19:48:10,760 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 164 positives
+2026-10-17 19:48:15,296 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 164 positives
+2026-10-17 19:48:21,153 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 164 positives
+2026-10-17 19:48:30,891 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 59. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.081200%
+2026-10-17 19:48:31,165 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 136 positives
+2026-10-17 19:48:37,361 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 135 positives
+2026-10-17 19:48:44,960 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 135 positives
+2026-10-17 19:48:56,430 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 60. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.094800%
+2026-10-17 19:48:56,666 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 158 positives
+2026-10-17 19:49:04,462 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 158 positives
+2026-10-17 19:49:10,368 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 158 positives
+2026-10-17 19:49:21,726 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 61. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.043200%
+2026-10-17 19:49:21,997 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 72 positives
+2026-10-17 19:49:29,773 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 72 positives
+2026-10-17 19:49:37,566 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 72 positives
+2026-10-17 19:49:47,974 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 62. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.056400%
+2026-10-17 19:49:48,239 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 94 positives
+2026-10-17 19:49:54,844 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 94 positives
+2026-10-17 19:50:02,486 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 94 positives
+2026-10-17 19:50:07,081 | INFO     | full_data_trainer |   [Round 1/1] Processed 10000000/18752217 rows (53.3%) | Running Positives: 3749
+2026-10-17 19:50:10,070 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 63. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.061400%
+2026-10-17 19:50:10,332 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 103 positives
+2026-10-17 19:50:15,139 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 102 positives
+2026-10-17 19:50:20,127 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 102 positives
+2026-10-17 19:50:30,262 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 64. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.041800%
+2026-10-17 19:50:30,546 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 70 positives
+2026-10-17 19:50:36,484 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 70 positives
+2026-10-17 19:50:42,824 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 69 positives
+2026-10-17 19:50:53,792 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 65. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.047000%
+2026-10-17 19:50:54,047 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 79 positives
+2026-10-17 19:51:02,111 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 78 positives
+2026-10-17 19:51:08,451 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 78 positives
+2026-10-17 19:51:20,266 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 66. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.057800%
+2026-10-17 19:51:20,502 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 97 positives
+2026-10-17 19:51:28,794 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 96 positives
+2026-10-17 19:51:34,815 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 96 positives
+2026-10-17 19:51:45,261 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 67. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.055400%
+2026-10-17 19:51:45,519 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 93 positives
+2026-10-17 19:51:50,490 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 92 positives
+2026-10-17 19:51:56,527 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 92 positives
+2026-10-17 19:52:02,340 | INFO     | full_data_trainer |   [Round 1/1] Processed 12500000/18752217 rows (66.7%) | Running Positives: 5066
+2026-10-17 19:52:05,545 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 68. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.042000%
+2026-10-17 19:52:05,726 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 70 positives
+2026-10-17 19:52:11,756 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 70 positives
+2026-10-17 19:52:18,807 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 70 positives
+2026-10-17 19:52:27,935 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 69. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.054400%
+2026-10-17 19:52:28,212 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 91 positives
+2026-10-17 19:52:36,241 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 91 positives
+2026-10-17 19:52:42,745 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 90 positives
+2026-10-17 19:52:52,522 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 70. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.059600%
+2026-10-17 19:52:52,756 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 100 positives
+2026-10-17 19:53:00,911 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 99 positives
+2026-10-17 19:53:07,315 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 99 positives
+2026-10-17 19:53:19,033 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 71. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.051000%
+2026-10-17 19:53:19,264 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 85 positives
+2026-10-17 19:53:27,013 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 85 positives
+2026-10-17 19:53:35,376 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 85 positives
+2026-10-17 19:53:45,570 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 72. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.048600%
+2026-10-17 19:53:45,848 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 81 positives
+2026-10-17 19:53:52,645 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 81 positives
+2026-10-17 19:53:59,027 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 81 positives
+2026-10-17 19:54:05,911 | INFO     | full_data_trainer |   [Round 1/1] Processed 15000000/18752217 rows (80.0%) | Running Positives: 6344
+2026-10-17 19:54:09,096 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 73. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.055200%
+2026-10-17 19:54:09,365 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 92 positives
+2026-10-17 19:54:17,199 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 92 positives
+2026-10-17 19:54:24,411 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 92 positives
+2026-10-17 19:54:34,041 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 74. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.066400%
+2026-10-17 19:54:34,319 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 111 positives
+2026-10-17 19:54:41,317 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 111 positives
+2026-10-17 19:54:49,493 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 110 positives
+2026-10-17 19:54:59,693 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 75. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.047800%
+2026-10-17 19:54:59,987 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 80 positives
+2026-10-17 19:55:07,834 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 80 positives
+2026-10-17 19:55:16,435 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 79 positives
+2026-10-17 19:55:28,651 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 76. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.033600%
+2026-10-17 19:55:28,947 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 56 positives
+2026-10-17 19:55:37,017 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 56 positives
+2026-10-17 19:55:44,938 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 56 positives
+2026-10-17 19:55:55,959 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 77. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.038400%
+2026-10-17 19:55:56,227 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 64 positives
+2026-10-17 19:56:04,700 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 64 positives
+2026-10-17 19:56:12,544 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 64 positives
+2026-10-17 19:56:19,418 | INFO     | full_data_trainer |   [Round 1/1] Processed 17500000/18752217 rows (93.3%) | Running Positives: 7551
+2026-10-17 19:56:22,830 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 78. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.050400%
+2026-10-17 19:56:23,100 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 84 positives
+2026-10-17 19:56:29,075 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 84 positives
+2026-10-17 19:56:35,532 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 84 positives
+2026-10-17 19:56:48,038 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 79. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.045600%
+2026-10-17 19:56:48,319 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 76 positives
+2026-10-17 19:56:57,084 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 76 positives
+2026-10-17 19:57:03,804 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 76 positives
+2026-10-17 19:57:14,802 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 252217 rows across 3 clients with seed 80. Client sizes: [84073, 84073, 84071]. Overall positive rate: 0.042424%
+2026-10-17 19:57:14,931 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 84073 rows, 84073 sequences, 36 positives
+2026-10-17 19:57:18,058 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 84073 rows, 84073 sequences, 36 positives
+2026-10-17 19:57:22,537 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 84071 rows, 84071 sequences, 35 positives
+2026-10-17 19:57:26,694 | INFO     | full_data_trainer |   [Round 1/1] Processed 18752217/18752217 rows (100.0%) | Running Positives: 8138
+2026-10-17 19:57:26,696 | INFO     | full_data_trainer | Round 1 Complete in 858.1s: Total Rows Processed = 18752217, Positives = 8138
+2026-10-17 19:57:26,740 | INFO     | full_data_trainer | 
+################################################################################
+2026-10-17 19:57:26,740 | INFO     | full_data_trainer | STARTING RETRAINING: gru_iid_fedprox_mu1.0_wbce_full_data [IID | GRU | FEDPROX | mu=1.0 | loss=weighted_bce]
+2026-10-17 19:57:26,740 | INFO     | full_data_trainer | ################################################################################
+2026-10-17 19:57:30,426 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 43. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.003600%
+2026-10-17 19:57:30,680 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 6 positives
+2026-10-17 19:57:36,394 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 6 positives
+2026-10-17 19:57:41,534 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 6 positives
+2026-10-17 19:57:50,229 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 44. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.003600%
+2026-10-17 19:57:50,438 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 6 positives
+2026-10-17 19:57:55,304 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 6 positives
+2026-10-17 19:58:00,927 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 6 positives
+2026-10-17 19:58:09,542 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 45. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.015400%
+2026-10-17 19:58:09,785 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 26 positives
+2026-10-17 19:58:15,594 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 26 positives
+2026-10-17 19:58:21,856 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 25 positives
+2026-10-17 19:58:31,981 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 46. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.023000%
+2026-10-17 19:58:32,241 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 39 positives
+2026-10-17 19:58:39,819 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 38 positives
+2026-10-17 19:58:46,807 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 38 positives
+2026-10-17 19:58:57,766 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 47. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.024200%
+2026-10-17 19:58:58,027 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 41 positives
+2026-10-17 19:59:04,716 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 40 positives
+2026-10-17 19:59:14,347 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 40 positives
+2026-10-17 19:59:31,521 | INFO     | full_data_trainer |   [Round 1/1] Processed 2500000/18752217 rows (13.3%) | Running Positives: 349
+2026-10-17 19:59:40,761 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 48. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.029400%
+2026-10-17 19:59:41,124 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 49 positives
+2026-10-17 19:59:46,960 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 49 positives
+2026-10-17 19:59:52,264 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 49 positives
+2026-10-17 20:00:00,122 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 49. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.023000%
+2026-10-17 20:00:00,331 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 39 positives
+2026-10-17 20:00:06,130 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 38 positives
+2026-10-17 20:00:12,799 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 38 positives
+2026-10-17 20:00:23,746 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 50. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.028800%
+2026-10-17 20:00:24,030 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 48 positives
+2026-10-17 20:00:31,119 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 48 positives
+2026-10-17 20:00:38,463 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 48 positives
+2026-10-17 20:00:47,592 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 51. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.022600%
+2026-10-17 20:00:47,877 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 38 positives
+2026-10-17 20:00:53,443 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 38 positives
+2026-10-17 20:00:58,974 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 37 positives
+2026-10-17 20:01:09,836 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 52. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.029400%
+2026-10-17 20:01:10,114 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 49 positives
+2026-10-17 20:01:19,184 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 49 positives
+2026-10-17 20:01:27,838 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 49 positives
+2026-10-17 20:01:36,637 | INFO     | full_data_trainer |   [Round 1/1] Processed 5000000/18752217 rows (26.7%) | Running Positives: 1015
+2026-10-17 20:01:40,210 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 53. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.033800%
+2026-10-17 20:01:40,435 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 57 positives
+2026-10-17 20:01:49,123 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 56 positives
+2026-10-17 20:01:58,098 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 56 positives
+2026-10-17 20:02:09,504 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 54. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.034600%
+2026-10-17 20:02:09,777 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 58 positives
+2026-10-17 20:02:18,586 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 58 positives
+2026-10-17 20:02:27,444 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 57 positives
+2026-10-17 20:02:37,575 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 55. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.031600%
+2026-10-17 20:02:37,857 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 53 positives
+2026-10-17 20:02:46,364 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 53 positives
+2026-10-17 20:02:53,459 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 52 positives
+2026-10-17 20:03:06,014 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 56. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.039400%
+2026-10-17 20:03:06,281 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 66 positives
+2026-10-17 20:03:14,762 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 66 positives
+2026-10-17 20:03:45,999 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 65 positives
+2026-10-17 20:04:10,624 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 57. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.033400%
+2026-10-17 20:04:10,895 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 56 positives
+2026-10-17 20:04:19,223 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 56 positives
+2026-10-17 20:04:28,058 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 55 positives
+2026-10-17 20:04:36,432 | INFO     | full_data_trainer |   [Round 1/1] Processed 7500000/18752217 rows (40.0%) | Running Positives: 1879
+2026-10-17 20:04:39,730 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 58. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.098400%
+2026-10-17 20:04:39,976 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 164 positives
+2026-10-17 20:04:48,230 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 164 positives
+2026-10-17 20:04:56,381 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 164 positives
+2026-10-17 20:05:09,700 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 59. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.081200%
+2026-10-17 20:05:09,947 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 136 positives
+2026-10-17 20:05:18,268 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 135 positives
+2026-10-17 20:05:26,616 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 135 positives
+2026-10-17 20:05:39,733 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 60. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.094800%
+2026-10-17 20:05:39,976 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 158 positives
+2026-10-17 20:05:46,268 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 158 positives
+2026-10-17 20:05:54,516 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 158 positives
+2026-10-17 20:06:04,933 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 61. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.043200%
+2026-10-17 20:06:05,153 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 72 positives
+2026-10-17 20:06:11,343 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 72 positives
+2026-10-17 20:06:19,529 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 72 positives
+2026-10-17 20:06:30,759 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 62. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.056400%
+2026-10-17 20:06:30,981 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 94 positives
+2026-10-17 20:06:38,364 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 94 positives
+2026-10-17 20:06:44,801 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 94 positives
+2026-10-17 20:06:55,136 | INFO     | full_data_trainer |   [Round 1/1] Processed 10000000/18752217 rows (53.3%) | Running Positives: 3749
+2026-10-17 20:06:58,535 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 63. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.061400%
+2026-10-17 20:06:58,802 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 103 positives
+2026-10-17 20:07:07,294 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 102 positives
+2026-10-17 20:07:15,260 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 102 positives
+2026-10-17 20:07:26,953 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 64. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.041800%
+2026-10-17 20:07:27,228 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 70 positives
+2026-10-17 20:07:33,373 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 70 positives
+2026-10-17 20:07:39,678 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 69 positives
+2026-10-17 20:07:51,097 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 65. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.047000%
+2026-10-17 20:07:51,379 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 79 positives
+2026-10-17 20:07:59,266 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 78 positives
+2026-10-17 20:08:07,613 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 78 positives
+2026-10-17 20:08:19,167 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 66. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.057800%
+2026-10-17 20:08:19,438 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 97 positives
+2026-10-17 20:08:25,993 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 96 positives
+2026-10-17 20:08:34,459 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 96 positives
+2026-10-17 20:08:46,216 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 67. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.055400%
+2026-10-17 20:08:46,506 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 93 positives
+2026-10-17 20:08:54,783 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 92 positives
+2026-10-17 20:09:03,480 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 92 positives
+2026-10-17 20:09:10,474 | INFO     | full_data_trainer |   [Round 1/1] Processed 12500000/18752217 rows (66.7%) | Running Positives: 5066
+2026-10-17 20:09:13,957 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 68. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.042000%
+2026-10-17 20:09:14,217 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 70 positives
+2026-10-17 20:09:21,918 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 70 positives
+2026-10-17 20:09:28,217 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 70 positives
+2026-10-17 20:09:39,814 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 69. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.054400%
+2026-10-17 20:09:40,100 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 91 positives
+2026-10-17 20:09:48,430 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 91 positives
+2026-10-17 20:09:57,047 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 90 positives
+2026-10-17 20:10:08,746 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 70. Client sizes: [166668, 166666, 166666]. Overall positive rate: 0.059600%
+2026-10-17 20:10:08,969 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166668 rows, 166668 sequences, 100 positives
+2026-10-17 20:10:17,509 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166666 rows, 166666 sequences, 99 positives
+2026-10-17 20:10:25,370 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 99 positives
+2026-10-17 20:10:39,306 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 71. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.051000%
+2026-10-17 20:10:39,647 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 85 positives
+2026-10-17 20:10:49,134 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 85 positives
+2026-10-17 20:10:56,667 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 85 positives
+2026-10-17 20:11:07,986 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 72. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.048600%
+2026-10-17 20:11:08,293 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 81 positives
+2026-10-17 20:11:15,290 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 81 positives
+2026-10-17 20:11:23,883 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 81 positives
+2026-10-17 20:11:31,769 | INFO     | full_data_trainer |   [Round 1/1] Processed 15000000/18752217 rows (80.0%) | Running Positives: 6344
+2026-10-17 20:11:35,083 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 73. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.055200%
+2026-10-17 20:11:35,334 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 92 positives
+2026-10-17 20:11:43,364 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 92 positives
+2026-10-17 20:11:51,739 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 92 positives
+2026-10-17 20:12:03,560 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 74. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.066400%
+2026-10-17 20:12:03,810 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 111 positives
+2026-10-17 20:12:11,312 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 111 positives
+2026-10-17 20:12:19,190 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 110 positives
+2026-10-17 20:12:31,102 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 75. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.047800%
+2026-10-17 20:12:31,378 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 80 positives
+2026-10-17 20:12:37,730 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 80 positives
+2026-10-17 20:12:46,159 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 79 positives
+2026-10-17 20:12:57,659 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 76. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.033600%
+2026-10-17 20:12:57,942 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 56 positives
+2026-10-17 20:13:06,367 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 56 positives
+2026-10-17 20:13:15,017 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 56 positives
+2026-10-17 20:13:24,848 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 77. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.038400%
+2026-10-17 20:13:25,119 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 64 positives
+2026-10-17 20:13:34,120 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 64 positives
+2026-10-17 20:13:43,140 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 64 positives
+2026-10-17 20:13:52,184 | INFO     | full_data_trainer |   [Round 1/1] Processed 17500000/18752217 rows (93.3%) | Running Positives: 7551
+2026-10-17 20:13:55,681 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 78. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.050400%
+2026-10-17 20:13:55,935 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 84 positives
+2026-10-17 20:14:03,088 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 84 positives
+2026-10-17 20:14:12,198 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 84 positives
+2026-10-17 20:14:23,261 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 500000 rows across 3 clients with seed 79. Client sizes: [166667, 166667, 166666]. Overall positive rate: 0.045600%
+2026-10-17 20:14:23,518 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 166667 rows, 166667 sequences, 76 positives
+2026-10-17 20:14:30,425 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 166667 rows, 166667 sequences, 76 positives
+2026-10-17 20:14:39,731 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 166666 rows, 166666 sequences, 76 positives
+2026-10-17 20:14:50,904 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 252217 rows across 3 clients with seed 80. Client sizes: [84073, 84073, 84071]. Overall positive rate: 0.042424%
+2026-10-17 20:14:51,028 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 84073 rows, 84073 sequences, 36 positives
+2026-10-17 20:14:54,318 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 84073 rows, 84073 sequences, 36 positives
+2026-10-17 20:14:57,800 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 84071 rows, 84071 sequences, 35 positives
+2026-10-17 20:15:01,360 | INFO     | full_data_trainer |   [Round 1/1] Processed 18752217/18752217 rows (100.0%) | Running Positives: 8138
+2026-10-17 20:15:01,361 | INFO     | full_data_trainer | Round 1 Complete in 1054.6s: Total Rows Processed = 18752217, Positives = 8138
+2026-10-17 20:15:01,439 | INFO     | full_data_trainer | Saved training progress, client partitions, and provenance CSVs.
+2026-10-17 20:15:01,439 | INFO     | full_data_trainer | 
+================================================================================
+2026-10-17 20:15:01,440 | INFO     | full_data_trainer | VALIDATION EVALUATION (6,250,154 ROWS) FOR ALL FULL-DATA MODELS
+2026-10-17 20:15:01,440 | INFO     | full_data_trainer | ================================================================================
+2026-10-17 20:15:32,818 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 6250154 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\validation\transactions.csv
+2026-10-17 20:15:41,566 | INFO     | full_data_trainer | Loaded Full Validation Split: 6250154 rows (4120 positives, 0.065918% prevalence)
+2026-10-17 20:18:20,378 | INFO     | full_data_trainer |   gru_iid_fedavg_full_data -> Val PR-AUC=0.058051, Val ROC-AUC=0.937719, Val F1 Thresh=0.033793, Op Thresh=0.013324
+2026-10-17 20:21:01,394 | INFO     | full_data_trainer |   gru_iid_fedprox_mu1.0_wbce_full_data -> Val PR-AUC=0.001251, Val ROC-AUC=0.684312, Val F1 Thresh=0.510975, Op Thresh=0.639447
+2026-10-17 20:21:01,400 | INFO     | full_data_trainer | Saved validation comparison to C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\full_data_retraining\validation_comparison.csv
+2026-10-17 20:21:01,803 | INFO     | full_data_trainer | 
+================================================================================
+2026-10-17 20:21:01,804 | INFO     | full_data_trainer | FULL TEST SPLIT EVALUATION (6,249,112 ROWS)
+2026-10-17 20:21:01,804 | INFO     | full_data_trainer | ================================================================================
+2026-10-17 20:21:33,085 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 6249112 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\test\transactions.csv
+2026-10-17 20:21:41,546 | INFO     | full_data_trainer | Loaded Full Test Split: 6249112 rows (3783 positives, 0.060537% prevalence)
+2026-10-17 20:24:09,918 | INFO     | full_data_trainer |   gru_iid_fedavg_full_data -> Full Test PR-AUC=0.149919, Full Test ROC-AUC=0.944373, Test Alerts/10k(Op)=5.2, TP(Op)=809
+2026-10-17 20:26:41,592 | INFO     | full_data_trainer |   gru_iid_fedprox_mu1.0_wbce_full_data -> Full Test PR-AUC=0.001142, Full Test ROC-AUC=0.646541, Test Alerts/10k(Op)=232.1, TP(Op)=194
+2026-10-17 20:26:41,598 | INFO     | full_data_trainer | Saved full test comparison to C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\full_data_retraining\full_test_comparison.csv
+2026-10-17 20:26:41,997 | INFO     | full_data_trainer | Saved full data experiment registry to C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\full_data_retraining\full_data_experiment_registry.csv
+2026-10-17 20:26:41,998 | INFO     | full_data_trainer | Successfully generated final retraining report.

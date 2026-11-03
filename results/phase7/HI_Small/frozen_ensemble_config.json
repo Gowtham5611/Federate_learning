@@ -1,0 +1,31 @@
+{
+  "dataset": "HI-Small",
+  "iid_model": {
+    "checkpoint_path": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\results\\HI_Small_Results\\checkpoints\\hi_small_lstm_fedavg_iid_seed42\\hi_small_lstm_fedavg_iid_seed42_global_best.pt",
+    "checkpoint_sha256": "dacfbb62e1e74a58a0c79237f7d0c16aa57df19253af82b8ab38af9bba2d46b4",
+    "frozen_standalone_threshold": 0.3377837836742401,
+    "validation_pr_auc": 0.2420825751709054
+  },
+  "noniid_model": {
+    "checkpoint_path": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\results\\HI_Small_Results\\checkpoints\\hi_small_lstm_fedavg_seed42\\hi_small_lstm_fedavg_seed42_global_best.pt",
+    "checkpoint_sha256": "1b64f79ddd4dc85d6bad953e93f2679bc102bf5fdbffeaf8b59df69ddd19ab1c",
+    "frozen_standalone_threshold": 0.3678055703639984,
+    "validation_pr_auc": 0.1989803627861664
+  },
+  "ensemble": {
+    "formula": "P_ensemble = alpha * P_IID + (1 - alpha) * P_NonIID",
+    "selected_alpha": 1.0,
+    "frozen_threshold": 0.3377837836742401,
+    "calibration_applied": "NONE (continuous probabilities preserved)",
+    "validation_pr_auc": 0.2420825751709054,
+    "validation_roc_auc": 0.9428359196735828,
+    "validation_f1": 0.3129675810473815,
+    "validation_alerts_per_10k": 5.149842698399413
+  },
+  "provenance": {
+    "validation_split_path": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\data\\processed\\ibm_aml\\HI-Small\\validation\\transactions.csv",
+    "validation_split_sha256": "bc35e07db44366c4cca133b2255adcd9340206fd4d98871a5ab114e782a8acfc",
+    "freezing_timestamp": "2026-10-21T22:11:33.544934",
+    "tie_breaking_policy": "pr_auc_descending, then f1_descending, then recall_descending"
+  }
+}

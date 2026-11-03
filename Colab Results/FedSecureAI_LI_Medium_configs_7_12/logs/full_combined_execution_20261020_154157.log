@@ -1,0 +1,88 @@
+2026-10-20 15:41:57 | INFO     | fedsecureai_full_combined_runner | ================================================================================
+2026-10-20 15:41:57 | INFO     | fedsecureai_full_combined_runner | STARTING FEDSECUREAI FULL COMBINED 12-EXPERIMENT CAMPAIGN
+2026-10-20 15:41:57 | INFO     | fedsecureai_full_combined_runner | Data Root: /content/FedSecureAI_project/Federate_learning/data/processed/ibm_aml/LI-Medium
+2026-10-20 15:41:57 | INFO     | fedsecureai_full_combined_runner | Output Directory: /content/drive/MyDrive/FedSecureAI_LI_Medium_configs_7_12
+2026-10-20 15:41:57 | INFO     | fedsecureai_full_combined_runner | Batch Size: 4096 | Rounds: 5 | Epochs: 1 | Device: cuda
+2026-10-20 15:41:57 | INFO     | fedsecureai_full_combined_runner | ================================================================================
+2026-10-20 15:41:57 | INFO     | fedsecureai_full_combined_runner | Running FedSecureAI Full Combined Preflight Environment & Data Checks...
+2026-10-20 15:41:57 | INFO     | fedsecureai_full_combined_runner | CUDA Detected: Tesla T4 (14.56 GB VRAM)
+2026-10-20 15:41:57 | INFO     | fedsecureai_full_combined_runner | Preflight checks completed with status: PASS
+2026-10-20 15:41:57 | INFO     | fedsecureai_full_combined_runner | Preparing read-only memory-mapped Validation and Test datasets...
+2026-10-20 15:43:43 | INFO     | fedsecureai_full_combined_runner | Preparing read-only memory-mapped Training parent dataset...
+2026-10-20 15:46:28 | INFO     | fedsecureai_full_combined_runner | 
+################################################################################
+2026-10-20 15:46:28 | INFO     | fedsecureai_full_combined_runner | CONFIG [7/12]: Distribution=NON_IID | Model=GRU | Algorithm=FEDAVG | mu=0.000000
+2026-10-20 15:46:28 | INFO     | fedsecureai_full_combined_runner | ################################################################################
+2026-10-20 15:46:28 | INFO     | fedsecureai_full_combined_runner | Binding 3 NON_IID client datasets to shared training memory map...
+2026-10-20 15:50:40 | INFO     | fedsecureai_full_combined_runner | Config #7 Round 1/5: Val Loss=0.163984, Val PR-AUC=0.001696, Val ROC-AUC=0.783778, Time=177.6s (BEST)
+2026-10-20 15:52:35 | INFO     | fedsecureai_full_combined_runner | Config #7 Round 2/5: Val Loss=0.039257, Val PR-AUC=0.008655, Val ROC-AUC=0.862057, Time=114.8s (BEST)
+2026-10-20 15:54:16 | INFO     | fedsecureai_full_combined_runner | Config #7 Round 3/5: Val Loss=0.040749, Val PR-AUC=0.009590, Val ROC-AUC=0.888520, Time=101.2s (BEST)
+2026-10-20 15:55:57 | INFO     | fedsecureai_full_combined_runner | Config #7 Round 4/5: Val Loss=0.040481, Val PR-AUC=0.010851, Val ROC-AUC=0.902287, Time=101.1s (BEST)
+2026-10-20 15:57:38 | INFO     | fedsecureai_full_combined_runner | Config #7 Round 5/5: Val Loss=0.041507, Val PR-AUC=0.013654, Val ROC-AUC=0.909385, Time=100.7s (BEST)
+2026-10-20 15:57:39 | INFO     | fedsecureai_full_combined_runner | Evaluating on Test split (~7.26M rows) at frozen threshold 0.7284...
+2026-10-20 15:58:03 | INFO     | fedsecureai_full_combined_runner | COMPLETED Config #7: PR-AUC=0.007560 | ROC-AUC=0.872551 | F1=0.023596 | Alerts/10k=54.56 | Duration=694.9s
+2026-10-20 15:58:03 | INFO     | fedsecureai_full_combined_runner | 
+################################################################################
+2026-10-20 15:58:03 | INFO     | fedsecureai_full_combined_runner | CONFIG [8/12]: Distribution=NON_IID | Model=GRU | Algorithm=FEDPROX | mu=0.000100
+2026-10-20 15:58:03 | INFO     | fedsecureai_full_combined_runner | ################################################################################
+2026-10-20 15:58:03 | INFO     | fedsecureai_full_combined_runner | Binding 3 NON_IID client datasets to shared training memory map...
+2026-10-20 16:00:57 | INFO     | fedsecureai_full_combined_runner | Config #8 Round 1/5: Val Loss=0.052931, Val PR-AUC=0.002274, Val ROC-AUC=0.779108, Time=172.3s (BEST)
+2026-10-20 16:03:41 | INFO     | fedsecureai_full_combined_runner | Config #8 Round 2/5: Val Loss=0.031779, Val PR-AUC=0.008008, Val ROC-AUC=0.848591, Time=163.9s (BEST)
+2026-10-20 16:06:24 | INFO     | fedsecureai_full_combined_runner | Config #8 Round 3/5: Val Loss=0.029689, Val PR-AUC=0.010156, Val ROC-AUC=0.870201, Time=163.0s (BEST)
+2026-10-20 16:09:06 | INFO     | fedsecureai_full_combined_runner | Config #8 Round 4/5: Val Loss=0.029450, Val PR-AUC=0.010803, Val ROC-AUC=0.879658, Time=162.1s (BEST)
+2026-10-20 16:11:50 | INFO     | fedsecureai_full_combined_runner | Config #8 Round 5/5: Val Loss=0.030137, Val PR-AUC=0.011214, Val ROC-AUC=0.887780, Time=163.6s (BEST)
+2026-10-20 16:11:52 | INFO     | fedsecureai_full_combined_runner | Evaluating on Test split (~7.26M rows) at frozen threshold 0.6172...
+2026-10-20 16:12:16 | INFO     | fedsecureai_full_combined_runner | COMPLETED Config #8: PR-AUC=0.005106 | ROC-AUC=0.837306 | F1=0.019314 | Alerts/10k=54.37 | Duration=853.3s
+2026-10-20 16:12:17 | INFO     | fedsecureai_full_combined_runner | 
+################################################################################
+2026-10-20 16:12:17 | INFO     | fedsecureai_full_combined_runner | CONFIG [9/12]: Distribution=NON_IID | Model=LSTM | Algorithm=FEDAVG | mu=0.000000
+2026-10-20 16:12:17 | INFO     | fedsecureai_full_combined_runner | ################################################################################
+2026-10-20 16:12:17 | INFO     | fedsecureai_full_combined_runner | Binding 3 NON_IID client datasets to shared training memory map...
+2026-10-20 16:15:09 | INFO     | fedsecureai_full_combined_runner | Config #9 Round 1/5: Val Loss=0.117694, Val PR-AUC=0.001505, Val ROC-AUC=0.753153, Time=171.0s (BEST)
+2026-10-20 16:17:46 | INFO     | fedsecureai_full_combined_runner | Config #9 Round 2/5: Val Loss=0.018423, Val PR-AUC=0.006162, Val ROC-AUC=0.871235, Time=156.9s (BEST)
+2026-10-20 16:20:18 | INFO     | fedsecureai_full_combined_runner | Config #9 Round 3/5: Val Loss=0.010744, Val PR-AUC=0.009167, Val ROC-AUC=0.909224, Time=151.7s (BEST)
+2026-10-20 16:22:51 | INFO     | fedsecureai_full_combined_runner | Config #9 Round 4/5: Val Loss=0.007335, Val PR-AUC=0.012730, Val ROC-AUC=0.929314, Time=152.8s (BEST)
+2026-10-20 16:25:26 | INFO     | fedsecureai_full_combined_runner | Config #9 Round 5/5: Val Loss=0.005757, Val PR-AUC=0.050499, Val ROC-AUC=0.940961, Time=154.8s (BEST)
+2026-10-20 16:25:27 | INFO     | fedsecureai_full_combined_runner | Evaluating on Test split (~7.26M rows) at frozen threshold 0.3343...
+2026-10-20 16:25:52 | INFO     | fedsecureai_full_combined_runner | COMPLETED Config #9: PR-AUC=0.045785 | ROC-AUC=0.923644 | F1=0.075216 | Alerts/10k=3.94 | Duration=815.4s
+2026-10-20 16:25:52 | INFO     | fedsecureai_full_combined_runner | 
+################################################################################
+2026-10-20 16:25:52 | INFO     | fedsecureai_full_combined_runner | CONFIG [10/12]: Distribution=NON_IID | Model=LSTM | Algorithm=FEDPROX | mu=0.000100
+2026-10-20 16:25:52 | INFO     | fedsecureai_full_combined_runner | ################################################################################
+2026-10-20 16:25:52 | INFO     | fedsecureai_full_combined_runner | Binding 3 NON_IID client datasets to shared training memory map...
+2026-10-20 16:28:48 | INFO     | fedsecureai_full_combined_runner | Config #10 Round 1/5: Val Loss=0.071389, Val PR-AUC=0.001987, Val ROC-AUC=0.753821, Time=174.3s (BEST)
+2026-10-20 16:31:29 | INFO     | fedsecureai_full_combined_runner | Config #10 Round 2/5: Val Loss=0.031681, Val PR-AUC=0.005574, Val ROC-AUC=0.823409, Time=160.3s (BEST)
+2026-10-20 16:34:10 | INFO     | fedsecureai_full_combined_runner | Config #10 Round 3/5: Val Loss=0.025352, Val PR-AUC=0.009131, Val ROC-AUC=0.870699, Time=161.2s (BEST)
+2026-10-20 16:36:50 | INFO     | fedsecureai_full_combined_runner | Config #10 Round 4/5: Val Loss=0.022738, Val PR-AUC=0.010603, Val ROC-AUC=0.889593, Time=160.1s (BEST)
+2026-10-20 16:39:31 | INFO     | fedsecureai_full_combined_runner | Config #10 Round 5/5: Val Loss=0.021638, Val PR-AUC=0.011578, Val ROC-AUC=0.900350, Time=160.4s (BEST)
+2026-10-20 16:39:32 | INFO     | fedsecureai_full_combined_runner | Evaluating on Test split (~7.26M rows) at frozen threshold 0.4773...
+2026-10-20 16:39:56 | INFO     | fedsecureai_full_combined_runner | COMPLETED Config #10: PR-AUC=0.005388 | ROC-AUC=0.854946 | F1=0.019023 | Alerts/10k=38.63 | Duration=844.0s
+2026-10-20 16:39:56 | INFO     | fedsecureai_full_combined_runner | 
+################################################################################
+2026-10-20 16:39:56 | INFO     | fedsecureai_full_combined_runner | CONFIG [11/12]: Distribution=NON_IID | Model=BILSTM | Algorithm=FEDAVG | mu=0.000000
+2026-10-20 16:39:56 | INFO     | fedsecureai_full_combined_runner | ################################################################################
+2026-10-20 16:39:56 | INFO     | fedsecureai_full_combined_runner | Binding 3 NON_IID client datasets to shared training memory map...
+2026-10-20 16:42:54 | INFO     | fedsecureai_full_combined_runner | Config #11 Round 1/5: Val Loss=0.075070, Val PR-AUC=0.001908, Val ROC-AUC=0.781563, Time=176.4s (BEST)
+2026-10-20 16:45:39 | INFO     | fedsecureai_full_combined_runner | Config #11 Round 2/5: Val Loss=0.032036, Val PR-AUC=0.006141, Val ROC-AUC=0.870115, Time=164.4s (BEST)
+2026-10-20 16:48:21 | INFO     | fedsecureai_full_combined_runner | Config #11 Round 3/5: Val Loss=0.024199, Val PR-AUC=0.008652, Val ROC-AUC=0.896759, Time=161.5s (BEST)
+2026-10-20 16:51:05 | INFO     | fedsecureai_full_combined_runner | Config #11 Round 4/5: Val Loss=0.017435, Val PR-AUC=0.013376, Val ROC-AUC=0.913181, Time=163.9s (BEST)
+2026-10-20 16:53:47 | INFO     | fedsecureai_full_combined_runner | Config #11 Round 5/5: Val Loss=0.013945, Val PR-AUC=0.033256, Val ROC-AUC=0.921481, Time=162.3s (BEST)
+2026-10-20 16:53:49 | INFO     | fedsecureai_full_combined_runner | Evaluating on Test split (~7.26M rows) at frozen threshold 0.7033...
+2026-10-20 16:54:14 | INFO     | fedsecureai_full_combined_runner | COMPLETED Config #11: PR-AUC=0.023957 | ROC-AUC=0.895235 | F1=0.065089 | Alerts/10k=3.89 | Duration=857.9s
+2026-10-20 16:54:14 | INFO     | fedsecureai_full_combined_runner | 
+################################################################################
+2026-10-20 16:54:14 | INFO     | fedsecureai_full_combined_runner | CONFIG [12/12]: Distribution=NON_IID | Model=BILSTM | Algorithm=FEDPROX | mu=0.000100
+2026-10-20 16:54:14 | INFO     | fedsecureai_full_combined_runner | ################################################################################
+2026-10-20 16:54:14 | INFO     | fedsecureai_full_combined_runner | Binding 3 NON_IID client datasets to shared training memory map...
+2026-10-20 16:57:24 | INFO     | fedsecureai_full_combined_runner | Config #12 Round 1/5: Val Loss=0.050512, Val PR-AUC=0.002699, Val ROC-AUC=0.775945, Time=187.7s (BEST)
+2026-10-20 17:00:15 | INFO     | fedsecureai_full_combined_runner | Config #12 Round 2/5: Val Loss=0.028916, Val PR-AUC=0.007289, Val ROC-AUC=0.837123, Time=171.4s (BEST)
+2026-10-20 17:03:02 | INFO     | fedsecureai_full_combined_runner | Config #12 Round 3/5: Val Loss=0.023699, Val PR-AUC=0.010473, Val ROC-AUC=0.874243, Time=167.0s (BEST)
+2026-10-20 17:05:50 | INFO     | fedsecureai_full_combined_runner | Config #12 Round 4/5: Val Loss=0.021390, Val PR-AUC=0.012581, Val ROC-AUC=0.894795, Time=167.9s (BEST)
+2026-10-20 17:08:42 | INFO     | fedsecureai_full_combined_runner | Config #12 Round 5/5: Val Loss=0.020532, Val PR-AUC=0.013959, Val ROC-AUC=0.907830, Time=172.0s (BEST)
+2026-10-20 17:08:44 | INFO     | fedsecureai_full_combined_runner | Evaluating on Test split (~7.26M rows) at frozen threshold 0.5940...
+2026-10-20 17:09:10 | INFO     | fedsecureai_full_combined_runner | COMPLETED Config #12: PR-AUC=0.007985 | ROC-AUC=0.870974 | F1=0.022091 | Alerts/10k=29.50 | Duration=895.2s
+2026-10-20 17:09:10 | INFO     | fedsecureai_full_combined_runner | ================================================================================
+2026-10-20 17:09:10 | INFO     | fedsecureai_full_combined_runner | ALL 12 FULL COMBINED CONFIGURATIONS SUCCESSFULLY EXECUTED!
+2026-10-20 17:09:10 | INFO     | fedsecureai_full_combined_runner | Final status report saved at: /content/drive/MyDrive/FedSecureAI_LI_Medium_configs_7_12/results/experiment_status.csv
+2026-10-20 17:09:10 | INFO     | fedsecureai_full_combined_runner | Resume manifest saved at: /content/drive/MyDrive/FedSecureAI_LI_Medium_configs_7_12/resume_manifest.json
+2026-10-20 17:09:10 | INFO     | fedsecureai_full_combined_runner | ================================================================================

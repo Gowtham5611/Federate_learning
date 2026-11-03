@@ -1,0 +1,235 @@
+2026-10-17 18:13:54,337 | INFO     | fedprox_final_opt | ================================================================================
+2026-10-17 18:13:54,337 | INFO     | fedprox_final_opt | STARTING FINAL FEDPROX OPTIMIZATION, VERIFICATION & PHASE SIGN-OFF
+2026-10-17 18:13:54,337 | INFO     | fedprox_final_opt | ================================================================================
+2026-10-17 18:13:54,341 | INFO     | fedprox_final_opt | Reading training split from transactions.csv (nrows=200000)...
+2026-10-17 18:13:55,263 | INFO     | fedprox_final_opt | Partitioning into 3 IID and 3 Non-IID client frames...
+2026-10-17 18:13:55,536 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 200000 rows across 3 clients with seed 42. Client sizes: [66667, 66667, 66666]. Overall positive rate: 0.004500%
+2026-10-17 18:13:56,126 | INFO     | infrastructure.data.partitioners.non_iid_partitioner | Non-IID typology partition complete: 200000 rows across 3 clients with seed 42. Client sizes: [24009, 8266, 167725]. Overall positive rate: 0.004500%
+2026-10-17 18:13:57,093 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 200000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\validation\transactions.csv
+2026-10-17 18:13:57,318 | INFO     | fedprox_final_opt | Validation dataset loaded: 200000 sequences, 57 features.
+2026-10-17 18:13:57,339 | INFO     | fedprox_final_opt | Exported 13 experiment configurations to C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\fedprox_final_optimization\fedprox_experiment_configurations.csv
+2026-10-17 18:13:57,339 | INFO     | fedprox_final_opt | 
+======================================================================
+2026-10-17 18:13:57,339 | INFO     | fedprox_final_opt | RUNNING EXPERIMENT: fedprox_mu1.0_iid_gru [IID | GRU | mu=1.0 | loss=unweighted_bce]
+2026-10-17 18:13:57,339 | INFO     | fedprox_final_opt | ======================================================================
+2026-10-17 18:13:57,404 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 66667 rows, 66667 sequences, 3 positives
+2026-10-17 18:13:57,467 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 66667 rows, 66667 sequences, 3 positives
+2026-10-17 18:13:57,536 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 66666 rows, 66666 sequences, 3 positives
+2026-10-17 18:15:03,169 | INFO     | fedprox_final_opt | ================================================================================
+2026-10-17 18:15:03,170 | INFO     | fedprox_final_opt | STARTING FINAL FEDPROX OPTIMIZATION, VERIFICATION & PHASE SIGN-OFF
+2026-10-17 18:15:03,170 | INFO     | fedprox_final_opt | ================================================================================
+2026-10-17 18:15:03,172 | INFO     | fedprox_final_opt | Reading training split from transactions.csv (nrows=200000)...
+2026-10-17 18:15:04,086 | INFO     | fedprox_final_opt | Partitioning into 3 IID and 3 Non-IID client frames...
+2026-10-17 18:15:04,284 | INFO     | infrastructure.data.partitioners.iid_partitioner | IID partition complete: 200000 rows across 3 clients with seed 42. Client sizes: [66667, 66667, 66666]. Overall positive rate: 0.004500%
+2026-10-17 18:15:04,901 | INFO     | infrastructure.data.partitioners.non_iid_partitioner | Non-IID typology partition complete: 200000 rows across 3 clients with seed 42. Client sizes: [24009, 8266, 167725]. Overall positive rate: 0.004500%
+2026-10-17 18:15:05,780 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 200000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\validation\transactions.csv
+2026-10-17 18:15:05,958 | INFO     | fedprox_final_opt | Validation dataset loaded: 200000 sequences, 57 features.
+2026-10-17 18:15:05,965 | INFO     | fedprox_final_opt | Exported 13 experiment configurations to C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\fedprox_final_optimization\fedprox_experiment_configurations.csv
+2026-10-17 18:15:05,965 | INFO     | fedprox_final_opt | 
+======================================================================
+2026-10-17 18:15:05,965 | INFO     | fedprox_final_opt | RUNNING EXPERIMENT: fedprox_mu1.0_iid_gru [IID | GRU | mu=1.0 | loss=unweighted_bce]
+2026-10-17 18:15:05,965 | INFO     | fedprox_final_opt | ======================================================================
+2026-10-17 18:15:06,030 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 66667 rows, 66667 sequences, 3 positives
+2026-10-17 18:15:06,091 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 66667 rows, 66667 sequences, 3 positives
+2026-10-17 18:15:06,154 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 66666 rows, 66666 sequences, 3 positives
+2026-10-17 18:15:21,302 | INFO     | fedprox_final_opt |   Round 1/5: Val Loss=0.750525, Val PR-AUC=0.000599, Val ROC-AUC=0.405851, Drift=0.505380, Time=15.1s (BEST)
+2026-10-17 18:15:32,362 | INFO     | fedprox_final_opt |   Round 2/5: Val Loss=0.769178, Val PR-AUC=0.000678, Val ROC-AUC=0.424598, Drift=0.298753, Time=11.1s (BEST)
+2026-10-17 18:15:43,658 | INFO     | fedprox_final_opt |   Round 3/5: Val Loss=0.774886, Val PR-AUC=0.000773, Val ROC-AUC=0.432736, Drift=0.186663, Time=11.3s (BEST)
+2026-10-17 18:15:55,967 | INFO     | fedprox_final_opt |   Round 4/5: Val Loss=0.776414, Val PR-AUC=0.000832, Val ROC-AUC=0.437257, Drift=0.129927, Time=12.3s (BEST)
+2026-10-17 18:16:11,917 | INFO     | fedprox_final_opt |   Round 5/5: Val Loss=0.778179, Val PR-AUC=0.000879, Val ROC-AUC=0.440221, Drift=0.096561, Time=15.9s (BEST)
+2026-10-17 18:16:11,996 | INFO     | infrastructure.evaluation.sklearn_metrics_calculator | Selected threshold 0.909645 on the validation split: F1 0.016949, precision 0.020408, recall 0.014493, from 197251 candidate(s).
+2026-10-17 18:16:12,004 | INFO     | fedprox_final_opt | 
+======================================================================
+2026-10-17 18:16:12,005 | INFO     | fedprox_final_opt | RUNNING EXPERIMENT: fedprox_mu1.0_iid_lstm [IID | LSTM | mu=1.0 | loss=unweighted_bce]
+2026-10-17 18:16:12,005 | INFO     | fedprox_final_opt | ======================================================================
+2026-10-17 18:16:12,090 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 66667 rows, 66667 sequences, 3 positives
+2026-10-17 18:16:12,163 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 66667 rows, 66667 sequences, 3 positives
+2026-10-17 18:16:12,234 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 66666 rows, 66666 sequences, 3 positives
+2026-10-17 18:16:24,469 | INFO     | fedprox_final_opt |   Round 1/5: Val Loss=0.677389, Val PR-AUC=0.000630, Val ROC-AUC=0.509875, Drift=0.459233, Time=12.2s (BEST)
+2026-10-17 18:16:38,611 | INFO     | fedprox_final_opt |   Round 2/5: Val Loss=0.648599, Val PR-AUC=0.000702, Val ROC-AUC=0.499520, Drift=0.386631, Time=14.1s (BEST)
+2026-10-17 18:16:49,968 | INFO     | fedprox_final_opt |   Round 3/5: Val Loss=0.621024, Val PR-AUC=0.000760, Val ROC-AUC=0.496470, Drift=0.297528, Time=11.3s (BEST)
+2026-10-17 18:17:03,350 | INFO     | fedprox_final_opt |   Round 4/5: Val Loss=0.594758, Val PR-AUC=0.000809, Val ROC-AUC=0.495223, Drift=0.221020, Time=13.4s (BEST)
+2026-10-17 18:17:15,480 | INFO     | fedprox_final_opt |   Round 5/5: Val Loss=0.571043, Val PR-AUC=0.000841, Val ROC-AUC=0.494343, Drift=0.166884, Time=12.1s (BEST)
+2026-10-17 18:17:15,548 | INFO     | infrastructure.evaluation.sklearn_metrics_calculator | Selected threshold 0.684557 on the validation split: F1 0.014599, precision 0.014706, recall 0.014493, from 196366 candidate(s).
+2026-10-17 18:17:15,553 | INFO     | fedprox_final_opt | 
+======================================================================
+2026-10-17 18:17:15,553 | INFO     | fedprox_final_opt | RUNNING EXPERIMENT: fedprox_mu1.0_iid_bilstm [IID | BILSTM | mu=1.0 | loss=unweighted_bce]
+2026-10-17 18:17:15,553 | INFO     | fedprox_final_opt | ======================================================================
+2026-10-17 18:17:15,621 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 66667 rows, 66667 sequences, 3 positives
+2026-10-17 18:17:15,704 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 66667 rows, 66667 sequences, 3 positives
+2026-10-17 18:17:15,797 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 66666 rows, 66666 sequences, 3 positives
+2026-10-17 18:17:40,073 | INFO     | fedprox_final_opt |   Round 1/5: Val Loss=0.684054, Val PR-AUC=0.000708, Val ROC-AUC=0.486770, Drift=0.474296, Time=24.3s (BEST)
+2026-10-17 18:18:03,718 | INFO     | fedprox_final_opt |   Round 2/5: Val Loss=0.666692, Val PR-AUC=0.000697, Val ROC-AUC=0.475614, Drift=0.369558, Time=23.6s
+2026-10-17 18:18:25,824 | INFO     | fedprox_final_opt |   Round 3/5: Val Loss=0.648491, Val PR-AUC=0.000682, Val ROC-AUC=0.471644, Drift=0.266515, Time=22.1s
+2026-10-17 18:18:47,680 | INFO     | fedprox_final_opt |   Round 4/5: Val Loss=0.630147, Val PR-AUC=0.000675, Val ROC-AUC=0.469801, Drift=0.193845, Time=21.9s
+2026-10-17 18:19:06,027 | INFO     | fedprox_final_opt |   Round 5/5: Val Loss=0.612447, Val PR-AUC=0.000670, Val ROC-AUC=0.468876, Drift=0.148127, Time=18.3s
+2026-10-17 18:19:06,110 | INFO     | infrastructure.evaluation.sklearn_metrics_calculator | Selected threshold 0.586946 on the validation split: F1 0.011364, precision 0.009346, recall 0.014493, from 185909 candidate(s).
+2026-10-17 18:19:06,121 | INFO     | fedprox_final_opt | 
+======================================================================
+2026-10-17 18:19:06,122 | INFO     | fedprox_final_opt | RUNNING EXPERIMENT: fedprox_mu1.0_non_iid_gru [NON_IID | GRU | mu=1.0 | loss=unweighted_bce]
+2026-10-17 18:19:06,123 | INFO     | fedprox_final_opt | ======================================================================
+2026-10-17 18:19:06,167 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 24009 rows, 24009 sequences, 8 positives
+2026-10-17 18:19:06,186 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 8266 rows, 8266 sequences, 0 positives
+2026-10-17 18:19:06,402 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 167725 rows, 167725 sequences, 1 positives
+2026-10-17 18:19:17,124 | INFO     | fedprox_final_opt |   Round 1/5: Val Loss=0.726156, Val PR-AUC=0.000609, Val ROC-AUC=0.406023, Drift=0.429520, Time=10.7s (BEST)
+2026-10-17 18:19:30,668 | INFO     | fedprox_final_opt |   Round 2/5: Val Loss=0.728769, Val PR-AUC=0.000688, Val ROC-AUC=0.424307, Drift=0.287296, Time=13.5s (BEST)
+2026-10-17 18:19:42,396 | INFO     | fedprox_final_opt |   Round 3/5: Val Loss=0.735001, Val PR-AUC=0.000773, Val ROC-AUC=0.431886, Drift=0.194438, Time=11.7s (BEST)
+2026-10-17 18:19:53,226 | INFO     | fedprox_final_opt |   Round 4/5: Val Loss=0.741597, Val PR-AUC=0.000840, Val ROC-AUC=0.435994, Drift=0.142765, Time=10.8s (BEST)
+2026-10-17 18:20:03,316 | INFO     | fedprox_final_opt |   Round 5/5: Val Loss=0.747205, Val PR-AUC=0.000887, Val ROC-AUC=0.438575, Drift=0.112027, Time=10.1s (BEST)
+2026-10-17 18:20:03,401 | INFO     | infrastructure.evaluation.sklearn_metrics_calculator | Selected threshold 0.898442 on the validation split: F1 0.017094, precision 0.020833, recall 0.014493, from 197111 candidate(s).
+2026-10-17 18:20:03,407 | INFO     | fedprox_final_opt | 
+======================================================================
+2026-10-17 18:20:03,407 | INFO     | fedprox_final_opt | RUNNING EXPERIMENT: fedprox_mu1.0_non_iid_lstm [NON_IID | LSTM | mu=1.0 | loss=unweighted_bce]
+2026-10-17 18:20:03,407 | INFO     | fedprox_final_opt | ======================================================================
+2026-10-17 18:20:03,438 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 24009 rows, 24009 sequences, 8 positives
+2026-10-17 18:20:03,453 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 8266 rows, 8266 sequences, 0 positives
+2026-10-17 18:20:03,672 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 167725 rows, 167725 sequences, 1 positives
+2026-10-17 18:20:14,481 | INFO     | fedprox_final_opt |   Round 1/5: Val Loss=0.649700, Val PR-AUC=0.000615, Val ROC-AUC=0.510542, Drift=0.383910, Time=10.8s (BEST)
+2026-10-17 18:20:25,787 | INFO     | fedprox_final_opt |   Round 2/5: Val Loss=0.598658, Val PR-AUC=0.000680, Val ROC-AUC=0.500243, Drift=0.337739, Time=11.3s (BEST)
+2026-10-17 18:20:34,485 | INFO     | fedprox_final_opt |   Round 3/5: Val Loss=0.555951, Val PR-AUC=0.000727, Val ROC-AUC=0.496214, Drift=0.270249, Time=8.7s (BEST)
+2026-10-17 18:20:45,089 | INFO     | fedprox_final_opt |   Round 4/5: Val Loss=0.522611, Val PR-AUC=0.000780, Val ROC-AUC=0.494322, Drift=0.211945, Time=10.6s (BEST)
+2026-10-17 18:20:56,585 | INFO     | fedprox_final_opt |   Round 5/5: Val Loss=0.497753, Val PR-AUC=0.000801, Val ROC-AUC=0.493380, Drift=0.169408, Time=11.5s (BEST)
+2026-10-17 18:20:56,680 | INFO     | infrastructure.evaluation.sklearn_metrics_calculator | Selected threshold 0.620644 on the validation split: F1 0.013158, precision 0.012048, recall 0.014493, from 196484 candidate(s).
+2026-10-17 18:20:56,685 | INFO     | fedprox_final_opt | 
+======================================================================
+2026-10-17 18:20:56,686 | INFO     | fedprox_final_opt | RUNNING EXPERIMENT: fedprox_mu1.0_non_iid_bilstm [NON_IID | BILSTM | mu=1.0 | loss=unweighted_bce]
+2026-10-17 18:20:56,686 | INFO     | fedprox_final_opt | ======================================================================
+2026-10-17 18:20:56,739 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 24009 rows, 24009 sequences, 8 positives
+2026-10-17 18:20:56,772 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 8266 rows, 8266 sequences, 0 positives
+2026-10-17 18:20:57,029 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 167725 rows, 167725 sequences, 1 positives
+2026-10-17 18:21:21,949 | INFO     | fedprox_final_opt |   Round 1/5: Val Loss=0.659042, Val PR-AUC=0.000692, Val ROC-AUC=0.479360, Drift=0.411559, Time=24.9s (BEST)
+2026-10-17 18:21:46,883 | INFO     | fedprox_final_opt |   Round 2/5: Val Loss=0.622066, Val PR-AUC=0.000700, Val ROC-AUC=0.468904, Drift=0.339243, Time=24.9s (BEST)
+2026-10-17 18:22:08,127 | INFO     | fedprox_final_opt |   Round 3/5: Val Loss=0.591233, Val PR-AUC=0.000687, Val ROC-AUC=0.466004, Drift=0.263237, Time=21.2s
+2026-10-17 18:22:27,901 | INFO     | fedprox_final_opt |   Round 4/5: Val Loss=0.568083, Val PR-AUC=0.000679, Val ROC-AUC=0.464715, Drift=0.205449, Time=19.8s
+2026-10-17 18:22:50,092 | INFO     | fedprox_final_opt |   Round 5/5: Val Loss=0.551777, Val PR-AUC=0.000672, Val ROC-AUC=0.463854, Drift=0.165258, Time=22.2s
+2026-10-17 18:22:50,161 | INFO     | infrastructure.evaluation.sklearn_metrics_calculator | Selected threshold 0.603113 on the validation split: F1 0.012195, precision 0.010526, recall 0.014493, from 192204 candidate(s).
+2026-10-17 18:22:50,168 | INFO     | fedprox_final_opt | 
+======================================================================
+2026-10-17 18:22:50,169 | INFO     | fedprox_final_opt | RUNNING EXPERIMENT: fedprox_mu1.0_wbce_iid_gru [IID | GRU | mu=1.0 | loss=weighted_bce]
+2026-10-17 18:22:50,169 | INFO     | fedprox_final_opt | ======================================================================
+2026-10-17 18:22:50,256 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 66667 rows, 66667 sequences, 3 positives
+2026-10-17 18:22:50,352 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 66667 rows, 66667 sequences, 3 positives
+2026-10-17 18:22:50,435 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 66666 rows, 66666 sequences, 3 positives
+2026-10-17 18:23:01,961 | INFO     | fedprox_final_opt |   Round 1/5: Val Loss=0.772317, Val PR-AUC=0.000607, Val ROC-AUC=0.420177, Drift=0.436959, Time=11.5s (BEST)
+2026-10-17 18:23:17,018 | INFO     | fedprox_final_opt |   Round 2/5: Val Loss=0.845182, Val PR-AUC=0.000665, Val ROC-AUC=0.447381, Drift=0.303597, Time=15.1s (BEST)
+2026-10-17 18:23:36,164 | INFO     | fedprox_final_opt |   Round 3/5: Val Loss=0.927422, Val PR-AUC=0.000741, Val ROC-AUC=0.461159, Drift=0.234177, Time=19.1s (BEST)
+2026-10-17 18:23:52,046 | INFO     | fedprox_final_opt |   Round 4/5: Val Loss=1.012567, Val PR-AUC=0.000774, Val ROC-AUC=0.470223, Drift=0.199258, Time=15.9s (BEST)
+2026-10-17 18:24:08,138 | INFO     | fedprox_final_opt |   Round 5/5: Val Loss=1.097623, Val PR-AUC=0.000770, Val ROC-AUC=0.477248, Drift=0.180887, Time=16.1s
+2026-10-17 18:24:08,248 | INFO     | infrastructure.evaluation.sklearn_metrics_calculator | Selected threshold 0.957800 on the validation split: F1 0.012821, precision 0.011494, recall 0.014493, from 196652 candidate(s).
+2026-10-17 18:24:08,255 | INFO     | fedprox_final_opt | 
+======================================================================
+2026-10-17 18:24:08,256 | INFO     | fedprox_final_opt | RUNNING EXPERIMENT: fedprox_mu1.0_wbce_iid_lstm [IID | LSTM | mu=1.0 | loss=weighted_bce]
+2026-10-17 18:24:08,256 | INFO     | fedprox_final_opt | ======================================================================
+2026-10-17 18:24:08,366 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 66667 rows, 66667 sequences, 3 positives
+2026-10-17 18:24:08,442 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 66667 rows, 66667 sequences, 3 positives
+2026-10-17 18:24:08,530 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 66666 rows, 66666 sequences, 3 positives
+2026-10-17 18:24:26,191 | INFO     | fedprox_final_opt |   Round 1/5: Val Loss=0.693886, Val PR-AUC=0.000707, Val ROC-AUC=0.543427, Drift=0.388306, Time=17.7s (BEST)
+2026-10-17 18:24:43,233 | INFO     | fedprox_final_opt |   Round 2/5: Val Loss=0.691483, Val PR-AUC=0.000764, Val ROC-AUC=0.524025, Drift=0.350478, Time=17.0s (BEST)
+2026-10-17 18:25:00,823 | INFO     | fedprox_final_opt |   Round 3/5: Val Loss=0.698338, Val PR-AUC=0.000791, Val ROC-AUC=0.519005, Drift=0.302790, Time=17.6s (BEST)
+2026-10-17 18:25:15,051 | INFO     | fedprox_final_opt |   Round 4/5: Val Loss=0.711615, Val PR-AUC=0.000801, Val ROC-AUC=0.517781, Drift=0.263832, Time=14.2s (BEST)
+2026-10-17 18:25:28,534 | INFO     | fedprox_final_opt |   Round 5/5: Val Loss=0.729818, Val PR-AUC=0.000803, Val ROC-AUC=0.518228, Drift=0.234742, Time=13.5s (BEST)
+2026-10-17 18:25:28,602 | INFO     | infrastructure.evaluation.sklearn_metrics_calculator | Selected threshold 0.786117 on the validation split: F1 0.008811, precision 0.005195, recall 0.028986, from 195713 candidate(s).
+2026-10-17 18:25:28,608 | INFO     | fedprox_final_opt | 
+======================================================================
+2026-10-17 18:25:28,608 | INFO     | fedprox_final_opt | RUNNING EXPERIMENT: fedprox_mu1.0_wbce_iid_bilstm [IID | BILSTM | mu=1.0 | loss=weighted_bce]
+2026-10-17 18:25:28,609 | INFO     | fedprox_final_opt | ======================================================================
+2026-10-17 18:25:28,672 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 66667 rows, 66667 sequences, 3 positives
+2026-10-17 18:25:28,776 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 66667 rows, 66667 sequences, 3 positives
+2026-10-17 18:25:28,839 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 66666 rows, 66666 sequences, 3 positives
+2026-10-17 18:25:52,342 | INFO     | fedprox_final_opt |   Round 1/5: Val Loss=0.699785, Val PR-AUC=0.000780, Val ROC-AUC=0.517794, Drift=0.425218, Time=23.5s (BEST)
+2026-10-17 18:26:22,917 | INFO     | fedprox_final_opt |   Round 2/5: Val Loss=0.710878, Val PR-AUC=0.000802, Val ROC-AUC=0.510938, Drift=0.363399, Time=30.6s (BEST)
+2026-10-17 18:26:54,426 | INFO     | fedprox_final_opt |   Round 3/5: Val Loss=0.730523, Val PR-AUC=0.000797, Val ROC-AUC=0.512303, Drift=0.307891, Time=31.5s
+2026-10-17 18:27:24,776 | INFO     | fedprox_final_opt |   Round 4/5: Val Loss=0.755698, Val PR-AUC=0.000779, Val ROC-AUC=0.515399, Drift=0.270853, Time=30.3s
+2026-10-17 18:27:55,110 | INFO     | fedprox_final_opt |   Round 5/5: Val Loss=0.784874, Val PR-AUC=0.000765, Val ROC-AUC=0.519384, Drift=0.248237, Time=30.3s
+2026-10-17 18:27:55,214 | INFO     | infrastructure.evaluation.sklearn_metrics_calculator | Selected threshold 0.683457 on the validation split: F1 0.011173, precision 0.009091, recall 0.014493, from 192219 candidate(s).
+2026-10-17 18:27:55,223 | INFO     | fedprox_final_opt | 
+======================================================================
+2026-10-17 18:27:55,224 | INFO     | fedprox_final_opt | RUNNING EXPERIMENT: fedprox_mu1.0_wbce_non_iid_gru [NON_IID | GRU | mu=1.0 | loss=weighted_bce]
+2026-10-17 18:27:55,225 | INFO     | fedprox_final_opt | ======================================================================
+2026-10-17 18:27:55,282 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 24009 rows, 24009 sequences, 8 positives
+2026-10-17 18:27:55,322 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 8266 rows, 8266 sequences, 0 positives
+2026-10-17 18:27:55,545 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 167725 rows, 167725 sequences, 1 positives
+2026-10-17 18:28:11,310 | INFO     | fedprox_final_opt |   Round 1/5: Val Loss=0.746737, Val PR-AUC=0.000612, Val ROC-AUC=0.403940, Drift=0.385761, Time=15.8s (BEST)
+2026-10-17 18:28:26,314 | INFO     | fedprox_final_opt |   Round 2/5: Val Loss=0.777960, Val PR-AUC=0.000676, Val ROC-AUC=0.423313, Drift=0.327642, Time=15.0s (BEST)
+2026-10-17 18:28:44,079 | INFO     | fedprox_final_opt |   Round 3/5: Val Loss=0.811258, Val PR-AUC=0.000778, Val ROC-AUC=0.432101, Drift=0.285189, Time=17.8s (BEST)
+2026-10-17 18:29:00,026 | INFO     | fedprox_final_opt |   Round 4/5: Val Loss=0.845603, Val PR-AUC=0.000860, Val ROC-AUC=0.437034, Drift=0.259369, Time=15.9s (BEST)
+2026-10-17 18:29:14,764 | INFO     | fedprox_final_opt |   Round 5/5: Val Loss=0.880291, Val PR-AUC=0.000929, Val ROC-AUC=0.440240, Drift=0.242662, Time=14.7s (BEST)
+2026-10-17 18:29:14,876 | INFO     | infrastructure.evaluation.sklearn_metrics_calculator | Selected threshold 0.938931 on the validation split: F1 0.017699, precision 0.022727, recall 0.014493, from 196961 candidate(s).
+2026-10-17 18:29:14,884 | INFO     | fedprox_final_opt | 
+======================================================================
+2026-10-17 18:29:14,885 | INFO     | fedprox_final_opt | RUNNING EXPERIMENT: fedprox_mu1.0_wbce_non_iid_lstm [NON_IID | LSTM | mu=1.0 | loss=weighted_bce]
+2026-10-17 18:29:14,885 | INFO     | fedprox_final_opt | ======================================================================
+2026-10-17 18:29:14,923 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 24009 rows, 24009 sequences, 8 positives
+2026-10-17 18:29:14,947 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 8266 rows, 8266 sequences, 0 positives
+2026-10-17 18:29:15,185 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 167725 rows, 167725 sequences, 1 positives
+2026-10-17 18:29:31,352 | INFO     | fedprox_final_opt |   Round 1/5: Val Loss=0.658481, Val PR-AUC=0.000645, Val ROC-AUC=0.523389, Drift=0.338726, Time=16.1s (BEST)
+2026-10-17 18:29:47,766 | INFO     | fedprox_final_opt |   Round 2/5: Val Loss=0.621529, Val PR-AUC=0.000723, Val ROC-AUC=0.510566, Drift=0.338877, Time=16.4s (BEST)
+2026-10-17 18:30:01,559 | INFO     | fedprox_final_opt |   Round 3/5: Val Loss=0.597091, Val PR-AUC=0.000773, Val ROC-AUC=0.506381, Drift=0.332968, Time=13.8s (BEST)
+2026-10-17 18:30:15,107 | INFO     | fedprox_final_opt |   Round 4/5: Val Loss=0.582649, Val PR-AUC=0.000808, Val ROC-AUC=0.504080, Drift=0.314312, Time=13.5s (BEST)
+2026-10-17 18:30:30,013 | INFO     | fedprox_final_opt |   Round 5/5: Val Loss=0.574896, Val PR-AUC=0.000831, Val ROC-AUC=0.502402, Drift=0.295005, Time=14.9s (BEST)
+2026-10-17 18:30:30,100 | INFO     | infrastructure.evaluation.sklearn_metrics_calculator | Selected threshold 0.684326 on the validation split: F1 0.009709, precision 0.007299, recall 0.014493, from 196080 candidate(s).
+2026-10-17 18:30:30,107 | INFO     | fedprox_final_opt | 
+======================================================================
+2026-10-17 18:30:30,107 | INFO     | fedprox_final_opt | RUNNING EXPERIMENT: fedprox_mu1.0_wbce_non_iid_bilstm [NON_IID | BILSTM | mu=1.0 | loss=weighted_bce]
+2026-10-17 18:30:30,108 | INFO     | fedprox_final_opt | ======================================================================
+2026-10-17 18:30:30,143 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 24009 rows, 24009 sequences, 8 positives
+2026-10-17 18:30:30,164 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 8266 rows, 8266 sequences, 0 positives
+2026-10-17 18:30:30,384 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 167725 rows, 167725 sequences, 1 positives
+2026-10-17 18:30:58,121 | INFO     | fedprox_final_opt |   Round 1/5: Val Loss=0.667004, Val PR-AUC=0.000716, Val ROC-AUC=0.488765, Drift=0.371521, Time=27.7s (BEST)
+2026-10-17 18:31:22,925 | INFO     | fedprox_final_opt |   Round 2/5: Val Loss=0.645235, Val PR-AUC=0.000734, Val ROC-AUC=0.478462, Drift=0.362139, Time=24.8s (BEST)
+2026-10-17 18:31:48,373 | INFO     | fedprox_final_opt |   Round 3/5: Val Loss=0.635672, Val PR-AUC=0.000736, Val ROC-AUC=0.476257, Drift=0.353935, Time=25.4s (BEST)
+2026-10-17 18:32:15,302 | INFO     | fedprox_final_opt |   Round 4/5: Val Loss=0.634458, Val PR-AUC=0.000737, Val ROC-AUC=0.475477, Drift=0.337756, Time=26.9s (BEST)
+2026-10-17 18:32:36,380 | INFO     | fedprox_final_opt |   Round 5/5: Val Loss=0.638158, Val PR-AUC=0.000735, Val ROC-AUC=0.475133, Drift=0.320400, Time=21.1s
+2026-10-17 18:32:36,472 | INFO     | infrastructure.evaluation.sklearn_metrics_calculator | Selected threshold 0.705146 on the validation split: F1 0.010363, precision 0.008065, recall 0.014493, from 195442 candidate(s).
+2026-10-17 18:32:36,480 | INFO     | fedprox_final_opt | 
+======================================================================
+2026-10-17 18:32:36,481 | INFO     | fedprox_final_opt | RUNNING EXPERIMENT: fedprox_mu_decay_wbce_iid_gru [IID | GRU | mu=1.0->0.1 | loss=weighted_bce]
+2026-10-17 18:32:36,481 | INFO     | fedprox_final_opt | ======================================================================
+2026-10-17 18:32:36,577 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_1 sequence dataset: 66667 rows, 66667 sequences, 3 positives
+2026-10-17 18:32:36,666 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_2 sequence dataset: 66667 rows, 66667 sequences, 3 positives
+2026-10-17 18:32:36,749 | INFO     | infrastructure.data.partitioners.client_sequence_provider | Built client client_3 sequence dataset: 66666 rows, 66666 sequences, 3 positives
+2026-10-17 18:32:55,715 | INFO     | fedprox_final_opt |   Round 1/5: Val Loss=0.772317, Val PR-AUC=0.000607, Val ROC-AUC=0.420177, Drift=0.436959, Time=19.0s (BEST)
+2026-10-17 18:33:15,691 | INFO     | fedprox_final_opt |   Round 2/5: Val Loss=0.854898, Val PR-AUC=0.000679, Val ROC-AUC=0.450723, Drift=0.345299, Time=20.0s (BEST)
+2026-10-17 18:33:40,246 | INFO     | fedprox_final_opt |   Round 3/5: Val Loss=0.967314, Val PR-AUC=0.000760, Val ROC-AUC=0.467197, Drift=0.306533, Time=24.6s (BEST)
+2026-10-17 18:33:58,680 | INFO     | fedprox_final_opt |   Round 4/5: Val Loss=1.106757, Val PR-AUC=0.000778, Val ROC-AUC=0.479056, Drift=0.322531, Time=18.4s (BEST)
+2026-10-17 18:34:14,795 | INFO     | fedprox_final_opt |   Round 5/5: Val Loss=1.211952, Val PR-AUC=0.000786, Val ROC-AUC=0.491518, Drift=0.449584, Time=16.1s (BEST)
+2026-10-17 18:34:14,901 | INFO     | infrastructure.evaluation.sklearn_metrics_calculator | Selected threshold 0.991679 on the validation split: F1 0.012821, precision 0.011494, recall 0.014493, from 196973 candidate(s).
+2026-10-17 18:34:14,925 | INFO     | fedprox_final_opt | Saved round metrics and client metrics CSVs.
+2026-10-17 18:34:14,926 | INFO     | fedprox_final_opt | 
+================================================================================
+2026-10-17 18:34:14,927 | INFO     | fedprox_final_opt | VALIDATION COMPARISON ACROSS ALL FEDPROX & FEDAVG BASELINES
+2026-10-17 18:34:14,927 | INFO     | fedprox_final_opt | ================================================================================
+2026-10-17 18:34:14,942 | INFO     | fedprox_final_opt | Saved validation comparison to C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\fedprox_final_optimization\fedprox_validation_comparison.csv
+2026-10-17 18:34:14,943 | INFO     | fedprox_final_opt | 
+>>> SELECTED BEST FEDPROX CANDIDATE (Validation PR-AUC): fedprox_mu1.0_wbce_non_iid_gru (Val PR-AUC=0.000929, Val ROC-AUC=0.440240)
+2026-10-17 18:34:14,944 | INFO     | fedprox_final_opt | 
+================================================================================
+2026-10-17 18:34:14,945 | INFO     | fedprox_final_opt | SEARCHING OPERATIONAL THRESHOLD ON VALIDATION FOR BEST CANDIDATE: fedprox_mu1.0_wbce_non_iid_gru
+2026-10-17 18:34:14,945 | INFO     | fedprox_final_opt | ================================================================================
+2026-10-17 18:34:18,090 | WARNING  | fedprox_final_opt |   Target Recall (30%) not satisfiable under 50 alerts/10k. Best trade-off: threshold=0.917622 (Recall=0.0145, Alerts/10k=50.0)
+2026-10-17 18:34:18,112 | INFO     | fedprox_final_opt | Saved threshold analysis to C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\fedprox_final_optimization\fedprox_threshold_analysis.csv
+2026-10-17 18:34:18,362 | INFO     | fedprox_final_opt | 
+================================================================================
+2026-10-17 18:34:18,362 | INFO     | fedprox_final_opt | LOADING COMPLETE TEST DATASET (6,249,112 ROWS) FOR FULL EVALUATION
+2026-10-17 18:34:18,363 | INFO     | fedprox_final_opt | ================================================================================
+2026-10-17 18:34:48,526 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 6249112 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\test\transactions.csv
+2026-10-17 18:34:57,319 | INFO     | fedprox_final_opt | Loaded Full Test Split: 6249112 rows (3783 positives, 0.060537% prevalence) in 38.92s
+2026-10-17 18:34:57,364 | INFO     | fedprox_final_opt | Executing batched inference across 5 models on 6249112 test rows...
+2026-10-17 18:35:32,384 | INFO     | fedprox_final_opt |   Test inference: batch 152/1526 (10.0%) complete...
+2026-10-17 18:36:14,759 | INFO     | fedprox_final_opt |   Test inference: batch 304/1526 (19.9%) complete...
+2026-10-17 18:37:07,828 | INFO     | fedprox_final_opt |   Test inference: batch 456/1526 (29.9%) complete...
+2026-10-17 18:38:06,307 | INFO     | fedprox_final_opt |   Test inference: batch 608/1526 (39.8%) complete...
+2026-10-17 18:39:07,111 | INFO     | fedprox_final_opt |   Test inference: batch 760/1526 (49.8%) complete...
+2026-10-17 18:40:05,955 | INFO     | fedprox_final_opt |   Test inference: batch 912/1526 (59.8%) complete...
+2026-10-17 18:41:06,799 | INFO     | fedprox_final_opt |   Test inference: batch 1064/1526 (69.7%) complete...
+2026-10-17 18:42:07,245 | INFO     | fedprox_final_opt |   Test inference: batch 1216/1526 (79.7%) complete...
+2026-10-17 18:43:08,775 | INFO     | fedprox_final_opt |   Test inference: batch 1368/1526 (89.6%) complete...
+2026-10-17 18:44:14,632 | INFO     | fedprox_final_opt |   Test inference: batch 1520/1526 (99.6%) complete...
+2026-10-17 18:44:17,049 | INFO     | fedprox_final_opt |   Test inference: batch 1526/1526 (100.0%) complete...
+2026-10-17 18:45:12,694 | INFO     | fedprox_final_opt | Saved full test comparison to C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\fedprox_final_optimization\fedprox_full_test_comparison.csv
+2026-10-17 18:45:13,126 | INFO     | fedprox_final_opt | 
+================================================================================
+2026-10-17 18:45:13,126 | INFO     | fedprox_final_opt | GENERATING AUDIT & PHASE COMPLETION REPORTS
+2026-10-17 18:45:13,126 | INFO     | fedprox_final_opt | ================================================================================
+2026-10-17 18:45:13,132 | INFO     | fedprox_final_opt | Successfully generated all reports and CSV artifacts.
+2026-10-17 18:45:13,133 | INFO     | fedprox_final_opt | PHASE COMPLETE: READY FOR ENSEMBLE PHASE.

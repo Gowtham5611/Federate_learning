@@ -1,0 +1,57 @@
+{
+  "phase": 8,
+  "phase_name": "Final Test Evaluation",
+  "timestamp_utc": "2026-10-18T05:19:16.384832+00:00",
+  "elapsed_seconds": 4.411071300000003,
+  "dataset": {
+    "name": "IBM AML HI-Small",
+    "path": "data/processed/ibm_aml/HI-Small/test/transactions.csv",
+    "sequences": 1015564,
+    "positives": 1797,
+    "negatives": 1013767,
+    "prevalence": 0.0017694601226510588
+  },
+  "models": {
+    "iid": {
+      "experiment_id": "federated_iid_fedavg_lstm_seed42_20260918T130515",
+      "architecture": "lstm",
+      "distribution": "iid",
+      "algorithm": "fedavg",
+      "checkpoint_path": "models\\checkpoints\\federated\\iid\\fedavg\\lstm\\federated_iid_fedavg_lstm_seed42_20260918T130515\\global_best.pt",
+      "sha256": "64e495c8175170033d5f08301add618e31e077e453126a44d5c263f299f492cc"
+    },
+    "non_iid": {
+      "experiment_id": "federated_non_iid_fedavg_bilstm_seed42_20260922T162100",
+      "architecture": "bilstm",
+      "distribution": "non_iid",
+      "algorithm": "fedavg",
+      "checkpoint_path": "models\\checkpoints\\federated\\non_iid\\fedavg\\bilstm\\federated_non_iid_fedavg_bilstm_seed42_20260922T162100\\global_best.pt",
+      "sha256": "87f213a646182df4e7ed10da84775136851717f5de0befaefd8c60c488e3964f"
+    },
+    "ensemble": {
+      "formula": "P_ensemble = alpha * P_IID + (1 - alpha) * P_NonIID",
+      "alpha": 1.0,
+      "frozen_threshold": 0.13,
+      "fixed_threshold": 0.5
+    }
+  },
+  "artifacts": {
+    "final_test_metrics_json": {
+      "path": "artifacts/phase8_final_test_evaluation/final_test_metrics.json",
+      "sha256": "10af19c786a65649bf4eff003c1db945866fc862c0fc096470f586f8a9bc8be2"
+    },
+    "final_test_metrics_csv": {
+      "path": "artifacts/phase8_final_test_evaluation/final_test_metrics.csv",
+      "sha256": "33879aef345aaef80eedaa2920c7a513f34147eea49a80edcdf1adf1b266802a"
+    },
+    "confusion_matrices_json": {
+      "path": "artifacts/phase8_final_test_evaluation/confusion_matrices.json",
+      "sha256": "56c98ec215ec3bfe78d7c8c487eed3af7abeaca48e49e65c8ec286f4608d811f"
+    },
+    "test_predictions_csv": {
+      "path": "artifacts/phase8_final_test_evaluation/test_predictions.csv",
+      "sha256": "3ab0e66361ba8245fe2c30db90cb9782ba4821fadcbc5afb38864198aa6aba37"
+    }
+  },
+  "status": "VERIFIED_COMPLETE"
+}

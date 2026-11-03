@@ -1,0 +1,18 @@
+{
+  "analysis_id": "analysis_seed42_20261003T165402",
+  "timestamp": "20261003T165402",
+  "seed": 42,
+  "total_experiments_analyzed": 18,
+  "artifacts_generated": [
+    "analysis\\phase8_analysis_seed42_20261003T165402\\visualizations\\01_centralized_vs_federated_prauc.png",
+    "analysis\\phase8_analysis_seed42_20261003T165402\\visualizations\\02_model_architecture_comparison.png",
+    "analysis\\phase8_analysis_seed42_20261003T165402\\visualizations\\03_fedavg_vs_fedprox_comparison.png",
+    "analysis\\phase8_analysis_seed42_20261003T165402\\visualizations\\04_iid_vs_non_iid_comparison.png",
+    "analysis\\phase8_analysis_seed42_20261003T165402\\visualizations\\05_federated_convergence_curves.png",
+    "analysis\\phase8_analysis_seed42_20261003T165402\\visualizations\\06_ensemble_alpha_vs_prauc.png",
+    "analysis\\phase8_analysis_seed42_20261003T165402\\visualizations\\07_precision_recall_curves.png",
+    "analysis\\phase8_analysis_seed42_20261003T165402\\visualizations\\08_final_confusion_matrix.png",
+    "analysis\\phase8_analysis_seed42_20261003T165402\\visualizations\\09_client_distribution_breakdown.png",
+    "analysis\\phase8_analysis_seed42_20261003T165402\\visualizations\\10_final_metric_summary.png"
+  ]
+}

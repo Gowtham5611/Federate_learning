@@ -1,0 +1,49 @@
+# =============================================================================
+# Base runtime dependencies
+# =============================================================================
+# Only what the CURRENT code imports. The remaining stack (flwr, shap, fastapi,
+# streamlit) is added phase by phase, as each module is actually implemented.
+# =============================================================================
+
+PyYAML>=6.0.1
+
+# Reads a git-ignored `.env` into the environment at startup. Used only by
+# backend/infrastructure/utils/env.py, and imported lazily inside the loader, so
+# an incomplete install degrades to "the file is ignored" rather than a crash.
+python-dotenv>=1.0.1
+
+# Tabular data. Used by the chunked CSV loader and schema validator. Only
+# backend/infrastructure/data/loaders/csv_chunk_loader.py calls the CSV parser,
+# and it only ever calls it with `chunksize` set - the dataset is never read whole.
+pandas>=2.2.0
+
+# Arrays and the sequence index. The sequence provider and the metrics adapter
+# work in numpy; pandas already requires it, and it is named here because this
+# code imports it directly rather than through pandas.
+numpy>=2.0.0
+
+# Deep learning. Used by backend/infrastructure/models/pytorch/ for the GRU,
+# LSTM and BiLSTM baselines and by the checkpoint store.
+#
+# INSTALL NOTE: `pip install torch` pulls the default wheel for the platform,
+# which on Linux is the CUDA build (~2.5 GB). This project runs CPU-only, so on a
+# machine without an NVIDIA GPU the CPU wheel is both smaller and correct:
+#
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+#
+# The measured environment here is torch 2.14.0+cpu on Python 3.14, CPU-only.
+torch>=2.2.0
+
+# Metrics. Used ONLY by
+# backend/infrastructure/evaluation/sklearn_metrics_calculator.py, for
+# average_precision_score, roc_auc_score and precision_recall_curve. The
+# confusion matrix and the threshold-dependent metrics are computed in numpy so
+# their degenerate cases are handled explicitly.
+scikit-learn>=1.4.0
+
+# Kaggle SDK - used ONLY by
+# backend/infrastructure/data/downloaders/kaggle_downloader.py,
+# and imported lazily inside the download call. Neither the unit tests nor
+# `python main.py dataset-info` import it, so a missing/unconfigured Kaggle
+# install cannot break metadata operations.
+kaggle>=1.6.14

@@ -1,0 +1,20 @@
+================================================================================
+FedSecureAI Runtime and Hardware Environment Audit
+================================================================================
+Host OS: Microsoft Windows 11 (64-bit)
+Python Version: 3.14.7 (v3.14.7:d399b1a, Feb 12 2026, 16:35:05) [MSC v.1944 64 bit (AMD64)]
+Virtual Environment: C:\Users\Acer\OneDrive\Desktop\Federate_learning\.venv
+PyTorch Version: 2.14.0+cpu
+CUDA Available: False (CPU execution mode)
+Hardware Specs:
+  - Physical CPU Count: 1
+  - Logical CPU Processors: 16
+  - Total Physical System RAM: 16.0 GB (16,869,548,032 bytes)
+Storage Metrics:
+  - System Drive (C:): 328.6 GB Total, 210.3 GB Free
+  - Data Drive (D:): 146.5 GB Total, 92.1 GB Free
+Kaggle API Status:
+  - Authenticated: True (user: iml071)
+  - Dataset: ealtman2019/ibm-transactions-for-anti-money-laundering-aml
+  - Target Remote File: LI-Medium_Trans.csv (2,976,436,978 bytes = 2.976 GB)
+================================================================================

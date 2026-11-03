@@ -1,0 +1,50 @@
+{
+  "experiment_id": "calibration_seed42_20261013T155820",
+  "timestamp": "20261013T155820",
+  "phase": "Phase 10: Probability Calibration",
+  "source_model": {
+    "model": "lstm",
+    "algorithm": "fedavg",
+    "distribution": "iid",
+    "experiment_id": "federated_iid_fedavg_lstm_seed42_20260918T130515",
+    "checkpoint_kind": "global_best",
+    "checkpoint_path": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\models\\checkpoints\\federated\\iid\\fedavg\\lstm\\federated_iid_fedavg_lstm_seed42_20260918T130515\\global_best.pt",
+    "validation_score": 0.3675258299234324,
+    "selection_metric": "pr_auc"
+  },
+  "config": {
+    "seed": 42,
+    "batch_size": 1024,
+    "device": null,
+    "row_limit": null,
+    "n_bins_ece": 15,
+    "ece_strategy": "uniform",
+    "historical_threshold": 0.13,
+    "threshold_policy": "validation_f1",
+    "selection_metric": "log_loss",
+    "methods": [
+      "none",
+      "temperature_scaling",
+      "platt_scaling",
+      "isotonic_regression"
+    ]
+  },
+  "selected_method": "isotonic_regression",
+  "selected_parameters": {
+    "method": "isotonic_regression",
+    "temperature": null,
+    "platt_a": null,
+    "platt_b": null,
+    "isotonic_x_min": 2.4008025434341107e-07,
+    "isotonic_x_max": 0.9901780486106873,
+    "isotonic_thresholds_count": 120
+  },
+  "frozen_threshold": 0.24444444477558136,
+  "timing": {
+    "val_prep_seconds": 3.9872767999768257,
+    "val_eval_seconds": 21.231285099987872,
+    "tuning_seconds": 6.9083094000816345,
+    "test_eval_seconds": 20.718315200065263,
+    "total_seconds": 58.433969100005925
+  }
+}

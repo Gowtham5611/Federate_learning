@@ -1,0 +1,130 @@
+# =============================================================================
+# Python
+# =============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# =============================================================================
+# Virtual environments
+# =============================================================================
+.venv/
+.venv-*/
+venv/
+env/
+
+# =============================================================================
+# Environment / secrets
+# =============================================================================
+.env
+.env.*
+!.env.example
+kaggle.json
+*.pem
+*.key
+
+# =============================================================================
+# Datasets and generated data (never committed)
+# =============================================================================
+data/raw/*
+!data/raw/.gitkeep
+data/interim/*
+!data/interim/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/partitions/*
+!data/partitions/.gitkeep
+data/cache/*
+!data/cache/.gitkeep
+
+# =============================================================================
+# Model artefacts
+# =============================================================================
+models/checkpoints/*
+!models/checkpoints/.gitkeep
+models/artifacts/*
+!models/artifacts/.gitkeep
+
+# =============================================================================
+# Experiment runs and evaluation output
+# (experiments/configs IS tracked - it declares experiments, not results)
+# =============================================================================
+experiments/runs/*
+!experiments/runs/.gitkeep
+experiments/results/*
+!experiments/results/.gitkeep
+evaluation/metrics/*
+!evaluation/metrics/.gitkeep
+evaluation/reports/*
+!evaluation/reports/.gitkeep
+evaluation/visualizations/*
+!evaluation/visualizations/.gitkeep
+
+# =============================================================================
+# Logs and reports
+# =============================================================================
+logs/*
+!logs/.gitkeep
+reports/*
+!reports/.gitkeep
+
+# =============================================================================
+# Data file formats (anywhere in the tree)
+# =============================================================================
+*.csv
+*.tsv
+*.parquet
+*.feather
+*.zip
+*.tar
+*.tar.gz
+*.gz
+*.7z
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.joblib
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.db
+*.sqlite
+*.sqlite3
+
+# Small curated test inputs are the one exception - review before adding.
+!backend/tests/fixtures/**/*.csv
+
+# =============================================================================
+# Tooling caches
+# =============================================================================
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+.ipynb_checkpoints/
+
+# =============================================================================
+# Editors and OS
+# =============================================================================
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =============================================================================
+# Local tool state
+# =============================================================================
+.claude/settings.local.json

@@ -1,0 +1,3350 @@
+{
+  "hi_small_iid_fedavg_gru_seed42": {
+    "HI-Small_test_own": {
+      "optimal_threshold": 0.9600000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 5,
+        "tn": 49919,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 2689,
+        "tn": 47235,
+        "fn": 70
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.9600000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 5,
+        "tn": 49919,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 2689,
+        "tn": 47235,
+        "fn": 70
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.9600000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.9600000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 5,
+        "tn": 49919,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 2689,
+        "tn": 47235,
+        "fn": 70
+      }
+    }
+  },
+  "hi_small_iid_fedprox_mu0.1_gru_seed42": {
+    "HI-Small_test_own": {
+      "optimal_threshold": 0.9,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 65,
+        "tn": 49859,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 16,
+        "fp": 24851,
+        "tn": 25073,
+        "fn": 60
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.9,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 65,
+        "tn": 49859,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 16,
+        "fp": 24851,
+        "tn": 25073,
+        "fn": 60
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.9,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 2,
+        "tn": 49980,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 11580,
+        "tn": 38402,
+        "fn": 13
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.9,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 65,
+        "tn": 49859,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 16,
+        "fp": 24851,
+        "tn": 25073,
+        "fn": 60
+      }
+    }
+  },
+  "hi_small_iid_fedprox_mu1.0_gru_seed42": {
+    "HI-Small_test_own": {
+      "optimal_threshold": 0.86,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 355,
+        "tn": 49569,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 40,
+        "fp": 45759,
+        "tn": 4165,
+        "fn": 36
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.86,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 355,
+        "tn": 49569,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 40,
+        "fp": 45759,
+        "tn": 4165,
+        "fn": 36
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.86,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 23,
+        "tn": 49959,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 30893,
+        "tn": 19089,
+        "fn": 13
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.86,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 355,
+        "tn": 49569,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 40,
+        "fp": 45759,
+        "tn": 4165,
+        "fn": 36
+      }
+    }
+  },
+  "hi_small_non_iid_fedavg_gru_seed42": {
+    "HI-Small_test_own": {
+      "optimal_threshold": 0.9500000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 18,
+        "tn": 49906,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 2749,
+        "tn": 47175,
+        "fn": 70
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.9500000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 18,
+        "tn": 49906,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 2749,
+        "tn": 47175,
+        "fn": 70
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.9500000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.9500000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 18,
+        "tn": 49906,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 2749,
+        "tn": 47175,
+        "fn": 70
+      }
+    }
+  },
+  "hi_small_non_iid_fedprox_mu0.1_gru_seed42": {
+    "HI-Small_test_own": {
+      "optimal_threshold": 0.89,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 141,
+        "tn": 49783,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 16,
+        "fp": 24883,
+        "tn": 25041,
+        "fn": 60
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.89,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 141,
+        "tn": 49783,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 16,
+        "fp": 24883,
+        "tn": 25041,
+        "fn": 60
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.89,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 8,
+        "tn": 49974,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 11610,
+        "tn": 38372,
+        "fn": 13
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.89,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 141,
+        "tn": 49783,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 16,
+        "fp": 24883,
+        "tn": 25041,
+        "fn": 60
+      }
+    }
+  },
+  "hi_small_non_iid_fedprox_mu1.0_gru_seed42": {
+    "HI-Small_test_own": {
+      "optimal_threshold": 0.86,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 364,
+        "tn": 49560,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 40,
+        "fp": 45728,
+        "tn": 4196,
+        "fn": 36
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.86,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 364,
+        "tn": 49560,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 40,
+        "fp": 45728,
+        "tn": 4196,
+        "fn": 36
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.86,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 23,
+        "tn": 49959,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 30826,
+        "tn": 19156,
+        "fn": 13
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.86,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 364,
+        "tn": 49560,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 40,
+        "fp": 45728,
+        "tn": 4196,
+        "fn": 36
+      }
+    }
+  },
+  "hi_small_iid_fedavg_lstm_seed42": {
+    "HI-Small_test_own": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 58,
+        "tn": 49866,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 2,
+        "fp": 335,
+        "tn": 49589,
+        "fn": 74
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 58,
+        "tn": 49866,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 2,
+        "fp": 335,
+        "tn": 49589,
+        "fn": 74
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 58,
+        "tn": 49866,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 2,
+        "fp": 335,
+        "tn": 49589,
+        "fn": 74
+      }
+    }
+  },
+  "hi_small_iid_fedprox_mu0.1_lstm_seed42": {
+    "HI-Small_test_own": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 405,
+        "tn": 49519,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 11,
+        "fp": 16157,
+        "tn": 33767,
+        "fn": 65
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 405,
+        "tn": 49519,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 11,
+        "fp": 16157,
+        "tn": 33767,
+        "fn": 65
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 151,
+        "tn": 49831,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 4,
+        "fp": 8726,
+        "tn": 41256,
+        "fn": 14
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 405,
+        "tn": 49519,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 11,
+        "fp": 16157,
+        "tn": 33767,
+        "fn": 65
+      }
+    }
+  },
+  "hi_small_iid_fedprox_mu1.0_lstm_seed42": {
+    "HI-Small_test_own": {
+      "optimal_threshold": 0.62,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 1461,
+        "tn": 48463,
+        "fn": 74
+      },
+      "confusion_matrix_fixed": {
+        "tp": 24,
+        "fp": 32541,
+        "tn": 17383,
+        "fn": 52
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.62,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 1461,
+        "tn": 48463,
+        "fn": 74
+      },
+      "confusion_matrix_fixed": {
+        "tp": 24,
+        "fp": 32541,
+        "tn": 17383,
+        "fn": 52
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.62,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 489,
+        "tn": 49493,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 19566,
+        "tn": 30416,
+        "fn": 13
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.62,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 1461,
+        "tn": 48463,
+        "fn": 74
+      },
+      "confusion_matrix_fixed": {
+        "tp": 24,
+        "fp": 32541,
+        "tn": 17383,
+        "fn": 52
+      }
+    }
+  },
+  "hi_small_non_iid_fedavg_lstm_seed42": {
+    "HI-Small_test_own": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 55,
+        "tn": 49869,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 2,
+        "fp": 345,
+        "tn": 49579,
+        "fn": 74
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 55,
+        "tn": 49869,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 2,
+        "fp": 345,
+        "tn": 49579,
+        "fn": 74
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 55,
+        "tn": 49869,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 2,
+        "fp": 345,
+        "tn": 49579,
+        "fn": 74
+      }
+    }
+  },
+  "hi_small_non_iid_fedprox_mu0.1_lstm_seed42": {
+    "HI-Small_test_own": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 408,
+        "tn": 49516,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 11,
+        "fp": 16184,
+        "tn": 33740,
+        "fn": 65
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 408,
+        "tn": 49516,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 11,
+        "fp": 16184,
+        "tn": 33740,
+        "fn": 65
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 152,
+        "tn": 49830,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 4,
+        "fp": 8732,
+        "tn": 41250,
+        "fn": 14
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 408,
+        "tn": 49516,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 11,
+        "fp": 16184,
+        "tn": 33740,
+        "fn": 65
+      }
+    }
+  },
+  "hi_small_non_iid_fedprox_mu1.0_lstm_seed42": {
+    "HI-Small_test_own": {
+      "optimal_threshold": 0.62,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 1467,
+        "tn": 48457,
+        "fn": 74
+      },
+      "confusion_matrix_fixed": {
+        "tp": 24,
+        "fp": 32491,
+        "tn": 17433,
+        "fn": 52
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.62,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 1467,
+        "tn": 48457,
+        "fn": 74
+      },
+      "confusion_matrix_fixed": {
+        "tp": 24,
+        "fp": 32491,
+        "tn": 17433,
+        "fn": 52
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.62,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 496,
+        "tn": 49486,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 19547,
+        "tn": 30435,
+        "fn": 13
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.62,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 1467,
+        "tn": 48457,
+        "fn": 74
+      },
+      "confusion_matrix_fixed": {
+        "tp": 24,
+        "fp": 32491,
+        "tn": 17433,
+        "fn": 52
+      }
+    }
+  },
+  "hi_small_iid_fedavg_bilstm_seed42": {
+    "HI-Small_test_own": {
+      "optimal_threshold": 0.6900000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 4,
+        "tn": 49920,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 238,
+        "tn": 49686,
+        "fn": 76
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.6900000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 4,
+        "tn": 49920,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 238,
+        "tn": 49686,
+        "fn": 76
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.6900000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.6900000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 4,
+        "tn": 49920,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 238,
+        "tn": 49686,
+        "fn": 76
+      }
+    }
+  },
+  "hi_small_iid_fedprox_mu0.1_bilstm_seed42": {
+    "HI-Small_test_own": {
+      "optimal_threshold": 0.77,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 357,
+        "tn": 49567,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 28,
+        "fp": 34831,
+        "tn": 15093,
+        "fn": 48
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.77,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 357,
+        "tn": 49567,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 28,
+        "fp": 34831,
+        "tn": 15093,
+        "fn": 48
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.77,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 84,
+        "tn": 49898,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 19508,
+        "tn": 30474,
+        "fn": 13
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.77,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 357,
+        "tn": 49567,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 28,
+        "fp": 34831,
+        "tn": 15093,
+        "fn": 48
+      }
+    }
+  },
+  "hi_small_iid_fedprox_mu1.0_bilstm_seed42": {
+    "HI-Small_test_own": {
+      "optimal_threshold": 0.67,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 693,
+        "tn": 49231,
+        "fn": 74
+      },
+      "confusion_matrix_fixed": {
+        "tp": 41,
+        "fp": 42854,
+        "tn": 7070,
+        "fn": 35
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.67,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 693,
+        "tn": 49231,
+        "fn": 74
+      },
+      "confusion_matrix_fixed": {
+        "tp": 41,
+        "fp": 42854,
+        "tn": 7070,
+        "fn": 35
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.67,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 188,
+        "tn": 49794,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 28647,
+        "tn": 21335,
+        "fn": 12
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.67,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 693,
+        "tn": 49231,
+        "fn": 74
+      },
+      "confusion_matrix_fixed": {
+        "tp": 41,
+        "fp": 42854,
+        "tn": 7070,
+        "fn": 35
+      }
+    }
+  },
+  "hi_small_non_iid_fedavg_bilstm_seed42": {
+    "HI-Small_test_own": {
+      "optimal_threshold": 0.6900000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 5,
+        "tn": 49919,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 227,
+        "tn": 49697,
+        "fn": 76
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.6900000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 5,
+        "tn": 49919,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 227,
+        "tn": 49697,
+        "fn": 76
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.6900000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.6900000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 5,
+        "tn": 49919,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 227,
+        "tn": 49697,
+        "fn": 76
+      }
+    }
+  },
+  "hi_small_non_iid_fedprox_mu0.1_bilstm_seed42": {
+    "HI-Small_test_own": {
+      "optimal_threshold": 0.78,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 233,
+        "tn": 49691,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 28,
+        "fp": 34847,
+        "tn": 15077,
+        "fn": 48
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.78,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 233,
+        "tn": 49691,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 28,
+        "fp": 34847,
+        "tn": 15077,
+        "fn": 48
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.78,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 58,
+        "tn": 49924,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 19552,
+        "tn": 30430,
+        "fn": 13
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.78,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 233,
+        "tn": 49691,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 28,
+        "fp": 34847,
+        "tn": 15077,
+        "fn": 48
+      }
+    }
+  },
+  "hi_small_non_iid_fedprox_mu1.0_bilstm_seed42": {
+    "HI-Small_test_own": {
+      "optimal_threshold": 0.67,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 708,
+        "tn": 49216,
+        "fn": 74
+      },
+      "confusion_matrix_fixed": {
+        "tp": 41,
+        "fp": 42803,
+        "tn": 7121,
+        "fn": 35
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.67,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 708,
+        "tn": 49216,
+        "fn": 74
+      },
+      "confusion_matrix_fixed": {
+        "tp": 41,
+        "fp": 42803,
+        "tn": 7121,
+        "fn": 35
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.67,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 190,
+        "tn": 49792,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 28597,
+        "tn": 21385,
+        "fn": 12
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.67,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 708,
+        "tn": 49216,
+        "fn": 74
+      },
+      "confusion_matrix_fixed": {
+        "tp": 41,
+        "fp": 42803,
+        "tn": 7121,
+        "fn": 35
+      }
+    }
+  },
+  "li_medium_iid_fedavg_gru_seed42": {
+    "LI-Medium_test_own": {
+      "optimal_threshold": 0.08,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 15243,
+        "tn": 34739,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.08,
+      "confusion_matrix_optimal": {
+        "tp": 34,
+        "fp": 31951,
+        "tn": 17973,
+        "fn": 42
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 4072,
+        "tn": 45852,
+        "fn": 70
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.08,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 15243,
+        "tn": 34739,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.08,
+      "confusion_matrix_optimal": {
+        "tp": 34,
+        "fp": 31951,
+        "tn": 17973,
+        "fn": 42
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 4072,
+        "tn": 45852,
+        "fn": 70
+      }
+    }
+  },
+  "li_medium_iid_fedprox_mu0.1_gru_seed42": {
+    "LI-Medium_test_own": {
+      "optimal_threshold": 0.64,
+      "confusion_matrix_optimal": {
+        "tp": 4,
+        "fp": 5341,
+        "tn": 44641,
+        "fn": 14
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 18534,
+        "tn": 31448,
+        "fn": 13
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.64,
+      "confusion_matrix_optimal": {
+        "tp": 9,
+        "fp": 11548,
+        "tn": 38376,
+        "fn": 67
+      },
+      "confusion_matrix_fixed": {
+        "tp": 24,
+        "fp": 34961,
+        "tn": 14963,
+        "fn": 52
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.64,
+      "confusion_matrix_optimal": {
+        "tp": 4,
+        "fp": 5341,
+        "tn": 44641,
+        "fn": 14
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 18534,
+        "tn": 31448,
+        "fn": 13
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.64,
+      "confusion_matrix_optimal": {
+        "tp": 9,
+        "fp": 11548,
+        "tn": 38376,
+        "fn": 67
+      },
+      "confusion_matrix_fixed": {
+        "tp": 24,
+        "fp": 34961,
+        "tn": 14963,
+        "fn": 52
+      }
+    }
+  },
+  "li_medium_iid_fedprox_mu1.0_gru_seed42": {
+    "LI-Medium_test_own": {
+      "optimal_threshold": 0.72,
+      "confusion_matrix_optimal": {
+        "tp": 5,
+        "fp": 4438,
+        "tn": 45544,
+        "fn": 13
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 36578,
+        "tn": 13404,
+        "fn": 12
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.72,
+      "confusion_matrix_optimal": {
+        "tp": 9,
+        "fp": 7184,
+        "tn": 42740,
+        "fn": 67
+      },
+      "confusion_matrix_fixed": {
+        "tp": 49,
+        "fp": 47302,
+        "tn": 2622,
+        "fn": 27
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.72,
+      "confusion_matrix_optimal": {
+        "tp": 5,
+        "fp": 4438,
+        "tn": 45544,
+        "fn": 13
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 36578,
+        "tn": 13404,
+        "fn": 12
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.72,
+      "confusion_matrix_optimal": {
+        "tp": 9,
+        "fp": 7184,
+        "tn": 42740,
+        "fn": 67
+      },
+      "confusion_matrix_fixed": {
+        "tp": 49,
+        "fp": 47302,
+        "tn": 2622,
+        "fn": 27
+      }
+    }
+  },
+  "li_medium_non_iid_fedavg_gru_seed42": {
+    "LI-Medium_test_own": {
+      "optimal_threshold": 0.08,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 15217,
+        "tn": 34765,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.08,
+      "confusion_matrix_optimal": {
+        "tp": 34,
+        "fp": 32114,
+        "tn": 17810,
+        "fn": 42
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 4144,
+        "tn": 45780,
+        "fn": 70
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.08,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 15217,
+        "tn": 34765,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.08,
+      "confusion_matrix_optimal": {
+        "tp": 34,
+        "fp": 32114,
+        "tn": 17810,
+        "fn": 42
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 4144,
+        "tn": 45780,
+        "fn": 70
+      }
+    }
+  },
+  "li_medium_non_iid_fedprox_mu0.1_gru_seed42": {
+    "LI-Medium_test_own": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 3,
+        "fp": 4507,
+        "tn": 45475,
+        "fn": 15
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 18404,
+        "tn": 31578,
+        "fn": 13
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 8,
+        "fp": 9082,
+        "tn": 40842,
+        "fn": 68
+      },
+      "confusion_matrix_fixed": {
+        "tp": 24,
+        "fp": 34726,
+        "tn": 15198,
+        "fn": 52
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 3,
+        "fp": 4507,
+        "tn": 45475,
+        "fn": 15
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 18404,
+        "tn": 31578,
+        "fn": 13
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 8,
+        "fp": 9082,
+        "tn": 40842,
+        "fn": 68
+      },
+      "confusion_matrix_fixed": {
+        "tp": 24,
+        "fp": 34726,
+        "tn": 15198,
+        "fn": 52
+      }
+    }
+  },
+  "li_medium_non_iid_fedprox_mu1.0_gru_seed42": {
+    "LI-Medium_test_own": {
+      "optimal_threshold": 0.72,
+      "confusion_matrix_optimal": {
+        "tp": 5,
+        "fp": 4428,
+        "tn": 45554,
+        "fn": 13
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 36570,
+        "tn": 13412,
+        "fn": 12
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.72,
+      "confusion_matrix_optimal": {
+        "tp": 9,
+        "fp": 7164,
+        "tn": 42760,
+        "fn": 67
+      },
+      "confusion_matrix_fixed": {
+        "tp": 49,
+        "fp": 47304,
+        "tn": 2620,
+        "fn": 27
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.72,
+      "confusion_matrix_optimal": {
+        "tp": 5,
+        "fp": 4428,
+        "tn": 45554,
+        "fn": 13
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 36570,
+        "tn": 13412,
+        "fn": 12
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.72,
+      "confusion_matrix_optimal": {
+        "tp": 9,
+        "fp": 7164,
+        "tn": 42760,
+        "fn": 67
+      },
+      "confusion_matrix_fixed": {
+        "tp": 49,
+        "fp": 47304,
+        "tn": 2620,
+        "fn": 27
+      }
+    }
+  },
+  "li_medium_iid_fedavg_lstm_seed42": {
+    "LI-Medium_test_own": {
+      "optimal_threshold": 0.15000000000000002,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 14587,
+        "tn": 35395,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.15000000000000002,
+      "confusion_matrix_optimal": {
+        "tp": 30,
+        "fp": 24936,
+        "tn": 24988,
+        "fn": 46
+      },
+      "confusion_matrix_fixed": {
+        "tp": 2,
+        "fp": 480,
+        "tn": 49444,
+        "fn": 74
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.15000000000000002,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 14587,
+        "tn": 35395,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.15000000000000002,
+      "confusion_matrix_optimal": {
+        "tp": 30,
+        "fp": 24936,
+        "tn": 24988,
+        "fn": 46
+      },
+      "confusion_matrix_fixed": {
+        "tp": 2,
+        "fp": 480,
+        "tn": 49444,
+        "fn": 74
+      }
+    }
+  },
+  "li_medium_iid_fedprox_mu0.1_lstm_seed42": {
+    "LI-Medium_test_own": {
+      "optimal_threshold": 0.5700000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 3652,
+        "tn": 46330,
+        "fn": 17
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 13202,
+        "tn": 36780,
+        "fn": 13
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.5700000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 6,
+        "fp": 6883,
+        "tn": 43041,
+        "fn": 70
+      },
+      "confusion_matrix_fixed": {
+        "tp": 17,
+        "fp": 22313,
+        "tn": 27611,
+        "fn": 59
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.5700000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 3652,
+        "tn": 46330,
+        "fn": 17
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 13202,
+        "tn": 36780,
+        "fn": 13
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.5700000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 6,
+        "fp": 6883,
+        "tn": 43041,
+        "fn": 70
+      },
+      "confusion_matrix_fixed": {
+        "tp": 17,
+        "fp": 22313,
+        "tn": 27611,
+        "fn": 59
+      }
+    }
+  },
+  "li_medium_iid_fedprox_mu1.0_lstm_seed42": {
+    "LI-Medium_test_own": {
+      "optimal_threshold": 0.59,
+      "confusion_matrix_optimal": {
+        "tp": 3,
+        "fp": 3698,
+        "tn": 46284,
+        "fn": 15
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 26731,
+        "tn": 23251,
+        "fn": 12
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.59,
+      "confusion_matrix_optimal": {
+        "tp": 6,
+        "fp": 6365,
+        "tn": 43559,
+        "fn": 70
+      },
+      "confusion_matrix_fixed": {
+        "tp": 32,
+        "fp": 40331,
+        "tn": 9593,
+        "fn": 44
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.59,
+      "confusion_matrix_optimal": {
+        "tp": 3,
+        "fp": 3698,
+        "tn": 46284,
+        "fn": 15
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 26731,
+        "tn": 23251,
+        "fn": 12
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.59,
+      "confusion_matrix_optimal": {
+        "tp": 6,
+        "fp": 6365,
+        "tn": 43559,
+        "fn": 70
+      },
+      "confusion_matrix_fixed": {
+        "tp": 32,
+        "fp": 40331,
+        "tn": 9593,
+        "fn": 44
+      }
+    }
+  },
+  "li_medium_non_iid_fedavg_lstm_seed42": {
+    "LI-Medium_test_own": {
+      "optimal_threshold": 0.14,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 16010,
+        "tn": 33972,
+        "fn": 17
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.14,
+      "confusion_matrix_optimal": {
+        "tp": 32,
+        "fp": 25373,
+        "tn": 24551,
+        "fn": 44
+      },
+      "confusion_matrix_fixed": {
+        "tp": 2,
+        "fp": 467,
+        "tn": 49457,
+        "fn": 74
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.14,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 16010,
+        "tn": 33972,
+        "fn": 17
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.14,
+      "confusion_matrix_optimal": {
+        "tp": 32,
+        "fp": 25373,
+        "tn": 24551,
+        "fn": 44
+      },
+      "confusion_matrix_fixed": {
+        "tp": 2,
+        "fp": 467,
+        "tn": 49457,
+        "fn": 74
+      }
+    }
+  },
+  "li_medium_non_iid_fedprox_mu0.1_lstm_seed42": {
+    "LI-Medium_test_own": {
+      "optimal_threshold": 0.5700000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 3644,
+        "tn": 46338,
+        "fn": 17
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 13171,
+        "tn": 36811,
+        "fn": 13
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.5700000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 6,
+        "fp": 6867,
+        "tn": 43057,
+        "fn": 70
+      },
+      "confusion_matrix_fixed": {
+        "tp": 17,
+        "fp": 22268,
+        "tn": 27656,
+        "fn": 59
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.5700000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 3644,
+        "tn": 46338,
+        "fn": 17
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 13171,
+        "tn": 36811,
+        "fn": 13
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.5700000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 6,
+        "fp": 6867,
+        "tn": 43057,
+        "fn": 70
+      },
+      "confusion_matrix_fixed": {
+        "tp": 17,
+        "fp": 22268,
+        "tn": 27656,
+        "fn": 59
+      }
+    }
+  },
+  "li_medium_non_iid_fedprox_mu1.0_lstm_seed42": {
+    "LI-Medium_test_own": {
+      "optimal_threshold": 0.59,
+      "confusion_matrix_optimal": {
+        "tp": 3,
+        "fp": 3664,
+        "tn": 46318,
+        "fn": 15
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 26688,
+        "tn": 23294,
+        "fn": 12
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.59,
+      "confusion_matrix_optimal": {
+        "tp": 6,
+        "fp": 6340,
+        "tn": 43584,
+        "fn": 70
+      },
+      "confusion_matrix_fixed": {
+        "tp": 32,
+        "fp": 40319,
+        "tn": 9605,
+        "fn": 44
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.59,
+      "confusion_matrix_optimal": {
+        "tp": 3,
+        "fp": 3664,
+        "tn": 46318,
+        "fn": 15
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 26688,
+        "tn": 23294,
+        "fn": 12
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.59,
+      "confusion_matrix_optimal": {
+        "tp": 6,
+        "fp": 6340,
+        "tn": 43584,
+        "fn": 70
+      },
+      "confusion_matrix_fixed": {
+        "tp": 32,
+        "fp": 40319,
+        "tn": 9605,
+        "fn": 44
+      }
+    }
+  },
+  "li_medium_iid_fedavg_bilstm_seed42": {
+    "LI-Medium_test_own": {
+      "optimal_threshold": 0.08,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 16269,
+        "tn": 33713,
+        "fn": 17
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.08,
+      "confusion_matrix_optimal": {
+        "tp": 32,
+        "fp": 29228,
+        "tn": 20696,
+        "fn": 44
+      },
+      "confusion_matrix_fixed": {
+        "tp": 2,
+        "fp": 416,
+        "tn": 49508,
+        "fn": 74
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.08,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 16269,
+        "tn": 33713,
+        "fn": 17
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.08,
+      "confusion_matrix_optimal": {
+        "tp": 32,
+        "fp": 29228,
+        "tn": 20696,
+        "fn": 44
+      },
+      "confusion_matrix_fixed": {
+        "tp": 2,
+        "fp": 416,
+        "tn": 49508,
+        "fn": 74
+      }
+    }
+  },
+  "li_medium_iid_fedprox_mu0.1_bilstm_seed42": {
+    "LI-Medium_test_own": {
+      "optimal_threshold": 0.68,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 2878,
+        "tn": 47104,
+        "fn": 16
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 24893,
+        "tn": 25089,
+        "fn": 12
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.68,
+      "confusion_matrix_optimal": {
+        "tp": 7,
+        "fp": 5933,
+        "tn": 43991,
+        "fn": 69
+      },
+      "confusion_matrix_fixed": {
+        "tp": 40,
+        "fp": 40198,
+        "tn": 9726,
+        "fn": 36
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.68,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 2878,
+        "tn": 47104,
+        "fn": 16
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 24893,
+        "tn": 25089,
+        "fn": 12
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.68,
+      "confusion_matrix_optimal": {
+        "tp": 7,
+        "fp": 5933,
+        "tn": 43991,
+        "fn": 69
+      },
+      "confusion_matrix_fixed": {
+        "tp": 40,
+        "fp": 40198,
+        "tn": 9726,
+        "fn": 36
+      }
+    }
+  },
+  "li_medium_iid_fedprox_mu1.0_bilstm_seed42": {
+    "LI-Medium_test_own": {
+      "optimal_threshold": 0.64,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 2527,
+        "tn": 47455,
+        "fn": 17
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 35257,
+        "tn": 14725,
+        "fn": 12
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.64,
+      "confusion_matrix_optimal": {
+        "tp": 8,
+        "fp": 5686,
+        "tn": 44238,
+        "fn": 68
+      },
+      "confusion_matrix_fixed": {
+        "tp": 48,
+        "fp": 45693,
+        "tn": 4231,
+        "fn": 28
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.64,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 2527,
+        "tn": 47455,
+        "fn": 17
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 35257,
+        "tn": 14725,
+        "fn": 12
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.64,
+      "confusion_matrix_optimal": {
+        "tp": 8,
+        "fp": 5686,
+        "tn": 44238,
+        "fn": 68
+      },
+      "confusion_matrix_fixed": {
+        "tp": 48,
+        "fp": 45693,
+        "tn": 4231,
+        "fn": 28
+      }
+    }
+  },
+  "li_medium_non_iid_fedavg_bilstm_seed42": {
+    "LI-Medium_test_own": {
+      "optimal_threshold": 0.08,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 16057,
+        "tn": 33925,
+        "fn": 17
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.08,
+      "confusion_matrix_optimal": {
+        "tp": 32,
+        "fp": 27894,
+        "tn": 22030,
+        "fn": 44
+      },
+      "confusion_matrix_fixed": {
+        "tp": 1,
+        "fp": 315,
+        "tn": 49609,
+        "fn": 75
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.08,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 16057,
+        "tn": 33925,
+        "fn": 17
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.08,
+      "confusion_matrix_optimal": {
+        "tp": 32,
+        "fp": 27894,
+        "tn": 22030,
+        "fn": 44
+      },
+      "confusion_matrix_fixed": {
+        "tp": 1,
+        "fp": 315,
+        "tn": 49609,
+        "fn": 75
+      }
+    }
+  },
+  "li_medium_non_iid_fedprox_mu0.1_bilstm_seed42": {
+    "LI-Medium_test_own": {
+      "optimal_threshold": 0.68,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 2901,
+        "tn": 47081,
+        "fn": 16
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 24937,
+        "tn": 25045,
+        "fn": 12
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.68,
+      "confusion_matrix_optimal": {
+        "tp": 7,
+        "fp": 5993,
+        "tn": 43931,
+        "fn": 69
+      },
+      "confusion_matrix_fixed": {
+        "tp": 40,
+        "fp": 40211,
+        "tn": 9713,
+        "fn": 36
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.68,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 2901,
+        "tn": 47081,
+        "fn": 16
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 24937,
+        "tn": 25045,
+        "fn": 12
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.68,
+      "confusion_matrix_optimal": {
+        "tp": 7,
+        "fp": 5993,
+        "tn": 43931,
+        "fn": 69
+      },
+      "confusion_matrix_fixed": {
+        "tp": 40,
+        "fp": 40211,
+        "tn": 9713,
+        "fn": 36
+      }
+    }
+  },
+  "li_medium_non_iid_fedprox_mu1.0_bilstm_seed42": {
+    "LI-Medium_test_own": {
+      "optimal_threshold": 0.64,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 2542,
+        "tn": 47440,
+        "fn": 17
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 35213,
+        "tn": 14769,
+        "fn": 12
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.64,
+      "confusion_matrix_optimal": {
+        "tp": 8,
+        "fp": 5704,
+        "tn": 44220,
+        "fn": 68
+      },
+      "confusion_matrix_fixed": {
+        "tp": 48,
+        "fp": 45664,
+        "tn": 4260,
+        "fn": 28
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.64,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 2542,
+        "tn": 47440,
+        "fn": 17
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 35213,
+        "tn": 14769,
+        "fn": 12
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.64,
+      "confusion_matrix_optimal": {
+        "tp": 8,
+        "fp": 5704,
+        "tn": 44220,
+        "fn": 68
+      },
+      "confusion_matrix_fixed": {
+        "tp": 48,
+        "fp": 45664,
+        "tn": 4260,
+        "fn": 28
+      }
+    }
+  },
+  "combined_iid_fedavg_gru_seed42": {
+    "Combined_test_own": {
+      "optimal_threshold": 0.9600000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 4,
+        "tn": 49920,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 4012,
+        "tn": 45912,
+        "fn": 70
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.9600000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 4,
+        "tn": 49920,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 4012,
+        "tn": 45912,
+        "fn": 70
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.9600000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.9600000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 4,
+        "tn": 49920,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 4012,
+        "tn": 45912,
+        "fn": 70
+      }
+    }
+  },
+  "combined_iid_fedprox_mu0.1_gru_seed42": {
+    "Combined_test_own": {
+      "optimal_threshold": 0.91,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 206,
+        "tn": 49718,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 23,
+        "fp": 35032,
+        "tn": 14892,
+        "fn": 53
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.91,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 206,
+        "tn": 49718,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 23,
+        "fp": 35032,
+        "tn": 14892,
+        "fn": 53
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.91,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 17,
+        "tn": 49965,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 18408,
+        "tn": 31574,
+        "fn": 13
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.91,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 206,
+        "tn": 49718,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 23,
+        "fp": 35032,
+        "tn": 14892,
+        "fn": 53
+      }
+    }
+  },
+  "combined_iid_fedprox_mu1.0_gru_seed42": {
+    "Combined_test_own": {
+      "optimal_threshold": 0.87,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 625,
+        "tn": 49299,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 50,
+        "fp": 47331,
+        "tn": 2593,
+        "fn": 26
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.87,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 625,
+        "tn": 49299,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 50,
+        "fp": 47331,
+        "tn": 2593,
+        "fn": 26
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.87,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 63,
+        "tn": 49919,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 36371,
+        "tn": 13611,
+        "fn": 13
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.87,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 625,
+        "tn": 49299,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 50,
+        "fp": 47331,
+        "tn": 2593,
+        "fn": 26
+      }
+    }
+  },
+  "combined_non_iid_fedavg_gru_seed42": {
+    "Combined_test_own": {
+      "optimal_threshold": 0.9500000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 12,
+        "tn": 49912,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 4286,
+        "tn": 45638,
+        "fn": 70
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.9500000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 12,
+        "tn": 49912,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 4286,
+        "tn": 45638,
+        "fn": 70
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.9500000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.9500000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 12,
+        "tn": 49912,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 4286,
+        "tn": 45638,
+        "fn": 70
+      }
+    }
+  },
+  "combined_non_iid_fedprox_mu0.1_gru_seed42": {
+    "Combined_test_own": {
+      "optimal_threshold": 0.91,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 202,
+        "tn": 49722,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 23,
+        "fp": 35000,
+        "tn": 14924,
+        "fn": 53
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.91,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 202,
+        "tn": 49722,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 23,
+        "fp": 35000,
+        "tn": 14924,
+        "fn": 53
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.91,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 16,
+        "tn": 49966,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 18411,
+        "tn": 31571,
+        "fn": 13
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.91,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 202,
+        "tn": 49722,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 23,
+        "fp": 35000,
+        "tn": 14924,
+        "fn": 53
+      }
+    }
+  },
+  "combined_non_iid_fedprox_mu1.0_gru_seed42": {
+    "Combined_test_own": {
+      "optimal_threshold": 0.87,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 624,
+        "tn": 49300,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 50,
+        "fp": 47331,
+        "tn": 2593,
+        "fn": 26
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.87,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 624,
+        "tn": 49300,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 50,
+        "fp": 47331,
+        "tn": 2593,
+        "fn": 26
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.87,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 62,
+        "tn": 49920,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 36361,
+        "tn": 13621,
+        "fn": 13
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.87,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 624,
+        "tn": 49300,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 50,
+        "fp": 47331,
+        "tn": 2593,
+        "fn": 26
+      }
+    }
+  },
+  "combined_iid_fedavg_lstm_seed42": {
+    "Combined_test_own": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 60,
+        "tn": 49864,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 2,
+        "fp": 422,
+        "tn": 49502,
+        "fn": 74
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 60,
+        "tn": 49864,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 2,
+        "fp": 422,
+        "tn": 49502,
+        "fn": 74
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 60,
+        "tn": 49864,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 2,
+        "fp": 422,
+        "tn": 49502,
+        "fn": 74
+      }
+    }
+  },
+  "combined_iid_fedprox_mu0.1_lstm_seed42": {
+    "Combined_test_own": {
+      "optimal_threshold": 0.67,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 452,
+        "tn": 49472,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 16,
+        "fp": 21894,
+        "tn": 28030,
+        "fn": 60
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.67,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 452,
+        "tn": 49472,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 16,
+        "fp": 21894,
+        "tn": 28030,
+        "fn": 60
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.67,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 201,
+        "tn": 49781,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 12780,
+        "tn": 37202,
+        "fn": 13
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.67,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 452,
+        "tn": 49472,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 16,
+        "fp": 21894,
+        "tn": 28030,
+        "fn": 60
+      }
+    }
+  },
+  "combined_iid_fedprox_mu1.0_lstm_seed42": {
+    "Combined_test_own": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 646,
+        "tn": 49278,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 31,
+        "fp": 39906,
+        "tn": 10018,
+        "fn": 45
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 646,
+        "tn": 49278,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 31,
+        "fp": 39906,
+        "tn": 10018,
+        "fn": 45
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 234,
+        "tn": 49748,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 26195,
+        "tn": 23787,
+        "fn": 12
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 646,
+        "tn": 49278,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 31,
+        "fp": 39906,
+        "tn": 10018,
+        "fn": 45
+      }
+    }
+  },
+  "combined_non_iid_fedavg_lstm_seed42": {
+    "Combined_test_own": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 60,
+        "tn": 49864,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 2,
+        "fp": 468,
+        "tn": 49456,
+        "fn": 74
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 60,
+        "tn": 49864,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 2,
+        "fp": 468,
+        "tn": 49456,
+        "fn": 74
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 60,
+        "tn": 49864,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 2,
+        "fp": 468,
+        "tn": 49456,
+        "fn": 74
+      }
+    }
+  },
+  "combined_non_iid_fedprox_mu0.1_lstm_seed42": {
+    "Combined_test_own": {
+      "optimal_threshold": 0.67,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 458,
+        "tn": 49466,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 16,
+        "fp": 21898,
+        "tn": 28026,
+        "fn": 60
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.67,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 458,
+        "tn": 49466,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 16,
+        "fp": 21898,
+        "tn": 28026,
+        "fn": 60
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.67,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 204,
+        "tn": 49778,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 5,
+        "fp": 12810,
+        "tn": 37172,
+        "fn": 13
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.67,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 458,
+        "tn": 49466,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 16,
+        "fp": 21898,
+        "tn": 28026,
+        "fn": 60
+      }
+    }
+  },
+  "combined_non_iid_fedprox_mu1.0_lstm_seed42": {
+    "Combined_test_own": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 657,
+        "tn": 49267,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 31,
+        "fp": 39849,
+        "tn": 10075,
+        "fn": 45
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 657,
+        "tn": 49267,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 31,
+        "fp": 39849,
+        "tn": 10075,
+        "fn": 45
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 237,
+        "tn": 49745,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 26190,
+        "tn": 23792,
+        "fn": 12
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.66,
+      "confusion_matrix_optimal": {
+        "tp": 1,
+        "fp": 657,
+        "tn": 49267,
+        "fn": 75
+      },
+      "confusion_matrix_fixed": {
+        "tp": 31,
+        "fp": 39849,
+        "tn": 10075,
+        "fn": 45
+      }
+    }
+  },
+  "combined_iid_fedavg_bilstm_seed42": {
+    "Combined_test_own": {
+      "optimal_threshold": 0.7100000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 5,
+        "tn": 49919,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 1,
+        "fp": 327,
+        "tn": 49597,
+        "fn": 75
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.7100000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 5,
+        "tn": 49919,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 1,
+        "fp": 327,
+        "tn": 49597,
+        "fn": 75
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.7100000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.7100000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 5,
+        "tn": 49919,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 1,
+        "fp": 327,
+        "tn": 49597,
+        "fn": 75
+      }
+    }
+  },
+  "combined_iid_fedprox_mu0.1_bilstm_seed42": {
+    "Combined_test_own": {
+      "optimal_threshold": 0.78,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 438,
+        "tn": 49486,
+        "fn": 74
+      },
+      "confusion_matrix_fixed": {
+        "tp": 38,
+        "fp": 40185,
+        "tn": 9739,
+        "fn": 38
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.78,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 438,
+        "tn": 49486,
+        "fn": 74
+      },
+      "confusion_matrix_fixed": {
+        "tp": 38,
+        "fp": 40185,
+        "tn": 9739,
+        "fn": 38
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.78,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 142,
+        "tn": 49840,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 24656,
+        "tn": 25326,
+        "fn": 12
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.78,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 438,
+        "tn": 49486,
+        "fn": 74
+      },
+      "confusion_matrix_fixed": {
+        "tp": 38,
+        "fp": 40185,
+        "tn": 9739,
+        "fn": 38
+      }
+    }
+  },
+  "combined_iid_fedprox_mu1.0_bilstm_seed42": {
+    "Combined_test_own": {
+      "optimal_threshold": 0.68,
+      "confusion_matrix_optimal": {
+        "tp": 3,
+        "fp": 1363,
+        "tn": 48561,
+        "fn": 73
+      },
+      "confusion_matrix_fixed": {
+        "tp": 47,
+        "fp": 45683,
+        "tn": 4241,
+        "fn": 29
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.68,
+      "confusion_matrix_optimal": {
+        "tp": 3,
+        "fp": 1363,
+        "tn": 48561,
+        "fn": 73
+      },
+      "confusion_matrix_fixed": {
+        "tp": 47,
+        "fp": 45683,
+        "tn": 4241,
+        "fn": 29
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.68,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 450,
+        "tn": 49532,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 34859,
+        "tn": 15123,
+        "fn": 12
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.68,
+      "confusion_matrix_optimal": {
+        "tp": 3,
+        "fp": 1363,
+        "tn": 48561,
+        "fn": 73
+      },
+      "confusion_matrix_fixed": {
+        "tp": 47,
+        "fp": 45683,
+        "tn": 4241,
+        "fn": 29
+      }
+    }
+  },
+  "combined_non_iid_fedavg_bilstm_seed42": {
+    "Combined_test_own": {
+      "optimal_threshold": 0.7100000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 5,
+        "tn": 49919,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 1,
+        "fp": 345,
+        "tn": 49579,
+        "fn": 75
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.7100000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 5,
+        "tn": 49919,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 1,
+        "fp": 345,
+        "tn": 49579,
+        "fn": 75
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.7100000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 49982,
+        "fn": 18
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.7100000000000001,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 5,
+        "tn": 49919,
+        "fn": 76
+      },
+      "confusion_matrix_fixed": {
+        "tp": 1,
+        "fp": 345,
+        "tn": 49579,
+        "fn": 75
+      }
+    }
+  },
+  "combined_non_iid_fedprox_mu0.1_bilstm_seed42": {
+    "Combined_test_own": {
+      "optimal_threshold": 0.78,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 433,
+        "tn": 49491,
+        "fn": 74
+      },
+      "confusion_matrix_fixed": {
+        "tp": 38,
+        "fp": 40131,
+        "tn": 9793,
+        "fn": 38
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.78,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 433,
+        "tn": 49491,
+        "fn": 74
+      },
+      "confusion_matrix_fixed": {
+        "tp": 38,
+        "fp": 40131,
+        "tn": 9793,
+        "fn": 38
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.78,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 141,
+        "tn": 49841,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 24573,
+        "tn": 25409,
+        "fn": 12
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.78,
+      "confusion_matrix_optimal": {
+        "tp": 2,
+        "fp": 433,
+        "tn": 49491,
+        "fn": 74
+      },
+      "confusion_matrix_fixed": {
+        "tp": 38,
+        "fp": 40131,
+        "tn": 9793,
+        "fn": 38
+      }
+    }
+  },
+  "combined_non_iid_fedprox_mu1.0_bilstm_seed42": {
+    "Combined_test_own": {
+      "optimal_threshold": 0.68,
+      "confusion_matrix_optimal": {
+        "tp": 3,
+        "fp": 1329,
+        "tn": 48595,
+        "fn": 73
+      },
+      "confusion_matrix_fixed": {
+        "tp": 47,
+        "fp": 45666,
+        "tn": 4258,
+        "fn": 29
+      }
+    },
+    "HI-Small_test": {
+      "optimal_threshold": 0.68,
+      "confusion_matrix_optimal": {
+        "tp": 3,
+        "fp": 1329,
+        "tn": 48595,
+        "fn": 73
+      },
+      "confusion_matrix_fixed": {
+        "tp": 47,
+        "fp": 45666,
+        "tn": 4258,
+        "fn": 29
+      }
+    },
+    "LI-Medium_test": {
+      "optimal_threshold": 0.68,
+      "confusion_matrix_optimal": {
+        "tp": 0,
+        "fp": 430,
+        "tn": 49552,
+        "fn": 18
+      },
+      "confusion_matrix_fixed": {
+        "tp": 6,
+        "fp": 34770,
+        "tn": 15212,
+        "fn": 12
+      }
+    },
+    "Combined_test": {
+      "optimal_threshold": 0.68,
+      "confusion_matrix_optimal": {
+        "tp": 3,
+        "fp": 1329,
+        "tn": 48595,
+        "fn": 73
+      },
+      "confusion_matrix_fixed": {
+        "tp": 47,
+        "fp": 45666,
+        "tn": 4258,
+        "fn": 29
+      }
+    }
+  }
+}

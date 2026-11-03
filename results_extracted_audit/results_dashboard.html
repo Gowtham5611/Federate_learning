@@ -1,0 +1,3133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FedSecureAI — Results & Forensic Audit Dashboard</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-hover: #0284c7;
+      --success: #4ade80;
+      --warning: #facc15;
+      --danger: #f87171;
+      --accent: #a855f7;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+      line-height: 1.5;
+    }
+    header {
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    h1 { font-size: 24px; font-weight: 700; color: var(--primary); }
+    .subtitle { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+    .badges { display: flex; gap: 8px; }
+    .badge {
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-success { background: rgba(74, 222, 128, 0.15); color: var(--success); border: 1px solid var(--success); }
+    .badge-warning { background: rgba(250, 204, 21, 0.15); color: var(--warning); border: 1px solid var(--warning); }
+    .badge-primary { background: rgba(56, 189, 248, 0.15); color: var(--primary); border: 1px solid var(--primary); }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .stat-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+    .stat-value { font-size: 22px; font-weight: 700; margin-top: 6px; color: var(--text); }
+    .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+    
+    .tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      padding: 8px 16px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+    
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .card-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--primary); display: flex; justify-content: space-between; align-items: center; }
+    
+    .table-container {
+      overflow-x: auto;
+      max-height: 520px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+    th, td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: #111827;
+      color: var(--text-muted);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    tr:hover td { background: rgba(255, 255, 255, 0.02); }
+    
+    .search-bar {
+      margin-bottom: 16px;
+      display: flex;
+      gap: 12px;
+    }
+    .search-input {
+      padding: 8px 12px;
+      background: #111827;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 14px;
+      width: 300px;
+    }
+    .search-input:focus { outline: none; border-color: var(--primary); }
+    
+    .highlight-best { color: var(--success); font-weight: 700; }
+    .tag {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .tag-fedavg { background: rgba(56, 189, 248, 0.2); color: var(--primary); }
+    .tag-fedprox { background: rgba(168, 85, 247, 0.2); color: var(--accent); }
+    .tag-iid { background: rgba(74, 222, 128, 0.2); color: var(--success); }
+    .tag-non-iid { background: rgba(250, 204, 21, 0.2); color: var(--warning); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1>FedSecureAI — Results & Forensic Audit Dashboard</h1>
+      <div class="subtitle">Complete Cross-Colab Extraction, Verification & Reconciled Metrics Repository</div>
+    </div>
+    <div class="badges">
+      <span class="badge badge-success">HI-Small: PASS</span>
+      <span class="badge badge-success">LI-Medium: PASS</span>
+      <span class="badge badge-warning">Overall: PASS WITH WARNINGS</span>
+    </div>
+  </header>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total Experiment Runs</div>
+      <div class="stat-value">25</div>
+      <div class="stat-sub">24 Full-scale + Historical Runs</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">HI-Small Champion (LSTM FedAvg)</div>
+      <div class="stat-value highlight-best">0.9555 / 0.4760</div>
+      <div class="stat-sub">ROC-AUC / PR-AUC (Precision: 90.18%)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">LI-Medium IID Champion (GRU)</div>
+      <div class="stat-value highlight-best">0.9697 / 0.2536</div>
+      <div class="stat-sub">ROC-AUC / PR-AUC (Alerts/10k: 2.07)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">LI-Medium Non-IID Champion (LSTM)</div>
+      <div class="stat-value highlight-best">0.9236 / 0.0458</div>
+      <div class="stat-sub">ROC-AUC / PR-AUC (Alerts/10k: 4.33)</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('tab-comparison')">Side-by-Side Comparison</button>
+    <button class="tab-btn" onclick="switchTab('tab-all')">All Experiment Runs (25)</button>
+    <button class="tab-btn" onclick="switchTab('tab-coverage')">Configuration Coverage (12/12)</button>
+    <button class="tab-btn" onclick="switchTab('tab-discrepancies')">Discrepancy Audit</button>
+    <button class="tab-btn" onclick="switchTab('tab-calibration')">Calibration Benchmark</button>
+    <button class="tab-btn" onclick="switchTab('tab-rounds')">Round-Level Convergence</button>
+  </div>
+
+  <!-- TAB 1: SIDE BY SIDE COMPARISON -->
+  <div id="tab-comparison" class="tab-content active">
+    <div class="card">
+      <div class="card-title">HI-Small vs. LI-Medium Full-Scale Parallel Configuration Comparison</div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Dist</th>
+              <th>Arch</th>
+              <th>Algorithm</th>
+              <th>HI-Small ROC</th>
+              <th>HI-Small PR</th>
+              <th>HI-Small F1</th>
+              <th>HI Alerts/10k</th>
+              <th>LI Config</th>
+              <th>LI-Medium ROC</th>
+              <th>LI-Medium PR</th>
+              <th>LI-Medium F1</th>
+              <th>LI Alerts/10k</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="tag tag-iid">IID</span></td>
+              <td><strong>GRU</strong></td>
+              <td><span class="tag tag-fedavg">FedAvg</span></td>
+              <td class="highlight-best">0.954757</td>
+              <td class="highlight-best">0.394998</td>
+              <td>0.340113</td>
+              <td>27.82</td>
+              <td><code>config_1</code></td>
+              <td class="highlight-best">0.969705</td>
+              <td class="highlight-best">0.253598</td>
+              <td>0.316847</td>
+              <td>2.07</td>
+            </tr>
+            <tr>
+              <td><span class="tag tag-iid">IID</span></td>
+              <td><strong>GRU</strong></td>
+              <td><span class="tag tag-fedprox">FedProx (mu=1e-4)</span></td>
+              <td class="highlight-best">0.935743</td>
+              <td class="highlight-best">0.249625</td>
+              <td>0.258109</td>
+              <td>24.80</td>
+              <td><code>config_2</code></td>
+              <td class="highlight-best">0.952056</td>
+              <td class="highlight-best">0.088746</td>
+              <td>0.141802</td>
+              <td>3.04</td>
+            </tr>
+            <tr>
+              <td><span class="tag tag-iid">IID</span></td>
+              <td><strong>LSTM</strong></td>
+              <td><span class="tag tag-fedavg">FedAvg</span></td>
+              <td class="highlight-best">0.955481</td>
+              <td class="highlight-best">0.475977</td>
+              <td>0.480196</td>
+              <td>6.42</td>
+              <td><code>config_3</code></td>
+              <td class="highlight-best">0.968630</td>
+              <td class="highlight-best">0.245072</td>
+              <td>0.303776</td>
+              <td>3.19</td>
+            </tr>
+            <tr>
+              <td><span class="tag tag-iid">IID</span></td>
+              <td><strong>LSTM</strong></td>
+              <td><span class="tag tag-fedprox">FedProx (mu=1e-4)</span></td>
+              <td class="highlight-best">0.910570</td>
+              <td class="highlight-best">0.282432</td>
+              <td>0.307903</td>
+              <td>3.86</td>
+              <td><code>config_4</code></td>
+              <td class="highlight-best">0.949487</td>
+              <td class="highlight-best">0.089483</td>
+              <td>0.128870</td>
+              <td>1.60</td>
+            </tr>
+            <tr>
+              <td><span class="tag tag-iid">IID</span></td>
+              <td><strong>BILSTM</strong></td>
+              <td><span class="tag tag-fedavg">FedAvg</span></td>
+              <td class="highlight-best">0.940446</td>
+              <td class="highlight-best">0.407818</td>
+              <td>0.443798</td>
+              <td>12.79</td>
+              <td><code>config_5</code></td>
+              <td class="highlight-best">0.969517</td>
+              <td class="highlight-best">0.253398</td>
+              <td>0.316789</td>
+              <td>2.20</td>
+            </tr>
+            <tr>
+              <td><span class="tag tag-iid">IID</span></td>
+              <td><strong>BILSTM</strong></td>
+              <td><span class="tag tag-fedprox">FedProx (mu=1e-4)</span></td>
+              <td class="highlight-best">0.904582</td>
+              <td class="highlight-best">0.297752</td>
+              <td>0.304833</td>
+              <td>19.39</td>
+              <td><code>config_6</code></td>
+              <td class="highlight-best">0.951358</td>
+              <td class="highlight-best">0.087103</td>
+              <td>0.136290</td>
+              <td>1.81</td>
+            </tr>
+            <tr>
+              <td><span class="tag tag-non-iid">NON-IID</span></td>
+              <td><strong>GRU</strong></td>
+              <td><span class="tag tag-fedavg">FedAvg</span></td>
+              <td class="highlight-best">0.950844</td>
+              <td class="highlight-best">0.344372</td>
+              <td>0.387665</td>
+              <td>6.89</td>
+              <td><code>config_7</code></td>
+              <td class="highlight-best">0.872551</td>
+              <td class="highlight-best">0.007560</td>
+              <td>0.023596</td>
+              <td>55.25</td>
+            </tr>
+            <tr>
+              <td><span class="tag tag-non-iid">NON-IID</span></td>
+              <td><strong>GRU</strong></td>
+              <td><span class="tag tag-fedprox">FedProx (mu=1e-4)</span></td>
+              <td class="highlight-best">0.930447</td>
+              <td class="highlight-best">0.227585</td>
+              <td>0.263647</td>
+              <td>6.66</td>
+              <td><code>config_8</code></td>
+              <td class="highlight-best">0.837306</td>
+              <td class="highlight-best">0.005106</td>
+              <td>0.019314</td>
+              <td>54.93</td>
+            </tr>
+            <tr>
+              <td><span class="tag tag-non-iid">NON-IID</span></td>
+              <td><strong>LSTM</strong></td>
+              <td><span class="tag tag-fedavg">FedAvg</span></td>
+              <td class="highlight-best">0.951587</td>
+              <td class="highlight-best">0.450499</td>
+              <td>0.502924</td>
+              <td>7.56</td>
+              <td><code>config_9</code></td>
+              <td class="highlight-best">0.923644</td>
+              <td class="highlight-best">0.045785</td>
+              <td>0.075216</td>
+              <td>4.33</td>
+            </tr>
+            <tr>
+              <td><span class="tag tag-non-iid">NON-IID</span></td>
+              <td><strong>LSTM</strong></td>
+              <td><span class="tag tag-fedprox">FedProx (mu=1e-4)</span></td>
+              <td class="highlight-best">0.907933</td>
+              <td class="highlight-best">0.279249</td>
+              <td>0.349603</td>
+              <td>8.33</td>
+              <td><code>config_10</code></td>
+              <td class="highlight-best">0.854946</td>
+              <td class="highlight-best">0.005388</td>
+              <td>0.019023</td>
+              <td>39.03</td>
+            </tr>
+            <tr>
+              <td><span class="tag tag-non-iid">NON-IID</span></td>
+              <td><strong>BILSTM</strong></td>
+              <td><span class="tag tag-fedavg">FedAvg</span></td>
+              <td class="highlight-best">0.933841</td>
+              <td class="highlight-best">0.390451</td>
+              <td>0.452344</td>
+              <td>7.51</td>
+              <td><code>config_11</code></td>
+              <td class="highlight-best">0.895235</td>
+              <td class="highlight-best">0.023957</td>
+              <td>0.065089</td>
+              <td>4.22</td>
+            </tr>
+            <tr>
+              <td><span class="tag tag-non-iid">NON-IID</span></td>
+              <td><strong>BILSTM</strong></td>
+              <td><span class="tag tag-fedprox">FedProx (mu=1e-4)</span></td>
+              <td class="highlight-best">0.898636</td>
+              <td class="highlight-best">0.281627</td>
+              <td>0.348397</td>
+              <td>7.80</td>
+              <td><code>config_12</code></td>
+              <td class="highlight-best">0.870974</td>
+              <td class="highlight-best">0.007985</td>
+              <td>0.022091</td>
+              <td>29.88</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: ALL EXPERIMENT RUNS -->
+  <div id="tab-all" class="tab-content">
+    <div class="card">
+      <div class="card-title">All Cataloged Experiment Runs (HI-Small, LI-Medium Full, and Historical Runs)</div>
+      <div class="search-bar">
+        <input type="text" id="allSearch" class="search-input" placeholder="Search by model, algorithm, dataset..." onkeyup="filterTable('allTable', this.value)">
+      </div>
+      <div class="table-container">
+        <table id="allTable">
+          <thead>
+            <tr>
+              <th>Dataset</th>
+              <th>Run Tier</th>
+              <th>Config</th>
+              <th>Arch</th>
+              <th>Dist</th>
+              <th>Algo</th>
+              <th>ROC-AUC</th>
+              <th>PR-AUC</th>
+              <th>F1</th>
+              <th>Prec</th>
+              <th>Rec</th>
+              <th>Alerts/10k</th>
+              <th>Threshold</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (5.08M rows)</span></td>
+              <td><code>config_1</code></td>
+              <td>GRU</td>
+              <td>IID</td>
+              <td>FedAvg</td>
+              <td class="highlight-best">0.954757</td>
+              <td class="highlight-best">0.394998</td>
+              <td>0.340113</td>
+              <td>0.2782</td>
+              <td>0.4374</td>
+              <td>27.82</td>
+              <td>0.5000</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (5.08M rows)</span></td>
+              <td><code>config_2</code></td>
+              <td>GRU</td>
+              <td>IID</td>
+              <td>FedProx</td>
+              <td class="highlight-best">0.935743</td>
+              <td class="highlight-best">0.249625</td>
+              <td>0.258109</td>
+              <td>0.2211</td>
+              <td>0.3100</td>
+              <td>24.80</td>
+              <td>0.5000</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (5.08M rows)</span></td>
+              <td><code>config_3</code></td>
+              <td>LSTM</td>
+              <td>IID</td>
+              <td>FedAvg</td>
+              <td class="highlight-best">0.955481</td>
+              <td class="highlight-best">0.475977</td>
+              <td>0.480196</td>
+              <td>0.9018</td>
+              <td>0.3272</td>
+              <td>6.42</td>
+              <td>0.5000</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (5.08M rows)</span></td>
+              <td><code>config_4</code></td>
+              <td>LSTM</td>
+              <td>IID</td>
+              <td>FedProx</td>
+              <td class="highlight-best">0.910570</td>
+              <td class="highlight-best">0.282432</td>
+              <td>0.307903</td>
+              <td>0.8597</td>
+              <td>0.1875</td>
+              <td>3.86</td>
+              <td>0.5000</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (5.08M rows)</span></td>
+              <td><code>config_5</code></td>
+              <td>BILSTM</td>
+              <td>IID</td>
+              <td>FedAvg</td>
+              <td class="highlight-best">0.940446</td>
+              <td class="highlight-best">0.407818</td>
+              <td>0.443798</td>
+              <td>0.5289</td>
+              <td>0.3823</td>
+              <td>12.79</td>
+              <td>0.5000</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (5.08M rows)</span></td>
+              <td><code>config_6</code></td>
+              <td>BILSTM</td>
+              <td>IID</td>
+              <td>FedProx</td>
+              <td class="highlight-best">0.904582</td>
+              <td class="highlight-best">0.297752</td>
+              <td>0.304833</td>
+              <td>0.2915</td>
+              <td>0.3194</td>
+              <td>19.39</td>
+              <td>0.5000</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (5.08M rows)</span></td>
+              <td><code>config_7</code></td>
+              <td>GRU</td>
+              <td>Non-IID</td>
+              <td>FedAvg</td>
+              <td class="highlight-best">0.950844</td>
+              <td class="highlight-best">0.344372</td>
+              <td>0.387665</td>
+              <td>0.6914</td>
+              <td>0.2693</td>
+              <td>6.89</td>
+              <td>0.7000</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (5.08M rows)</span></td>
+              <td><code>config_8</code></td>
+              <td>GRU</td>
+              <td>Non-IID</td>
+              <td>FedProx</td>
+              <td class="highlight-best">0.930447</td>
+              <td class="highlight-best">0.227585</td>
+              <td>0.263647</td>
+              <td>0.4822</td>
+              <td>0.1814</td>
+              <td>6.66</td>
+              <td>0.6900</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (5.08M rows)</span></td>
+              <td><code>config_9</code></td>
+              <td>LSTM</td>
+              <td>Non-IID</td>
+              <td>FedAvg</td>
+              <td class="highlight-best">0.951587</td>
+              <td class="highlight-best">0.450499</td>
+              <td>0.502924</td>
+              <td>0.8398</td>
+              <td>0.3589</td>
+              <td>7.56</td>
+              <td>0.3700</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (5.08M rows)</span></td>
+              <td><code>config_10</code></td>
+              <td>LSTM</td>
+              <td>Non-IID</td>
+              <td>FedProx</td>
+              <td class="highlight-best">0.907933</td>
+              <td class="highlight-best">0.279249</td>
+              <td>0.349603</td>
+              <td>0.5461</td>
+              <td>0.2571</td>
+              <td>8.33</td>
+              <td>0.3600</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (5.08M rows)</span></td>
+              <td><code>config_11</code></td>
+              <td>BILSTM</td>
+              <td>Non-IID</td>
+              <td>FedAvg</td>
+              <td class="highlight-best">0.933841</td>
+              <td class="highlight-best">0.390451</td>
+              <td>0.452344</td>
+              <td>0.7588</td>
+              <td>0.3222</td>
+              <td>7.51</td>
+              <td>0.6200</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (5.08M rows)</span></td>
+              <td><code>config_12</code></td>
+              <td>BILSTM</td>
+              <td>Non-IID</td>
+              <td>FedProx</td>
+              <td class="highlight-best">0.898636</td>
+              <td class="highlight-best">0.281627</td>
+              <td>0.348397</td>
+              <td>0.5694</td>
+              <td>0.2510</td>
+              <td>7.80</td>
+              <td>0.5800</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (31.25M rows)</span></td>
+              <td><code>config_1</code></td>
+              <td>GRU</td>
+              <td>IID</td>
+              <td>FedAvg</td>
+              <td class="highlight-best">0.969705</td>
+              <td class="highlight-best">0.253598</td>
+              <td>0.316847</td>
+              <td>0.6223</td>
+              <td>0.2125</td>
+              <td>2.07</td>
+              <td>0.2362</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (31.25M rows)</span></td>
+              <td><code>config_2</code></td>
+              <td>GRU</td>
+              <td>IID</td>
+              <td>FedProx</td>
+              <td class="highlight-best">0.952056</td>
+              <td class="highlight-best">0.088746</td>
+              <td>0.141802</td>
+              <td>0.2120</td>
+              <td>0.1065</td>
+              <td>3.04</td>
+              <td>0.0816</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (31.25M rows)</span></td>
+              <td><code>config_3</code></td>
+              <td>LSTM</td>
+              <td>IID</td>
+              <td>FedAvg</td>
+              <td class="highlight-best">0.968630</td>
+              <td class="highlight-best">0.245072</td>
+              <td>0.303776</td>
+              <td>0.4405</td>
+              <td>0.2318</td>
+              <td>3.19</td>
+              <td>0.1526</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (31.25M rows)</span></td>
+              <td><code>config_4</code></td>
+              <td>LSTM</td>
+              <td>IID</td>
+              <td>FedProx</td>
+              <td class="highlight-best">0.949487</td>
+              <td class="highlight-best">0.089483</td>
+              <td>0.128870</td>
+              <td>0.3089</td>
+              <td>0.0814</td>
+              <td>1.60</td>
+              <td>0.0899</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (31.25M rows)</span></td>
+              <td><code>config_5</code></td>
+              <td>BiLSTM</td>
+              <td>IID</td>
+              <td>FedAvg</td>
+              <td class="highlight-best">0.969517</td>
+              <td class="highlight-best">0.253398</td>
+              <td>0.316789</td>
+              <td>0.5942</td>
+              <td>0.2160</td>
+              <td>2.20</td>
+              <td>0.2385</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (31.25M rows)</span></td>
+              <td><code>config_6</code></td>
+              <td>BiLSTM</td>
+              <td>IID</td>
+              <td>FedProx</td>
+              <td class="highlight-best">0.951358</td>
+              <td class="highlight-best">0.087103</td>
+              <td>0.136290</td>
+              <td>0.2957</td>
+              <td>0.0886</td>
+              <td>1.81</td>
+              <td>0.0852</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (31.25M rows)</span></td>
+              <td><code>config_7</code></td>
+              <td>GRU</td>
+              <td>Non-IID</td>
+              <td>FedAvg</td>
+              <td class="highlight-best">0.872551</td>
+              <td class="highlight-best">0.007560</td>
+              <td>0.023596</td>
+              <td>0.0131</td>
+              <td>0.1195</td>
+              <td>55.25</td>
+              <td>0.7284</td>
+              <td><span class="badge badge-success">RUNNING</span></td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (31.25M rows)</span></td>
+              <td><code>config_7</code></td>
+              <td>GRU</td>
+              <td>Non-IID</td>
+              <td>FedAvg</td>
+              <td class="highlight-best">0.872551</td>
+              <td class="highlight-best">0.007560</td>
+              <td>0.023596</td>
+              <td>0.0131</td>
+              <td>0.1195</td>
+              <td>55.25</td>
+              <td>0.7284</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (31.25M rows)</span></td>
+              <td><code>config_8</code></td>
+              <td>GRU</td>
+              <td>Non-IID</td>
+              <td>FedProx</td>
+              <td class="highlight-best">0.837306</td>
+              <td class="highlight-best">0.005106</td>
+              <td>0.019314</td>
+              <td>0.0107</td>
+              <td>0.0973</td>
+              <td>54.93</td>
+              <td>0.6172</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (31.25M rows)</span></td>
+              <td><code>config_9</code></td>
+              <td>LSTM</td>
+              <td>Non-IID</td>
+              <td>FedAvg</td>
+              <td class="highlight-best">0.923644</td>
+              <td class="highlight-best">0.045785</td>
+              <td>0.075216</td>
+              <td>0.0902</td>
+              <td>0.0645</td>
+              <td>4.33</td>
+              <td>0.3343</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (31.25M rows)</span></td>
+              <td><code>config_10</code></td>
+              <td>LSTM</td>
+              <td>Non-IID</td>
+              <td>FedProx</td>
+              <td class="highlight-best">0.854946</td>
+              <td class="highlight-best">0.005388</td>
+              <td>0.019023</td>
+              <td>0.0110</td>
+              <td>0.0708</td>
+              <td>39.03</td>
+              <td>0.4773</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (31.25M rows)</span></td>
+              <td><code>config_11</code></td>
+              <td>BiLSTM</td>
+              <td>Non-IID</td>
+              <td>FedAvg</td>
+              <td class="highlight-best">0.895235</td>
+              <td class="highlight-best">0.023957</td>
+              <td>0.065089</td>
+              <td>0.0792</td>
+              <td>0.0552</td>
+              <td>4.22</td>
+              <td>0.7033</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><span style="font-size:11px; color:var(--text-muted);">Full (31.25M rows)</span></td>
+              <td><code>config_12</code></td>
+              <td>BiLSTM</td>
+              <td>Non-IID</td>
+              <td>FedProx</td>
+              <td class="highlight-best">0.870974</td>
+              <td class="highlight-best">0.007985</td>
+              <td>0.022091</td>
+              <td>0.0133</td>
+              <td>0.0656</td>
+              <td>29.88</td>
+              <td>0.5940</td>
+              <td><span class="badge badge-success">COMPLETED</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: COVERAGE -->
+  <div id="tab-coverage" class="tab-content">
+    <div class="card">
+      <div class="card-title">12-Configuration Matrix Coverage Verification</div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Dataset</th>
+              <th>Config #</th>
+              <th>Architecture</th>
+              <th>Distribution</th>
+              <th>Algorithm</th>
+              <th>Status</th>
+              <th>Rounds</th>
+              <th>Checkpoint</th>
+              <th>Prediction</th>
+              <th>Recalculated</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td>Config 1</td>
+              <td>GRU</td>
+              <td>IID</td>
+              <td>FedAvg</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 3.05M train rows, tested on 1.015M test rows. Both Non-IID and IID completed.</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td>Config 1</td>
+              <td>GRU</td>
+              <td>IID</td>
+              <td>FedAvg</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 18.75M train rows in Colab (Tesla T4). Tested on full 6.25M test rows.</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td>Config 2</td>
+              <td>GRU</td>
+              <td>IID</td>
+              <td>FedProx</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 3.05M train rows, tested on 1.015M test rows. Both Non-IID and IID completed.</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td>Config 2</td>
+              <td>GRU</td>
+              <td>IID</td>
+              <td>FedProx</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 18.75M train rows in Colab (Tesla T4). Tested on full 6.25M test rows.</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td>Config 3</td>
+              <td>LSTM</td>
+              <td>IID</td>
+              <td>FedAvg</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 3.05M train rows, tested on 1.015M test rows. Both Non-IID and IID completed.</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td>Config 3</td>
+              <td>LSTM</td>
+              <td>IID</td>
+              <td>FedAvg</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 18.75M train rows in Colab (Tesla T4). Tested on full 6.25M test rows.</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td>Config 4</td>
+              <td>LSTM</td>
+              <td>IID</td>
+              <td>FedProx</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 3.05M train rows, tested on 1.015M test rows. Both Non-IID and IID completed.</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td>Config 4</td>
+              <td>LSTM</td>
+              <td>IID</td>
+              <td>FedProx</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 18.75M train rows in Colab (Tesla T4). Tested on full 6.25M test rows.</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td>Config 5</td>
+              <td>BiLSTM</td>
+              <td>IID</td>
+              <td>FedAvg</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 3.05M train rows, tested on 1.015M test rows. Both Non-IID and IID completed.</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td>Config 5</td>
+              <td>BiLSTM</td>
+              <td>IID</td>
+              <td>FedAvg</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 18.75M train rows in Colab (Tesla T4). Tested on full 6.25M test rows.</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td>Config 6</td>
+              <td>BiLSTM</td>
+              <td>IID</td>
+              <td>FedProx</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 3.05M train rows, tested on 1.015M test rows. Both Non-IID and IID completed.</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td>Config 6</td>
+              <td>BiLSTM</td>
+              <td>IID</td>
+              <td>FedProx</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 18.75M train rows in Colab (Tesla T4). Tested on full 6.25M test rows.</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td>Config 7</td>
+              <td>GRU</td>
+              <td>Non-IID</td>
+              <td>FedAvg</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 3.05M train rows, tested on 1.015M test rows. Both Non-IID and IID completed.</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td>Config 7</td>
+              <td>GRU</td>
+              <td>Non-IID</td>
+              <td>FedAvg</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 18.75M train rows in Colab (Tesla T4). Tested on full 6.25M test rows.</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td>Config 8</td>
+              <td>GRU</td>
+              <td>Non-IID</td>
+              <td>FedProx</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 3.05M train rows, tested on 1.015M test rows. Both Non-IID and IID completed.</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td>Config 8</td>
+              <td>GRU</td>
+              <td>Non-IID</td>
+              <td>FedProx</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 18.75M train rows in Colab (Tesla T4). Tested on full 6.25M test rows.</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td>Config 9</td>
+              <td>LSTM</td>
+              <td>Non-IID</td>
+              <td>FedAvg</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 3.05M train rows, tested on 1.015M test rows. Both Non-IID and IID completed.</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td>Config 9</td>
+              <td>LSTM</td>
+              <td>Non-IID</td>
+              <td>FedAvg</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 18.75M train rows in Colab (Tesla T4). Tested on full 6.25M test rows.</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td>Config 10</td>
+              <td>LSTM</td>
+              <td>Non-IID</td>
+              <td>FedProx</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 3.05M train rows, tested on 1.015M test rows. Both Non-IID and IID completed.</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td>Config 10</td>
+              <td>LSTM</td>
+              <td>Non-IID</td>
+              <td>FedProx</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 18.75M train rows in Colab (Tesla T4). Tested on full 6.25M test rows.</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td>Config 11</td>
+              <td>BiLSTM</td>
+              <td>Non-IID</td>
+              <td>FedAvg</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 3.05M train rows, tested on 1.015M test rows. Both Non-IID and IID completed.</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td>Config 11</td>
+              <td>BiLSTM</td>
+              <td>Non-IID</td>
+              <td>FedAvg</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 18.75M train rows in Colab (Tesla T4). Tested on full 6.25M test rows.</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td>Config 12</td>
+              <td>BiLSTM</td>
+              <td>Non-IID</td>
+              <td>FedProx</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 3.05M train rows, tested on 1.015M test rows. Both Non-IID and IID completed.</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td>Config 12</td>
+              <td>BiLSTM</td>
+              <td>Non-IID</td>
+              <td>FedProx</td>
+              <td><span class="badge badge-success">COMPLETE</span></td>
+              <td>5/5</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td>✓ Yes</td>
+              <td style="font-size:12px; color:var(--text-muted);">Trained on full 18.75M train rows in Colab (Tesla T4). Tested on full 6.25M test rows.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: DISCREPANCIES -->
+  <div id="tab-discrepancies" class="tab-content">
+    <div class="card">
+      <div class="card-title">Discrepancy Audit & Resolution Log</div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Category</th>
+              <th>Dataset</th>
+              <th>Description</th>
+              <th>Resolution Status</th>
+              <th>Audit Evidence & Conclusion</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>DISC-001</code></td>
+              <td>Historical Data Scope</td>
+              <td><strong>LI-Medium</strong></td>
+              <td>Historical preliminary run in 'colab work and results/artifacts/li_medium_subset_comparison' used a 200,000-row subset due to standard RAM limits (~12.7GB).</td>
+              <td><span class="badge badge-warning">SUPERSEDED</span></td>
+              <td style="font-size:12px;">The full 31.25M-row campaign (18.75M train, 6.25M test) completed successfully in Google Colab using memory-mapped arrays and is verified in 'Colab Results/'.<br><span style="color:var(--primary); font-size:11px;">Path: Colab Results/artifacts/li_medium_experiment & FedSecureAI_LI_Medium_configs_7_12</span></td>
+            </tr>
+            <tr>
+              <td><code>DISC-002</code></td>
+              <td>Manifest State Disparity</td>
+              <td><strong>HI-Small</strong></td>
+              <td>Local workspace manifest 'artifacts/fedavg_fedprox_full_comparison/resume_manifest.json' lists HI-Small IID models as PENDING (stopped due to local overheating).</td>
+              <td><span class="badge badge-warning">RESOLVED BY COLAB BACKUP</span></td>
+              <td style="font-size:12px;">Google Colab completed all 6 IID models on Tesla T4 GPU. All 84 checkpoints and 12 prediction arrays are intact and 100% verified.<br><span style="color:var(--primary); font-size:11px;">Path: colab work and results/artifacts/fedavg_fedprox_full_comparison/resume_manifest.json</span></td>
+            </tr>
+            <tr>
+              <td><code>DISC-003</code></td>
+              <td>Runner Log Metadata</td>
+              <td><strong>LI-Medium</strong></td>
+              <td>In 'Colab Results/FedSecureAI_LI_Medium_configs_7_12/logs/', log output stated 'Evaluating on Test split (~7.26M rows)' due to a reused print string from the Combined pipeline.</td>
+              <td><span class="badge badge-warning">VERIFIED HARMLESS</span></td>
+              <td style="font-size:12px;">Prediction arrays contain exactly 6,249,112 rows with 3,783 positives, confirming execution occurred strictly on the full LI-Medium test split.<br><span style="color:var(--primary); font-size:11px;">Path: Colab Results/FedSecureAI_LI_Medium_configs_7_12/predictions/config_*/test_predictions.npz</span></td>
+            </tr>
+            <tr>
+              <td><code>DISC-004</code></td>
+              <td>Extreme Imbalance PR-AUC Drop</td>
+              <td><strong>LI-Medium (Non-IID)</strong></td>
+              <td>Test PR-AUC for Non-IID models on LI-Medium drops to 0.005–0.045 compared to 0.22–0.45 on HI-Small.</td>
+              <td><span class="badge badge-warning">SCIENTIFICALLY VALIDATED</span></td>
+              <td style="font-size:12px;">Caused by 2.92x lower base laundering prevalence (0.0605% vs 0.1769%) and severe client non-IID bank partitioning. ROC-AUC remains high (0.84–0.92).<br><span style="color:var(--primary); font-size:11px;">Path: results/comparison/comparison_methodology.md</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 5: CALIBRATION -->
+  <div id="tab-calibration" class="tab-content">
+    <div class="card">
+      <div class="card-title">Probability Calibration Benchmark (HI-Small Held-out Test Split: 1,015,564 transactions)</div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Split</th>
+              <th>Type</th>
+              <th>Brier Score</th>
+              <th>Log Loss</th>
+              <th>ECE</th>
+              <th>MCE</th>
+              <th>ROC-AUC</th>
+              <th>PR-AUC</th>
+              <th>Precision</th>
+              <th>Recall</th>
+              <th>F1</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>none</strong></td>
+              <td>test</td>
+              <td>uncalibrated_baseline</td>
+              <td class="highlight-best">0.001092</td>
+              <td>0.005720</td>
+              <td class="highlight-best">0.000494</td>
+              <td>0.273260</td>
+              <td>0.976867</td>
+              <td>0.543749</td>
+              <td>0.7189</td>
+              <td>0.4752</td>
+              <td>0.5722</td>
+            </tr>
+            <tr>
+              <td><strong>isotonic_regression</strong></td>
+              <td>test</td>
+              <td>calibrated_model</td>
+              <td class="highlight-best">0.001075</td>
+              <td>0.005734</td>
+              <td class="highlight-best">0.000217</td>
+              <td>0.155454</td>
+              <td>0.976639</td>
+              <td>0.525941</td>
+              <td>0.7189</td>
+              <td>0.4752</td>
+              <td>0.5722</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 6: ROUND CONVERGENCE -->
+  <div id="tab-rounds" class="tab-content">
+    <div class="card">
+      <div class="card-title">Round-by-Round Federated Convergence Tracking</div>
+      <div class="search-bar">
+        <input type="text" id="roundSearch" class="search-input" placeholder="Search by config or dataset..." onkeyup="filterTable('roundTable', this.value)">
+      </div>
+      <div class="table-container">
+        <table id="roundTable">
+          <thead>
+            <tr>
+              <th>Dataset</th>
+              <th>Config</th>
+              <th>Round</th>
+              <th>Val Loss</th>
+              <th>Val PR-AUC</th>
+              <th>Val ROC-AUC</th>
+              <th>Duration (s)</th>
+              <th>Best Round</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_1</code></td>
+              <td>Round 1.0</td>
+              <td>0.004277</td>
+              <td class="highlight-best">0.029497</td>
+              <td class="highlight-best">0.951520</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_1</code></td>
+              <td>Round 2.0</td>
+              <td>0.003533</td>
+              <td class="highlight-best">0.135467</td>
+              <td class="highlight-best">0.968450</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_1</code></td>
+              <td>Round 3.0</td>
+              <td>0.003412</td>
+              <td class="highlight-best">0.160982</td>
+              <td class="highlight-best">0.970219</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_1</code></td>
+              <td>Round 4.0</td>
+              <td>0.003388</td>
+              <td class="highlight-best">0.170334</td>
+              <td class="highlight-best">0.970497</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_1</code></td>
+              <td>Round 5.0</td>
+              <td>0.003345</td>
+              <td class="highlight-best">0.175689</td>
+              <td class="highlight-best">0.971683</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_2</code></td>
+              <td>Round 1.0</td>
+              <td>0.004624</td>
+              <td class="highlight-best">0.010059</td>
+              <td class="highlight-best">0.918642</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_2</code></td>
+              <td>Round 2.0</td>
+              <td>0.004167</td>
+              <td class="highlight-best">0.018953</td>
+              <td class="highlight-best">0.944127</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_2</code></td>
+              <td>Round 3.0</td>
+              <td>0.003996</td>
+              <td class="highlight-best">0.030380</td>
+              <td class="highlight-best">0.953157</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_2</code></td>
+              <td>Round 4.0</td>
+              <td>0.003872</td>
+              <td class="highlight-best">0.049225</td>
+              <td class="highlight-best">0.958025</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_2</code></td>
+              <td>Round 5.0</td>
+              <td>0.003777</td>
+              <td class="highlight-best">0.069473</td>
+              <td class="highlight-best">0.961081</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_3</code></td>
+              <td>Round 1.0</td>
+              <td>0.004186</td>
+              <td class="highlight-best">0.017740</td>
+              <td class="highlight-best">0.947659</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_3</code></td>
+              <td>Round 2.0</td>
+              <td>0.003631</td>
+              <td class="highlight-best">0.112771</td>
+              <td class="highlight-best">0.965602</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_3</code></td>
+              <td>Round 3.0</td>
+              <td>0.003562</td>
+              <td class="highlight-best">0.141575</td>
+              <td class="highlight-best">0.965774</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_3</code></td>
+              <td>Round 4.0</td>
+              <td>0.003435</td>
+              <td class="highlight-best">0.156837</td>
+              <td class="highlight-best">0.969383</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_3</code></td>
+              <td>Round 5.0</td>
+              <td>0.003394</td>
+              <td class="highlight-best">0.165848</td>
+              <td class="highlight-best">0.969888</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_4</code></td>
+              <td>Round 1.0</td>
+              <td>0.004900</td>
+              <td class="highlight-best">0.007842</td>
+              <td class="highlight-best">0.900404</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_4</code></td>
+              <td>Round 2.0</td>
+              <td>0.004214</td>
+              <td class="highlight-best">0.017295</td>
+              <td class="highlight-best">0.938753</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_4</code></td>
+              <td>Round 3.0</td>
+              <td>0.004027</td>
+              <td class="highlight-best">0.025136</td>
+              <td class="highlight-best">0.950485</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_4</code></td>
+              <td>Round 4.0</td>
+              <td>0.003907</td>
+              <td class="highlight-best">0.039123</td>
+              <td class="highlight-best">0.955841</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_4</code></td>
+              <td>Round 5.0</td>
+              <td>0.003812</td>
+              <td class="highlight-best">0.061376</td>
+              <td class="highlight-best">0.958878</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_5</code></td>
+              <td>Round 1.0</td>
+              <td>0.003999</td>
+              <td class="highlight-best">0.058023</td>
+              <td class="highlight-best">0.954413</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_5</code></td>
+              <td>Round 2.0</td>
+              <td>0.003540</td>
+              <td class="highlight-best">0.139136</td>
+              <td class="highlight-best">0.966107</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_5</code></td>
+              <td>Round 3.0</td>
+              <td>0.003475</td>
+              <td class="highlight-best">0.158213</td>
+              <td class="highlight-best">0.967934</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_5</code></td>
+              <td>Round 4.0</td>
+              <td>0.003396</td>
+              <td class="highlight-best">0.168944</td>
+              <td class="highlight-best">0.969687</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_5</code></td>
+              <td>Round 5.0</td>
+              <td>0.003346</td>
+              <td class="highlight-best">0.176900</td>
+              <td class="highlight-best">0.970897</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_6</code></td>
+              <td>Round 1.0</td>
+              <td>0.004881</td>
+              <td class="highlight-best">0.008287</td>
+              <td class="highlight-best">0.904699</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_6</code></td>
+              <td>Round 2.0</td>
+              <td>0.004223</td>
+              <td class="highlight-best">0.018468</td>
+              <td class="highlight-best">0.939456</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_6</code></td>
+              <td>Round 3.0</td>
+              <td>0.004030</td>
+              <td class="highlight-best">0.028340</td>
+              <td class="highlight-best">0.950908</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_6</code></td>
+              <td>Round 4.0</td>
+              <td>0.003912</td>
+              <td class="highlight-best">0.041948</td>
+              <td class="highlight-best">0.956052</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_6</code></td>
+              <td>Round 5.0</td>
+              <td>0.003823</td>
+              <td class="highlight-best">0.060209</td>
+              <td class="highlight-best">0.958948</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_7</code></td>
+              <td>Round 1.0</td>
+              <td>0.163984</td>
+              <td class="highlight-best">0.001696</td>
+              <td class="highlight-best">0.783778</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_7</code></td>
+              <td>Round 2.0</td>
+              <td>0.039257</td>
+              <td class="highlight-best">0.008655</td>
+              <td class="highlight-best">0.862057</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_7</code></td>
+              <td>Round 3.0</td>
+              <td>0.040749</td>
+              <td class="highlight-best">0.009590</td>
+              <td class="highlight-best">0.888520</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_7</code></td>
+              <td>Round 4.0</td>
+              <td>0.040481</td>
+              <td class="highlight-best">0.010851</td>
+              <td class="highlight-best">0.902287</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_7</code></td>
+              <td>Round 5.0</td>
+              <td>0.041507</td>
+              <td class="highlight-best">0.013654</td>
+              <td class="highlight-best">0.909385</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_8</code></td>
+              <td>Round 1.0</td>
+              <td>0.052931</td>
+              <td class="highlight-best">0.002274</td>
+              <td class="highlight-best">0.779108</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_8</code></td>
+              <td>Round 2.0</td>
+              <td>0.031779</td>
+              <td class="highlight-best">0.008008</td>
+              <td class="highlight-best">0.848591</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_8</code></td>
+              <td>Round 3.0</td>
+              <td>0.029689</td>
+              <td class="highlight-best">0.010156</td>
+              <td class="highlight-best">0.870201</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_8</code></td>
+              <td>Round 4.0</td>
+              <td>0.029450</td>
+              <td class="highlight-best">0.010803</td>
+              <td class="highlight-best">0.879658</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_8</code></td>
+              <td>Round 5.0</td>
+              <td>0.030137</td>
+              <td class="highlight-best">0.011214</td>
+              <td class="highlight-best">0.887780</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_9</code></td>
+              <td>Round 1.0</td>
+              <td>0.117694</td>
+              <td class="highlight-best">0.001505</td>
+              <td class="highlight-best">0.753153</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_9</code></td>
+              <td>Round 2.0</td>
+              <td>0.018423</td>
+              <td class="highlight-best">0.006162</td>
+              <td class="highlight-best">0.871235</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_9</code></td>
+              <td>Round 3.0</td>
+              <td>0.010744</td>
+              <td class="highlight-best">0.009167</td>
+              <td class="highlight-best">0.909224</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_9</code></td>
+              <td>Round 4.0</td>
+              <td>0.007335</td>
+              <td class="highlight-best">0.012730</td>
+              <td class="highlight-best">0.929314</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_9</code></td>
+              <td>Round 5.0</td>
+              <td>0.005757</td>
+              <td class="highlight-best">0.050499</td>
+              <td class="highlight-best">0.940961</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_10</code></td>
+              <td>Round 1.0</td>
+              <td>0.071389</td>
+              <td class="highlight-best">0.001987</td>
+              <td class="highlight-best">0.753821</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_10</code></td>
+              <td>Round 2.0</td>
+              <td>0.031681</td>
+              <td class="highlight-best">0.005574</td>
+              <td class="highlight-best">0.823409</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_10</code></td>
+              <td>Round 3.0</td>
+              <td>0.025352</td>
+              <td class="highlight-best">0.009131</td>
+              <td class="highlight-best">0.870699</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_10</code></td>
+              <td>Round 4.0</td>
+              <td>0.022738</td>
+              <td class="highlight-best">0.010603</td>
+              <td class="highlight-best">0.889593</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_10</code></td>
+              <td>Round 5.0</td>
+              <td>0.021638</td>
+              <td class="highlight-best">0.011578</td>
+              <td class="highlight-best">0.900350</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_11</code></td>
+              <td>Round 1.0</td>
+              <td>0.075070</td>
+              <td class="highlight-best">0.001908</td>
+              <td class="highlight-best">0.781563</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_11</code></td>
+              <td>Round 2.0</td>
+              <td>0.032036</td>
+              <td class="highlight-best">0.006141</td>
+              <td class="highlight-best">0.870115</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_11</code></td>
+              <td>Round 3.0</td>
+              <td>0.024199</td>
+              <td class="highlight-best">0.008652</td>
+              <td class="highlight-best">0.896759</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_11</code></td>
+              <td>Round 4.0</td>
+              <td>0.017435</td>
+              <td class="highlight-best">0.013376</td>
+              <td class="highlight-best">0.913181</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_11</code></td>
+              <td>Round 5.0</td>
+              <td>0.013945</td>
+              <td class="highlight-best">0.033256</td>
+              <td class="highlight-best">0.921481</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_12</code></td>
+              <td>Round 1.0</td>
+              <td>0.050512</td>
+              <td class="highlight-best">0.002699</td>
+              <td class="highlight-best">0.775945</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_12</code></td>
+              <td>Round 2.0</td>
+              <td>0.028916</td>
+              <td class="highlight-best">0.007289</td>
+              <td class="highlight-best">0.837123</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_12</code></td>
+              <td>Round 3.0</td>
+              <td>0.023699</td>
+              <td class="highlight-best">0.010473</td>
+              <td class="highlight-best">0.874243</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_12</code></td>
+              <td>Round 4.0</td>
+              <td>0.021390</td>
+              <td class="highlight-best">0.012581</td>
+              <td class="highlight-best">0.894795</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>LI-Medium</strong></td>
+              <td><code>config_12</code></td>
+              <td>Round 5.0</td>
+              <td>0.020532</td>
+              <td class="highlight-best">0.013959</td>
+              <td class="highlight-best">0.907830</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedavg_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.562878</td>
+              <td class="highlight-best">0.000881</td>
+              <td class="highlight-best">0.380969</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedavg_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.387921</td>
+              <td class="highlight-best">0.000938</td>
+              <td class="highlight-best">0.390559</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedavg_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.283977</td>
+              <td class="highlight-best">0.000912</td>
+              <td class="highlight-best">0.383828</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedavg_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.241941</td>
+              <td class="highlight-best">0.000923</td>
+              <td class="highlight-best">0.389584</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedavg_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.232828</td>
+              <td class="highlight-best">0.000947</td>
+              <td class="highlight-best">0.394680</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.562929</td>
+              <td class="highlight-best">0.000883</td>
+              <td class="highlight-best">0.381161</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.390336</td>
+              <td class="highlight-best">0.000939</td>
+              <td class="highlight-best">0.391408</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.298119</td>
+              <td class="highlight-best">0.000959</td>
+              <td class="highlight-best">0.401856</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.271088</td>
+              <td class="highlight-best">0.000875</td>
+              <td class="highlight-best">0.412865</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.336796</td>
+              <td class="highlight-best">0.000825</td>
+              <td class="highlight-best">0.413407</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedavg_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.600365</td>
+              <td class="highlight-best">0.000862</td>
+              <td class="highlight-best">0.403171</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedavg_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.429070</td>
+              <td class="highlight-best">0.000783</td>
+              <td class="highlight-best">0.412250</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedavg_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.291305</td>
+              <td class="highlight-best">0.000722</td>
+              <td class="highlight-best">0.394917</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedavg_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.206052</td>
+              <td class="highlight-best">0.000724</td>
+              <td class="highlight-best">0.398408</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedavg_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.159538</td>
+              <td class="highlight-best">0.000732</td>
+              <td class="highlight-best">0.399100</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.600473</td>
+              <td class="highlight-best">0.000861</td>
+              <td class="highlight-best">0.403158</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.431483</td>
+              <td class="highlight-best">0.000791</td>
+              <td class="highlight-best">0.412971</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.312785</td>
+              <td class="highlight-best">0.000771</td>
+              <td class="highlight-best">0.413353</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.239423</td>
+              <td class="highlight-best">0.000779</td>
+              <td class="highlight-best">0.417253</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.203078</td>
+              <td class="highlight-best">0.000809</td>
+              <td class="highlight-best">0.424460</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedavg_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.587231</td>
+              <td class="highlight-best">0.000862</td>
+              <td class="highlight-best">0.458389</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedavg_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.387627</td>
+              <td class="highlight-best">0.000784</td>
+              <td class="highlight-best">0.429340</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedavg_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.245665</td>
+              <td class="highlight-best">0.000725</td>
+              <td class="highlight-best">0.405252</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedavg_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.179327</td>
+              <td class="highlight-best">0.000722</td>
+              <td class="highlight-best">0.405790</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedavg_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.155742</td>
+              <td class="highlight-best">0.000714</td>
+              <td class="highlight-best">0.415104</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.587443</td>
+              <td class="highlight-best">0.000859</td>
+              <td class="highlight-best">0.458765</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.397843</td>
+              <td class="highlight-best">0.000816</td>
+              <td class="highlight-best">0.434136</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.285494</td>
+              <td class="highlight-best">0.000796</td>
+              <td class="highlight-best">0.431213</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.246035</td>
+              <td class="highlight-best">0.000795</td>
+              <td class="highlight-best">0.433715</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.265536</td>
+              <td class="highlight-best">0.000797</td>
+              <td class="highlight-best">0.435209</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedavg_iid_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.563369</td>
+              <td class="highlight-best">0.000888</td>
+              <td class="highlight-best">0.382350</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedavg_iid_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.387671</td>
+              <td class="highlight-best">0.000935</td>
+              <td class="highlight-best">0.392184</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedavg_iid_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.282846</td>
+              <td class="highlight-best">0.000888</td>
+              <td class="highlight-best">0.385369</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedavg_iid_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.239382</td>
+              <td class="highlight-best">0.000894</td>
+              <td class="highlight-best">0.394456</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedavg_iid_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.231537</td>
+              <td class="highlight-best">0.000931</td>
+              <td class="highlight-best">0.403301</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.563417</td>
+              <td class="highlight-best">0.000887</td>
+              <td class="highlight-best">0.382504</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.390063</td>
+              <td class="highlight-best">0.000936</td>
+              <td class="highlight-best">0.393003</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.297266</td>
+              <td class="highlight-best">0.000939</td>
+              <td class="highlight-best">0.403388</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.269773</td>
+              <td class="highlight-best">0.000869</td>
+              <td class="highlight-best">0.414384</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_gru_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.335705</td>
+              <td class="highlight-best">0.000825</td>
+              <td class="highlight-best">0.414001</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedavg_iid_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.600658</td>
+              <td class="highlight-best">0.000865</td>
+              <td class="highlight-best">0.403857</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedavg_iid_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.429274</td>
+              <td class="highlight-best">0.000785</td>
+              <td class="highlight-best">0.413200</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedavg_iid_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.291051</td>
+              <td class="highlight-best">0.000722</td>
+              <td class="highlight-best">0.395930</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedavg_iid_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.205141</td>
+              <td class="highlight-best">0.000725</td>
+              <td class="highlight-best">0.399533</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedavg_iid_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.158321</td>
+              <td class="highlight-best">0.000734</td>
+              <td class="highlight-best">0.400358</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.600778</td>
+              <td class="highlight-best">0.000865</td>
+              <td class="highlight-best">0.403878</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.431752</td>
+              <td class="highlight-best">0.000792</td>
+              <td class="highlight-best">0.413931</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.312483</td>
+              <td class="highlight-best">0.000772</td>
+              <td class="highlight-best">0.414333</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.238724</td>
+              <td class="highlight-best">0.000780</td>
+              <td class="highlight-best">0.418098</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_lstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.202179</td>
+              <td class="highlight-best">0.000811</td>
+              <td class="highlight-best">0.425083</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedavg_iid_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.587562</td>
+              <td class="highlight-best">0.000865</td>
+              <td class="highlight-best">0.459346</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedavg_iid_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.387497</td>
+              <td class="highlight-best">0.000785</td>
+              <td class="highlight-best">0.431039</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedavg_iid_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.244874</td>
+              <td class="highlight-best">0.000726</td>
+              <td class="highlight-best">0.406198</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedavg_iid_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.177022</td>
+              <td class="highlight-best">0.000725</td>
+              <td class="highlight-best">0.407253</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedavg_iid_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.151471</td>
+              <td class="highlight-best">0.000720</td>
+              <td class="highlight-best">0.416953</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.587770</td>
+              <td class="highlight-best">0.000861</td>
+              <td class="highlight-best">0.459718</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.397660</td>
+              <td class="highlight-best">0.000815</td>
+              <td class="highlight-best">0.435497</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.284711</td>
+              <td class="highlight-best">0.000796</td>
+              <td class="highlight-best">0.432742</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.245173</td>
+              <td class="highlight-best">0.000797</td>
+              <td class="highlight-best">0.434727</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>combined_bilstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.263864</td>
+              <td class="highlight-best">0.000799</td>
+              <td class="highlight-best">0.435498</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedavg_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.077987</td>
+              <td class="highlight-best">0.001304</td>
+              <td class="highlight-best">0.584596</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedavg_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.019157</td>
+              <td class="highlight-best">0.008976</td>
+              <td class="highlight-best">0.868366</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedavg_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.012295</td>
+              <td class="highlight-best">0.045082</td>
+              <td class="highlight-best">0.918368</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedavg_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.011073</td>
+              <td class="highlight-best">0.082462</td>
+              <td class="highlight-best">0.932504</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedavg_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.010477</td>
+              <td class="highlight-best">0.125580</td>
+              <td class="highlight-best">0.939912</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.081879</td>
+              <td class="highlight-best">0.001290</td>
+              <td class="highlight-best">0.582516</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.035081</td>
+              <td class="highlight-best">0.004038</td>
+              <td class="highlight-best">0.810960</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.019242</td>
+              <td class="highlight-best">0.015822</td>
+              <td class="highlight-best">0.883159</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.015782</td>
+              <td class="highlight-best">0.030016</td>
+              <td class="highlight-best">0.905148</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.014622</td>
+              <td class="highlight-best">0.039387</td>
+              <td class="highlight-best">0.915640</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedavg_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.095027</td>
+              <td class="highlight-best">0.001295</td>
+              <td class="highlight-best">0.580104</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedavg_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.022856</td>
+              <td class="highlight-best">0.003210</td>
+              <td class="highlight-best">0.809082</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedavg_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.009825</td>
+              <td class="highlight-best">0.052172</td>
+              <td class="highlight-best">0.907771</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedavg_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.007334</td>
+              <td class="highlight-best">0.146884</td>
+              <td class="highlight-best">0.930708</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedavg_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.006504</td>
+              <td class="highlight-best">0.198980</td>
+              <td class="highlight-best">0.939808</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.099800</td>
+              <td class="highlight-best">0.001296</td>
+              <td class="highlight-best">0.581517</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.048911</td>
+              <td class="highlight-best">0.002689</td>
+              <td class="highlight-best">0.682434</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.033569</td>
+              <td class="highlight-best">0.003296</td>
+              <td class="highlight-best">0.806116</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.023236</td>
+              <td class="highlight-best">0.013289</td>
+              <td class="highlight-best">0.858768</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.018465</td>
+              <td class="highlight-best">0.053777</td>
+              <td class="highlight-best">0.882133</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedavg_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.089599</td>
+              <td class="highlight-best">0.001312</td>
+              <td class="highlight-best">0.586521</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedavg_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.026378</td>
+              <td class="highlight-best">0.005422</td>
+              <td class="highlight-best">0.840293</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedavg_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.017318</td>
+              <td class="highlight-best">0.029441</td>
+              <td class="highlight-best">0.892257</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedavg_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.014385</td>
+              <td class="highlight-best">0.062414</td>
+              <td class="highlight-best">0.909845</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedavg_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.014004</td>
+              <td class="highlight-best">0.098687</td>
+              <td class="highlight-best">0.920156</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.094617</td>
+              <td class="highlight-best">0.001334</td>
+              <td class="highlight-best">0.583392</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.062521</td>
+              <td class="highlight-best">0.003074</td>
+              <td class="highlight-best">0.737596</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.041497</td>
+              <td class="highlight-best">0.011923</td>
+              <td class="highlight-best">0.825884</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.030059</td>
+              <td class="highlight-best">0.033471</td>
+              <td class="highlight-best">0.861604</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedprox_mu0.0001_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.025531</td>
+              <td class="highlight-best">0.054832</td>
+              <td class="highlight-best">0.877476</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedavg_iid_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.078696</td>
+              <td class="highlight-best">0.001305</td>
+              <td class="highlight-best">0.584887</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedavg_iid_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.018019</td>
+              <td class="highlight-best">0.009985</td>
+              <td class="highlight-best">0.875042</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedavg_iid_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.011982</td>
+              <td class="highlight-best">0.055608</td>
+              <td class="highlight-best">0.923006</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedavg_iid_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.010915</td>
+              <td class="highlight-best">0.114089</td>
+              <td class="highlight-best">0.936138</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedavg_iid_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.010416</td>
+              <td class="highlight-best">0.165588</td>
+              <td class="highlight-best">0.942815</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.082548</td>
+              <td class="highlight-best">0.001291</td>
+              <td class="highlight-best">0.582853</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.032376</td>
+              <td class="highlight-best">0.004587</td>
+              <td class="highlight-best">0.825370</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.017701</td>
+              <td class="highlight-best">0.018286</td>
+              <td class="highlight-best">0.890320</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.014600</td>
+              <td class="highlight-best">0.035255</td>
+              <td class="highlight-best">0.911694</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_gru_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.013520</td>
+              <td class="highlight-best">0.049881</td>
+              <td class="highlight-best">0.921811</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedavg_iid_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.095294</td>
+              <td class="highlight-best">0.001294</td>
+              <td class="highlight-best">0.580079</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedavg_iid_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.022522</td>
+              <td class="highlight-best">0.003471</td>
+              <td class="highlight-best">0.819787</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedavg_iid_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.009135</td>
+              <td class="highlight-best">0.075845</td>
+              <td class="highlight-best">0.913144</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedavg_iid_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.006926</td>
+              <td class="highlight-best">0.182406</td>
+              <td class="highlight-best">0.933711</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedavg_iid_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.006171</td>
+              <td class="highlight-best">0.242083</td>
+              <td class="highlight-best">0.942836</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.100070</td>
+              <td class="highlight-best">0.001295</td>
+              <td class="highlight-best">0.581715</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.050550</td>
+              <td class="highlight-best">0.002296</td>
+              <td class="highlight-best">0.695005</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.036756</td>
+              <td class="highlight-best">0.003268</td>
+              <td class="highlight-best">0.803709</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.026055</td>
+              <td class="highlight-best">0.010432</td>
+              <td class="highlight-best">0.859804</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_lstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.020725</td>
+              <td class="highlight-best">0.051566</td>
+              <td class="highlight-best">0.884586</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedavg_iid_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.089896</td>
+              <td class="highlight-best">0.001312</td>
+              <td class="highlight-best">0.586761</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedavg_iid_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.025977</td>
+              <td class="highlight-best">0.006542</td>
+              <td class="highlight-best">0.848300</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedavg_iid_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.016399</td>
+              <td class="highlight-best">0.057238</td>
+              <td class="highlight-best">0.902286</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedavg_iid_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.013976</td>
+              <td class="highlight-best">0.089209</td>
+              <td class="highlight-best">0.917751</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedavg_iid_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.012807</td>
+              <td class="highlight-best">0.123172</td>
+              <td class="highlight-best">0.928201</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 1.0</td>
+              <td>0.094938</td>
+              <td class="highlight-best">0.001330</td>
+              <td class="highlight-best">0.583560</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 2.0</td>
+              <td>0.064622</td>
+              <td class="highlight-best">0.003213</td>
+              <td class="highlight-best">0.751538</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 3.0</td>
+              <td>0.041205</td>
+              <td class="highlight-best">0.012170</td>
+              <td class="highlight-best">0.834423</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 4.0</td>
+              <td>0.029711</td>
+              <td class="highlight-best">0.039255</td>
+              <td class="highlight-best">0.868790</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+            <tr>
+              <td><strong>HI-Small</strong></td>
+              <td><code>hi_small_bilstm_fedprox_mu0.0001_iid_seed42</code></td>
+              <td>Round 5.0</td>
+              <td>0.024877</td>
+              <td class="highlight-best">0.064929</td>
+              <td class="highlight-best">0.885503</td>
+              <td>N/A</td>
+              <td>★ BEST</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    function filterTable(tableId, query) {
+      const q = query.toLowerCase();
+      const rows = document.querySelectorAll('#' + tableId + ' tbody tr');
+      rows.forEach(r => {
+        r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

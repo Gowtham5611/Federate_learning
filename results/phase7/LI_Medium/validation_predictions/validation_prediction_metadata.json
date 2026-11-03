@@ -1,0 +1,13 @@
+{
+  "dataset": "LI-Medium",
+  "split": "validation",
+  "row_count": 6250154,
+  "positive_count": 4120,
+  "iid_model": "config_5 (BiLSTM FedAvg)",
+  "iid_checkpoint": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\results\\LI_Medium_Results\\checkpoints\\config_5\\global_best.pt",
+  "iid_checkpoint_sha256": "bded77c75fcf89ea24af295fd7a5c28110744bf226a1c4c0a386f9924d1087d2",
+  "noniid_model": "config_9 (LSTM FedAvg)",
+  "noniid_checkpoint": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\results\\LI_Medium_Results\\checkpoints\\config_9\\global_best.pt",
+  "noniid_checkpoint_sha256": "91ea59ef4ad8d183006bda47c44b91d7ce8ea1f52c43f3f548b2763a2b0f3653",
+  "timestamp": "2026-10-21T21:27:38.219816"
+}

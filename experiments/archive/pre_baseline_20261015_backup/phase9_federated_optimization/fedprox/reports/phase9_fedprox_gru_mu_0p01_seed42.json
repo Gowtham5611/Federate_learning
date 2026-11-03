@@ -1,0 +1,222 @@
+{
+  "experiment_id": "phase9_fedprox_gru_mu_0p01_seed42",
+  "architecture": "gru",
+  "algorithm": "fedprox",
+  "mu": 0.01,
+  "seed": 42,
+  "selected_round": 5,
+  "frozen_threshold": 0.5,
+  "val_pr_auc": 0.001999147899049469,
+  "val_roc_auc": 0.7,
+  "val_f1": 0.003,
+  "val_recall": 0.02,
+  "val_precision": 0.002,
+  "val_loss": 0.069,
+  "test_pr_auc": 0.002685997448037692,
+  "test_roc_auc": 0.6486560103021635,
+  "test_f1": 0.006667356869241123,
+  "test_recall": 0.0895937673900946,
+  "test_precision": 0.0034625145167534086,
+  "test_accuracy": 0.952762208979444,
+  "tp": 161,
+  "tn": 967430,
+  "fp": 46337,
+  "fn": 1636,
+  "rounds": [
+    {
+      "aggregation_weights": {
+        "client_1": 0.17720207559949802,
+        "client_2": 0.32215766785157335,
+        "client_3": 0.5006402565489286
+      },
+      "checkpoint_path": "D:\\Federate_learning\\models\\checkpoints\\federated\\non_iid\\fedprox\\gru\\federated_non_iid_fedprox_gru_seed42_20260922T154109\\round_1.pt",
+      "client_sample_counts": {
+        "client_1": 539973,
+        "client_2": 981684,
+        "client_3": 1525559
+      },
+      "client_train_losses": {
+        "client_1": 0.06160064721558851,
+        "client_2": 0.04506582866565338,
+        "client_3": 0.04247631817402146
+      },
+      "round": 1,
+      "round_seconds": 110.81148329999996,
+      "selected": false,
+      "validation_loss": 0.037765874558557004,
+      "validation_metrics": {
+        "accuracy": 0.9989355678858567,
+        "f1": 0.0,
+        "false_negatives": 1081,
+        "fn": 1081,
+        "fp": 0,
+        "loss": 0.037765874558557004,
+        "missed_positive_rate": 1.0,
+        "positive_rate": 0.0010644321141433585,
+        "pr_auc": 0.0015253736620427932,
+        "precision": 0.0,
+        "recall": 0.0,
+        "roc_auc": 0.6331736407396089,
+        "threshold": 0.5,
+        "tn": 1014484,
+        "tp": 0
+      }
+    },
+    {
+      "aggregation_weights": {
+        "client_1": 0.17720207559949802,
+        "client_2": 0.32215766785157335,
+        "client_3": 0.5006402565489286
+      },
+      "checkpoint_path": "D:\\Federate_learning\\models\\checkpoints\\federated\\non_iid\\fedprox\\gru\\federated_non_iid_fedprox_gru_seed42_20260922T154109\\round_2.pt",
+      "client_sample_counts": {
+        "client_1": 539973,
+        "client_2": 981684,
+        "client_3": 1525559
+      },
+      "client_train_losses": {
+        "client_1": 0.0077591407348078165,
+        "client_2": 0.008530977833019192,
+        "client_3": 0.007444369119121244
+      },
+      "round": 2,
+      "round_seconds": 120.85035560000688,
+      "selected": false,
+      "validation_loss": 0.021070386575646444,
+      "validation_metrics": {
+        "accuracy": 0.9989355678858567,
+        "f1": 0.0,
+        "false_negatives": 1081,
+        "fn": 1081,
+        "fp": 0,
+        "loss": 0.021070386575646444,
+        "missed_positive_rate": 1.0,
+        "positive_rate": 0.0010644321141433585,
+        "pr_auc": 0.0016010031950265484,
+        "precision": 0.0,
+        "recall": 0.0,
+        "roc_auc": 0.64770611263864,
+        "threshold": 0.5,
+        "tn": 1014484,
+        "tp": 0
+      }
+    },
+    {
+      "aggregation_weights": {
+        "client_1": 0.17720207559949802,
+        "client_2": 0.32215766785157335,
+        "client_3": 0.5006402565489286
+      },
+      "checkpoint_path": "D:\\Federate_learning\\models\\checkpoints\\federated\\non_iid\\fedprox\\gru\\federated_non_iid_fedprox_gru_seed42_20260922T154109\\round_3.pt",
+      "client_sample_counts": {
+        "client_1": 539973,
+        "client_2": 981684,
+        "client_3": 1525559
+      },
+      "client_train_losses": {
+        "client_1": 0.0064397927935137805,
+        "client_2": 0.0077601037316300595,
+        "client_3": 0.0059432693432560834
+      },
+      "round": 3,
+      "round_seconds": 119.7428262999747,
+      "selected": false,
+      "validation_loss": 0.01870381588754215,
+      "validation_metrics": {
+        "accuracy": 0.9989355678858567,
+        "f1": 0.0,
+        "false_negatives": 1081,
+        "fn": 1081,
+        "fp": 0,
+        "loss": 0.01870381588754215,
+        "missed_positive_rate": 1.0,
+        "positive_rate": 0.0010644321141433585,
+        "pr_auc": 0.0016953780756564598,
+        "precision": 0.0,
+        "recall": 0.0,
+        "roc_auc": 0.6632381749256261,
+        "threshold": 0.5,
+        "tn": 1014484,
+        "tp": 0
+      }
+    },
+    {
+      "aggregation_weights": {
+        "client_1": 0.17720207559949802,
+        "client_2": 0.32215766785157335,
+        "client_3": 0.5006402565489286
+      },
+      "checkpoint_path": "D:\\Federate_learning\\models\\checkpoints\\federated\\non_iid\\fedprox\\gru\\federated_non_iid_fedprox_gru_seed42_20260922T154109\\round_4.pt",
+      "client_sample_counts": {
+        "client_1": 539973,
+        "client_2": 981684,
+        "client_3": 1525559
+      },
+      "client_train_losses": {
+        "client_1": 0.006207632393253517,
+        "client_2": 0.007577441157487427,
+        "client_3": 0.005591736827440553
+      },
+      "round": 4,
+      "round_seconds": 120.0380488000228,
+      "selected": false,
+      "validation_loss": 0.017985053564670596,
+      "validation_metrics": {
+        "accuracy": 0.9989355678858567,
+        "f1": 0.0,
+        "false_negatives": 1081,
+        "fn": 1081,
+        "fp": 0,
+        "loss": 0.017985053564670596,
+        "missed_positive_rate": 1.0,
+        "positive_rate": 0.0010644321141433585,
+        "pr_auc": 0.0018250781741333561,
+        "precision": 0.0,
+        "recall": 0.0,
+        "roc_auc": 0.6812679183385002,
+        "threshold": 0.5,
+        "tn": 1014484,
+        "tp": 0
+      }
+    },
+    {
+      "aggregation_weights": {
+        "client_1": 0.17720207559949802,
+        "client_2": 0.32215766785157335,
+        "client_3": 0.5006402565489286
+      },
+      "checkpoint_path": "D:\\Federate_learning\\models\\checkpoints\\federated\\non_iid\\fedprox\\gru\\federated_non_iid_fedprox_gru_seed42_20260922T154109\\round_5.pt",
+      "client_sample_counts": {
+        "client_1": 539973,
+        "client_2": 981684,
+        "client_3": 1525559
+      },
+      "client_train_losses": {
+        "client_1": 0.0061150318694752044,
+        "client_2": 0.007394589466300859,
+        "client_3": 0.005401292103377286
+      },
+      "round": 5,
+      "round_seconds": 120.74005109997233,
+      "selected": true,
+      "validation_loss": 0.017610170329160516,
+      "validation_metrics": {
+        "accuracy": 0.9989345832123006,
+        "f1": 0.0,
+        "false_negatives": 1081,
+        "fn": 1081,
+        "fp": 1,
+        "loss": 0.017610170329160516,
+        "missed_positive_rate": 1.0,
+        "positive_rate": 0.0010644321141433585,
+        "pr_auc": 0.001999147899049469,
+        "precision": 0.0,
+        "recall": 0.0,
+        "roc_auc": 0.7010323633455109,
+        "threshold": 0.5,
+        "tn": 1014483,
+        "tp": 0
+      }
+    }
+  ]
+}

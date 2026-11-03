@@ -1,0 +1,48 @@
+{
+  "timestamp": "2026-10-26T21:19:54",
+  "frameworks": {
+    "torch": "2.14.0+cpu",
+    "numpy": "2.5.2",
+    "captum_installed": false,
+    "shap_installed": false,
+    "explainer_used": "PyTorch-Native Integrated Gradients (Sundararajan et al., 2017)"
+  },
+  "models": {
+    "HI-Small": {
+      "model_name": "hi_small_lstm_fedavg_iid_seed42",
+      "checkpoint_sha256": "dacfbb62e1e74a58a0c79237f7d0c16aa57df19253af82b8ab38af9bba2d46b4",
+      "architecture": "lstm",
+      "sample_size": 200,
+      "background_samples": 100,
+      "steps": 50,
+      "runtime_seconds": 1.997318983078003,
+      "mean_ms_per_sample": 9.986594915390015,
+      "max_abs_completeness_residual": 0.005978584289550781,
+      "mean_abs_completeness_residual": 0.00030154071282595396,
+      "max_rel_completeness_residual": 0.0023932643234729767,
+      "mean_rel_completeness_residual": 9.846074681263417e-05,
+      "padding_leakage_max": 0.0,
+      "padding_leakage_status": "PASSED (Zero Leakage)",
+      "finite_values_all": true,
+      "frozen_threshold": 0.3377837836742401
+    },
+    "LI-Medium": {
+      "model_name": "config_5_bilstm_fedavg_iid",
+      "checkpoint_sha256": "bded77c75fcf89ea24af295fd7a5c28110744bf226a1c4c0a386f9924d1087d2",
+      "architecture": "bilstm",
+      "sample_size": 200,
+      "background_samples": 100,
+      "steps": 50,
+      "runtime_seconds": 2.534407138824463,
+      "mean_ms_per_sample": 12.672035694122314,
+      "max_abs_completeness_residual": 0.22960281372070312,
+      "mean_abs_completeness_residual": 0.004740967880934477,
+      "max_rel_completeness_residual": 0.012001115828752518,
+      "mean_rel_completeness_residual": 0.0005956648383289576,
+      "padding_leakage_max": 0.0,
+      "padding_leakage_status": "PASSED (Zero Leakage)",
+      "finite_values_all": true,
+      "frozen_threshold": 0.2384829968214035
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "timestamp_utc": "2026-10-19T13:15:50.516838+00:00",
+  "dataset_name": "IBM AML LI-Medium Full",
+  "dataset_verified_on_disk": true,
+  "files": {
+    "train": {
+      "path": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\data\\processed\\ibm_aml\\LI-Medium\\train\\transactions.csv",
+      "exists": true,
+      "size_bytes": 4982034864,
+      "size_gb": 4.64,
+      "rows": 18752217,
+      "positives": 8138,
+      "negatives": 18744079,
+      "positive_rate": 0.0004339753534208782
+    },
+    "validation": {
+      "path": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\data\\processed\\ibm_aml\\LI-Medium\\validation\\transactions.csv",
+      "exists": true,
+      "size_bytes": 1628058679,
+      "size_gb": 1.516,
+      "rows": 6250154,
+      "positives": 4120,
+      "negatives": 6246034,
+      "positive_rate": 0.00065918375771221
+    },
+    "test": {
+      "path": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\data\\processed\\ibm_aml\\LI-Medium\\test\\transactions.csv",
+      "exists": true,
+      "size_bytes": 1664608238,
+      "size_gb": 1.55,
+      "rows": 6249112,
+      "positives": 3783,
+      "negatives": 6245329,
+      "positive_rate": 0.0006053660104027581
+    }
+  },
+  "total_rows_verified": 31251483,
+  "expected_rows": 31251483,
+  "feature_dimension": 57,
+  "memory_mapped_pipeline_ready": true,
+  "colab_runner_notebook_ready": true,
+  "colab_zip_package": "FedSecureAI_FULL_LI_MEDIUM_COLAB_READY_v1.zip",
+  "colab_zip_size_mb": 40.19,
+  "colab_zip_sha256": "e1fbe5f9a6a9cd2f1fae79568ef495b5bb1c55b06ccc539bb13babeaddaca4be",
+  "experiments_completed_count": 0,
+  "experiments_pending_count": 12,
+  "execution_target": "Google Colab GPU Runtime (T4/V100/A100)",
+  "readiness_summary": "Dataset and memory-safe pipeline are 100% ready. All 12 experiments are pending execution in Google Colab."
+}

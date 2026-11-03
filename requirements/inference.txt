@@ -1,0 +1,26 @@
+# =============================================================================
+# FedSecureAI — Inference Service Production Runtime Dependencies
+# =============================================================================
+# Strict runtime packages only. Excludes training frameworks (flwr), development
+# tooling (pytest, black, ruff), datasets downloaders (kaggle), and notebooks.
+# =============================================================================
+
+# Web API Framework & ASGI Server
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.10.0
+starlette>=0.41.0
+
+# Deep Learning Runtime (CPU-only build recommended)
+# Install via: pip install torch --index-url https://download.pytorch.org/whl/cpu
+torch>=2.2.0
+
+# Array & Sequence Manipulation
+numpy>=2.0.0
+pandas>=2.2.0
+
+# Machine Learning & Configuration Utilities
+scikit-learn>=1.4.0
+PyYAML>=6.0.1
+python-dotenv>=1.0.1
+

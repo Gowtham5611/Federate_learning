@@ -1,0 +1,16 @@
+# FedSecureAI Canonical Decision Thresholds
+# Source of truth: validation-optimal F1 thresholds frozen from Phase 7/8.
+# All API endpoints, evaluators, and serving services must reference this configuration.
+
+thresholds:
+  HI-Small: 0.337784
+  LI-Medium: 0.238483
+
+default_dataset: "HI-Small"
+default_threshold: 0.337784
+
+policy:
+  enforce_frozen_default: true
+  allow_what_if_slider: true
+  description: "Frozen validation-optimal decision threshold selected by maximizing validation F1. UI threshold slider is for what-if sensitivity analysis only."
+

@@ -1,0 +1,266 @@
+{
+  "column_order": [
+    "timestamp",
+    "from_account",
+    "to_account",
+    "amount_paid_log",
+    "amount_received_log",
+    "amount_mismatch",
+    "same_currency",
+    "same_bank",
+    "self_transfer",
+    "payment_format_code",
+    "payment_currency_code",
+    "receiving_currency_code",
+    "minute_of_day_sin",
+    "minute_of_day_cos",
+    "day_of_week_sin",
+    "day_of_week_cos",
+    "is_weekend",
+    "is_night",
+    "sender_prior_count_log",
+    "sender_prior_amount_log",
+    "sender_seconds_since_prior_log",
+    "sender_has_prior",
+    "receiver_prior_count_log",
+    "receiver_prior_amount_log",
+    "receiver_seconds_since_prior_log",
+    "receiver_has_prior",
+    "is_laundering"
+  ],
+  "columns_not_encoded": {
+    "Account": "515,080 distinct sending/receiving account identifiers were measured across the file. One-hot encoding would produce a matrix wider than the dataset is long, and ordinal codes would impose a false ordering on identifiers that have none. Account identity is used only to accumulate causal per-account history features, never as a model input column.",
+    "Account.1": "Same identifier space as 'Account'; see that entry. Encoded nowhere, used only for receiver-side history.",
+    "From Bank": "Bank identifiers range to 356,303. An integer bank id carries no magnitude - bank 300,000 is not larger than bank 3 - so it is neither scaled nor encoded. The relationship that does carry signal, whether sender and receiver share a bank, is kept as a boolean feature.",
+    "To Bank": "Same identifier space as 'From Bank'; see that entry."
+  },
+  "excluded_features": {
+    "account_degree_over_window": "A rolling distinct-counterparty count needs a per-account window buffer, making state grow with window length times account count. Deferred rather than rejected outright, but not implemented in this phase.",
+    "account_total_transaction_count": "A whole-dataset count per account uses transactions that happen after the row it would describe. That is future information; the causal 'prior count' features replace it.",
+    "amount_difference": "'Amount Received' and 'Amount Paid' are denominated in different currencies in 1.42% of rows, so their arithmetic difference is not a quantity. No exchange-rate table exists in the dataset and inventing one would fabricate data. The boolean 'amount_mismatch' captures the same signal without asserting a conversion.",
+    "amount_in_common_currency": "Would require exchange rates that the dataset does not contain. Rates for 2022-09 could be fetched externally, but that would silently introduce data from outside the dataset into a preprocessing step.",
+    "bank_identifier_encoded": "356,303 distinct bank identifiers. See HIGH_CARDINALITY_REFUSALS in the categorical encoder: an integer bank id has no magnitude, so it is neither scaled nor encoded. 'same_bank' keeps the part that carries signal.",
+    "calendar_month": "The verified data spans a single month (September 2022), so the feature is constant and carries no information.",
+    "counterparty_pair_prior_count": "Would need state keyed by (sender, receiver) pair. The number of distinct pairs is unbounded by anything measured and can approach the row count, so the state would grow with the dataset rather than with the account population - the exact property that keeps this builder memory-safe.",
+    "days_since_dataset_start": "A monotonically increasing index whose training range (days 0-5) and test range (days 7-17) are disjoint under the chronological split. A model could fit a trend it can only extrapolate at test time, so every test metric would measure extrapolation instead of detection.",
+    "is_fraud_ring_member": "Any feature derived from the label leaks the target directly. Not implemented under any windowing scheme.",
+    "time_to_next_transaction": "Requires a later row to compute a value for an earlier one. That is future information by construction and is exactly the leakage this pipeline exists to prevent."
+  },
+  "feature_builders": [
+    {
+      "builder": "TransactionFeatureBuilder",
+      "produces": [
+        "amount_paid_log",
+        "amount_received_log",
+        "amount_mismatch",
+        "same_currency",
+        "same_bank",
+        "self_transfer"
+      ],
+      "rejected": {
+        "amount_difference": "'Amount Received' and 'Amount Paid' are denominated in different currencies in 1.42% of rows, so their arithmetic difference is not a quantity. No exchange-rate table exists in the dataset and inventing one would fabricate data. The boolean 'amount_mismatch' captures the same signal without asserting a conversion.",
+        "amount_in_common_currency": "Would require exchange rates that the dataset does not contain. Rates for 2022-09 could be fetched externally, but that would silently introduce data from outside the dataset into a preprocessing step.",
+        "bank_identifier_encoded": "356,303 distinct bank identifiers. See HIGH_CARDINALITY_REFUSALS in the categorical encoder: an integer bank id has no magnitude, so it is neither scaled nor encoded. 'same_bank' keeps the part that carries signal."
+      },
+      "requires": [
+        "Amount Paid",
+        "Amount Received",
+        "Payment Currency",
+        "Receiving Currency",
+        "From Bank",
+        "To Bank",
+        "Account",
+        "Account.1"
+      ]
+    },
+    {
+      "builder": "TemporalFeatureBuilder",
+      "produces": [
+        "minute_of_day_sin",
+        "minute_of_day_cos",
+        "day_of_week_sin",
+        "day_of_week_cos",
+        "is_weekend",
+        "is_night"
+      ],
+      "rejected": {
+        "calendar_month": "The verified data spans a single month (September 2022), so the feature is constant and carries no information.",
+        "days_since_dataset_start": "A monotonically increasing index whose training range (days 0-5) and test range (days 7-17) are disjoint under the chronological split. A model could fit a trend it can only extrapolate at test time, so every test metric would measure extrapolation instead of detection.",
+        "time_to_next_transaction": "Requires a later row to compute a value for an earlier one. That is future information by construction and is exactly the leakage this pipeline exists to prevent."
+      },
+      "requires": [
+        "_parsed_timestamp"
+      ]
+    },
+    {
+      "builder": "AccountHistoryBuilder",
+      "produces": [
+        "sender_prior_count_log",
+        "sender_prior_amount_log",
+        "sender_seconds_since_prior_log",
+        "sender_has_prior",
+        "receiver_prior_count_log",
+        "receiver_prior_amount_log",
+        "receiver_seconds_since_prior_log",
+        "receiver_has_prior"
+      ],
+      "rejected": {
+        "account_degree_over_window": "A rolling distinct-counterparty count needs a per-account window buffer, making state grow with window length times account count. Deferred rather than rejected outright, but not implemented in this phase.",
+        "account_total_transaction_count": "A whole-dataset count per account uses transactions that happen after the row it would describe. That is future information; the causal 'prior count' features replace it.",
+        "counterparty_pair_prior_count": "Would need state keyed by (sender, receiver) pair. The number of distinct pairs is unbounded by anything measured and can approach the row count, so the state would grow with the dataset rather than with the account population - the exact property that keeps this builder memory-safe.",
+        "is_fraud_ring_member": "Any feature derived from the label leaks the target directly. Not implemented under any windowing scheme."
+      },
+      "requires": [
+        "Account",
+        "Account.1",
+        "Amount Paid",
+        "Amount Received",
+        "_epoch_seconds"
+      ]
+    }
+  ],
+  "feature_columns": [
+    "amount_paid_log",
+    "amount_received_log",
+    "amount_mismatch",
+    "same_currency",
+    "same_bank",
+    "self_transfer",
+    "payment_format_code",
+    "payment_currency_code",
+    "receiving_currency_code",
+    "minute_of_day_sin",
+    "minute_of_day_cos",
+    "day_of_week_sin",
+    "day_of_week_cos",
+    "is_weekend",
+    "is_night",
+    "sender_prior_count_log",
+    "sender_prior_amount_log",
+    "sender_seconds_since_prior_log",
+    "sender_has_prior",
+    "receiver_prior_count_log",
+    "receiver_prior_amount_log",
+    "receiver_seconds_since_prior_log",
+    "receiver_has_prior"
+  ],
+  "identifier_columns": [
+    "timestamp",
+    "from_account",
+    "to_account"
+  ],
+  "numerical_transformations": {
+    "amount_mismatch": {
+      "reason": "boolean indicator, already in {0, 1}",
+      "transform": "none"
+    },
+    "amount_paid_log": {
+      "applied_before": "standardization",
+      "reason": "right-skewed non-negative quantity; log1p compresses the tail without discarding the large values that matter in AML",
+      "transform": "log1p"
+    },
+    "amount_received_log": {
+      "applied_before": "standardization",
+      "reason": "right-skewed non-negative quantity; log1p compresses the tail without discarding the large values that matter in AML",
+      "transform": "log1p"
+    },
+    "day_of_week_cos": {
+      "reason": "already bounded in [-1, 1] by the cyclical encoding",
+      "transform": "none"
+    },
+    "day_of_week_sin": {
+      "reason": "already bounded in [-1, 1] by the cyclical encoding",
+      "transform": "none"
+    },
+    "is_night": {
+      "reason": "boolean indicator, already in {0, 1}",
+      "transform": "none"
+    },
+    "is_weekend": {
+      "reason": "boolean indicator, already in {0, 1}",
+      "transform": "none"
+    },
+    "minute_of_day_cos": {
+      "reason": "already bounded in [-1, 1] by the cyclical encoding",
+      "transform": "none"
+    },
+    "minute_of_day_sin": {
+      "reason": "already bounded in [-1, 1] by the cyclical encoding",
+      "transform": "none"
+    },
+    "payment_currency_code": {
+      "reason": "nominal category code; scaling would imply an ordering the values do not have",
+      "transform": "none"
+    },
+    "payment_format_code": {
+      "reason": "nominal category code; scaling would imply an ordering the values do not have",
+      "transform": "none"
+    },
+    "receiver_has_prior": {
+      "reason": "boolean indicator, already in {0, 1}",
+      "transform": "none"
+    },
+    "receiver_prior_amount_log": {
+      "applied_before": "standardization",
+      "reason": "right-skewed non-negative quantity; log1p compresses the tail without discarding the large values that matter in AML",
+      "transform": "log1p"
+    },
+    "receiver_prior_count_log": {
+      "applied_before": "standardization",
+      "reason": "right-skewed non-negative quantity; log1p compresses the tail without discarding the large values that matter in AML",
+      "transform": "log1p"
+    },
+    "receiver_seconds_since_prior_log": {
+      "applied_before": "standardization",
+      "reason": "right-skewed non-negative quantity; log1p compresses the tail without discarding the large values that matter in AML",
+      "transform": "log1p"
+    },
+    "receiving_currency_code": {
+      "reason": "nominal category code; scaling would imply an ordering the values do not have",
+      "transform": "none"
+    },
+    "same_bank": {
+      "reason": "boolean indicator, already in {0, 1}",
+      "transform": "none"
+    },
+    "same_currency": {
+      "reason": "boolean indicator, already in {0, 1}",
+      "transform": "none"
+    },
+    "self_transfer": {
+      "reason": "boolean indicator, already in {0, 1}",
+      "transform": "none"
+    },
+    "sender_has_prior": {
+      "reason": "boolean indicator, already in {0, 1}",
+      "transform": "none"
+    },
+    "sender_prior_amount_log": {
+      "applied_before": "standardization",
+      "reason": "right-skewed non-negative quantity; log1p compresses the tail without discarding the large values that matter in AML",
+      "transform": "log1p"
+    },
+    "sender_prior_count_log": {
+      "applied_before": "standardization",
+      "reason": "right-skewed non-negative quantity; log1p compresses the tail without discarding the large values that matter in AML",
+      "transform": "log1p"
+    },
+    "sender_seconds_since_prior_log": {
+      "applied_before": "standardization",
+      "reason": "right-skewed non-negative quantity; log1p compresses the tail without discarding the large values that matter in AML",
+      "transform": "log1p"
+    }
+  },
+  "preprocessing_version": "1.0.0",
+  "raw_to_output_names": {
+    "Account": "from_account",
+    "Account.1": "to_account",
+    "Is Laundering": "is_laundering",
+    "Payment Currency_code": "payment_currency_code",
+    "Payment Format_code": "payment_format_code",
+    "Receiving Currency_code": "receiving_currency_code",
+    "Timestamp": "timestamp"
+  },
+  "target_column": "is_laundering",
+  "timestamp_format": "%Y-%m-%d %H:%M:%S"
+}

@@ -1,0 +1,114 @@
+2026-10-18 18:38:04,139 | INFO     | fedavg_vs_fedprox_suite | Output root: /content/Federate_learning/Federate_learning/artifacts/li_medium_subset_comparison
+2026-10-18 18:38:04,140 | INFO     | fedavg_vs_fedprox_suite | Manifest path: /content/Federate_learning/Federate_learning/artifacts/li_medium_subset_comparison/resume_manifest.json
+2026-10-18 18:38:04,140 | INFO     | fedavg_vs_fedprox_suite | Loading dataset LI-Medium from /content/Federate_learning/Federate_learning/data/processed/ibm_aml_training_subset/LI-Medium...
+2026-10-18 18:38:07,261 | INFO     | fedavg_vs_fedprox_suite | Loaded LI-Medium in 3.12s: Train=200000 (pos=9), Val=200000 (pos=69), Test=200000 (pos=105)
+2026-10-18 18:38:07,270 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:38:07,270 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: li_medium_gru_fedavg_seed42 [LI-Medium, gru, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:38:07,270 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:38:13,176 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [4.6s]: Train Task Loss=0.41405, Prox Loss=0.000000, Val Loss=0.58237, Val PR-AUC=0.000552, Val ROC-AUC=0.4709
+2026-10-18 18:38:14,188 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [1.0s]: Train Task Loss=0.15343, Prox Loss=0.000000, Val Loss=0.39172, Val PR-AUC=0.000376, Val ROC-AUC=0.4759
+2026-10-18 18:38:15,233 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [1.0s]: Train Task Loss=0.04306, Prox Loss=0.000000, Val Loss=0.21669, Val PR-AUC=0.000267, Val ROC-AUC=0.3994
+2026-10-18 18:38:16,249 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [1.0s]: Train Task Loss=0.01073, Prox Loss=0.000000, Val Loss=0.12962, Val PR-AUC=0.000270, Val ROC-AUC=0.4021
+2026-10-18 18:38:17,271 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [1.0s]: Train Task Loss=0.00281, Prox Loss=0.000000, Val Loss=0.08111, Val PR-AUC=0.000277, Val ROC-AUC=0.4169
+2026-10-18 18:38:19,068 | INFO     | fedavg_vs_fedprox_suite | Run li_medium_gru_fedavg_seed42 Complete: Test ROC-AUC=0.4496, Test PR-AUC=0.000739, Test F1=0.0000, Alerts/10k=26.5 [Best Round=1, Tau=0.58]
+2026-10-18 18:38:19,083 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:38:19,083 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: li_medium_gru_fedprox_mu0.0001_seed42 [LI-Medium, gru, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:38:19,083 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:38:20,163 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [1.1s]: Train Task Loss=0.41405, Prox Loss=0.000077, Val Loss=0.58232, Val PR-AUC=0.000552, Val ROC-AUC=0.4711
+2026-10-18 18:38:21,251 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [1.1s]: Train Task Loss=0.15342, Prox Loss=0.000082, Val Loss=0.39203, Val PR-AUC=0.000378, Val ROC-AUC=0.4769
+2026-10-18 18:38:22,365 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [1.1s]: Train Task Loss=0.04307, Prox Loss=0.000064, Val Loss=0.22162, Val PR-AUC=0.000271, Val ROC-AUC=0.4098
+2026-10-18 18:38:23,494 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [1.1s]: Train Task Loss=0.01075, Prox Loss=0.000035, Val Loss=0.13933, Val PR-AUC=0.000270, Val ROC-AUC=0.4066
+2026-10-18 18:38:24,570 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [1.1s]: Train Task Loss=0.00282, Prox Loss=0.000024, Val Loss=0.09099, Val PR-AUC=0.000275, Val ROC-AUC=0.4148
+2026-10-18 18:38:26,391 | INFO     | fedavg_vs_fedprox_suite | Run li_medium_gru_fedprox_mu0.0001_seed42 Complete: Test ROC-AUC=0.4497, Test PR-AUC=0.000739, Test F1=0.0000, Alerts/10k=26.7 [Best Round=1, Tau=0.58]
+2026-10-18 18:38:26,408 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:38:26,408 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: li_medium_lstm_fedavg_seed42 [LI-Medium, lstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:38:26,408 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:38:27,448 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [1.0s]: Train Task Loss=0.59490, Prox Loss=0.000000, Val Loss=0.61848, Val PR-AUC=0.000346, Val ROC-AUC=0.5099
+2026-10-18 18:38:28,486 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [1.0s]: Train Task Loss=0.34812, Prox Loss=0.000000, Val Loss=0.46989, Val PR-AUC=0.000293, Val ROC-AUC=0.4498
+2026-10-18 18:38:29,521 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [1.0s]: Train Task Loss=0.15822, Prox Loss=0.000000, Val Loss=0.30328, Val PR-AUC=0.000275, Val ROC-AUC=0.4056
+2026-10-18 18:38:30,585 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [1.1s]: Train Task Loss=0.05993, Prox Loss=0.000000, Val Loss=0.20461, Val PR-AUC=0.000280, Val ROC-AUC=0.4128
+2026-10-18 18:38:31,629 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [1.0s]: Train Task Loss=0.02078, Prox Loss=0.000000, Val Loss=0.13922, Val PR-AUC=0.000284, Val ROC-AUC=0.4188
+2026-10-18 18:38:33,494 | INFO     | fedavg_vs_fedprox_suite | Run li_medium_lstm_fedavg_seed42 Complete: Test ROC-AUC=0.5403, Test PR-AUC=0.000641, Test F1=0.0011, Alerts/10k=4979.2 [Best Round=1, Tau=0.46]
+2026-10-18 18:38:33,511 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:38:33,512 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: li_medium_lstm_fedprox_mu0.0001_seed42 [LI-Medium, lstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:38:33,512 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:38:34,606 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [1.1s]: Train Task Loss=0.59489, Prox Loss=0.000093, Val Loss=0.61847, Val PR-AUC=0.000348, Val ROC-AUC=0.5110
+2026-10-18 18:38:35,723 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [1.1s]: Train Task Loss=0.34804, Prox Loss=0.000115, Val Loss=0.47026, Val PR-AUC=0.000294, Val ROC-AUC=0.4517
+2026-10-18 18:38:36,814 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [1.1s]: Train Task Loss=0.15819, Prox Loss=0.000102, Val Loss=0.30624, Val PR-AUC=0.000275, Val ROC-AUC=0.4067
+2026-10-18 18:38:37,944 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [1.1s]: Train Task Loss=0.05993, Prox Loss=0.000068, Val Loss=0.21317, Val PR-AUC=0.000277, Val ROC-AUC=0.4075
+2026-10-18 18:38:39,080 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [1.1s]: Train Task Loss=0.02080, Prox Loss=0.000044, Val Loss=0.15056, Val PR-AUC=0.000278, Val ROC-AUC=0.4090
+2026-10-18 18:38:40,929 | INFO     | fedavg_vs_fedprox_suite | Run li_medium_lstm_fedprox_mu0.0001_seed42 Complete: Test ROC-AUC=0.5409, Test PR-AUC=0.000646, Test F1=0.0011, Alerts/10k=4979.9 [Best Round=1, Tau=0.46]
+2026-10-18 18:38:40,945 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:38:40,946 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: li_medium_bilstm_fedavg_seed42 [LI-Medium, bilstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:38:40,946 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:38:42,100 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [1.1s]: Train Task Loss=0.51210, Prox Loss=0.000000, Val Loss=0.58710, Val PR-AUC=0.000315, Val ROC-AUC=0.4674
+2026-10-18 18:38:43,289 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [1.2s]: Train Task Loss=0.21497, Prox Loss=0.000000, Val Loss=0.40217, Val PR-AUC=0.000291, Val ROC-AUC=0.4358
+2026-10-18 18:38:44,452 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [1.2s]: Train Task Loss=0.05727, Prox Loss=0.000000, Val Loss=0.22880, Val PR-AUC=0.000284, Val ROC-AUC=0.4163
+2026-10-18 18:38:45,610 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [1.2s]: Train Task Loss=0.01139, Prox Loss=0.000000, Val Loss=0.13822, Val PR-AUC=0.000285, Val ROC-AUC=0.4158
+2026-10-18 18:38:46,759 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [1.1s]: Train Task Loss=0.00228, Prox Loss=0.000000, Val Loss=0.08607, Val PR-AUC=0.000286, Val ROC-AUC=0.4200
+2026-10-18 18:38:48,658 | INFO     | fedavg_vs_fedprox_suite | Run li_medium_bilstm_fedavg_seed42 Complete: Test ROC-AUC=0.4558, Test PR-AUC=0.000516, Test F1=0.0010, Alerts/10k=7735.4 [Best Round=1, Tau=0.43]
+2026-10-18 18:38:48,677 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:38:48,677 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: li_medium_bilstm_fedprox_mu0.0001_seed42 [LI-Medium, bilstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:38:48,677 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:38:49,902 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [1.2s]: Train Task Loss=0.51208, Prox Loss=0.000192, Val Loss=0.58704, Val PR-AUC=0.000316, Val ROC-AUC=0.4685
+2026-10-18 18:38:51,103 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [1.2s]: Train Task Loss=0.21490, Prox Loss=0.000203, Val Loss=0.40439, Val PR-AUC=0.000292, Val ROC-AUC=0.4391
+2026-10-18 18:38:52,318 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [1.2s]: Train Task Loss=0.05727, Prox Loss=0.000130, Val Loss=0.24158, Val PR-AUC=0.000288, Val ROC-AUC=0.4287
+2026-10-18 18:38:53,584 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [1.3s]: Train Task Loss=0.01140, Prox Loss=0.000074, Val Loss=0.15276, Val PR-AUC=0.000289, Val ROC-AUC=0.4306
+2026-10-18 18:38:54,822 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [1.2s]: Train Task Loss=0.00229, Prox Loss=0.000047, Val Loss=0.10190, Val PR-AUC=0.000292, Val ROC-AUC=0.4372
+2026-10-18 18:38:56,698 | INFO     | fedavg_vs_fedprox_suite | Run li_medium_bilstm_fedprox_mu0.0001_seed42 Complete: Test ROC-AUC=0.4570, Test PR-AUC=0.000521, Test F1=0.0010, Alerts/10k=7729.6 [Best Round=1, Tau=0.43]
+2026-10-18 18:38:56,724 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:38:56,724 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: li_medium_gru_fedavg_iid_seed42 [LI-Medium, gru, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:38:56,724 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:38:57,747 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [1.0s]: Train Task Loss=0.41404, Prox Loss=0.000000, Val Loss=0.58238, Val PR-AUC=0.000551, Val ROC-AUC=0.4707
+2026-10-18 18:38:58,771 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [1.0s]: Train Task Loss=0.15352, Prox Loss=0.000000, Val Loss=0.39157, Val PR-AUC=0.000374, Val ROC-AUC=0.4750
+2026-10-18 18:38:59,829 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [1.1s]: Train Task Loss=0.04317, Prox Loss=0.000000, Val Loss=0.21695, Val PR-AUC=0.000267, Val ROC-AUC=0.3994
+2026-10-18 18:39:00,844 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [1.0s]: Train Task Loss=0.01084, Prox Loss=0.000000, Val Loss=0.12985, Val PR-AUC=0.000270, Val ROC-AUC=0.4017
+2026-10-18 18:39:01,860 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [1.0s]: Train Task Loss=0.00292, Prox Loss=0.000000, Val Loss=0.08111, Val PR-AUC=0.000277, Val ROC-AUC=0.4158
+2026-10-18 18:39:03,720 | INFO     | fedavg_vs_fedprox_suite | Run li_medium_gru_fedavg_iid_seed42 Complete: Test ROC-AUC=0.4496, Test PR-AUC=0.000738, Test F1=0.0000, Alerts/10k=25.6 [Best Round=1, Tau=0.58]
+2026-10-18 18:39:03,739 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:39:03,739 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: li_medium_gru_fedprox_mu0.0001_iid_seed42 [LI-Medium, gru, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:39:03,739 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:39:04,824 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [1.1s]: Train Task Loss=0.41403, Prox Loss=0.000077, Val Loss=0.58234, Val PR-AUC=0.000551, Val ROC-AUC=0.4708
+2026-10-18 18:39:05,899 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [1.1s]: Train Task Loss=0.15351, Prox Loss=0.000082, Val Loss=0.39191, Val PR-AUC=0.000376, Val ROC-AUC=0.4761
+2026-10-18 18:39:06,952 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [1.1s]: Train Task Loss=0.04318, Prox Loss=0.000064, Val Loss=0.22194, Val PR-AUC=0.000271, Val ROC-AUC=0.4100
+2026-10-18 18:39:08,006 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [1.1s]: Train Task Loss=0.01086, Prox Loss=0.000036, Val Loss=0.13955, Val PR-AUC=0.000271, Val ROC-AUC=0.4066
+2026-10-18 18:39:09,119 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [1.1s]: Train Task Loss=0.00294, Prox Loss=0.000024, Val Loss=0.09118, Val PR-AUC=0.000275, Val ROC-AUC=0.4151
+2026-10-18 18:39:10,910 | INFO     | fedavg_vs_fedprox_suite | Run li_medium_gru_fedprox_mu0.0001_iid_seed42 Complete: Test ROC-AUC=0.4497, Test PR-AUC=0.000738, Test F1=0.0000, Alerts/10k=25.8 [Best Round=1, Tau=0.58]
+2026-10-18 18:39:10,929 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:39:10,929 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: li_medium_lstm_fedavg_iid_seed42 [LI-Medium, lstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:39:10,929 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:39:11,968 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [1.0s]: Train Task Loss=0.59483, Prox Loss=0.000000, Val Loss=0.61830, Val PR-AUC=0.000342, Val ROC-AUC=0.5086
+2026-10-18 18:39:13,001 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [1.0s]: Train Task Loss=0.34810, Prox Loss=0.000000, Val Loss=0.46948, Val PR-AUC=0.000292, Val ROC-AUC=0.4485
+2026-10-18 18:39:14,077 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [1.1s]: Train Task Loss=0.15830, Prox Loss=0.000000, Val Loss=0.30342, Val PR-AUC=0.000275, Val ROC-AUC=0.4054
+2026-10-18 18:39:15,132 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [1.1s]: Train Task Loss=0.06005, Prox Loss=0.000000, Val Loss=0.20485, Val PR-AUC=0.000280, Val ROC-AUC=0.4126
+2026-10-18 18:39:16,155 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [1.0s]: Train Task Loss=0.02091, Prox Loss=0.000000, Val Loss=0.13943, Val PR-AUC=0.000284, Val ROC-AUC=0.4186
+2026-10-18 18:39:17,942 | INFO     | fedavg_vs_fedprox_suite | Run li_medium_lstm_fedavg_iid_seed42 Complete: Test ROC-AUC=0.5397, Test PR-AUC=0.000635, Test F1=0.0011, Alerts/10k=4970.6 [Best Round=1, Tau=0.46]
+2026-10-18 18:39:17,962 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:39:17,962 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: li_medium_lstm_fedprox_mu0.0001_iid_seed42 [LI-Medium, lstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:39:17,962 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:39:19,041 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [1.1s]: Train Task Loss=0.59481, Prox Loss=0.000093, Val Loss=0.61829, Val PR-AUC=0.000345, Val ROC-AUC=0.5097
+2026-10-18 18:39:20,103 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [1.1s]: Train Task Loss=0.34802, Prox Loss=0.000115, Val Loss=0.46985, Val PR-AUC=0.000293, Val ROC-AUC=0.4502
+2026-10-18 18:39:21,154 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [1.0s]: Train Task Loss=0.15827, Prox Loss=0.000101, Val Loss=0.30634, Val PR-AUC=0.000275, Val ROC-AUC=0.4065
+2026-10-18 18:39:22,229 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [1.1s]: Train Task Loss=0.06005, Prox Loss=0.000067, Val Loss=0.21336, Val PR-AUC=0.000277, Val ROC-AUC=0.4073
+2026-10-18 18:39:23,306 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [1.1s]: Train Task Loss=0.02092, Prox Loss=0.000044, Val Loss=0.15070, Val PR-AUC=0.000278, Val ROC-AUC=0.4089
+2026-10-18 18:39:25,170 | INFO     | fedavg_vs_fedprox_suite | Run li_medium_lstm_fedprox_mu0.0001_iid_seed42 Complete: Test ROC-AUC=0.5403, Test PR-AUC=0.000640, Test F1=0.0011, Alerts/10k=4971.6 [Best Round=1, Tau=0.46]
+2026-10-18 18:39:25,191 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:39:25,191 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: li_medium_bilstm_fedavg_iid_seed42 [LI-Medium, bilstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:39:25,191 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:39:26,332 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [1.1s]: Train Task Loss=0.51205, Prox Loss=0.000000, Val Loss=0.58709, Val PR-AUC=0.000314, Val ROC-AUC=0.4666
+2026-10-18 18:39:27,482 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [1.1s]: Train Task Loss=0.21504, Prox Loss=0.000000, Val Loss=0.40215, Val PR-AUC=0.000291, Val ROC-AUC=0.4351
+2026-10-18 18:39:28,665 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [1.2s]: Train Task Loss=0.05741, Prox Loss=0.000000, Val Loss=0.22912, Val PR-AUC=0.000284, Val ROC-AUC=0.4160
+2026-10-18 18:39:29,827 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [1.2s]: Train Task Loss=0.01155, Prox Loss=0.000000, Val Loss=0.13827, Val PR-AUC=0.000285, Val ROC-AUC=0.4155
+2026-10-18 18:39:30,972 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [1.1s]: Train Task Loss=0.00245, Prox Loss=0.000000, Val Loss=0.08605, Val PR-AUC=0.000286, Val ROC-AUC=0.4190
+2026-10-18 18:39:32,824 | INFO     | fedavg_vs_fedprox_suite | Run li_medium_bilstm_fedavg_iid_seed42 Complete: Test ROC-AUC=0.4554, Test PR-AUC=0.000514, Test F1=0.0010, Alerts/10k=7739.3 [Best Round=1, Tau=0.43]
+2026-10-18 18:39:32,845 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:39:32,845 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: li_medium_bilstm_fedprox_mu0.0001_iid_seed42 [LI-Medium, bilstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:39:32,845 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:39:34,110 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [1.3s]: Train Task Loss=0.51203, Prox Loss=0.000192, Val Loss=0.58702, Val PR-AUC=0.000315, Val ROC-AUC=0.4677
+2026-10-18 18:39:35,389 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [1.3s]: Train Task Loss=0.21497, Prox Loss=0.000203, Val Loss=0.40439, Val PR-AUC=0.000292, Val ROC-AUC=0.4385
+2026-10-18 18:39:36,625 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [1.2s]: Train Task Loss=0.05741, Prox Loss=0.000129, Val Loss=0.24195, Val PR-AUC=0.000288, Val ROC-AUC=0.4285
+2026-10-18 18:39:37,859 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [1.2s]: Train Task Loss=0.01155, Prox Loss=0.000074, Val Loss=0.15310, Val PR-AUC=0.000289, Val ROC-AUC=0.4305
+2026-10-18 18:39:39,116 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [1.3s]: Train Task Loss=0.00244, Prox Loss=0.000047, Val Loss=0.10226, Val PR-AUC=0.000292, Val ROC-AUC=0.4375
+2026-10-18 18:39:41,027 | INFO     | fedavg_vs_fedprox_suite | Run li_medium_bilstm_fedprox_mu0.0001_iid_seed42 Complete: Test ROC-AUC=0.4566, Test PR-AUC=0.000519, Test F1=0.0010, Alerts/10k=7735.1 [Best Round=1, Tau=0.43]
+2026-10-18 18:39:41,230 | INFO     | fedavg_vs_fedprox_suite | Released dataset LI-Medium from memory.
+2026-10-18 18:39:41,230 | INFO     | fedavg_vs_fedprox_suite | SUITE COMPLETE. Newly trained: 12 models. Elapsed time: 1.62 minutes.

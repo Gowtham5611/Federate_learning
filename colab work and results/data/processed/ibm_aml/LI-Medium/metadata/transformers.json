@@ -1,0 +1,145 @@
+{
+  "categorical_encoding": {
+    "codes_are_nominal": true,
+    "codes_assigned_in": "sorted vocabulary order (order-independent)",
+    "columns": {
+      "Payment Currency": {
+        "mapping": {
+          "Australian Dollar": 0,
+          "Bitcoin": 1,
+          "Brazil Real": 2,
+          "Canadian Dollar": 3,
+          "Euro": 4,
+          "Mexican Peso": 5,
+          "Ruble": 6,
+          "Rupee": 7,
+          "Saudi Riyal": 8,
+          "Shekel": 9,
+          "Swiss Franc": 10,
+          "UK Pound": 11,
+          "US Dollar": 12,
+          "Yen": 13,
+          "Yuan": 14
+        },
+        "vocabulary_size": 15
+      },
+      "Payment Format": {
+        "mapping": {
+          "ACH": 0,
+          "Bitcoin": 1,
+          "Cash": 2,
+          "Cheque": 3,
+          "Credit Card": 4,
+          "Reinvestment": 5,
+          "Wire": 6
+        },
+        "vocabulary_size": 7
+      },
+      "Receiving Currency": {
+        "mapping": {
+          "Australian Dollar": 0,
+          "Bitcoin": 1,
+          "Brazil Real": 2,
+          "Canadian Dollar": 3,
+          "Euro": 4,
+          "Mexican Peso": 5,
+          "Ruble": 6,
+          "Rupee": 7,
+          "Saudi Riyal": 8,
+          "Shekel": 9,
+          "Swiss Franc": 10,
+          "UK Pound": 11,
+          "US Dollar": 12,
+          "Yen": 13,
+          "Yuan": 14
+        },
+        "vocabulary_size": 15
+      }
+    },
+    "nominal_note": "Codes identify categories and imply no ordering. Models that assume ordinal inputs must one-hot or embed these columns; that expansion is deferred to the modelling phase so the processed files stay compact and streamable.",
+    "not_encoded": {
+      "Account": "515,080 distinct sending/receiving account identifiers were measured across the file. One-hot encoding would produce a matrix wider than the dataset is long, and ordinal codes would impose a false ordering on identifiers that have none. Account identity is used only to accumulate causal per-account history features, never as a model input column.",
+      "Account.1": "Same identifier space as 'Account'; see that entry. Encoded nowhere, used only for receiver-side history.",
+      "From Bank": "Bank identifiers range to 356,303. An integer bank id carries no magnitude - bank 300,000 is not larger than bank 3 - so it is neither scaled nor encoded. The relationship that does carry signal, whether sender and receiver share a bank, is kept as a boolean feature.",
+      "To Bank": "Same identifier space as 'From Bank'; see that entry."
+    },
+    "scheme": "ordinal",
+    "unknown_code": -1
+  },
+  "fitted_on": "train split only",
+  "preprocessing_version": "1.0.0",
+  "scaled_columns": [
+    "amount_paid_log",
+    "amount_received_log",
+    "sender_prior_count_log",
+    "sender_prior_amount_log",
+    "sender_seconds_since_prior_log",
+    "receiver_prior_count_log",
+    "receiver_prior_amount_log",
+    "receiver_seconds_since_prior_log"
+  ],
+  "scaling_parameters": {
+    "amount_paid_log": {
+      "count": 18752217.0,
+      "mean": 7.49360893383107,
+      "std": 3.314194604960654
+    },
+    "amount_received_log": {
+      "count": 18752217.0,
+      "mean": 7.497229577797258,
+      "std": 3.330637486550664
+    },
+    "receiver_prior_amount_log": {
+      "count": 18752217.0,
+      "mean": 10.716985818490512,
+      "std": 4.715404472645265
+    },
+    "receiver_prior_count_log": {
+      "count": 18752217.0,
+      "mean": 2.1512864221382038,
+      "std": 1.0302460288330724
+    },
+    "receiver_seconds_since_prior_log": {
+      "count": 18752217.0,
+      "mean": 7.409515430695021,
+      "std": 3.6213633157049334
+    },
+    "sender_prior_amount_log": {
+      "count": 18752217.0,
+      "mean": 12.018451315842505,
+      "std": 6.476875595601201
+    },
+    "sender_prior_count_log": {
+      "count": 18752217.0,
+      "mean": 3.1711772773337294,
+      "std": 2.8472611060238044
+    },
+    "sender_seconds_since_prior_log": {
+      "count": 18752217.0,
+      "mean": 6.409202812960836,
+      "std": 4.0565180201625415
+    }
+  },
+  "unknown_category_counts": {
+    "Payment Currency": 0,
+    "Payment Format": 0,
+    "Receiving Currency": 0
+  },
+  "unscaled_columns": [
+    "amount_mismatch",
+    "same_currency",
+    "same_bank",
+    "self_transfer",
+    "payment_format_code",
+    "payment_currency_code",
+    "receiving_currency_code",
+    "minute_of_day_sin",
+    "minute_of_day_cos",
+    "day_of_week_sin",
+    "day_of_week_cos",
+    "is_weekend",
+    "is_night",
+    "sender_has_prior",
+    "receiver_has_prior"
+  ]
+}

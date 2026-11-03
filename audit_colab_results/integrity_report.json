@@ -1,0 +1,51 @@
+{
+  "audit_timestamp_utc": "2026-10-19T04:53:33.615252+00:00",
+  "zero_byte_files_count": 1,
+  "zero_byte_files": [
+    "backend/scripts/.gitkeep"
+  ],
+  "corrupted_or_truncated_files_found": 0,
+  "predictions_integrity_summary": {
+    "total_prediction_files_in_colab": 115,
+    "files_with_nans": 0,
+    "files_with_infs": 0,
+    "files_outside_unit_interval": 0,
+    "status": "ALL_PREDICTIONS_VALID_FLOAT32_IN_UNIT_INTERVAL"
+  },
+  "confusion_matrix_mathematical_consistency": {
+    "models_evaluated": 36,
+    "mathematical_errors_found": 0,
+    "formulas_verified": [
+      "TP + TN + FP + FN == test_rows",
+      "TP + FN == test_positives",
+      "TN + FP == test_negatives",
+      "Precision == TP / (TP + FP)",
+      "Recall == TP / (TP + FN)",
+      "Specificity == TN / (TN + FP)",
+      "FPR == FP / (TN + FP)",
+      "F1 == 2 * Precision * Recall / (Precision + Recall)",
+      "Alerts per 10k legitimate == FPR * 10000"
+    ],
+    "status": "100%_MATHEMATICALLY_CONSISTENT"
+  },
+  "scientific_validity_and_anomaly_analysis": {
+    "roc_auc_below_0.5_root_cause": {
+      "affected_datasets": [
+        "Combined",
+        "LI-Medium (Subset)"
+      ],
+      "combined_roc_auc_range": "0.4409 to 0.4656",
+      "li_medium_subset_roc_auc_range": "0.4496 to 0.5409",
+      "contrast_with_hi_small": "HI-Small achieved 0.8986 to 0.9555 ROC-AUC across all models.",
+      "scientific_explanation": "The ROC-AUC depression in Combined (0.44-0.46) and LI-Medium subset (0.45-0.54) is strictly driven by extreme class imbalance. Combined training data has only 15 positive laundering transactions out of 300,000 samples (0.005% positive rate), which divides into only 5 positive samples per client across 3 federated clients. Similarly, LI-Medium subset training data has only 9 positive transactions out of 200,000 samples (0.0045% positive rate, or 3 positives per client). With so few positive examples per client, the recurrent networks cannot learn discriminative temporal sequences and produce near-constant low scores, leading to random-walk ROC-AUC near 0.50. In sharp contrast, HI-Small has 2,299 positive transactions in training (~766 per client), enabling all 12 models to reliably learn discriminative features and achieve ROC-AUC between 0.8986 and 0.9555. Importantly, labels are NOT inverted, scores are properly oriented (higher score = laundering), and metrics are computed on continuous probability scores."
+    },
+    "threshold_selection_integrity": {
+      "validation_threshold_frozen": true,
+      "description": "Validation threshold tau was frozen based on validation PR-AUC / alert budget and applied directly to test predictions without peeking."
+    },
+    "algorithm_comparison_summary": {
+      "observation": "FedAvg consistently outperforms FedProx (mu=0.0001) across all architectures and partitions on HI-Small.",
+      "top_performer": "hi_small_lstm_fedavg_iid_seed42 (ROC-AUC: 0.9555, PR-AUC: 0.4760, F1: 0.5352, Alerts/10k: 1.55)"
+    }
+  }
+}

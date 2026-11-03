@@ -1,0 +1,85 @@
+2026-10-17 00:40:08,850 | INFO     | li_medium_preprocessing | Starting LI-Medium preprocessing pipeline...
+2026-10-17 00:40:08,851 | INFO     | li_medium_preprocessing | Raw input path: C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\raw\ibm_aml\LI-Medium_Trans.csv
+2026-10-17 00:40:08,851 | INFO     | li_medium_preprocessing | Processed output path: C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium
+2026-10-17 00:40:08,852 | INFO     | li_medium_preprocessing | Interim working path: C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\interim\ibm_aml\LI-Medium
+2026-10-17 00:40:08,852 | INFO     | li_medium_preprocessing | Chunk size: 200000 rows
+2026-10-17 00:40:08,854 | INFO     | application.services.preprocessing_service | Preprocessing starting: file=LI-Medium_Trans.csv chunk_size=200000 version=1.0.0
+2026-10-17 00:40:14,030 | INFO     | application.services.preprocessing_service | Stage 'fingerprint' finished in 5.2s
+2026-10-17 00:40:14,032 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'LI-Medium_Trans.csv' in chunks of 200000 row(s)
+2026-10-17 00:45:28,613 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'LI-Medium_Trans.csv': 157 chunk(s), 31251483 row(s)
+2026-10-17 00:45:28,622 | INFO     | application.services.preprocessing_service | Partitioned 31251483 row(s) into 27 day(s); 23761 distinct timestamp(s)
+2026-10-17 00:45:28,631 | INFO     | application.services.preprocessing_service | Stage 'partition' finished in 314.6s
+2026-10-17 00:45:28,650 | INFO     | application.services.preprocessing_service | Chronological boundaries: train<=2022-09-09 20:39:00, validation<=2022-09-14 05:39:00 (whole_timestamp_to_earlier_split)
+2026-10-17 00:45:28,650 | INFO     | application.services.preprocessing_service | Stage 'boundaries' finished in 0.0s
+2026-10-17 00:45:28,651 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-01.csv' in chunks of 2000000 row(s)
+2026-10-17 00:45:39,175 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-01.csv': 3 chunk(s), 4376934 row(s)
+2026-10-17 00:47:54,707 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-02.csv' in chunks of 2000000 row(s)
+2026-10-17 00:48:01,150 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-02.csv': 2 chunk(s), 2960694 row(s)
+2026-10-17 00:49:39,112 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-03.csv' in chunks of 2000000 row(s)
+2026-10-17 00:49:40,651 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-03.csv': 1 chunk(s), 814486 row(s)
+2026-10-17 00:50:11,374 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-04.csv' in chunks of 2000000 row(s)
+2026-10-17 00:50:13,406 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-04.csv': 1 chunk(s), 813978 row(s)
+2026-10-17 00:50:45,093 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-05.csv' in chunks of 2000000 row(s)
+2026-10-17 00:50:49,413 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-05.csv': 1 chunk(s), 1893375 row(s)
+2026-10-17 00:51:48,076 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-06.csv' in chunks of 2000000 row(s)
+2026-10-17 00:51:52,416 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-06.csv': 1 chunk(s), 1891023 row(s)
+2026-10-17 00:52:55,102 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-07.csv' in chunks of 2000000 row(s)
+2026-10-17 00:52:58,716 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-07.csv': 1 chunk(s), 1890776 row(s)
+2026-10-17 00:53:59,917 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-08.csv' in chunks of 2000000 row(s)
+2026-10-17 00:54:04,635 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-08.csv': 1 chunk(s), 1890504 row(s)
+2026-10-17 00:55:15,674 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-09.csv' in chunks of 2000000 row(s)
+2026-10-17 00:55:21,954 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-09.csv': 2 chunk(s), 2568602 row(s)
+2026-10-17 00:56:58,715 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-10.csv' in chunks of 2000000 row(s)
+2026-10-17 00:57:00,685 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-10.csv': 1 chunk(s), 814076 row(s)
+2026-10-17 00:57:39,927 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-11.csv' in chunks of 2000000 row(s)
+2026-10-17 00:57:41,824 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-11.csv': 1 chunk(s), 813639 row(s)
+2026-10-17 00:58:20,411 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-12.csv' in chunks of 2000000 row(s)
+2026-10-17 00:58:24,847 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-12.csv': 1 chunk(s), 1892586 row(s)
+2026-10-17 00:59:41,985 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-13.csv' in chunks of 2000000 row(s)
+2026-10-17 00:59:46,194 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-13.csv': 1 chunk(s), 1890575 row(s)
+2026-10-17 01:01:02,640 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-14.csv' in chunks of 2000000 row(s)
+2026-10-17 01:01:07,037 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-14.csv': 1 chunk(s), 1891265 row(s)
+2026-10-17 01:02:25,205 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-15.csv' in chunks of 2000000 row(s)
+2026-10-17 01:02:29,653 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-15.csv': 1 chunk(s), 1891498 row(s)
+2026-10-17 01:03:49,907 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-16.csv' in chunks of 2000000 row(s)
+2026-10-17 01:03:57,040 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-16.csv': 2 chunk(s), 2956102 row(s)
+2026-10-17 01:05:52,838 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-17.csv' in chunks of 2000000 row(s)
+2026-10-17 01:05:52,857 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-17.csv': 1 chunk(s), 380 row(s)
+2026-10-17 01:06:01,782 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-18.csv' in chunks of 2000000 row(s)
+2026-10-17 01:06:01,790 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-18.csv': 1 chunk(s), 353 row(s)
+2026-10-17 01:06:07,917 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-19.csv' in chunks of 2000000 row(s)
+2026-10-17 01:06:07,922 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-19.csv': 1 chunk(s), 244 row(s)
+2026-10-17 01:06:13,728 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-20.csv' in chunks of 2000000 row(s)
+2026-10-17 01:06:13,738 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-20.csv': 1 chunk(s), 211 row(s)
+2026-10-17 01:06:20,046 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-21.csv' in chunks of 2000000 row(s)
+2026-10-17 01:06:20,054 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-21.csv': 1 chunk(s), 73 row(s)
+2026-10-17 01:06:25,966 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-22.csv' in chunks of 2000000 row(s)
+2026-10-17 01:06:25,973 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-22.csv': 1 chunk(s), 65 row(s)
+2026-10-17 01:06:31,702 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-23.csv' in chunks of 2000000 row(s)
+2026-10-17 01:06:31,708 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-23.csv': 1 chunk(s), 16 row(s)
+2026-10-17 01:06:35,686 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-24.csv' in chunks of 2000000 row(s)
+2026-10-17 01:06:35,689 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-24.csv': 1 chunk(s), 11 row(s)
+2026-10-17 01:06:39,833 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-25.csv' in chunks of 2000000 row(s)
+2026-10-17 01:06:39,839 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-25.csv': 1 chunk(s), 12 row(s)
+2026-10-17 01:06:43,961 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-26.csv' in chunks of 2000000 row(s)
+2026-10-17 01:06:43,965 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-26.csv': 1 chunk(s), 1 row(s)
+2026-10-17 01:06:47,893 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'day=2022-09-27.csv' in chunks of 2000000 row(s)
+2026-10-17 01:06:47,899 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'day=2022-09-27.csv': 1 chunk(s), 4 row(s)
+2026-10-17 01:06:52,070 | INFO     | application.services.preprocessing_service | Stage 'engineer' finished in 1283.4s
+2026-10-17 01:06:52,071 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Streaming 'staged_train.csv' in chunks of 200000 row(s)
+2026-10-17 01:16:20,752 | INFO     | infrastructure.data.loaders.csv_chunk_loader | Finished streaming 'staged_train.csv': 94 chunk(s), 18752217 row(s)
+2026-10-17 01:16:20,769 | INFO     | application.services.preprocessing_service | Stage 'finalize_train' finished in 568.7s
+2026-10-17 01:16:20,800 | INFO     | infrastructure.data.writers.csv_processed_data_writer | Closed split 'validation': 6250154 row(s) in C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\validation\transactions.csv
+2026-10-17 01:16:20,801 | INFO     | infrastructure.data.writers.csv_processed_data_writer | Closed split 'test': 6249112 row(s) in C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\test\transactions.csv
+2026-10-17 01:16:20,803 | INFO     | infrastructure.data.writers.csv_processed_data_writer | Closed split 'train': 18752217 row(s) in C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\train\transactions.csv
+2026-10-17 01:16:26,494 | INFO     | application.services.preprocessing_service | Stage 'verify' finished in 5.7s
+2026-10-17 01:16:26,500 | INFO     | infrastructure.data.writers.csv_processed_data_writer | Wrote preprocessing artefact 'schema.json'
+2026-10-17 01:16:26,503 | INFO     | infrastructure.data.writers.csv_processed_data_writer | Wrote preprocessing artefact 'feature_metadata.json'
+2026-10-17 01:16:26,505 | INFO     | infrastructure.data.writers.csv_processed_data_writer | Wrote preprocessing artefact 'transformers.json'
+2026-10-17 01:16:26,507 | INFO     | infrastructure.data.writers.csv_processed_data_writer | Wrote preprocessing artefact 'splits.json'
+2026-10-17 01:16:26,510 | INFO     | infrastructure.data.writers.csv_processed_data_writer | Wrote preprocessing artefact 'preprocessing_report.json'
+2026-10-17 01:16:27,515 | WARNING  | infrastructure.data.writers.interim_partition_store | Could not remove 'data\interim\ibm_aml\LI-Medium\partitions' after 3 attempt(s): [WinError 5] Access is denied: 'data\\interim\\ibm_aml\\LI-Medium\\partitions'
+2026-10-17 01:16:27,585 | WARNING  | infrastructure.data.writers.csv_interim_storage | Interim working files could not be removed and can be deleted by hand: data\interim\ibm_aml\LI-Medium\partitions
+2026-10-17 01:16:27,586 | INFO     | application.services.preprocessing_service | Preprocessing finished: 31251483 row(s) read, 31251483 written, 2177.6s
+2026-10-17 01:16:27,594 | INFO     | li_medium_preprocessing | LI-Medium preprocessing completed successfully in 2178.7 seconds!
+2026-10-17 01:16:27,594 | INFO     | li_medium_preprocessing | Rows read: 31251483, Rows written: 31251483, Rows removed: 0

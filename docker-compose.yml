@@ -1,0 +1,84 @@
+# =============================================================================
+# FedSecureAI — Production Restricted Inference Deployment Compose File
+# =============================================================================
+# Architecture:
+# - Service binds strictly to localhost (127.0.0.1) or internal bridge network.
+# - Non-root container with read-only root filesystem.
+# - Authoritative checkpoints mounted as read-only volumes.
+# - Ingress requires an authenticated reverse proxy or API gateway.
+# =============================================================================
+
+version: "3.8"
+
+services:
+  fedsecure-inference:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.inference
+    image: fedsecureai-inference:1.0.0
+    container_name: fedsecure-inference
+    restart: unless-stopped
+    
+    # Restrict binding to host loopback interface only (prevents public network exposure)
+    ports:
+      - "127.0.0.1:8000:8000"
+
+    # Runtime Environment
+    environment:
+      - APP_ENV=production
+      - LOG_LEVEL=INFO
+      - FEDSECUREAI_CHECKPOINT_DIR=/app/checkpoints
+      - FEDSECUREAI_DATA_DIR=/app/data
+      - OMP_NUM_THREADS=2
+      - MKL_NUM_THREADS=2
+
+    # Hardened Security & Isolation
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+    # Writeable temporary scratch space (memory-backed)
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+
+    # Controlled Checkpoint Mounting (Read-Only)
+    volumes:
+      # HI-Small authoritative checkpoint
+      - type: bind
+        source: ./results/HI_Small_Results/checkpoints/hi_small_lstm_fedavg_iid_seed42/hi_small_lstm_fedavg_iid_seed42_global_best.pt
+        target: /app/checkpoints/hi_small_lstm_fedavg_iid_seed42_global_best.pt
+        read_only: true
+      # LI-Medium authoritative checkpoint
+      - type: bind
+        source: ./results/LI_Medium_Results/checkpoints/config_5/global_best.pt
+        target: /app/checkpoints/global_best.pt
+        read_only: true
+
+    # Resource Constraints
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2048M
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+
+    # Liveness & Readiness Probe
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request, sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3).getcode() == 200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+
+    networks:
+      - fedsecure-internal
+
+networks:
+  fedsecure-internal:
+    driver: bridge
+    internal: false # Allow gateway integration on the same docker bridge
+

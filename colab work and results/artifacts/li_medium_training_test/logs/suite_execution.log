@@ -1,0 +1,6 @@
+2026-10-18 18:31:55,079 | INFO     | fedavg_vs_fedprox_suite | Output root: /content/Federate_learning/Federate_learning/artifacts/li_medium_training_test
+2026-10-18 18:31:55,079 | INFO     | fedavg_vs_fedprox_suite | Manifest path: /content/Federate_learning/Federate_learning/artifacts/li_medium_training_test/resume_manifest.json
+2026-10-18 18:31:55,079 | INFO     | fedavg_vs_fedprox_suite | Loading dataset LI-Medium from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/LI-Medium...
+2026-10-18 18:34:21,648 | INFO     | fedavg_vs_fedprox_suite | Output root: /content/Federate_learning/Federate_learning/artifacts/li_medium_training_test
+2026-10-18 18:34:21,649 | INFO     | fedavg_vs_fedprox_suite | Manifest path: /content/Federate_learning/Federate_learning/artifacts/li_medium_training_test/resume_manifest.json
+2026-10-18 18:34:21,650 | INFO     | fedavg_vs_fedprox_suite | Loading dataset LI-Medium from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/LI-Medium...

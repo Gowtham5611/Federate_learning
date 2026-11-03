@@ -1,0 +1,181 @@
+2026-10-18 11:15:29,911 | INFO     | dataset_comparison | =================================================================
+2026-10-18 11:15:29,912 | INFO     | dataset_comparison | STARTING FEDSECUREAI DATASET COMPARISON EXPERIMENT
+2026-10-18 11:15:29,912 | INFO     | dataset_comparison | Datasets: HI-Small vs. LI-Medium vs. Combined
+2026-10-18 11:15:29,912 | INFO     | dataset_comparison | FedProx mu = 0.1 and mu = 1.0 vs. FedAvg Baselines
+2026-10-18 11:15:29,912 | INFO     | dataset_comparison | =================================================================
+2026-10-18 11:15:29,919 | INFO     | dataset_comparison | Loading training datasets (100k sequence controlled slice)...
+2026-10-18 11:15:30,233 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\train\transactions.csv
+2026-10-18 11:15:30,645 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\train\transactions.csv
+2026-10-18 11:15:31,047 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\train\transactions.csv
+2026-10-18 11:15:31,120 | INFO     | dataset_comparison | Loading validation datasets (50k sequence slice)...
+2026-10-18 11:15:31,252 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\validation\transactions.csv
+2026-10-18 11:15:31,411 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\validation\transactions.csv
+2026-10-18 11:15:31,591 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\validation\transactions.csv
+2026-10-18 11:15:31,622 | INFO     | dataset_comparison | Loading test datasets (50k sequence slice for evaluation matrix)...
+2026-10-18 11:15:31,779 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\test\transactions.csv
+2026-10-18 11:15:31,975 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\test\transactions.csv
+2026-10-18 11:15:32,153 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\test\transactions.csv
+2026-10-18 11:16:23,863 | INFO     | dataset_comparison | =================================================================
+2026-10-18 11:16:23,864 | INFO     | dataset_comparison | STARTING FEDSECUREAI DATASET COMPARISON EXPERIMENT
+2026-10-18 11:16:23,864 | INFO     | dataset_comparison | Datasets: HI-Small vs. LI-Medium vs. Combined
+2026-10-18 11:16:23,864 | INFO     | dataset_comparison | FedProx mu = 0.1 and mu = 1.0 vs. FedAvg Baselines
+2026-10-18 11:16:23,864 | INFO     | dataset_comparison | =================================================================
+2026-10-18 11:16:23,868 | INFO     | dataset_comparison | Loading training datasets (100k sequence controlled slice)...
+2026-10-18 11:16:24,195 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\train\transactions.csv
+2026-10-18 11:16:24,618 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\train\transactions.csv
+2026-10-18 11:16:25,010 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\train\transactions.csv
+2026-10-18 11:16:25,083 | INFO     | dataset_comparison | Loading validation datasets (50k sequence slice)...
+2026-10-18 11:16:25,248 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\validation\transactions.csv
+2026-10-18 11:16:25,484 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\validation\transactions.csv
+2026-10-18 11:16:25,711 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\validation\transactions.csv
+2026-10-18 11:16:25,751 | INFO     | dataset_comparison | Loading test datasets (50k sequence slice for evaluation matrix)...
+2026-10-18 11:16:25,956 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\test\transactions.csv
+2026-10-18 11:16:26,177 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\test\transactions.csv
+2026-10-18 11:16:26,399 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\test\transactions.csv
+2026-10-18 11:18:05,005 | INFO     | dataset_comparison | =================================================================
+2026-10-18 11:18:05,005 | INFO     | dataset_comparison | STARTING FEDSECUREAI DATASET COMPARISON EXPERIMENT
+2026-10-18 11:18:05,006 | INFO     | dataset_comparison | Datasets: HI-Small vs. LI-Medium vs. Combined
+2026-10-18 11:18:05,006 | INFO     | dataset_comparison | FedProx mu = 0.1 and mu = 1.0 vs. FedAvg Baselines
+2026-10-18 11:18:05,006 | INFO     | dataset_comparison | =================================================================
+2026-10-18 11:18:05,009 | INFO     | dataset_comparison | Loading training datasets (100k sequence controlled slice)...
+2026-10-18 11:18:05,294 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\train\transactions.csv
+2026-10-18 11:18:05,630 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\train\transactions.csv
+2026-10-18 11:18:05,978 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\train\transactions.csv
+2026-10-18 11:18:06,037 | INFO     | dataset_comparison | Loading validation datasets (50k sequence slice)...
+2026-10-18 11:18:06,168 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\validation\transactions.csv
+2026-10-18 11:18:06,321 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\validation\transactions.csv
+2026-10-18 11:18:06,501 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\validation\transactions.csv
+2026-10-18 11:18:06,525 | INFO     | dataset_comparison | Loading test datasets (50k sequence slice for evaluation matrix)...
+2026-10-18 11:18:06,663 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\test\transactions.csv
+2026-10-18 11:18:06,832 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\test\transactions.csv
+2026-10-18 11:18:07,018 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\test\transactions.csv
+2026-10-18 11:18:07,828 | INFO     | dataset_comparison | Built client loaders for HI-Small (IID and Non-IID)
+2026-10-18 11:18:08,599 | INFO     | dataset_comparison | Built client loaders for LI-Medium (IID and Non-IID)
+2026-10-18 11:18:09,356 | INFO     | dataset_comparison | Built client loaders for Combined (IID and Non-IID)
+2026-10-18 11:18:45,253 | INFO     | dataset_comparison | =================================================================
+2026-10-18 11:18:45,253 | INFO     | dataset_comparison | STARTING FEDSECUREAI DATASET COMPARISON EXPERIMENT
+2026-10-18 11:18:45,253 | INFO     | dataset_comparison | Datasets: HI-Small vs. LI-Medium vs. Combined
+2026-10-18 11:18:45,254 | INFO     | dataset_comparison | FedProx mu = 0.1 and mu = 1.0 vs. FedAvg Baselines
+2026-10-18 11:18:45,254 | INFO     | dataset_comparison | =================================================================
+2026-10-18 11:18:45,257 | INFO     | dataset_comparison | Loading training datasets (100k sequence controlled slice)...
+2026-10-18 11:18:45,529 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\train\transactions.csv
+2026-10-18 11:18:45,854 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\train\transactions.csv
+2026-10-18 11:18:46,170 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\train\transactions.csv
+2026-10-18 11:18:46,227 | INFO     | dataset_comparison | Loading validation datasets (50k sequence slice)...
+2026-10-18 11:18:46,362 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\validation\transactions.csv
+2026-10-18 11:18:46,519 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\validation\transactions.csv
+2026-10-18 11:18:46,700 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\validation\transactions.csv
+2026-10-18 11:18:46,729 | INFO     | dataset_comparison | Loading test datasets (50k sequence slice for evaluation matrix)...
+2026-10-18 11:18:46,867 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\test\transactions.csv
+2026-10-18 11:18:47,045 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\test\transactions.csv
+2026-10-18 11:18:47,266 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\test\transactions.csv
+2026-10-18 11:18:47,774 | INFO     | dataset_comparison | Built client loaders for HI-Small (IID and Non-IID)
+2026-10-18 11:18:48,293 | INFO     | dataset_comparison | Built client loaders for LI-Medium (IID and Non-IID)
+2026-10-18 11:18:48,959 | INFO     | dataset_comparison | Built client loaders for Combined (IID and Non-IID)
+2026-10-18 11:18:48,959 | INFO     | dataset_comparison | [1/54] Running experiment: hi_small_iid_fedavg_gru_seed42 (Dataset=HI-Small, Arch=gru, Dist=iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:19:56,634 | INFO     | dataset_comparison | =================================================================
+2026-10-18 11:19:56,635 | INFO     | dataset_comparison | STARTING FEDSECUREAI DATASET COMPARISON EXPERIMENT
+2026-10-18 11:19:56,635 | INFO     | dataset_comparison | Datasets: HI-Small vs. LI-Medium vs. Combined
+2026-10-18 11:19:56,636 | INFO     | dataset_comparison | FedProx mu = 0.1 and mu = 1.0 vs. FedAvg Baselines
+2026-10-18 11:19:56,636 | INFO     | dataset_comparison | =================================================================
+2026-10-18 11:19:56,639 | INFO     | dataset_comparison | Loading training datasets (100k sequence controlled slice)...
+2026-10-18 11:19:56,913 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\train\transactions.csv
+2026-10-18 11:19:57,254 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\train\transactions.csv
+2026-10-18 11:19:57,687 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\train\transactions.csv
+2026-10-18 11:19:57,760 | INFO     | dataset_comparison | Loading validation datasets (50k sequence slice)...
+2026-10-18 11:19:57,927 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\validation\transactions.csv
+2026-10-18 11:19:58,208 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\validation\transactions.csv
+2026-10-18 11:19:58,494 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\validation\transactions.csv
+2026-10-18 11:19:58,540 | INFO     | dataset_comparison | Loading test datasets (50k sequence slice for evaluation matrix)...
+2026-10-18 11:19:58,765 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\test\transactions.csv
+2026-10-18 11:19:59,004 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\test\transactions.csv
+2026-10-18 11:19:59,237 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\test\transactions.csv
+2026-10-18 11:19:59,977 | INFO     | dataset_comparison | Built client loaders for HI-Small (IID and Non-IID)
+2026-10-18 11:20:00,763 | INFO     | dataset_comparison | Built client loaders for LI-Medium (IID and Non-IID)
+2026-10-18 11:20:01,786 | INFO     | dataset_comparison | Built client loaders for Combined (IID and Non-IID)
+2026-10-18 11:20:01,788 | INFO     | dataset_comparison | [1/54] Running experiment: hi_small_iid_fedavg_gru_seed42 (Dataset=HI-Small, Arch=gru, Dist=iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:21:12,772 | INFO     | dataset_comparison | =================================================================
+2026-10-18 11:21:12,773 | INFO     | dataset_comparison | STARTING FEDSECUREAI DATASET COMPARISON EXPERIMENT
+2026-10-18 11:21:12,773 | INFO     | dataset_comparison | Datasets: HI-Small vs. LI-Medium vs. Combined
+2026-10-18 11:21:12,773 | INFO     | dataset_comparison | FedProx mu = 0.1 and mu = 1.0 vs. FedAvg Baselines
+2026-10-18 11:21:12,773 | INFO     | dataset_comparison | =================================================================
+2026-10-18 11:21:12,776 | INFO     | dataset_comparison | Loading training datasets (100k sequence controlled slice)...
+2026-10-18 11:21:13,046 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\train\transactions.csv
+2026-10-18 11:21:13,383 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\train\transactions.csv
+2026-10-18 11:21:13,709 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\train\transactions.csv
+2026-10-18 11:21:13,780 | INFO     | dataset_comparison | Loading validation datasets (50k sequence slice)...
+2026-10-18 11:21:13,922 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\validation\transactions.csv
+2026-10-18 11:21:14,123 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\validation\transactions.csv
+2026-10-18 11:21:14,291 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\validation\transactions.csv
+2026-10-18 11:21:14,325 | INFO     | dataset_comparison | Loading test datasets (50k sequence slice for evaluation matrix)...
+2026-10-18 11:21:14,455 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\test\transactions.csv
+2026-10-18 11:21:14,618 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\test\transactions.csv
+2026-10-18 11:21:14,840 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\test\transactions.csv
+2026-10-18 11:21:15,320 | INFO     | dataset_comparison | Built client loaders for HI-Small (IID and Non-IID)
+2026-10-18 11:21:15,944 | INFO     | dataset_comparison | Built client loaders for LI-Medium (IID and Non-IID)
+2026-10-18 11:21:16,863 | INFO     | dataset_comparison | Built client loaders for Combined (IID and Non-IID)
+2026-10-18 11:21:16,863 | INFO     | dataset_comparison | [1/54] Running experiment: hi_small_iid_fedavg_gru_seed42 (Dataset=HI-Small, Arch=gru, Dist=iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:21:42,980 | INFO     | dataset_comparison | [2/54] Running experiment: hi_small_iid_fedprox_mu0.1_gru_seed42 (Dataset=HI-Small, Arch=gru, Dist=iid, Algo=fedprox, mu=0.1)
+2026-10-18 11:22:06,776 | INFO     | dataset_comparison | [3/54] Running experiment: hi_small_iid_fedprox_mu1.0_gru_seed42 (Dataset=HI-Small, Arch=gru, Dist=iid, Algo=fedprox, mu=1.0)
+2026-10-18 11:22:31,160 | INFO     | dataset_comparison | [4/54] Running experiment: hi_small_non_iid_fedavg_gru_seed42 (Dataset=HI-Small, Arch=gru, Dist=non_iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:22:55,155 | INFO     | dataset_comparison | [5/54] Running experiment: hi_small_non_iid_fedprox_mu0.1_gru_seed42 (Dataset=HI-Small, Arch=gru, Dist=non_iid, Algo=fedprox, mu=0.1)
+2026-10-18 11:23:19,386 | INFO     | dataset_comparison | [6/54] Running experiment: hi_small_non_iid_fedprox_mu1.0_gru_seed42 (Dataset=HI-Small, Arch=gru, Dist=non_iid, Algo=fedprox, mu=1.0)
+2026-10-18 11:23:42,864 | INFO     | dataset_comparison | [7/54] Running experiment: hi_small_iid_fedavg_lstm_seed42 (Dataset=HI-Small, Arch=lstm, Dist=iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:24:05,596 | INFO     | dataset_comparison | [8/54] Running experiment: hi_small_iid_fedprox_mu0.1_lstm_seed42 (Dataset=HI-Small, Arch=lstm, Dist=iid, Algo=fedprox, mu=0.1)
+2026-10-18 11:24:22,852 | INFO     | dataset_comparison | [9/54] Running experiment: hi_small_iid_fedprox_mu1.0_lstm_seed42 (Dataset=HI-Small, Arch=lstm, Dist=iid, Algo=fedprox, mu=1.0)
+2026-10-18 11:24:41,360 | INFO     | dataset_comparison | [10/54] Running experiment: hi_small_non_iid_fedavg_lstm_seed42 (Dataset=HI-Small, Arch=lstm, Dist=non_iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:25:03,511 | INFO     | dataset_comparison | [11/54] Running experiment: hi_small_non_iid_fedprox_mu0.1_lstm_seed42 (Dataset=HI-Small, Arch=lstm, Dist=non_iid, Algo=fedprox, mu=0.1)
+2026-10-18 11:25:27,838 | INFO     | dataset_comparison | [12/54] Running experiment: hi_small_non_iid_fedprox_mu1.0_lstm_seed42 (Dataset=HI-Small, Arch=lstm, Dist=non_iid, Algo=fedprox, mu=1.0)
+2026-10-18 11:25:59,278 | INFO     | dataset_comparison | [13/54] Running experiment: hi_small_iid_fedavg_bilstm_seed42 (Dataset=HI-Small, Arch=bilstm, Dist=iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:26:47,657 | INFO     | dataset_comparison | [14/54] Running experiment: hi_small_iid_fedprox_mu0.1_bilstm_seed42 (Dataset=HI-Small, Arch=bilstm, Dist=iid, Algo=fedprox, mu=0.1)
+2026-10-18 11:27:34,624 | INFO     | dataset_comparison | [15/54] Running experiment: hi_small_iid_fedprox_mu1.0_bilstm_seed42 (Dataset=HI-Small, Arch=bilstm, Dist=iid, Algo=fedprox, mu=1.0)
+2026-10-18 11:28:22,157 | INFO     | dataset_comparison | [16/54] Running experiment: hi_small_non_iid_fedavg_bilstm_seed42 (Dataset=HI-Small, Arch=bilstm, Dist=non_iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:29:12,413 | INFO     | dataset_comparison | [17/54] Running experiment: hi_small_non_iid_fedprox_mu0.1_bilstm_seed42 (Dataset=HI-Small, Arch=bilstm, Dist=non_iid, Algo=fedprox, mu=0.1)
+2026-10-18 11:30:04,094 | INFO     | dataset_comparison | [18/54] Running experiment: hi_small_non_iid_fedprox_mu1.0_bilstm_seed42 (Dataset=HI-Small, Arch=bilstm, Dist=non_iid, Algo=fedprox, mu=1.0)
+2026-10-18 11:31:04,782 | INFO     | dataset_comparison | [19/54] Running experiment: li_medium_iid_fedavg_gru_seed42 (Dataset=LI-Medium, Arch=gru, Dist=iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:31:38,652 | INFO     | dataset_comparison | [20/54] Running experiment: li_medium_iid_fedprox_mu0.1_gru_seed42 (Dataset=LI-Medium, Arch=gru, Dist=iid, Algo=fedprox, mu=0.1)
+2026-10-18 11:32:04,315 | INFO     | dataset_comparison | [21/54] Running experiment: li_medium_iid_fedprox_mu1.0_gru_seed42 (Dataset=LI-Medium, Arch=gru, Dist=iid, Algo=fedprox, mu=1.0)
+2026-10-18 11:32:29,417 | INFO     | dataset_comparison | [22/54] Running experiment: li_medium_non_iid_fedavg_gru_seed42 (Dataset=LI-Medium, Arch=gru, Dist=non_iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:32:53,691 | INFO     | dataset_comparison | [23/54] Running experiment: li_medium_non_iid_fedprox_mu0.1_gru_seed42 (Dataset=LI-Medium, Arch=gru, Dist=non_iid, Algo=fedprox, mu=0.1)
+2026-10-18 11:33:17,701 | INFO     | dataset_comparison | [24/54] Running experiment: li_medium_non_iid_fedprox_mu1.0_gru_seed42 (Dataset=LI-Medium, Arch=gru, Dist=non_iid, Algo=fedprox, mu=1.0)
+2026-10-18 11:33:42,755 | INFO     | dataset_comparison | [25/54] Running experiment: li_medium_iid_fedavg_lstm_seed42 (Dataset=LI-Medium, Arch=lstm, Dist=iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:34:07,635 | INFO     | dataset_comparison | [26/54] Running experiment: li_medium_iid_fedprox_mu0.1_lstm_seed42 (Dataset=LI-Medium, Arch=lstm, Dist=iid, Algo=fedprox, mu=0.1)
+2026-10-18 11:34:35,014 | INFO     | dataset_comparison | [27/54] Running experiment: li_medium_iid_fedprox_mu1.0_lstm_seed42 (Dataset=LI-Medium, Arch=lstm, Dist=iid, Algo=fedprox, mu=1.0)
+2026-10-18 11:35:01,823 | INFO     | dataset_comparison | [28/54] Running experiment: li_medium_non_iid_fedavg_lstm_seed42 (Dataset=LI-Medium, Arch=lstm, Dist=non_iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:35:28,230 | INFO     | dataset_comparison | [29/54] Running experiment: li_medium_non_iid_fedprox_mu0.1_lstm_seed42 (Dataset=LI-Medium, Arch=lstm, Dist=non_iid, Algo=fedprox, mu=0.1)
+2026-10-18 11:35:54,955 | INFO     | dataset_comparison | [30/54] Running experiment: li_medium_non_iid_fedprox_mu1.0_lstm_seed42 (Dataset=LI-Medium, Arch=lstm, Dist=non_iid, Algo=fedprox, mu=1.0)
+2026-10-18 11:36:23,479 | INFO     | dataset_comparison | [31/54] Running experiment: li_medium_iid_fedavg_bilstm_seed42 (Dataset=LI-Medium, Arch=bilstm, Dist=iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:36:59,329 | INFO     | dataset_comparison | [32/54] Running experiment: li_medium_iid_fedprox_mu0.1_bilstm_seed42 (Dataset=LI-Medium, Arch=bilstm, Dist=iid, Algo=fedprox, mu=0.1)
+2026-10-18 11:37:34,861 | INFO     | dataset_comparison | [33/54] Running experiment: li_medium_iid_fedprox_mu1.0_bilstm_seed42 (Dataset=LI-Medium, Arch=bilstm, Dist=iid, Algo=fedprox, mu=1.0)
+2026-10-18 11:38:15,587 | INFO     | dataset_comparison | [34/54] Running experiment: li_medium_non_iid_fedavg_bilstm_seed42 (Dataset=LI-Medium, Arch=bilstm, Dist=non_iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:38:51,042 | INFO     | dataset_comparison | [35/54] Running experiment: li_medium_non_iid_fedprox_mu0.1_bilstm_seed42 (Dataset=LI-Medium, Arch=bilstm, Dist=non_iid, Algo=fedprox, mu=0.1)
+2026-10-18 11:39:36,706 | INFO     | dataset_comparison | [36/54] Running experiment: li_medium_non_iid_fedprox_mu1.0_bilstm_seed42 (Dataset=LI-Medium, Arch=bilstm, Dist=non_iid, Algo=fedprox, mu=1.0)
+2026-10-18 11:40:38,359 | INFO     | dataset_comparison | [37/54] Running experiment: combined_iid_fedavg_gru_seed42 (Dataset=Combined, Arch=gru, Dist=iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:41:21,617 | INFO     | dataset_comparison | [38/54] Running experiment: combined_iid_fedprox_mu0.1_gru_seed42 (Dataset=Combined, Arch=gru, Dist=iid, Algo=fedprox, mu=0.1)
+2026-10-18 11:42:01,100 | INFO     | dataset_comparison | [39/54] Running experiment: combined_iid_fedprox_mu1.0_gru_seed42 (Dataset=Combined, Arch=gru, Dist=iid, Algo=fedprox, mu=1.0)
+2026-10-18 11:43:02,634 | INFO     | dataset_comparison | [40/54] Running experiment: combined_non_iid_fedavg_gru_seed42 (Dataset=Combined, Arch=gru, Dist=non_iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:43:50,319 | INFO     | dataset_comparison | [41/54] Running experiment: combined_non_iid_fedprox_mu0.1_gru_seed42 (Dataset=Combined, Arch=gru, Dist=non_iid, Algo=fedprox, mu=0.1)
+2026-10-18 11:44:18,091 | INFO     | dataset_comparison | [42/54] Running experiment: combined_non_iid_fedprox_mu1.0_gru_seed42 (Dataset=Combined, Arch=gru, Dist=non_iid, Algo=fedprox, mu=1.0)
+2026-10-18 11:44:52,635 | INFO     | dataset_comparison | [43/54] Running experiment: combined_iid_fedavg_lstm_seed42 (Dataset=Combined, Arch=lstm, Dist=iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:45:25,389 | INFO     | dataset_comparison | [44/54] Running experiment: combined_iid_fedprox_mu0.1_lstm_seed42 (Dataset=Combined, Arch=lstm, Dist=iid, Algo=fedprox, mu=0.1)
+2026-10-18 11:46:02,163 | INFO     | dataset_comparison | [45/54] Running experiment: combined_iid_fedprox_mu1.0_lstm_seed42 (Dataset=Combined, Arch=lstm, Dist=iid, Algo=fedprox, mu=1.0)
+2026-10-18 11:46:30,541 | INFO     | dataset_comparison | [46/54] Running experiment: combined_non_iid_fedavg_lstm_seed42 (Dataset=Combined, Arch=lstm, Dist=non_iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:46:51,038 | INFO     | dataset_comparison | [47/54] Running experiment: combined_non_iid_fedprox_mu0.1_lstm_seed42 (Dataset=Combined, Arch=lstm, Dist=non_iid, Algo=fedprox, mu=0.1)
+2026-10-18 11:47:11,789 | INFO     | dataset_comparison | [48/54] Running experiment: combined_non_iid_fedprox_mu1.0_lstm_seed42 (Dataset=Combined, Arch=lstm, Dist=non_iid, Algo=fedprox, mu=1.0)
+2026-10-18 11:47:32,027 | INFO     | dataset_comparison | [49/54] Running experiment: combined_iid_fedavg_bilstm_seed42 (Dataset=Combined, Arch=bilstm, Dist=iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:48:01,203 | INFO     | dataset_comparison | [50/54] Running experiment: combined_iid_fedprox_mu0.1_bilstm_seed42 (Dataset=Combined, Arch=bilstm, Dist=iid, Algo=fedprox, mu=0.1)
+2026-10-18 11:48:45,502 | INFO     | dataset_comparison | [51/54] Running experiment: combined_iid_fedprox_mu1.0_bilstm_seed42 (Dataset=Combined, Arch=bilstm, Dist=iid, Algo=fedprox, mu=1.0)
+2026-10-18 11:49:38,773 | INFO     | dataset_comparison | [52/54] Running experiment: combined_non_iid_fedavg_bilstm_seed42 (Dataset=Combined, Arch=bilstm, Dist=non_iid, Algo=fedavg, mu=0.0)
+2026-10-18 11:50:53,348 | INFO     | dataset_comparison | [53/54] Running experiment: combined_non_iid_fedprox_mu0.1_bilstm_seed42 (Dataset=Combined, Arch=bilstm, Dist=non_iid, Algo=fedprox, mu=0.1)
+2026-10-18 11:51:32,554 | INFO     | dataset_comparison | [54/54] Running experiment: combined_non_iid_fedprox_mu1.0_bilstm_seed42 (Dataset=Combined, Arch=bilstm, Dist=non_iid, Algo=fedprox, mu=1.0)
+2026-10-18 11:52:30,085 | INFO     | dataset_comparison | Saved C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\dataset_comparison_combined\experiment_matrix.csv
+2026-10-18 11:52:30,172 | INFO     | dataset_comparison | Saved C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\dataset_comparison_combined\evaluation_metrics.csv
+2026-10-18 11:52:30,194 | INFO     | dataset_comparison | Saved C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\dataset_comparison_combined\training_history.csv
+2026-10-18 11:52:30,210 | INFO     | dataset_comparison | Saved checkpoints_manifest.json
+2026-10-18 11:52:30,237 | INFO     | dataset_comparison | Saved confusion_matrices.json
+2026-10-18 11:52:30,333 | INFO     | dataset_comparison | Saved evaluation_metrics.json
+2026-10-18 11:52:30,351 | INFO     | dataset_comparison | Saved C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\dataset_comparison_combined\comparison_summary.csv
+2026-10-18 11:52:30,508 | INFO     | dataset_comparison | Saved C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\dataset_comparison_combined\dataset_comparison_report.md
+2026-10-18 11:52:30,513 | INFO     | dataset_comparison | =================================================================
+2026-10-18 11:52:30,517 | INFO     | dataset_comparison | DATASET COMPARISON COMPLETE in 1877.58s
+2026-10-18 11:52:30,520 | INFO     | dataset_comparison | =================================================================

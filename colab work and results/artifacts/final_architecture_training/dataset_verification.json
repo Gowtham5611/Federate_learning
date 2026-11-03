@@ -1,0 +1,35 @@
+{
+  "HI-Small": {
+    "train_samples": 100000,
+    "train_positives": 7,
+    "train_prevalence": 7e-05,
+    "val_samples": 50000,
+    "val_positives": 64,
+    "val_prevalence": 0.00128,
+    "test_samples": 50000,
+    "test_positives": 76,
+    "test_prevalence": 0.00152
+  },
+  "LI-Medium": {
+    "train_samples": 100000,
+    "train_positives": 5,
+    "train_prevalence": 5e-05,
+    "val_samples": 50000,
+    "val_positives": 14,
+    "val_prevalence": 0.00028,
+    "test_samples": 50000,
+    "test_positives": 18,
+    "test_prevalence": 0.00036
+  },
+  "Combined": {
+    "train_samples": 100000,
+    "train_positives": 5,
+    "train_prevalence": 5e-05,
+    "val_samples": 50000,
+    "val_positives": 64,
+    "val_prevalence": 0.00128,
+    "test_samples": 50000,
+    "test_positives": 76,
+    "test_prevalence": 0.00152
+  }
+}

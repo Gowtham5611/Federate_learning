@@ -1,0 +1,41 @@
+{
+  "best_alpha": 1.0,
+  "fixed_threshold_0.5": {
+    "accuracy": 0.9991364412913009,
+    "f1": 0.3828289936664321,
+    "false_negatives": 809,
+    "fn": 809,
+    "fp": 68,
+    "loss": null,
+    "missed_positive_rate": 0.7483811285846439,
+    "positive_rate": 0.0010644321141433585,
+    "pr_auc": 0.3675258299234324,
+    "precision": 0.8,
+    "recall": 0.25161887141535616,
+    "roc_auc": 0.9704859897131537,
+    "threshold": 0.5,
+    "tn": 1014416,
+    "tp": 272
+  },
+  "frozen_threshold": {
+    "metrics": {
+      "accuracy": 0.9990872076134959,
+      "f1": 0.455026455026455,
+      "false_negatives": 694,
+      "fn": 694,
+      "fp": 233,
+      "loss": null,
+      "missed_positive_rate": 0.6419981498612396,
+      "positive_rate": 0.0010644321141433585,
+      "pr_auc": 0.3675258299234324,
+      "precision": 0.6241935483870967,
+      "recall": 0.3580018501387604,
+      "roc_auc": 0.9704859897131537,
+      "threshold": 0.13,
+      "tn": 1014251,
+      "tp": 387
+    },
+    "threshold": 0.13
+  },
+  "sequence_count": 1015565
+}

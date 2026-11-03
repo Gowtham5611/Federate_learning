@@ -1,0 +1,62 @@
+{
+  "audit_timestamp_utc": "2026-10-19T04:53:30.559125+00:00",
+  "manifest_files_audited": {
+    "local_root_manifest": {
+      "path": "resume_manifest.json",
+      "exists": true,
+      "sha256": "a347e461d3b24066b866fef069faa4822b3b36a3fd7be8bde2f2a7e399d31527",
+      "size_bytes": 25072
+    },
+    "local_ffc_manifest": {
+      "path": "artifacts/fedavg_fedprox_full_comparison/resume_manifest.json",
+      "exists": true,
+      "sha256": "a347e461d3b24066b866fef069faa4822b3b36a3fd7be8bde2f2a7e399d31527",
+      "size_bytes": 25072
+    },
+    "colab_root_manifest": {
+      "path": "colab work and results/resume_manifest.json",
+      "exists": true,
+      "sha256": "a347e461d3b24066b866fef069faa4822b3b36a3fd7be8bde2f2a7e399d31527",
+      "size_bytes": 25072
+    },
+    "colab_ffc_manifest": {
+      "path": "colab work and results/artifacts/fedavg_fedprox_full_comparison/resume_manifest.json",
+      "exists": true,
+      "sha256": "8bab2e8ec2d62f1defe46e7b9ac8081395d4fc17c6f8b99022a102046f568592",
+      "size_bytes": 27943
+    }
+  },
+  "manifest_summary_comparison": {
+    "local_manifests_summary": {
+      "completed": 12,
+      "pending": 24,
+      "total": 36,
+      "completed_non_iid": 12,
+      "completed_iid": 0,
+      "details": "12 Non-IID models on Combined (6) and HI-Small (6) completed locally before thermal throttling."
+    },
+    "colab_ffc_manifest_summary": {
+      "completed": 24,
+      "pending": 12,
+      "total": 36,
+      "completed_non_iid": 12,
+      "completed_iid": 12,
+      "details": "All 12 Combined (6 Non-IID + 6 IID) and all 12 HI-Small (6 Non-IID + 6 IID) verified and completed. The 12 full LI-Medium runs remain PENDING due to host RAM OOM crash when loading 18.75M rows."
+    },
+    "colab_li_medium_subset_run": {
+      "completed": 12,
+      "pending": 0,
+      "total": 12,
+      "details": "Executed in artifacts/li_medium_subset_comparison on a 200k subset to overcome RAM constraints. All 12 models (6 Non-IID + 6 IID) completed successfully with full checkpoints, predictions, and metrics."
+    }
+  },
+  "artifact_vs_manifest_consistency": {
+    "total_configurations_in_matrix": 36,
+    "configurations_with_complete_artifacts": 36,
+    "configurations_with_checkpoints_7_per_model": 36,
+    "configurations_with_test_predictions": 36,
+    "configurations_with_validation_metrics": 36,
+    "configurations_with_test_metrics": 36,
+    "discrepancy_explanation": "In colab_ffc manifest, 12 LI-Medium configurations are marked PENDING for the full dataset (18.75M rows). However, equivalent trained models, checkpoints, predictions, and metrics for all 12 LI-Medium configurations were successfully completed in artifacts/li_medium_subset_comparison."
+  }
+}

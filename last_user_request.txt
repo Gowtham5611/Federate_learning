@@ -1,0 +1,89 @@
+<USER_REQUEST>
+# FEDSECUREAI — PHASE 12: SHAP EXPLAINABILITY & TYPOLOGY ATTRIBUTIONS
+
+Act as a senior Machine Learning Research Engineer, Federated Learning Specialist, Explainable AI Engineer, and MLOps Architect.
+
+Implement Phase 12 of my existing FedSecureAI project. Follow the existing repository architecture, authoritative experiment results, and roadmap. Prioritize scientific correctness, reproducibility, memory efficiency, and complete verification.
+
+## 1. PROJECT CONTEXT
+
+Repository root:
+
+`c:\Users\Acer\OneDrive\Desktop\Federate_learning`
+
+Project: FedSecureAI — Privacy-Preserving, Explainable, Drift-Aware Federated Anti-Money Laundering Detection.
+
+Datasets:
+- IBM AML HI-Small
+- IBM AML LI-Medium
+
+Active model architectures:
+- GRU
+- LSTM
+- BiLSTM
+
+Existing relevant artifacts:
+- `results/phase8/phase8_report.md`
+- `results/phase8/phase8_report.json`
+- `results/phase8/phase8_data_provenance.csv`
+- `results/phase8/phase8_readiness_decision.md`
+- `results/authoritative_results/experiment_registry.csv`
+- `results/authoritative_results/authoritative_results_readme.md`
+- `results/phase9_11_audit/phase9_11_audit_report.md`
+- `backend/application/dto/analysis.py`
+- Existing model inference, preprocessing, sequence-building, dataset-loading, and calibration modules.
+
+Verify every path before use. If a path is missing, find its real equivalent and record the discrepancy.
+
+## 2. PHASE AND PRESERVATION RULES
+
+The repository roadmap identifies this work as Phase 12: SHAP Explainability.
+
+Important existing statuses:
+- Phase 9: PARTIAL / FROZEN. Never restart the FedProx sweep or SCAFFOLD experiments.
+- Phase 10: Calibration is verified for the HI-Small IID LSTM baseline. LI-Medium calibration remains an outstanding extension.
+- Phase 11: Experiment-matrix analysis is functionally covered by Phase 8.
+
+Do not renumber existing phases or alter their statuses.
+
+Never:
+- Retrain completed experiments.
+- Modify trained model weights or existing checkpoints.
+- Overwrite 
+<truncated 11845 bytes>
+hy in the discrepancy report.
+
+Follow the existing project DTO and reporting conventions. Do not change the meaning or contents of Phase8Report.
+
+## 15. FINAL ACCEPTANCE CRITERIA
+
+Phase 12 may be marked GO only when:
+1. Model and checkpoint identity are verified.
+2. Prediction parity passes within a documented tolerance.
+3. Training background and validation explanation samples are correctly separated.
+4. SHAP output dimensions and feature alignment are verified.
+5. Explanation-quality checks are documented.
+6. Generated artifacts are readable and reproducible.
+7. Existing phases and authoritative artifacts remain unchanged.
+8. Tests actually run and their results are recorded.
+9. All scientific limitations are disclosed.
+
+Use CONDITIONAL GO if only a documented subset of models or datasets can be explained correctly.
+
+Use NO-GO if model identity, prediction parity, or feature alignment fails.
+
+Begin with a read-only audit and show me the verified model paths and proposed explanation configuration before executing expensive SHAP computations. Then implement incrementally, test, and generate the final report.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-10-26T20:56:52+05:30.
+
+The user's current state is as follows:
+Active Document: c:\Users\Acer\OneDrive\Desktop\Federate_learning\backend\scripts\audit_and_validate_experiment_suite.py (LANGUAGE_UNSPECIFIED)
+Cursor is on line: 1
+Other open documents:
+- c:\Users\Acer\OneDrive\Desktop\Federate_learning\backend\scripts\run_phase8_analysis.py (LANGUAGE_UNSPECIFIED)
+- c:\Users\Acer\OneDrive\Desktop\Federate_learning\backend\scripts\generate_authoritative_results.py (LANGUAGE_UNSPECIFIED)
+- c:\Users\Acer\OneDrive\Desktop\Federate_learning\backend\scripts\run_phase7_ensemble.py (LANGUAGE_UNSPECIFIED)
+- c:\Users\Acer\OneDrive\Desktop\Federate_learning\tests\test_phase7_ensemble.py (LANGUAGE_UNSPECIFIED)
+- c:\Users\Acer\OneDrive\Desktop\Federate_learning\FEDSECUREAI_RECOVERY_REPORT.md (LANGUAGE_UNSPECIFIED)
+</ADDITIONAL_METADATA>

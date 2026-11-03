@@ -1,0 +1,151 @@
+# =============================================================================
+# FedSecureAI - Base configuration
+# =============================================================================
+# Only the settings that the CURRENT code actually reads are defined here.
+# Later phases add their own sections (see config/README.md for the plan).
+# Values may be overridden by environment variables (see .env.example).
+# =============================================================================
+
+app:
+  name: FedSecureAI
+  description: Privacy-Preserving Federated Deep Learning for Anti-Money Laundering Detection
+  version: 0.1.0
+  environment: development   # development | testing | production
+
+# Reproducibility. Used by every future stochastic component.
+reproducibility:
+  random_seed: 42
+
+# Which registered dataset the application operates on. Declarations themselves
+# live in datasets/dataset_registry.yaml, not here.
+dataset:
+  active_dataset_id: ibm_transactions_aml
+
+# Paths are resolved relative to the project root by infrastructure.utils.paths.
+paths:
+  data_raw: data/raw
+  data_interim: data/interim
+  data_processed: data/processed
+  data_partitions: data/partitions
+  data_cache: data/cache
+  dataset_registry: datasets/dataset_registry.yaml
+  model_checkpoints: models/checkpoints
+  model_artifacts: models/artifacts
+  experiment_runs: experiments/runs
+  experiment_results: experiments/results
+  evaluation_metrics: evaluation/metrics
+  evaluation_reports: evaluation/reports
+  evaluation_visualizations: evaluation/visualizations
+  logs: logs
+  reports: reports
+
+# Dataset preprocessing (raw -> train/validation/test). Read by
+# composition_root when it builds the preprocessing service.
+preprocessing:
+  # Rows held in memory per read. Bounds peak memory independently of the
+  # 5,078,345-row file. Raise it to trade memory for fewer round trips.
+  chunk_size: 200000
+  # Appended to data_interim and data_processed, so the outputs of a second
+  # dataset would sit beside these rather than on top of them.
+  output_subdirectory: ibm_aml/HI-Small
+  # Chronological, never random. The test fraction is the remainder.
+  split:
+    train_fraction: 0.60
+    validation_fraction: 0.20
+  # Working files are deleted after a successful run; they are a second copy of
+  # the dataset on disk and nothing downstream may read them.
+  keep_interim: false
+
+# Centralized baseline training (processed splits -> a fitted model).
+# Read by composition_root when it builds the training session. Every value here
+# is overridable on the command line; nothing here is a measured optimum, and the
+# comments say which choices are conventions rather than findings.
+#
+# Federated settings are absent on purpose. Client partitioning, FedAvg, FedProx
+# and the proximal term belong to later phases and have no defaults to carry yet.
+training:
+  # Which architecture a bare configuration describes. `train --model` is
+  # required, so this is only the fallback when no architecture is supplied at all.
+  architecture: gru
+
+  # --- Sequence construction ---
+  # Transactions per window, including the one being classified. A choice, not a
+  # measured optimum: long enough to show a short behavioural pattern in one
+  # account's history, short enough that every training target keeps its own
+  # sequence on a CPU-only machine.
+  sequence_length: 10
+  # Emit a sequence for every transaction. Above 1 this discards labelled rows and
+  # changes the effective class balance, so every reported baseline uses 1.
+  sequence_stride: 1
+  # Expand the three category-code columns into indicator columns. Preprocessing
+  # recorded these codes as carrying no ordering and deferred the expansion to
+  # this phase; turning it off feeds them as integers, asserting an ordering the
+  # data does not have.
+  one_hot_nominal_codes: true
+
+  # --- Architecture ---
+  # Hidden units per direction. The bidirectional model's head is sized at twice
+  # this automatically, so the three architectures share one value here.
+  hidden_size: 64
+  num_layers: 1
+  # Applies between recurrent layers only, so it has no effect at num_layers: 1.
+  # The reported configuration records the effective value, not this one.
+  dropout: 0.0
+
+  # --- Optimisation ---
+  epochs: 5
+  batch_size: 1024
+  learning_rate: 0.001
+  optimizer: adam        # adam | adamw | sgd | rmsprop
+  # Caps the global gradient norm. Recurrent models on 3-million-sequence splits
+  # can take a very large step from a rare batch; null disables clipping.
+  gradient_clip_norm: 5.0
+  # Epochs without validation improvement before stopping. 0 trains the full
+  # budget. Measured on validation only - never on test.
+  early_stopping_patience: 2
+  # Which validation quantity picks the best checkpoint: pr_auc | recall | f1 | loss.
+  # PR-AUC by default because it is threshold-free and, unlike ROC-AUC, does not
+  # flatter a model on a split that is 99.9% negative.
+  selection_metric: pr_auc
+
+  # --- Decision threshold ---
+  # The fixed baseline threshold, and what the fitted one is compared against.
+  threshold: 0.5
+  # fixed | validation_f1. Fitting happens on the validation split alone; the
+  # chosen value is then frozen and applied to test unchanged.
+  threshold_policy: validation_f1
+
+  # --- Runtime ---
+  # null selects CUDA when it is genuinely available and the CPU otherwise.
+  device: null
+  num_workers: 0
+  # null reads every row. A number marks the run as reduced in the log and in the
+  # experiment report, so a smoke test cannot be mistaken for a full run.
+  row_limit: null
+
+# IID Federated Learning (Phase 5).
+# Read by composition_root when building the federated training session.
+federated:
+  n_clients: 3
+  rounds: 5
+  local_epochs: 1
+  distribution: iid
+  algorithm: fedavg
+  mu: null
+  seed: 42
+
+# IID + Non-IID Ensemble (Phase 7).
+# Read by composition_root when building the ensemble modeling session.
+ensemble:
+  seed: 42
+  alpha_grid: null
+  row_limit: null
+  iid_experiment_id: null
+  non_iid_experiment_id: null
+
+logging:
+  level: INFO
+  format: "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
+  date_format: "%Y-%m-%d %H:%M:%S"
+  console: true
+  file: logs/fedsecureai.log

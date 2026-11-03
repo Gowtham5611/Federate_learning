@@ -1,0 +1,895 @@
+2026-10-18 14:52:57,798 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 14:52:57,799 | INFO     | fedavg_vs_fedprox_suite | FEDSECUREAI: FEDAVG VS FEDPROX COMPARATIVE RETRAINING SUITE
+2026-10-18 14:52:57,799 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 14:52:57,799 | INFO     | fedavg_vs_fedprox_suite | Loading full dataset Combined from data\processed\ibm_aml\Combined...
+2026-10-18 14:52:58,591 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 300000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\train\transactions.csv
+2026-10-18 14:52:59,093 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\validation\transactions.csv
+2026-10-18 14:52:59,462 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\test\transactions.csv
+2026-10-18 14:52:59,523 | INFO     | fedavg_vs_fedprox_suite | Loaded Combined in 1.71s: Train=300000 (pos=15), Val=100000 (pos=78), Test=100000 (pos=94)
+2026-10-18 14:52:59,539 | INFO     | fedavg_vs_fedprox_suite | [1/18] Executing Configuration: combined_gru_fedavg_seed42
+2026-10-18 14:52:59,539 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 14:52:59,539 | INFO     | fedavg_vs_fedprox_suite | Starting Run: combined_gru_fedavg_seed42 [Dataset=Combined, Arch=gru, Algo=fedavg, mu=0.0]
+2026-10-18 14:52:59,539 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 14:53:03,833 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [4.3s]: Train Task Loss=0.35330, Prox Loss=0.000000, Val Loss=0.56288, Val PR-AUC=0.000881, Val ROC-AUC=0.3810
+2026-10-18 14:53:10,234 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [6.4s]: Train Task Loss=0.07538, Prox Loss=0.000000, Val Loss=0.38792, Val PR-AUC=0.000938, Val ROC-AUC=0.3906
+2026-10-18 14:53:19,279 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [9.0s]: Train Task Loss=0.01176, Prox Loss=0.000000, Val Loss=0.28398, Val PR-AUC=0.000912, Val ROC-AUC=0.3838
+2026-10-18 14:53:25,099 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [5.8s]: Train Task Loss=0.00206, Prox Loss=0.000000, Val Loss=0.24194, Val PR-AUC=0.000923, Val ROC-AUC=0.3896
+2026-10-18 14:53:30,386 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [5.3s]: Train Task Loss=0.00074, Prox Loss=0.000000, Val Loss=0.23283, Val PR-AUC=0.000947, Val ROC-AUC=0.3947
+2026-10-18 14:53:34,006 | INFO     | fedavg_vs_fedprox_suite | Run combined_gru_fedavg_seed42 Complete: Test ROC-AUC=0.4656, Test PR-AUC=0.001208, Test F1=0.0000, Alerts/10k=0.5 [Best Round=5, Tau=0.98]
+2026-10-18 14:53:34,014 | INFO     | fedavg_vs_fedprox_suite | [2/18] Executing Configuration: combined_gru_fedprox_mu0.0001_seed42
+2026-10-18 14:53:34,015 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 14:53:34,015 | INFO     | fedavg_vs_fedprox_suite | Starting Run: combined_gru_fedprox_mu0.0001_seed42 [Dataset=Combined, Arch=gru, Algo=fedprox, mu=0.0001]
+2026-10-18 14:53:34,015 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 14:53:39,517 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [5.5s]: Train Task Loss=0.35329, Prox Loss=0.000160, Val Loss=0.56293, Val PR-AUC=0.000883, Val ROC-AUC=0.3812
+2026-10-18 14:53:44,505 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [5.0s]: Train Task Loss=0.07538, Prox Loss=0.000150, Val Loss=0.39034, Val PR-AUC=0.000939, Val ROC-AUC=0.3914
+2026-10-18 14:53:49,752 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [5.2s]: Train Task Loss=0.01179, Prox Loss=0.000073, Val Loss=0.29812, Val PR-AUC=0.000959, Val ROC-AUC=0.4019
+2026-10-18 14:53:55,305 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [5.5s]: Train Task Loss=0.00208, Prox Loss=0.000037, Val Loss=0.27109, Val PR-AUC=0.000875, Val ROC-AUC=0.4129
+2026-10-18 14:54:00,374 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [5.1s]: Train Task Loss=0.00075, Prox Loss=0.000018, Val Loss=0.33680, Val PR-AUC=0.000825, Val ROC-AUC=0.4134
+2026-10-18 14:54:03,075 | INFO     | fedavg_vs_fedprox_suite | Run combined_gru_fedprox_mu0.0001_seed42 Complete: Test ROC-AUC=0.4482, Test PR-AUC=0.001112, Test F1=0.0000, Alerts/10k=0.5 [Best Round=3, Tau=0.93]
+2026-10-18 14:54:03,082 | INFO     | fedavg_vs_fedprox_suite | [3/18] Executing Configuration: combined_lstm_fedavg_seed42
+2026-10-18 14:54:03,082 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 14:54:03,082 | INFO     | fedavg_vs_fedprox_suite | Starting Run: combined_lstm_fedavg_seed42 [Dataset=Combined, Arch=lstm, Algo=fedavg, mu=0.0]
+2026-10-18 14:54:03,082 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 14:54:08,858 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [5.8s]: Train Task Loss=0.53787, Prox Loss=0.000000, Val Loss=0.60037, Val PR-AUC=0.000862, Val ROC-AUC=0.4032
+2026-10-18 14:54:14,325 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [5.4s]: Train Task Loss=0.21274, Prox Loss=0.000000, Val Loss=0.42907, Val PR-AUC=0.000783, Val ROC-AUC=0.4122
+2026-10-18 14:54:19,644 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [5.3s]: Train Task Loss=0.05649, Prox Loss=0.000000, Val Loss=0.29130, Val PR-AUC=0.000722, Val ROC-AUC=0.3949
+2026-10-18 14:54:25,291 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [5.6s]: Train Task Loss=0.01301, Prox Loss=0.000000, Val Loss=0.20605, Val PR-AUC=0.000724, Val ROC-AUC=0.3984
+2026-10-18 14:54:30,993 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [5.7s]: Train Task Loss=0.00324, Prox Loss=0.000000, Val Loss=0.15954, Val PR-AUC=0.000732, Val ROC-AUC=0.3991
+2026-10-18 14:54:34,462 | INFO     | fedavg_vs_fedprox_suite | Run combined_lstm_fedavg_seed42 Complete: Test ROC-AUC=0.4409, Test PR-AUC=0.000908, Test F1=0.0054, Alerts/10k=27.3 [Best Round=1, Tau=0.53]
+2026-10-18 14:54:34,472 | INFO     | fedavg_vs_fedprox_suite | [4/18] Executing Configuration: combined_lstm_fedprox_mu0.0001_seed42
+2026-10-18 14:54:34,472 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 14:54:34,472 | INFO     | fedavg_vs_fedprox_suite | Starting Run: combined_lstm_fedprox_mu0.0001_seed42 [Dataset=Combined, Arch=lstm, Algo=fedprox, mu=0.0001]
+2026-10-18 14:54:34,472 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 14:54:40,903 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [6.4s]: Train Task Loss=0.53782, Prox Loss=0.000197, Val Loss=0.60047, Val PR-AUC=0.000861, Val ROC-AUC=0.4032
+2026-10-18 14:54:46,945 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [6.0s]: Train Task Loss=0.21266, Prox Loss=0.000230, Val Loss=0.43148, Val PR-AUC=0.000791, Val ROC-AUC=0.4130
+2026-10-18 14:54:52,860 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [5.9s]: Train Task Loss=0.05650, Prox Loss=0.000140, Val Loss=0.31278, Val PR-AUC=0.000771, Val ROC-AUC=0.4134
+2026-10-18 14:54:58,765 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [5.9s]: Train Task Loss=0.01304, Prox Loss=0.000079, Val Loss=0.23942, Val PR-AUC=0.000779, Val ROC-AUC=0.4173
+2026-10-18 14:55:04,530 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [5.8s]: Train Task Loss=0.00326, Prox Loss=0.000049, Val Loss=0.20308, Val PR-AUC=0.000809, Val ROC-AUC=0.4245
+2026-10-18 14:55:07,630 | INFO     | fedavg_vs_fedprox_suite | Run combined_lstm_fedprox_mu0.0001_seed42 Complete: Test ROC-AUC=0.4409, Test PR-AUC=0.000909, Test F1=0.0053, Alerts/10k=28.5 [Best Round=1, Tau=0.53]
+2026-10-18 14:55:07,639 | INFO     | fedavg_vs_fedprox_suite | [5/18] Executing Configuration: combined_bilstm_fedavg_seed42
+2026-10-18 14:55:07,640 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 14:55:07,640 | INFO     | fedavg_vs_fedprox_suite | Starting Run: combined_bilstm_fedavg_seed42 [Dataset=Combined, Arch=bilstm, Algo=fedavg, mu=0.0]
+2026-10-18 14:55:07,640 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 14:55:17,780 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [10.1s]: Train Task Loss=0.44200, Prox Loss=0.000000, Val Loss=0.58723, Val PR-AUC=0.000862, Val ROC-AUC=0.4584
+2026-10-18 14:55:27,342 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [9.6s]: Train Task Loss=0.10086, Prox Loss=0.000000, Val Loss=0.38763, Val PR-AUC=0.000784, Val ROC-AUC=0.4293
+2026-10-18 14:55:36,625 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [9.3s]: Train Task Loss=0.01230, Prox Loss=0.000000, Val Loss=0.24567, Val PR-AUC=0.000725, Val ROC-AUC=0.4053
+2026-10-18 14:55:45,475 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [8.8s]: Train Task Loss=0.00168, Prox Loss=0.000000, Val Loss=0.17933, Val PR-AUC=0.000722, Val ROC-AUC=0.4058
+2026-10-18 14:55:54,405 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [8.9s]: Train Task Loss=0.00077, Prox Loss=0.000000, Val Loss=0.15574, Val PR-AUC=0.000714, Val ROC-AUC=0.4151
+2026-10-18 14:55:58,782 | INFO     | fedavg_vs_fedprox_suite | Run combined_bilstm_fedavg_seed42 Complete: Test ROC-AUC=0.4553, Test PR-AUC=0.001076, Test F1=0.0000, Alerts/10k=3.7 [Best Round=1, Tau=0.54]
+2026-10-18 14:55:58,790 | INFO     | fedavg_vs_fedprox_suite | [6/18] Executing Configuration: combined_bilstm_fedprox_mu0.0001_seed42
+2026-10-18 14:55:58,790 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 14:55:58,791 | INFO     | fedavg_vs_fedprox_suite | Starting Run: combined_bilstm_fedprox_mu0.0001_seed42 [Dataset=Combined, Arch=bilstm, Algo=fedprox, mu=0.0001]
+2026-10-18 14:55:58,791 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 14:56:09,201 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [10.4s]: Train Task Loss=0.44195, Prox Loss=0.000389, Val Loss=0.58744, Val PR-AUC=0.000859, Val ROC-AUC=0.4588
+2026-10-18 14:56:19,167 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [10.0s]: Train Task Loss=0.10082, Prox Loss=0.000336, Val Loss=0.39784, Val PR-AUC=0.000816, Val ROC-AUC=0.4341
+2026-10-18 14:56:27,896 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [8.7s]: Train Task Loss=0.01231, Prox Loss=0.000143, Val Loss=0.28549, Val PR-AUC=0.000796, Val ROC-AUC=0.4312
+2026-10-18 14:56:36,643 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [8.7s]: Train Task Loss=0.00166, Prox Loss=0.000070, Val Loss=0.24603, Val PR-AUC=0.000795, Val ROC-AUC=0.4337
+2026-10-18 14:56:45,415 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [8.8s]: Train Task Loss=0.00074, Prox Loss=0.000027, Val Loss=0.26554, Val PR-AUC=0.000797, Val ROC-AUC=0.4352
+2026-10-18 14:56:49,593 | INFO     | fedavg_vs_fedprox_suite | Run combined_bilstm_fedprox_mu0.0001_seed42 Complete: Test ROC-AUC=0.4554, Test PR-AUC=0.001077, Test F1=0.0000, Alerts/10k=0.8 [Best Round=1, Tau=0.55]
+2026-10-18 14:56:49,811 | INFO     | fedavg_vs_fedprox_suite | Released dataset Combined from memory.
+2026-10-18 14:56:49,811 | INFO     | fedavg_vs_fedprox_suite | Loading full dataset HI-Small from data\processed\ibm_aml\HI-Small...
+2026-10-18 14:56:59,025 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 3047216 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\train\transactions.csv
+2026-10-18 14:57:04,575 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 1015565 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\validation\transactions.csv
+2026-10-18 14:57:08,322 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 1015564 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\test\transactions.csv
+2026-10-18 14:57:09,205 | INFO     | fedavg_vs_fedprox_suite | Loaded HI-Small in 19.39s: Train=3047216 (pos=2299), Val=1015565 (pos=1081), Test=1015564 (pos=1797)
+2026-10-18 14:57:09,463 | INFO     | fedavg_vs_fedprox_suite | [7/18] Executing Configuration: hi_small_gru_fedavg_seed42
+2026-10-18 14:57:09,463 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 14:57:09,463 | INFO     | fedavg_vs_fedprox_suite | Starting Run: hi_small_gru_fedavg_seed42 [Dataset=HI-Small, Arch=gru, Algo=fedavg, mu=0.0]
+2026-10-18 14:57:09,463 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 14:59:21,244 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [131.8s]: Train Task Loss=0.05807, Prox Loss=0.000000, Val Loss=0.07799, Val PR-AUC=0.001304, Val ROC-AUC=0.5846
+2026-10-18 15:02:02,697 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [161.4s]: Train Task Loss=0.00496, Prox Loss=0.000000, Val Loss=0.01916, Val PR-AUC=0.008976, Val ROC-AUC=0.8684
+2026-10-18 15:05:12,334 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [189.6s]: Train Task Loss=0.00358, Prox Loss=0.000000, Val Loss=0.01230, Val PR-AUC=0.045082, Val ROC-AUC=0.9184
+2026-10-18 15:07:27,518 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [135.2s]: Train Task Loss=0.00334, Prox Loss=0.000000, Val Loss=0.01107, Val PR-AUC=0.082462, Val ROC-AUC=0.9325
+2026-10-18 15:10:26,635 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [179.1s]: Train Task Loss=0.00323, Prox Loss=0.000000, Val Loss=0.01048, Val PR-AUC=0.125580, Val ROC-AUC=0.9399
+2026-10-18 15:11:10,023 | INFO     | fedavg_vs_fedprox_suite | Run hi_small_gru_fedavg_seed42 Complete: Test ROC-AUC=0.9508, Test PR-AUC=0.344372, Test F1=0.3877, Alerts/10k=2.1 [Best Round=5, Tau=0.70]
+2026-10-18 15:11:10,035 | INFO     | fedavg_vs_fedprox_suite | [8/18] Executing Configuration: hi_small_gru_fedprox_mu0.0001_seed42
+2026-10-18 15:11:10,035 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 15:11:10,035 | INFO     | fedavg_vs_fedprox_suite | Starting Run: hi_small_gru_fedprox_mu0.0001_seed42 [Dataset=HI-Small, Arch=gru, Algo=fedprox, mu=0.0001]
+2026-10-18 15:11:10,035 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 15:15:12,571 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [242.5s]: Train Task Loss=0.05820, Prox Loss=0.001424, Val Loss=0.08188, Val PR-AUC=0.001290, Val ROC-AUC=0.5825
+2026-10-18 15:19:12,897 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [240.3s]: Train Task Loss=0.00521, Prox Loss=0.000285, Val Loss=0.03508, Val PR-AUC=0.004038, Val ROC-AUC=0.8110
+2026-10-18 15:23:38,125 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [265.2s]: Train Task Loss=0.00381, Prox Loss=0.000072, Val Loss=0.01924, Val PR-AUC=0.015822, Val ROC-AUC=0.8832
+2026-10-18 15:28:23,300 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [285.2s]: Train Task Loss=0.00352, Prox Loss=0.000035, Val Loss=0.01578, Val PR-AUC=0.030016, Val ROC-AUC=0.9051
+2026-10-18 15:32:36,228 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [252.9s]: Train Task Loss=0.00340, Prox Loss=0.000027, Val Loss=0.01462, Val PR-AUC=0.039387, Val ROC-AUC=0.9156
+2026-10-18 15:33:27,656 | INFO     | fedavg_vs_fedprox_suite | Run hi_small_gru_fedprox_mu0.0001_seed42 Complete: Test ROC-AUC=0.9304, Test PR-AUC=0.227585, Test F1=0.2636, Alerts/10k=3.5 [Best Round=5, Tau=0.69]
+2026-10-18 15:33:27,669 | INFO     | fedavg_vs_fedprox_suite | [9/18] Executing Configuration: hi_small_lstm_fedavg_seed42
+2026-10-18 15:33:27,669 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 15:33:27,669 | INFO     | fedavg_vs_fedprox_suite | Starting Run: hi_small_lstm_fedavg_seed42 [Dataset=HI-Small, Arch=lstm, Algo=fedavg, mu=0.0]
+2026-10-18 15:33:27,669 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 15:38:31,221 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [303.5s]: Train Task Loss=0.07539, Prox Loss=0.000000, Val Loss=0.09503, Val PR-AUC=0.001295, Val ROC-AUC=0.5801
+2026-10-18 15:44:11,843 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [340.6s]: Train Task Loss=0.00553, Prox Loss=0.000000, Val Loss=0.02286, Val PR-AUC=0.003210, Val ROC-AUC=0.8091
+2026-10-18 15:50:16,611 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [364.8s]: Train Task Loss=0.00381, Prox Loss=0.000000, Val Loss=0.00983, Val PR-AUC=0.052172, Val ROC-AUC=0.9078
+2026-10-18 15:55:23,723 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [307.1s]: Train Task Loss=0.00342, Prox Loss=0.000000, Val Loss=0.00733, Val PR-AUC=0.146884, Val ROC-AUC=0.9307
+2026-10-18 16:00:32,828 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [309.1s]: Train Task Loss=0.00328, Prox Loss=0.000000, Val Loss=0.00650, Val PR-AUC=0.198980, Val ROC-AUC=0.9398
+2026-10-18 16:01:37,541 | INFO     | fedavg_vs_fedprox_suite | Run hi_small_lstm_fedavg_seed42 Complete: Test ROC-AUC=0.9516, Test PR-AUC=0.450499, Test F1=0.5029, Alerts/10k=1.2 [Best Round=5, Tau=0.37]
+2026-10-18 16:01:37,560 | INFO     | fedavg_vs_fedprox_suite | [10/18] Executing Configuration: hi_small_lstm_fedprox_mu0.0001_seed42
+2026-10-18 16:01:37,560 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 16:01:37,560 | INFO     | fedavg_vs_fedprox_suite | Starting Run: hi_small_lstm_fedprox_mu0.0001_seed42 [Dataset=HI-Small, Arch=lstm, Algo=fedprox, mu=0.0001]
+2026-10-18 16:01:37,561 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 16:06:38,730 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [301.2s]: Train Task Loss=0.07556, Prox Loss=0.002263, Val Loss=0.09980, Val PR-AUC=0.001296, Val ROC-AUC=0.5815
+2026-10-18 16:11:54,282 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [315.5s]: Train Task Loss=0.00608, Prox Loss=0.000372, Val Loss=0.04891, Val PR-AUC=0.002689, Val ROC-AUC=0.6824
+2026-10-18 18:21:16,248 | INFO     | fedavg_vs_fedprox_suite | Hardware & Thermal Setup: PyTorch CPU Threads capped at 4 (inter-op=2).
+2026-10-18 18:21:16,249 | INFO     | fedavg_vs_fedprox_suite | Cooldown Delays: 15 sec/round, 30 sec/config.
+2026-10-18 18:21:16,249 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:16,249 | INFO     | fedavg_vs_fedprox_suite | FEDSECUREAI: FEDAVG VS FEDPROX COMPARATIVE RETRAINING SUITE
+2026-10-18 18:21:16,250 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:16,250 | INFO     | fedavg_vs_fedprox_suite | Checking dataset Combined (Path: data\processed\ibm_aml\Combined)...
+2026-10-18 18:21:17,469 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 300000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\train\transactions.csv
+2026-10-18 18:21:18,059 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\validation\transactions.csv
+2026-10-18 18:21:18,569 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\test\transactions.csv
+2026-10-18 18:21:18,638 | INFO     | fedavg_vs_fedprox_suite | Loaded Combined in 2.39s: Train=300000 (pos=15), Val=100000 (pos=78), Test=100000 (pos=94)
+2026-10-18 18:21:18,658 | INFO     | fedavg_vs_fedprox_suite | [1/18] Inspecting Configuration: combined_gru_fedavg_seed42
+2026-10-18 18:21:18,659 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:18,659 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedavg_seed42 [Dataset=Combined, Arch=gru, Algo=fedavg, mu=0.0]
+2026-10-18 18:21:18,659 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:18,769 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:21:18,801 | INFO     | fedavg_vs_fedprox_suite | [2/18] Inspecting Configuration: combined_gru_fedprox_mu0.0001_seed42
+2026-10-18 18:21:18,801 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:18,801 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedprox_mu0.0001_seed42 [Dataset=Combined, Arch=gru, Algo=fedprox, mu=0.0001]
+2026-10-18 18:21:18,801 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:18,901 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:21:18,926 | INFO     | fedavg_vs_fedprox_suite | [3/18] Inspecting Configuration: combined_lstm_fedavg_seed42
+2026-10-18 18:21:18,927 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:18,927 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedavg_seed42 [Dataset=Combined, Arch=lstm, Algo=fedavg, mu=0.0]
+2026-10-18 18:21:18,927 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:19,042 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:21:19,064 | INFO     | fedavg_vs_fedprox_suite | [4/18] Inspecting Configuration: combined_lstm_fedprox_mu0.0001_seed42
+2026-10-18 18:21:19,064 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:19,064 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedprox_mu0.0001_seed42 [Dataset=Combined, Arch=lstm, Algo=fedprox, mu=0.0001]
+2026-10-18 18:21:19,064 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:19,177 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:21:19,200 | INFO     | fedavg_vs_fedprox_suite | [5/18] Inspecting Configuration: combined_bilstm_fedavg_seed42
+2026-10-18 18:21:19,200 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:19,200 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedavg_seed42 [Dataset=Combined, Arch=bilstm, Algo=fedavg, mu=0.0]
+2026-10-18 18:21:19,200 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:19,314 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:21:19,342 | INFO     | fedavg_vs_fedprox_suite | [6/18] Inspecting Configuration: combined_bilstm_fedprox_mu0.0001_seed42
+2026-10-18 18:21:19,343 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:19,343 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedprox_mu0.0001_seed42 [Dataset=Combined, Arch=bilstm, Algo=fedprox, mu=0.0001]
+2026-10-18 18:21:19,343 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:19,460 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:21:19,591 | INFO     | fedavg_vs_fedprox_suite | Released dataset Combined from memory.
+2026-10-18 18:21:19,592 | INFO     | fedavg_vs_fedprox_suite | Checking dataset HI-Small (Path: data\processed\ibm_aml\HI-Small)...
+2026-10-18 18:21:33,720 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 3047216 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\train\transactions.csv
+2026-10-18 18:21:47,993 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 1015565 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\validation\transactions.csv
+2026-10-18 18:21:53,787 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 1015564 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\test\transactions.csv
+2026-10-18 18:21:54,800 | INFO     | fedavg_vs_fedprox_suite | Loaded HI-Small in 35.20s: Train=3047216 (pos=2299), Val=1015565 (pos=1081), Test=1015564 (pos=1797)
+2026-10-18 18:21:55,187 | INFO     | fedavg_vs_fedprox_suite | [7/18] Inspecting Configuration: hi_small_gru_fedavg_seed42
+2026-10-18 18:21:55,188 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:55,188 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedavg_seed42 [Dataset=HI-Small, Arch=gru, Algo=fedavg, mu=0.0]
+2026-10-18 18:21:55,188 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:56,539 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:21:56,569 | INFO     | fedavg_vs_fedprox_suite | [8/18] Inspecting Configuration: hi_small_gru_fedprox_mu0.0001_seed42
+2026-10-18 18:21:56,570 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:56,570 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedprox_mu0.0001_seed42 [Dataset=HI-Small, Arch=gru, Algo=fedprox, mu=0.0001]
+2026-10-18 18:21:56,570 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:58,062 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:21:58,087 | INFO     | fedavg_vs_fedprox_suite | [9/18] Inspecting Configuration: hi_small_lstm_fedavg_seed42
+2026-10-18 18:21:58,087 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:58,087 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedavg_seed42 [Dataset=HI-Small, Arch=lstm, Algo=fedavg, mu=0.0]
+2026-10-18 18:21:58,087 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:59,472 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:21:59,500 | INFO     | fedavg_vs_fedprox_suite | [10/18] Inspecting Configuration: hi_small_lstm_fedprox_mu0.0001_seed42
+2026-10-18 18:21:59,501 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:59,501 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedprox_mu0.0001_seed42 [Dataset=HI-Small, Arch=lstm, Algo=fedprox, mu=0.0001]
+2026-10-18 18:21:59,501 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:21:59,523 | INFO     | fedavg_vs_fedprox_suite | --> [RESUME DETECTED] Found verified round checkpoints up to Round 2 for hi_small_lstm_fedprox_mu0.0001_seed42. Restoring state...
+2026-10-18 18:21:59,531 | INFO     | fedavg_vs_fedprox_suite | --> State successfully loaded from Round 2 checkpoint. Resuming at Round 3/5.
+2026-10-18 18:27:29,573 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [330.0s]: Train Task Loss=0.00446, Prox Loss=0.000164, Val Loss=0.03357, Val PR-AUC=0.003296, Val ROC-AUC=0.8061
+2026-10-18 18:27:29,574 | INFO     | fedavg_vs_fedprox_suite |   [Thermal Safeguard] Pausing 15 seconds for CPU cooling...
+2026-10-18 18:34:09,848 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [385.3s]: Train Task Loss=0.00377, Prox Loss=0.000070, Val Loss=0.02324, Val PR-AUC=0.013289, Val ROC-AUC=0.8588
+2026-10-18 18:34:09,849 | INFO     | fedavg_vs_fedprox_suite |   [Thermal Safeguard] Pausing 15 seconds for CPU cooling...
+2026-10-18 18:38:41,152 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [256.3s]: Train Task Loss=0.00352, Prox Loss=0.000039, Val Loss=0.01847, Val PR-AUC=0.053777, Val ROC-AUC=0.8821
+2026-10-18 18:39:22,941 | ERROR    | fedavg_vs_fedprox_suite | Failed execution for hi_small_lstm_fedprox_mu0.0001_seed42: [WinError 2] The system cannot find the file specified: 'C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\artifacts\\fedavg_fedprox_full_comparison\\predictions\\hi_small_lstm_fedprox_mu0.0001_seed42_test_preds.npy.tmp' -> 'C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\artifacts\\fedavg_fedprox_full_comparison\\predictions\\hi_small_lstm_fedprox_mu0.0001_seed42_test_preds.npy'
+Traceback (most recent call last):
+  File "C:\Users\Acer\OneDrive\Desktop\Federate_learning\backend\scripts\run_fedavg_fedprox_comparison_suite.py", line 975, in main
+    res = run_single_experiment(
+        exp_id=exp_id,
+    ...<13 lines>...
+        cooldown_round_sec=args.cooldown_round,
+    )
+  File "C:\Users\Acer\OneDrive\Desktop\Federate_learning\backend\scripts\run_fedavg_fedprox_comparison_suite.py", line 645, in run_single_experiment
+    atomic_numpy_save(y_test_prob, pred_path)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\OneDrive\Desktop\Federate_learning\backend\scripts\run_fedavg_fedprox_comparison_suite.py", line 104, in atomic_numpy_save
+    os.rename(tmp_path, filepath)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [WinError 2] The system cannot find the file specified: 'C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\artifacts\\fedavg_fedprox_full_comparison\\predictions\\hi_small_lstm_fedprox_mu0.0001_seed42_test_preds.npy.tmp' -> 'C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\artifacts\\fedavg_fedprox_full_comparison\\predictions\\hi_small_lstm_fedprox_mu0.0001_seed42_test_preds.npy'
+2026-10-18 18:39:22,954 | INFO     | fedavg_vs_fedprox_suite | [11/18] Inspecting Configuration: hi_small_bilstm_fedavg_seed42
+2026-10-18 18:39:22,954 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:39:22,955 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedavg_seed42 [Dataset=HI-Small, Arch=bilstm, Algo=fedavg, mu=0.0]
+2026-10-18 18:39:22,955 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:45:24,960 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [362.0s]: Train Task Loss=0.06118, Prox Loss=0.000000, Val Loss=0.08960, Val PR-AUC=0.001312, Val ROC-AUC=0.5865
+2026-10-18 18:45:24,960 | INFO     | fedavg_vs_fedprox_suite |   [Thermal Safeguard] Pausing 15 seconds for CPU cooling...
+2026-10-18 18:51:09,105 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [329.1s]: Train Task Loss=0.00495, Prox Loss=0.000000, Val Loss=0.02638, Val PR-AUC=0.005422, Val ROC-AUC=0.8403
+2026-10-18 18:51:09,106 | INFO     | fedavg_vs_fedprox_suite |   [Thermal Safeguard] Pausing 15 seconds for CPU cooling...
+2026-10-18 18:56:40,146 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [316.0s]: Train Task Loss=0.00354, Prox Loss=0.000000, Val Loss=0.01732, Val PR-AUC=0.029441, Val ROC-AUC=0.8923
+2026-10-18 18:56:40,147 | INFO     | fedavg_vs_fedprox_suite |   [Thermal Safeguard] Pausing 15 seconds for CPU cooling...
+2026-10-18 19:01:13,725 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [258.6s]: Train Task Loss=0.00332, Prox Loss=0.000000, Val Loss=0.01439, Val PR-AUC=0.062414, Val ROC-AUC=0.9098
+2026-10-18 19:01:13,725 | INFO     | fedavg_vs_fedprox_suite |   [Thermal Safeguard] Pausing 15 seconds for CPU cooling...
+2026-10-18 19:05:52,578 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [263.8s]: Train Task Loss=0.00320, Prox Loss=0.000000, Val Loss=0.01400, Val PR-AUC=0.098687, Val ROC-AUC=0.9202
+2026-10-18 19:06:40,762 | ERROR    | fedavg_vs_fedprox_suite | Failed execution for hi_small_bilstm_fedavg_seed42: [WinError 2] The system cannot find the file specified: 'C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\artifacts\\fedavg_fedprox_full_comparison\\predictions\\hi_small_bilstm_fedavg_seed42_test_preds.npy.tmp' -> 'C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\artifacts\\fedavg_fedprox_full_comparison\\predictions\\hi_small_bilstm_fedavg_seed42_test_preds.npy'
+Traceback (most recent call last):
+  File "C:\Users\Acer\OneDrive\Desktop\Federate_learning\backend\scripts\run_fedavg_fedprox_comparison_suite.py", line 975, in main
+    res = run_single_experiment(
+        exp_id=exp_id,
+    ...<13 lines>...
+        cooldown_round_sec=args.cooldown_round,
+    )
+  File "C:\Users\Acer\OneDrive\Desktop\Federate_learning\backend\scripts\run_fedavg_fedprox_comparison_suite.py", line 645, in run_single_experiment
+    atomic_numpy_save(y_test_prob, pred_path)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\OneDrive\Desktop\Federate_learning\backend\scripts\run_fedavg_fedprox_comparison_suite.py", line 104, in atomic_numpy_save
+    os.rename(tmp_path, filepath)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [WinError 2] The system cannot find the file specified: 'C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\artifacts\\fedavg_fedprox_full_comparison\\predictions\\hi_small_bilstm_fedavg_seed42_test_preds.npy.tmp' -> 'C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\artifacts\\fedavg_fedprox_full_comparison\\predictions\\hi_small_bilstm_fedavg_seed42_test_preds.npy'
+2026-10-18 19:06:40,776 | INFO     | fedavg_vs_fedprox_suite | [12/18] Inspecting Configuration: hi_small_bilstm_fedprox_mu0.0001_seed42
+2026-10-18 19:06:40,776 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 19:06:40,776 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedprox_mu0.0001_seed42 [Dataset=HI-Small, Arch=bilstm, Algo=fedprox, mu=0.0001]
+2026-10-18 19:06:40,776 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 19:12:04,488 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [323.7s]: Train Task Loss=0.06134, Prox Loss=0.002903, Val Loss=0.09462, Val PR-AUC=0.001334, Val ROC-AUC=0.5834
+2026-10-18 19:12:04,488 | INFO     | fedavg_vs_fedprox_suite |   [Thermal Safeguard] Pausing 15 seconds for CPU cooling...
+2026-10-18 19:17:46,914 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [327.4s]: Train Task Loss=0.00548, Prox Loss=0.000451, Val Loss=0.06252, Val PR-AUC=0.003074, Val ROC-AUC=0.7376
+2026-10-18 19:17:46,914 | INFO     | fedavg_vs_fedprox_suite |   [Thermal Safeguard] Pausing 15 seconds for CPU cooling...
+2026-10-18 19:23:30,405 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [328.5s]: Train Task Loss=0.00398, Prox Loss=0.000149, Val Loss=0.04150, Val PR-AUC=0.011923, Val ROC-AUC=0.8259
+2026-10-18 19:23:30,405 | INFO     | fedavg_vs_fedprox_suite |   [Thermal Safeguard] Pausing 15 seconds for CPU cooling...
+2026-10-18 19:29:11,096 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [325.7s]: Train Task Loss=0.00356, Prox Loss=0.000076, Val Loss=0.03006, Val PR-AUC=0.033471, Val ROC-AUC=0.8616
+2026-10-18 19:29:11,097 | INFO     | fedavg_vs_fedprox_suite |   [Thermal Safeguard] Pausing 15 seconds for CPU cooling...
+2026-10-18 19:34:41,161 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [315.1s]: Train Task Loss=0.00339, Prox Loss=0.000052, Val Loss=0.02553, Val PR-AUC=0.054832, Val ROC-AUC=0.8775
+2026-10-18 19:35:42,072 | ERROR    | fedavg_vs_fedprox_suite | Failed execution for hi_small_bilstm_fedprox_mu0.0001_seed42: [WinError 2] The system cannot find the file specified: 'C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\artifacts\\fedavg_fedprox_full_comparison\\predictions\\hi_small_bilstm_fedprox_mu0.0001_seed42_test_preds.npy.tmp' -> 'C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\artifacts\\fedavg_fedprox_full_comparison\\predictions\\hi_small_bilstm_fedprox_mu0.0001_seed42_test_preds.npy'
+Traceback (most recent call last):
+  File "C:\Users\Acer\OneDrive\Desktop\Federate_learning\backend\scripts\run_fedavg_fedprox_comparison_suite.py", line 975, in main
+    res = run_single_experiment(
+        exp_id=exp_id,
+    ...<13 lines>...
+        cooldown_round_sec=args.cooldown_round,
+    )
+  File "C:\Users\Acer\OneDrive\Desktop\Federate_learning\backend\scripts\run_fedavg_fedprox_comparison_suite.py", line 645, in run_single_experiment
+    atomic_numpy_save(y_test_prob, pred_path)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\OneDrive\Desktop\Federate_learning\backend\scripts\run_fedavg_fedprox_comparison_suite.py", line 104, in atomic_numpy_save
+    os.rename(tmp_path, filepath)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [WinError 2] The system cannot find the file specified: 'C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\artifacts\\fedavg_fedprox_full_comparison\\predictions\\hi_small_bilstm_fedprox_mu0.0001_seed42_test_preds.npy.tmp' -> 'C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\artifacts\\fedavg_fedprox_full_comparison\\predictions\\hi_small_bilstm_fedprox_mu0.0001_seed42_test_preds.npy'
+2026-10-18 19:35:42,964 | INFO     | fedavg_vs_fedprox_suite | Released dataset HI-Small from memory.
+2026-10-18 19:35:42,965 | INFO     | fedavg_vs_fedprox_suite | Checking dataset LI-Medium (Path: data\processed\ibm_aml\LI-Medium)...
+2026-10-18 19:37:00,279 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 18752217 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\train\transactions.csv
+2026-10-18 19:37:50,536 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 6250154 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\validation\transactions.csv
+2026-10-18 19:38:26,691 | INFO     | infrastructure.data.sequences.processed_sequence_provider | Read 6249112 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\test\transactions.csv
+2026-10-18 19:38:34,504 | INFO     | fedavg_vs_fedprox_suite | Loaded LI-Medium in 171.40s: Train=18752217 (pos=8138), Val=6250154 (pos=4120), Test=6249112 (pos=3783)
+2026-10-18 19:38:36,886 | INFO     | fedavg_vs_fedprox_suite | [13/18] Inspecting Configuration: li_medium_gru_fedavg_seed42
+2026-10-18 19:38:36,887 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 19:38:36,887 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: li_medium_gru_fedavg_seed42 [Dataset=LI-Medium, Arch=gru, Algo=fedavg, mu=0.0]
+2026-10-18 19:38:36,887 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 20:26:47,196 | INFO     | fedavg_vs_fedprox_suite | Output root: C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\fedavg_fedprox_full_comparison
+2026-10-18 20:26:47,197 | INFO     | fedavg_vs_fedprox_suite | Manifest path: C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\fedavg_fedprox_full_comparison\resume_manifest.json
+2026-10-18 20:26:47,198 | INFO     | fedavg_vs_fedprox_suite | === VERIFICATION MODE ACTIVATED (NO FULL TRAINING) ===
+2026-10-18 20:26:47,198 | INFO     | fedavg_vs_fedprox_suite | 1. Device check: cpu (CUDA Available: False)
+2026-10-18 20:26:47,198 | INFO     | fedavg_vs_fedprox_suite | 2. Dataset paths check:
+2026-10-18 20:26:47,198 | INFO     | fedavg_vs_fedprox_suite |    - Combined: C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined (exists=True)
+2026-10-18 20:26:47,199 | INFO     | fedavg_vs_fedprox_suite |    - HI-Small: C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small (exists=True)
+2026-10-18 20:26:47,199 | INFO     | fedavg_vs_fedprox_suite |    - LI-Medium: C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium (exists=True)
+2026-10-18 20:26:47,199 | INFO     | fedavg_vs_fedprox_suite | 3. Manifest check: C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\fedavg_fedprox_full_comparison\resume_manifest.json (exists=True)
+2026-10-18 20:26:47,199 | INFO     | fedavg_vs_fedprox_suite |    Manifest summary: {'completed': 12, 'pending': 24, 'total': 36, 'completed_non_iid': 12, 'pending_non_iid': 6, 'completed_iid': 0, 'pending_iid': 18}
+2026-10-18 20:26:47,200 | INFO     | fedavg_vs_fedprox_suite | 4. Testing dummy model forward/backward on cpu...
+2026-10-18 20:26:47,213 | INFO     | fedavg_vs_fedprox_suite |    Forward/Backward computed successfully! Loss: 0.7100
+2026-10-18 20:26:47,213 | INFO     | fedavg_vs_fedprox_suite | === VERIFICATION COMPLETE: ALL SYSTEMS READY FOR EXECUTION ===
+2026-10-18 17:38:59,073 | INFO     | fedavg_vs_fedprox_suite | Output root: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison
+2026-10-18 17:38:59,074 | INFO     | fedavg_vs_fedprox_suite | Manifest path: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison/resume_manifest.json
+2026-10-18 17:38:59,075 | INFO     | fedavg_vs_fedprox_suite | === VERIFICATION MODE ACTIVATED (NO FULL TRAINING) ===
+2026-10-18 17:38:59,075 | INFO     | fedavg_vs_fedprox_suite | 1. Device check: cuda (CUDA Available: True)
+2026-10-18 17:38:59,075 | INFO     | fedavg_vs_fedprox_suite | 2. Dataset paths check:
+2026-10-18 17:38:59,075 | INFO     | fedavg_vs_fedprox_suite |    - Combined: /content/Federate_learning/Federate_learning/data/processed/ibm_aml/Combined (exists=True)
+2026-10-18 17:38:59,075 | INFO     | fedavg_vs_fedprox_suite |    - HI-Small: /content/Federate_learning/Federate_learning/data/processed/ibm_aml/HI-Small (exists=True)
+2026-10-18 17:38:59,075 | INFO     | fedavg_vs_fedprox_suite |    - LI-Medium: /content/Federate_learning/Federate_learning/data/processed/ibm_aml/LI-Medium (exists=True)
+2026-10-18 17:38:59,075 | INFO     | fedavg_vs_fedprox_suite | 3. Manifest check: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison/resume_manifest.json (exists=True)
+2026-10-18 17:38:59,076 | INFO     | fedavg_vs_fedprox_suite |    Manifest summary: {'completed': 12, 'pending': 24, 'total': 36, 'completed_non_iid': 12, 'pending_non_iid': 6, 'completed_iid': 0, 'pending_iid': 18}
+2026-10-18 17:38:59,076 | INFO     | fedavg_vs_fedprox_suite | 4. Testing dummy model forward/backward on cuda...
+2026-10-18 17:39:01,553 | INFO     | fedavg_vs_fedprox_suite |    Forward/Backward computed successfully! Loss: 0.7093
+2026-10-18 17:39:01,554 | INFO     | fedavg_vs_fedprox_suite | === VERIFICATION COMPLETE: ALL SYSTEMS READY FOR EXECUTION ===
+2026-10-18 17:40:42,957 | INFO     | fedavg_vs_fedprox_suite | Output root: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison
+2026-10-18 17:40:42,957 | INFO     | fedavg_vs_fedprox_suite | Manifest path: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison/resume_manifest.json
+2026-10-18 17:40:42,958 | INFO     | fedavg_vs_fedprox_suite | Loading dataset Combined from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/Combined...
+2026-10-18 17:40:46,015 | INFO     | fedavg_vs_fedprox_suite | Loaded Combined in 3.05s: Train=300000 (pos=15), Val=100000 (pos=78), Test=100000 (pos=94)
+2026-10-18 17:40:46,035 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:40:46,035 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedavg_seed42 [Combined, gru, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 17:40:46,035 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:40:46,131 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:40:46,149 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:40:46,149 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedprox_mu0.0001_seed42 [Combined, gru, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 17:40:46,149 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:40:46,222 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:40:46,235 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:40:46,235 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedavg_seed42 [Combined, lstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 17:40:46,235 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:40:46,311 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:40:46,323 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:40:46,323 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedprox_mu0.0001_seed42 [Combined, lstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 17:40:46,323 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:40:46,395 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:40:46,407 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:40:46,408 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedavg_seed42 [Combined, bilstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 17:40:46,408 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:40:46,497 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:40:46,515 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:40:46,515 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedprox_mu0.0001_seed42 [Combined, bilstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 17:40:46,515 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:40:46,601 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:40:46,624 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:40:46,624 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedavg_iid_seed42 [Combined, gru, fedavg, mu=0.0, IID] on cuda
+2026-10-18 17:40:46,624 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:40:53,700 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [6.9s]: Train Task Loss=0.35341, Prox Loss=0.000000, Val Loss=0.56337, Val PR-AUC=0.000888, Val ROC-AUC=0.3824
+2026-10-18 17:40:54,825 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [1.1s]: Train Task Loss=0.07538, Prox Loss=0.000000, Val Loss=0.38767, Val PR-AUC=0.000935, Val ROC-AUC=0.3922
+2026-10-18 17:40:55,891 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [1.1s]: Train Task Loss=0.01174, Prox Loss=0.000000, Val Loss=0.28285, Val PR-AUC=0.000888, Val ROC-AUC=0.3854
+2026-10-18 17:40:57,007 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [1.1s]: Train Task Loss=0.00205, Prox Loss=0.000000, Val Loss=0.23938, Val PR-AUC=0.000894, Val ROC-AUC=0.3945
+2026-10-18 17:40:58,080 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [1.1s]: Train Task Loss=0.00074, Prox Loss=0.000000, Val Loss=0.23154, Val PR-AUC=0.000931, Val ROC-AUC=0.4033
+2026-10-18 17:40:59,114 | INFO     | fedavg_vs_fedprox_suite | Run combined_gru_fedavg_iid_seed42 Complete: Test ROC-AUC=0.4462, Test PR-AUC=0.001077, Test F1=0.0000, Alerts/10k=0.7 [Best Round=2, Tau=0.85]
+2026-10-18 17:40:59,132 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:40:59,132 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedprox_mu0.0001_iid_seed42 [Combined, gru, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 17:40:59,132 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:41:00,288 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [1.2s]: Train Task Loss=0.35340, Prox Loss=0.000160, Val Loss=0.56342, Val PR-AUC=0.000887, Val ROC-AUC=0.3825
+2026-10-18 17:41:01,429 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [1.1s]: Train Task Loss=0.07538, Prox Loss=0.000150, Val Loss=0.39006, Val PR-AUC=0.000936, Val ROC-AUC=0.3930
+2026-10-18 17:41:02,562 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [1.1s]: Train Task Loss=0.01177, Prox Loss=0.000074, Val Loss=0.29727, Val PR-AUC=0.000939, Val ROC-AUC=0.4034
+2026-10-18 17:41:03,699 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [1.1s]: Train Task Loss=0.00207, Prox Loss=0.000037, Val Loss=0.26977, Val PR-AUC=0.000869, Val ROC-AUC=0.4144
+2026-10-18 17:41:04,879 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [1.2s]: Train Task Loss=0.00075, Prox Loss=0.000018, Val Loss=0.33570, Val PR-AUC=0.000825, Val ROC-AUC=0.4140
+2026-10-18 17:41:05,945 | INFO     | fedavg_vs_fedprox_suite | Run combined_gru_fedprox_mu0.0001_iid_seed42 Complete: Test ROC-AUC=0.4495, Test PR-AUC=0.001109, Test F1=0.0000, Alerts/10k=0.6 [Best Round=3, Tau=0.93]
+2026-10-18 17:41:05,963 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:41:05,963 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedavg_iid_seed42 [Combined, lstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 17:41:05,963 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:41:07,055 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [1.1s]: Train Task Loss=0.53798, Prox Loss=0.000000, Val Loss=0.60066, Val PR-AUC=0.000865, Val ROC-AUC=0.4039
+2026-10-18 17:41:08,123 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [1.1s]: Train Task Loss=0.21279, Prox Loss=0.000000, Val Loss=0.42927, Val PR-AUC=0.000785, Val ROC-AUC=0.4132
+2026-10-18 17:41:09,236 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [1.1s]: Train Task Loss=0.05645, Prox Loss=0.000000, Val Loss=0.29105, Val PR-AUC=0.000722, Val ROC-AUC=0.3959
+2026-10-18 17:41:10,326 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [1.1s]: Train Task Loss=0.01299, Prox Loss=0.000000, Val Loss=0.20514, Val PR-AUC=0.000725, Val ROC-AUC=0.3995
+2026-10-18 17:41:11,413 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [1.1s]: Train Task Loss=0.00323, Prox Loss=0.000000, Val Loss=0.15832, Val PR-AUC=0.000734, Val ROC-AUC=0.4004
+2026-10-18 17:41:12,416 | INFO     | fedavg_vs_fedprox_suite | Run combined_lstm_fedavg_iid_seed42 Complete: Test ROC-AUC=0.4415, Test PR-AUC=0.000909, Test F1=0.0052, Alerts/10k=28.8 [Best Round=1, Tau=0.53]
+2026-10-18 17:41:12,436 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:41:12,436 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedprox_mu0.0001_iid_seed42 [Combined, lstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 17:41:12,436 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:41:13,603 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [1.2s]: Train Task Loss=0.53793, Prox Loss=0.000198, Val Loss=0.60078, Val PR-AUC=0.000865, Val ROC-AUC=0.4039
+2026-10-18 17:41:14,838 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [1.2s]: Train Task Loss=0.21271, Prox Loss=0.000230, Val Loss=0.43175, Val PR-AUC=0.000792, Val ROC-AUC=0.4139
+2026-10-18 17:41:16,039 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [1.2s]: Train Task Loss=0.05647, Prox Loss=0.000140, Val Loss=0.31248, Val PR-AUC=0.000772, Val ROC-AUC=0.4143
+2026-10-18 17:41:17,223 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [1.2s]: Train Task Loss=0.01302, Prox Loss=0.000079, Val Loss=0.23872, Val PR-AUC=0.000780, Val ROC-AUC=0.4181
+2026-10-18 17:41:18,402 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [1.2s]: Train Task Loss=0.00325, Prox Loss=0.000049, Val Loss=0.20218, Val PR-AUC=0.000811, Val ROC-AUC=0.4251
+2026-10-18 17:41:19,421 | INFO     | fedavg_vs_fedprox_suite | Run combined_lstm_fedprox_mu0.0001_iid_seed42 Complete: Test ROC-AUC=0.4415, Test PR-AUC=0.000909, Test F1=0.0050, Alerts/10k=30.4 [Best Round=1, Tau=0.53]
+2026-10-18 17:41:19,441 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:41:19,441 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedavg_iid_seed42 [Combined, bilstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 17:41:19,441 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:41:20,709 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [1.3s]: Train Task Loss=0.44208, Prox Loss=0.000000, Val Loss=0.58756, Val PR-AUC=0.000865, Val ROC-AUC=0.4593
+2026-10-18 17:41:21,950 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [1.2s]: Train Task Loss=0.10082, Prox Loss=0.000000, Val Loss=0.38750, Val PR-AUC=0.000785, Val ROC-AUC=0.4310
+2026-10-18 17:41:23,202 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [1.2s]: Train Task Loss=0.01226, Prox Loss=0.000000, Val Loss=0.24487, Val PR-AUC=0.000726, Val ROC-AUC=0.4062
+2026-10-18 17:41:24,477 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [1.3s]: Train Task Loss=0.00166, Prox Loss=0.000000, Val Loss=0.17702, Val PR-AUC=0.000725, Val ROC-AUC=0.4073
+2026-10-18 17:41:25,758 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [1.3s]: Train Task Loss=0.00076, Prox Loss=0.000000, Val Loss=0.15147, Val PR-AUC=0.000720, Val ROC-AUC=0.4170
+2026-10-18 17:41:26,801 | INFO     | fedavg_vs_fedprox_suite | Run combined_bilstm_fedavg_iid_seed42 Complete: Test ROC-AUC=0.4558, Test PR-AUC=0.001081, Test F1=0.0000, Alerts/10k=0.7 [Best Round=1, Tau=0.55]
+2026-10-18 17:41:26,823 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:41:26,823 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedprox_mu0.0001_iid_seed42 [Combined, bilstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 17:41:26,823 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:41:28,189 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [1.4s]: Train Task Loss=0.44203, Prox Loss=0.000388, Val Loss=0.58777, Val PR-AUC=0.000861, Val ROC-AUC=0.4597
+2026-10-18 17:41:29,562 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [1.4s]: Train Task Loss=0.10078, Prox Loss=0.000338, Val Loss=0.39766, Val PR-AUC=0.000815, Val ROC-AUC=0.4355
+2026-10-18 17:41:30,943 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [1.4s]: Train Task Loss=0.01228, Prox Loss=0.000143, Val Loss=0.28471, Val PR-AUC=0.000796, Val ROC-AUC=0.4327
+2026-10-18 17:41:32,313 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [1.4s]: Train Task Loss=0.00165, Prox Loss=0.000069, Val Loss=0.24517, Val PR-AUC=0.000797, Val ROC-AUC=0.4347
+2026-10-18 17:41:33,683 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [1.4s]: Train Task Loss=0.00074, Prox Loss=0.000025, Val Loss=0.26386, Val PR-AUC=0.000799, Val ROC-AUC=0.4355
+2026-10-18 17:41:34,791 | INFO     | fedavg_vs_fedprox_suite | Run combined_bilstm_fedprox_mu0.0001_iid_seed42 Complete: Test ROC-AUC=0.4559, Test PR-AUC=0.001088, Test F1=0.0000, Alerts/10k=0.1 [Best Round=1, Tau=0.56]
+2026-10-18 17:41:35,011 | INFO     | fedavg_vs_fedprox_suite | Released dataset Combined from memory.
+2026-10-18 17:41:35,012 | INFO     | fedavg_vs_fedprox_suite | Loading dataset HI-Small from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/HI-Small...
+2026-10-18 17:42:03,562 | INFO     | fedavg_vs_fedprox_suite | Loaded HI-Small in 28.54s: Train=3047216 (pos=2299), Val=1015565 (pos=1081), Test=1015564 (pos=1797)
+2026-10-18 17:42:03,685 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:42:03,686 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedavg_seed42 [HI-Small, gru, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 17:42:03,686 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:42:04,335 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:42:04,358 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:42:04,358 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedprox_mu0.0001_seed42 [HI-Small, gru, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 17:42:04,358 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:42:05,047 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:42:05,098 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:42:05,098 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedavg_seed42 [HI-Small, lstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 17:42:05,098 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:42:05,735 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:42:05,764 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:42:05,764 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedprox_mu0.0001_seed42 [HI-Small, lstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 17:42:05,764 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:42:06,397 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:42:06,421 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:42:06,421 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedavg_seed42 [HI-Small, bilstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 17:42:06,421 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:42:07,044 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_bilstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:42:07,069 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:42:07,069 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedprox_mu0.0001_seed42 [HI-Small, bilstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 17:42:07,069 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:42:07,726 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_bilstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:42:07,886 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:42:07,886 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedavg_iid_seed42 [HI-Small, gru, fedavg, mu=0.0, IID] on cuda
+2026-10-18 17:42:07,886 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:42:22,427 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [14.5s]: Train Task Loss=0.05821, Prox Loss=0.000000, Val Loss=0.07870, Val PR-AUC=0.001305, Val ROC-AUC=0.5849
+2026-10-18 17:42:37,102 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [14.7s]: Train Task Loss=0.00503, Prox Loss=0.000000, Val Loss=0.01802, Val PR-AUC=0.009985, Val ROC-AUC=0.8750
+2026-10-18 17:42:51,729 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [14.6s]: Train Task Loss=0.00361, Prox Loss=0.000000, Val Loss=0.01198, Val PR-AUC=0.055608, Val ROC-AUC=0.9230
+2026-10-18 17:43:06,516 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [14.8s]: Train Task Loss=0.00338, Prox Loss=0.000000, Val Loss=0.01091, Val PR-AUC=0.114089, Val ROC-AUC=0.9361
+2026-10-18 17:43:21,029 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [14.5s]: Train Task Loss=0.00327, Prox Loss=0.000000, Val Loss=0.01042, Val PR-AUC=0.165588, Val ROC-AUC=0.9428
+2026-10-18 17:43:30,852 | INFO     | fedavg_vs_fedprox_suite | Run hi_small_gru_fedavg_iid_seed42 Complete: Test ROC-AUC=0.9548, Test PR-AUC=0.394998, Test F1=0.4358, Alerts/10k=1.3 [Best Round=5, Tau=0.74]
+2026-10-18 17:43:30,883 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:43:30,883 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedprox_mu0.0001_iid_seed42 [HI-Small, gru, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 17:43:30,883 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:43:46,460 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [15.6s]: Train Task Loss=0.05834, Prox Loss=0.001424, Val Loss=0.08255, Val PR-AUC=0.001291, Val ROC-AUC=0.5829
+2026-10-18 17:44:01,782 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [15.3s]: Train Task Loss=0.00530, Prox Loss=0.000295, Val Loss=0.03238, Val PR-AUC=0.004587, Val ROC-AUC=0.8254
+2026-10-18 17:44:17,229 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [15.4s]: Train Task Loss=0.00383, Prox Loss=0.000063, Val Loss=0.01770, Val PR-AUC=0.018286, Val ROC-AUC=0.8903
+2026-10-18 17:44:32,587 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [15.4s]: Train Task Loss=0.00356, Prox Loss=0.000034, Val Loss=0.01460, Val PR-AUC=0.035255, Val ROC-AUC=0.9117
+2026-10-18 17:44:47,892 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [15.3s]: Train Task Loss=0.00345, Prox Loss=0.000027, Val Loss=0.01352, Val PR-AUC=0.049881, Val ROC-AUC=0.9218
+2026-10-18 17:44:57,679 | INFO     | fedavg_vs_fedprox_suite | Run hi_small_gru_fedprox_mu0.0001_iid_seed42 Complete: Test ROC-AUC=0.9357, Test PR-AUC=0.249625, Test F1=0.2752, Alerts/10k=13.1 [Best Round=5, Tau=0.55]
+2026-10-18 17:44:57,711 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:44:57,711 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedavg_iid_seed42 [HI-Small, lstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 17:44:57,711 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:45:12,411 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [14.7s]: Train Task Loss=0.07559, Prox Loss=0.000000, Val Loss=0.09529, Val PR-AUC=0.001294, Val ROC-AUC=0.5801
+2026-10-18 17:45:27,229 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [14.8s]: Train Task Loss=0.00561, Prox Loss=0.000000, Val Loss=0.02252, Val PR-AUC=0.003471, Val ROC-AUC=0.8198
+2026-10-18 17:45:42,132 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [14.9s]: Train Task Loss=0.00384, Prox Loss=0.000000, Val Loss=0.00913, Val PR-AUC=0.075845, Val ROC-AUC=0.9131
+2026-10-18 17:45:57,108 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [15.0s]: Train Task Loss=0.00347, Prox Loss=0.000000, Val Loss=0.00693, Val PR-AUC=0.182406, Val ROC-AUC=0.9337
+2026-10-18 17:46:11,972 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [14.9s]: Train Task Loss=0.00333, Prox Loss=0.000000, Val Loss=0.00617, Val PR-AUC=0.242083, Val ROC-AUC=0.9428
+2026-10-18 17:46:21,940 | INFO     | fedavg_vs_fedprox_suite | Run hi_small_lstm_fedavg_iid_seed42 Complete: Test ROC-AUC=0.9555, Test PR-AUC=0.475977, Test F1=0.5352, Alerts/10k=1.5 [Best Round=5, Tau=0.34]
+2026-10-18 17:46:21,973 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:46:21,974 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedprox_mu0.0001_iid_seed42 [HI-Small, lstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 17:46:21,974 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:46:37,823 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [15.8s]: Train Task Loss=0.07576, Prox Loss=0.002261, Val Loss=0.10007, Val PR-AUC=0.001295, Val ROC-AUC=0.5817
+2026-10-18 17:46:53,749 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [15.9s]: Train Task Loss=0.00622, Prox Loss=0.000362, Val Loss=0.05055, Val PR-AUC=0.002296, Val ROC-AUC=0.6950
+2026-10-18 17:47:09,600 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [15.8s]: Train Task Loss=0.00457, Prox Loss=0.000173, Val Loss=0.03676, Val PR-AUC=0.003268, Val ROC-AUC=0.8037
+2026-10-18 17:47:25,286 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [15.7s]: Train Task Loss=0.00384, Prox Loss=0.000069, Val Loss=0.02605, Val PR-AUC=0.010432, Val ROC-AUC=0.8598
+2026-10-18 17:47:40,894 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [15.6s]: Train Task Loss=0.00358, Prox Loss=0.000036, Val Loss=0.02073, Val PR-AUC=0.051566, Val ROC-AUC=0.8846
+2026-10-18 17:47:50,715 | INFO     | fedavg_vs_fedprox_suite | Run hi_small_lstm_fedprox_mu0.0001_iid_seed42 Complete: Test ROC-AUC=0.9106, Test PR-AUC=0.282432, Test F1=0.2943, Alerts/10k=0.4 [Best Round=5, Tau=0.52]
+2026-10-18 17:47:50,749 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:47:50,749 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedavg_iid_seed42 [HI-Small, bilstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 17:47:50,749 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:48:06,196 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [15.4s]: Train Task Loss=0.06134, Prox Loss=0.000000, Val Loss=0.08990, Val PR-AUC=0.001312, Val ROC-AUC=0.5868
+2026-10-18 17:48:21,553 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [15.4s]: Train Task Loss=0.00504, Prox Loss=0.000000, Val Loss=0.02598, Val PR-AUC=0.006542, Val ROC-AUC=0.8483
+2026-10-18 17:48:36,859 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [15.3s]: Train Task Loss=0.00358, Prox Loss=0.000000, Val Loss=0.01640, Val PR-AUC=0.057238, Val ROC-AUC=0.9023
+2026-10-18 17:48:52,232 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [15.4s]: Train Task Loss=0.00336, Prox Loss=0.000000, Val Loss=0.01398, Val PR-AUC=0.089209, Val ROC-AUC=0.9178
+2026-10-18 17:49:07,485 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [15.2s]: Train Task Loss=0.00324, Prox Loss=0.000000, Val Loss=0.01281, Val PR-AUC=0.123172, Val ROC-AUC=0.9282
+2026-10-18 17:49:17,489 | INFO     | fedavg_vs_fedprox_suite | Run hi_small_bilstm_fedavg_iid_seed42 Complete: Test ROC-AUC=0.9404, Test PR-AUC=0.407818, Test F1=0.4616, Alerts/10k=1.3 [Best Round=5, Tau=0.62]
+2026-10-18 17:49:17,523 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:49:17,524 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedprox_mu0.0001_iid_seed42 [HI-Small, bilstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 17:49:17,524 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:49:34,384 | INFO     | fedavg_vs_fedprox_suite |   Round 1/5 [16.9s]: Train Task Loss=0.06149, Prox Loss=0.002897, Val Loss=0.09494, Val PR-AUC=0.001330, Val ROC-AUC=0.5836
+2026-10-18 17:49:51,294 | INFO     | fedavg_vs_fedprox_suite |   Round 2/5 [16.9s]: Train Task Loss=0.00559, Prox Loss=0.000451, Val Loss=0.06462, Val PR-AUC=0.003213, Val ROC-AUC=0.7515
+2026-10-18 17:50:08,276 | INFO     | fedavg_vs_fedprox_suite |   Round 3/5 [17.0s]: Train Task Loss=0.00401, Prox Loss=0.000133, Val Loss=0.04120, Val PR-AUC=0.012170, Val ROC-AUC=0.8344
+2026-10-18 17:50:24,894 | INFO     | fedavg_vs_fedprox_suite |   Round 4/5 [16.6s]: Train Task Loss=0.00360, Prox Loss=0.000069, Val Loss=0.02971, Val PR-AUC=0.039255, Val ROC-AUC=0.8688
+2026-10-18 17:50:41,517 | INFO     | fedavg_vs_fedprox_suite |   Round 5/5 [16.6s]: Train Task Loss=0.00344, Prox Loss=0.000049, Val Loss=0.02488, Val PR-AUC=0.064929, Val ROC-AUC=0.8855
+2026-10-18 17:50:51,697 | INFO     | fedavg_vs_fedprox_suite | Run hi_small_bilstm_fedprox_mu0.0001_iid_seed42 Complete: Test ROC-AUC=0.9046, Test PR-AUC=0.297752, Test F1=0.3360, Alerts/10k=0.6 [Best Round=5, Tau=0.66]
+2026-10-18 17:50:51,993 | INFO     | fedavg_vs_fedprox_suite | Released dataset HI-Small from memory.
+2026-10-18 17:50:51,993 | INFO     | fedavg_vs_fedprox_suite | Loading dataset LI-Medium from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/LI-Medium...
+2026-10-18 17:58:51,515 | INFO     | fedavg_vs_fedprox_suite | Output root: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison
+2026-10-18 17:58:51,516 | INFO     | fedavg_vs_fedprox_suite | Manifest path: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison/resume_manifest.json
+2026-10-18 17:58:51,519 | INFO     | fedavg_vs_fedprox_suite | Loading dataset Combined from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/Combined...
+2026-10-18 17:58:54,470 | INFO     | fedavg_vs_fedprox_suite | Loaded Combined in 2.95s: Train=300000 (pos=15), Val=100000 (pos=78), Test=100000 (pos=94)
+2026-10-18 17:58:54,482 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:54,483 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedavg_seed42 [Combined, gru, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 17:58:54,483 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:54,591 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:58:54,608 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:54,608 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedprox_mu0.0001_seed42 [Combined, gru, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 17:58:54,608 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:54,678 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:58:54,693 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:54,693 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedavg_seed42 [Combined, lstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 17:58:54,693 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:54,770 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:58:54,783 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:54,784 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedprox_mu0.0001_seed42 [Combined, lstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 17:58:54,784 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:54,860 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:58:54,874 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:54,874 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedavg_seed42 [Combined, bilstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 17:58:54,874 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:54,960 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:58:54,977 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:54,977 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedprox_mu0.0001_seed42 [Combined, bilstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 17:58:54,978 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:55,083 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:58:55,110 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:55,110 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedavg_iid_seed42 [Combined, gru, fedavg, mu=0.0, IID] on cuda
+2026-10-18 17:58:55,110 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:55,192 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:58:55,207 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:55,207 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedprox_mu0.0001_iid_seed42 [Combined, gru, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 17:58:55,207 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:55,282 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:58:55,296 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:55,297 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedavg_iid_seed42 [Combined, lstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 17:58:55,297 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:55,374 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:58:55,389 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:55,389 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedprox_mu0.0001_iid_seed42 [Combined, lstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 17:58:55,389 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:55,463 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:58:55,480 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:55,480 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedavg_iid_seed42 [Combined, bilstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 17:58:55,480 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:55,562 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:58:55,579 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:55,579 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedprox_mu0.0001_iid_seed42 [Combined, bilstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 17:58:55,579 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:58:55,658 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:58:55,786 | INFO     | fedavg_vs_fedprox_suite | Released dataset Combined from memory.
+2026-10-18 17:58:55,787 | INFO     | fedavg_vs_fedprox_suite | Loading dataset HI-Small from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/HI-Small...
+2026-10-18 17:59:22,990 | INFO     | fedavg_vs_fedprox_suite | Loaded HI-Small in 27.20s: Train=3047216 (pos=2299), Val=1015565 (pos=1081), Test=1015564 (pos=1797)
+2026-10-18 17:59:23,145 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:23,145 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedavg_seed42 [HI-Small, gru, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 17:59:23,145 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:23,768 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:59:23,788 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:23,788 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedprox_mu0.0001_seed42 [HI-Small, gru, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 17:59:23,788 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:24,411 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:59:24,430 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:24,430 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedavg_seed42 [HI-Small, lstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 17:59:24,430 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:25,081 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:59:25,114 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:25,114 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedprox_mu0.0001_seed42 [HI-Small, lstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 17:59:25,114 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:25,747 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:59:25,768 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:25,768 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedavg_seed42 [HI-Small, bilstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 17:59:25,768 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:26,386 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_bilstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:59:26,407 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:26,407 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedprox_mu0.0001_seed42 [HI-Small, bilstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 17:59:26,407 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:27,042 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_bilstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:59:27,239 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:27,240 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedavg_iid_seed42 [HI-Small, gru, fedavg, mu=0.0, IID] on cuda
+2026-10-18 17:59:27,240 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:27,886 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:59:27,909 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:27,909 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedprox_mu0.0001_iid_seed42 [HI-Small, gru, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 17:59:27,909 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:28,534 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:59:28,557 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:28,557 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedavg_iid_seed42 [HI-Small, lstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 17:59:28,557 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:29,179 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:59:29,202 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:29,202 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedprox_mu0.0001_iid_seed42 [HI-Small, lstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 17:59:29,202 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:29,827 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:59:29,851 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:29,851 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedavg_iid_seed42 [HI-Small, bilstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 17:59:29,851 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:30,481 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_bilstm_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:59:30,505 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:30,506 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedprox_mu0.0001_iid_seed42 [HI-Small, bilstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 17:59:30,506 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 17:59:31,133 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_bilstm_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 17:59:31,326 | INFO     | fedavg_vs_fedprox_suite | Released dataset HI-Small from memory.
+2026-10-18 17:59:31,326 | INFO     | fedavg_vs_fedprox_suite | Loading dataset LI-Medium from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/LI-Medium...
+2026-10-18 18:02:12,189 | INFO     | fedavg_vs_fedprox_suite | Output root: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison
+2026-10-18 18:02:12,190 | INFO     | fedavg_vs_fedprox_suite | Manifest path: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison/resume_manifest.json
+2026-10-18 18:02:12,191 | INFO     | fedavg_vs_fedprox_suite | Loading dataset Combined from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/Combined...
+2026-10-18 18:02:15,231 | INFO     | fedavg_vs_fedprox_suite | Loaded Combined in 3.03s: Train=300000 (pos=15), Val=100000 (pos=78), Test=100000 (pos=94)
+2026-10-18 18:02:15,248 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:15,249 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedavg_seed42 [Combined, gru, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:02:15,249 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:15,362 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:15,378 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:15,378 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedprox_mu0.0001_seed42 [Combined, gru, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:02:15,378 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:15,455 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:15,472 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:15,472 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedavg_seed42 [Combined, lstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:02:15,472 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:15,548 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:15,562 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:15,562 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedprox_mu0.0001_seed42 [Combined, lstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:02:15,562 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:15,635 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:15,650 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:15,650 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedavg_seed42 [Combined, bilstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:02:15,650 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:15,736 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:15,755 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:15,755 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedprox_mu0.0001_seed42 [Combined, bilstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:02:15,756 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:15,839 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:15,863 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:15,864 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedavg_iid_seed42 [Combined, gru, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:02:15,864 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:15,942 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:15,957 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:15,957 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedprox_mu0.0001_iid_seed42 [Combined, gru, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:02:15,957 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:16,034 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:16,050 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:16,050 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedavg_iid_seed42 [Combined, lstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:02:16,050 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:16,127 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:16,143 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:16,143 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedprox_mu0.0001_iid_seed42 [Combined, lstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:02:16,143 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:16,221 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:16,237 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:16,237 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedavg_iid_seed42 [Combined, bilstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:02:16,238 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:16,334 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:16,352 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:16,352 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedprox_mu0.0001_iid_seed42 [Combined, bilstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:02:16,352 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:16,435 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:16,570 | INFO     | fedavg_vs_fedprox_suite | Released dataset Combined from memory.
+2026-10-18 18:02:16,570 | INFO     | fedavg_vs_fedprox_suite | Loading dataset HI-Small from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/HI-Small...
+2026-10-18 18:02:43,936 | INFO     | fedavg_vs_fedprox_suite | Loaded HI-Small in 27.36s: Train=3047216 (pos=2299), Val=1015565 (pos=1081), Test=1015564 (pos=1797)
+2026-10-18 18:02:44,065 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:44,065 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedavg_seed42 [HI-Small, gru, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:02:44,065 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:44,696 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:44,715 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:44,715 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedprox_mu0.0001_seed42 [HI-Small, gru, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:02:44,715 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:45,366 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:45,387 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:45,387 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedavg_seed42 [HI-Small, lstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:02:45,387 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:46,036 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:46,057 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:46,057 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedprox_mu0.0001_seed42 [HI-Small, lstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:02:46,057 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:46,682 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:46,704 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:46,704 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedavg_seed42 [HI-Small, bilstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:02:46,704 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:47,322 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_bilstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:47,344 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:47,344 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedprox_mu0.0001_seed42 [HI-Small, bilstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:02:47,344 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:47,996 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_bilstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:48,165 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:48,165 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedavg_iid_seed42 [HI-Small, gru, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:02:48,165 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:48,783 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:48,807 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:48,807 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedprox_mu0.0001_iid_seed42 [HI-Small, gru, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:02:48,807 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:49,422 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:49,448 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:49,448 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedavg_iid_seed42 [HI-Small, lstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:02:49,448 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:50,122 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:50,146 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:50,146 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedprox_mu0.0001_iid_seed42 [HI-Small, lstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:02:50,146 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:50,777 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:50,803 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:50,803 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedavg_iid_seed42 [HI-Small, bilstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:02:50,803 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:51,419 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_bilstm_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:51,444 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:51,444 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedprox_mu0.0001_iid_seed42 [HI-Small, bilstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:02:51,444 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:02:52,065 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_bilstm_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:02:52,250 | INFO     | fedavg_vs_fedprox_suite | Released dataset HI-Small from memory.
+2026-10-18 18:02:52,251 | INFO     | fedavg_vs_fedprox_suite | Loading dataset LI-Medium from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/LI-Medium...
+2026-10-18 18:07:50,237 | INFO     | fedavg_vs_fedprox_suite | Output root: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison
+2026-10-18 18:07:50,238 | INFO     | fedavg_vs_fedprox_suite | Manifest path: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison/resume_manifest.json
+2026-10-18 18:07:50,240 | INFO     | fedavg_vs_fedprox_suite | Loading dataset Combined from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/Combined...
+2026-10-18 18:07:53,188 | INFO     | fedavg_vs_fedprox_suite | Loaded Combined in 2.94s: Train=300000 (pos=15), Val=100000 (pos=78), Test=100000 (pos=94)
+2026-10-18 18:07:53,208 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:53,208 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedavg_seed42 [Combined, gru, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:07:53,208 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:53,349 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:07:53,362 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:53,362 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedprox_mu0.0001_seed42 [Combined, gru, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:07:53,362 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:53,451 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:07:53,465 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:53,465 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedavg_seed42 [Combined, lstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:07:53,466 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:53,540 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:07:53,553 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:53,553 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedprox_mu0.0001_seed42 [Combined, lstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:07:53,553 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:53,623 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:07:53,637 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:53,637 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedavg_seed42 [Combined, bilstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:07:53,637 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:53,727 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:07:53,744 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:53,744 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedprox_mu0.0001_seed42 [Combined, bilstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:07:53,745 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:53,827 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:07:53,852 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:53,852 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedavg_iid_seed42 [Combined, gru, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:07:53,853 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:53,929 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:07:53,944 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:53,944 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedprox_mu0.0001_iid_seed42 [Combined, gru, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:07:53,944 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:54,021 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:07:54,039 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:54,039 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedavg_iid_seed42 [Combined, lstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:07:54,039 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:54,116 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:07:54,132 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:54,132 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedprox_mu0.0001_iid_seed42 [Combined, lstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:07:54,132 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:54,210 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:07:54,235 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:54,235 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedavg_iid_seed42 [Combined, bilstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:07:54,235 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:54,322 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:07:54,340 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:54,340 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedprox_mu0.0001_iid_seed42 [Combined, bilstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:07:54,340 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:07:54,423 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:07:54,557 | INFO     | fedavg_vs_fedprox_suite | Released dataset Combined from memory.
+2026-10-18 18:07:54,557 | INFO     | fedavg_vs_fedprox_suite | Loading dataset HI-Small from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/HI-Small...
+2026-10-18 18:08:22,189 | INFO     | fedavg_vs_fedprox_suite | Loaded HI-Small in 27.63s: Train=3047216 (pos=2299), Val=1015565 (pos=1081), Test=1015564 (pos=1797)
+2026-10-18 18:08:22,344 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:22,344 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedavg_seed42 [HI-Small, gru, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:08:22,344 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:22,981 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:08:23,001 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:23,001 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedprox_mu0.0001_seed42 [HI-Small, gru, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:08:23,001 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:23,677 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:08:23,712 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:23,712 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedavg_seed42 [HI-Small, lstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:08:23,712 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:24,350 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:08:24,371 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:24,371 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedprox_mu0.0001_seed42 [HI-Small, lstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:08:24,371 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:24,993 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:08:25,022 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:25,022 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedavg_seed42 [HI-Small, bilstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:08:25,022 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:25,655 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_bilstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:08:25,676 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:25,676 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedprox_mu0.0001_seed42 [HI-Small, bilstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:08:25,677 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:26,319 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_bilstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:08:26,493 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:26,494 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedavg_iid_seed42 [HI-Small, gru, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:08:26,494 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:27,147 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:08:27,170 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:27,170 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedprox_mu0.0001_iid_seed42 [HI-Small, gru, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:08:27,170 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:27,805 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:08:27,828 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:27,828 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedavg_iid_seed42 [HI-Small, lstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:08:27,828 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:28,450 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:08:28,477 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:28,477 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedprox_mu0.0001_iid_seed42 [HI-Small, lstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:08:28,478 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:29,099 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:08:29,123 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:29,123 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedavg_iid_seed42 [HI-Small, bilstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:08:29,123 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:29,791 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_bilstm_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:08:29,817 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:29,818 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedprox_mu0.0001_iid_seed42 [HI-Small, bilstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:08:29,818 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:08:30,469 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_bilstm_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:08:30,686 | INFO     | fedavg_vs_fedprox_suite | Released dataset HI-Small from memory.
+2026-10-18 18:08:30,686 | INFO     | fedavg_vs_fedprox_suite | Loading dataset LI-Medium from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/LI-Medium...
+2026-10-18 18:11:27,134 | INFO     | fedavg_vs_fedprox_suite | Output root: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison
+2026-10-18 18:11:27,135 | INFO     | fedavg_vs_fedprox_suite | Manifest path: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison/resume_manifest.json
+2026-10-18 18:11:27,137 | INFO     | fedavg_vs_fedprox_suite | Loading dataset Combined from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/Combined...
+2026-10-18 18:11:30,170 | INFO     | fedavg_vs_fedprox_suite | Loaded Combined in 3.03s: Train=300000 (pos=15), Val=100000 (pos=78), Test=100000 (pos=94)
+2026-10-18 18:11:30,182 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:30,182 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedavg_seed42 [Combined, gru, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:11:30,183 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:30,299 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:11:30,315 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:30,315 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedprox_mu0.0001_seed42 [Combined, gru, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:11:30,315 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:30,385 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:11:30,399 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:30,399 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedavg_seed42 [Combined, lstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:11:30,399 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:30,475 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:11:30,488 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:30,488 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedprox_mu0.0001_seed42 [Combined, lstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:11:30,488 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:30,569 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:11:30,582 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:30,582 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedavg_seed42 [Combined, bilstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:11:30,582 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:30,667 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:11:30,684 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:30,684 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedprox_mu0.0001_seed42 [Combined, bilstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:11:30,684 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:30,765 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:11:30,788 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:30,789 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedavg_iid_seed42 [Combined, gru, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:11:30,789 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:30,867 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:11:30,884 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:30,884 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_gru_fedprox_mu0.0001_iid_seed42 [Combined, gru, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:11:30,884 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:30,959 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_gru_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:11:30,975 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:30,975 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedavg_iid_seed42 [Combined, lstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:11:30,975 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:31,052 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:11:31,069 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:31,069 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_lstm_fedprox_mu0.0001_iid_seed42 [Combined, lstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:11:31,069 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:31,150 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_lstm_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:11:31,166 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:31,166 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedavg_iid_seed42 [Combined, bilstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:11:31,166 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:31,248 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:11:31,265 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:31,266 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: combined_bilstm_fedprox_mu0.0001_iid_seed42 [Combined, bilstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:11:31,266 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:31,349 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] combined_bilstm_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:11:31,481 | INFO     | fedavg_vs_fedprox_suite | Released dataset Combined from memory.
+2026-10-18 18:11:31,481 | INFO     | fedavg_vs_fedprox_suite | Loading dataset HI-Small from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/HI-Small...
+2026-10-18 18:11:59,329 | INFO     | fedavg_vs_fedprox_suite | Loaded HI-Small in 27.84s: Train=3047216 (pos=2299), Val=1015565 (pos=1081), Test=1015564 (pos=1797)
+2026-10-18 18:11:59,468 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:11:59,469 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedavg_seed42 [HI-Small, gru, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:11:59,469 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:00,124 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:12:00,144 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:00,144 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedprox_mu0.0001_seed42 [HI-Small, gru, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:12:00,145 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:00,778 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:12:00,798 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:00,798 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedavg_seed42 [HI-Small, lstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:12:00,798 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:01,422 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:12:01,443 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:01,443 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedprox_mu0.0001_seed42 [HI-Small, lstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:12:01,443 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:02,088 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:12:02,108 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:02,108 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedavg_seed42 [HI-Small, bilstm, fedavg, mu=0.0, Non-IID] on cuda
+2026-10-18 18:12:02,109 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:02,741 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_bilstm_fedavg_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:12:02,765 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:02,765 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedprox_mu0.0001_seed42 [HI-Small, bilstm, fedprox, mu=0.0001, Non-IID] on cuda
+2026-10-18 18:12:02,765 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:03,400 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_bilstm_fedprox_mu0.0001_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:12:03,561 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:03,562 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedavg_iid_seed42 [HI-Small, gru, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:12:03,562 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:04,200 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:12:04,223 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:04,223 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_gru_fedprox_mu0.0001_iid_seed42 [HI-Small, gru, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:12:04,223 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:04,901 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_gru_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:12:04,927 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:04,927 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedavg_iid_seed42 [HI-Small, lstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:12:04,927 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:05,569 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:12:05,593 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:05,593 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_lstm_fedprox_mu0.0001_iid_seed42 [HI-Small, lstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:12:05,593 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:06,284 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_lstm_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:12:06,309 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:06,309 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedavg_iid_seed42 [HI-Small, bilstm, fedavg, mu=0.0, IID] on cuda
+2026-10-18 18:12:06,309 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:06,943 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_bilstm_fedavg_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:12:06,968 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:06,968 | INFO     | fedavg_vs_fedprox_suite | Configuration Target: hi_small_bilstm_fedprox_mu0.0001_iid_seed42 [HI-Small, bilstm, fedprox, mu=0.0001, IID] on cuda
+2026-10-18 18:12:06,968 | INFO     | fedavg_vs_fedprox_suite | =================================================================
+2026-10-18 18:12:07,605 | INFO     | fedavg_vs_fedprox_suite | --> [SKIP COMPLETED] hi_small_bilstm_fedprox_mu0.0001_iid_seed42 has verified final checkpoints & predictions. Skipping retraining.
+2026-10-18 18:12:07,791 | INFO     | fedavg_vs_fedprox_suite | Released dataset HI-Small from memory.
+2026-10-18 18:12:07,791 | INFO     | fedavg_vs_fedprox_suite | Loading dataset LI-Medium from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/LI-Medium...
+2026-10-18 18:16:43,177 | INFO     | fedavg_vs_fedprox_suite | Output root: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison
+2026-10-18 18:16:43,178 | INFO     | fedavg_vs_fedprox_suite | Manifest path: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison/resume_manifest.json
+2026-10-18 18:16:43,178 | INFO     | fedavg_vs_fedprox_suite | Loading dataset LI-Medium from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/LI-Medium...
+2026-10-18 18:24:41,243 | INFO     | fedavg_vs_fedprox_suite | Output root: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison
+2026-10-18 18:24:41,244 | INFO     | fedavg_vs_fedprox_suite | Manifest path: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison/resume_manifest.json
+2026-10-18 18:24:41,245 | INFO     | fedavg_vs_fedprox_suite | Loading dataset LI-Medium from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/LI-Medium...
+2026-10-18 18:28:46,439 | INFO     | fedavg_vs_fedprox_suite | Output root: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison
+2026-10-18 18:28:46,442 | INFO     | fedavg_vs_fedprox_suite | Manifest path: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison/resume_manifest.json
+2026-10-18 18:28:46,443 | INFO     | fedavg_vs_fedprox_suite | Loading dataset LI-Medium from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/LI-Medium...
+2026-10-18 18:43:55,297 | INFO     | fedavg_vs_fedprox_suite | Output root: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison
+2026-10-18 18:43:55,298 | INFO     | fedavg_vs_fedprox_suite | Manifest path: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison/resume_manifest.json
+2026-10-18 18:43:55,298 | INFO     | fedavg_vs_fedprox_suite | Loading dataset LI-Medium from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/LI-Medium...
+2026-10-18 18:46:15,497 | INFO     | fedavg_vs_fedprox_suite | Output root: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison
+2026-10-18 18:46:15,498 | INFO     | fedavg_vs_fedprox_suite | Manifest path: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison/resume_manifest.json
+2026-10-18 18:46:15,498 | INFO     | fedavg_vs_fedprox_suite | Loading dataset LI-Medium from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/LI-Medium...
+2026-10-18 18:51:53,815 | INFO     | fedavg_vs_fedprox_suite | Output root: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison
+2026-10-18 18:51:53,816 | INFO     | fedavg_vs_fedprox_suite | Manifest path: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison/resume_manifest.json
+2026-10-18 18:51:53,816 | INFO     | fedavg_vs_fedprox_suite | Loading dataset LI-Medium from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/LI-Medium...
+2026-10-18 19:02:40,060 | INFO     | fedavg_vs_fedprox_suite | Output root: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison
+2026-10-18 19:02:40,061 | INFO     | fedavg_vs_fedprox_suite | Manifest path: /content/Federate_learning/Federate_learning/artifacts/fedavg_fedprox_full_comparison/resume_manifest.json
+2026-10-18 19:02:40,061 | INFO     | fedavg_vs_fedprox_suite | Loading dataset LI-Medium from /content/Federate_learning/Federate_learning/data/processed/ibm_aml/LI-Medium...

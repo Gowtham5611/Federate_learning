@@ -1,0 +1,69 @@
+{
+  "boundaries": {
+    "tie_policy": "whole_timestamp_to_earlier_split",
+    "train_last": "2022-09-06 13:36:00",
+    "validation_last": "2022-09-08 16:12:00"
+  },
+  "chronology_holds": true,
+  "per_split": [
+    {
+      "first_timestamp": "2022-09-01 00:00:00",
+      "last_timestamp": "2022-09-06 13:36:00",
+      "name": "train",
+      "negative": 3044917,
+      "positive": 2299,
+      "positive_rate": 0.0007544591522228815,
+      "rows": 3047216,
+      "share": 0.6000411551401096
+    },
+    {
+      "first_timestamp": "2022-09-06 13:37:00",
+      "last_timestamp": "2022-09-08 16:12:00",
+      "name": "validation",
+      "negative": 1014484,
+      "positive": 1081,
+      "positive_rate": 0.0010644321141433585,
+      "rows": 1015565,
+      "share": 0.19997952088721818
+    },
+    {
+      "first_timestamp": "2022-09-08 16:13:00",
+      "last_timestamp": "2022-09-18 16:18:00",
+      "name": "test",
+      "negative": 1013767,
+      "positive": 1797,
+      "positive_rate": 0.0017694601226510588,
+      "rows": 1015564,
+      "share": 0.1999793239726722
+    }
+  ],
+  "requested_fractions": {
+    "test": 0.2,
+    "train": 0.6,
+    "validation": 0.2
+  },
+  "target": {
+    "class_counts": {
+      "0": 5073168,
+      "1": 5177
+    },
+    "class_percentages": {
+      "0": 99.89805733954664,
+      "1": 0.10194266045335636
+    },
+    "mapping": {
+      "0": 0,
+      "1": 1
+    },
+    "observed_values": [
+      "0",
+      "1"
+    ],
+    "output_column": "is_laundering",
+    "positive_label": 1,
+    "source_column": "Is Laundering"
+  },
+  "tie_policy": "whole_timestamp_to_earlier_split",
+  "train_last_timestamp": "2022-09-06 13:36:00",
+  "validation_last_timestamp": "2022-09-08 16:12:00"
+}

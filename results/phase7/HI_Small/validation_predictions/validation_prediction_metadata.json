@@ -1,0 +1,13 @@
+{
+  "dataset": "HI-Small",
+  "split": "validation",
+  "row_count": 1015565,
+  "positive_count": 1081,
+  "iid_model": "hi_small_lstm_fedavg_iid_seed42",
+  "iid_checkpoint": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\results\\HI_Small_Results\\checkpoints\\hi_small_lstm_fedavg_iid_seed42\\hi_small_lstm_fedavg_iid_seed42_global_best.pt",
+  "iid_checkpoint_sha256": "dacfbb62e1e74a58a0c79237f7d0c16aa57df19253af82b8ab38af9bba2d46b4",
+  "noniid_model": "hi_small_lstm_fedavg_seed42",
+  "noniid_checkpoint": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\results\\HI_Small_Results\\checkpoints\\hi_small_lstm_fedavg_seed42\\hi_small_lstm_fedavg_seed42_global_best.pt",
+  "noniid_checkpoint_sha256": "1b64f79ddd4dc85d6bad953e93f2679bc102bf5fdbffeaf8b59df69ddd19ab1c",
+  "timestamp": "2026-10-21T21:18:17.367360"
+}

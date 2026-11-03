@@ -1,0 +1,36 @@
+{
+  "experiment_id": "fedsecureai_iid_fedavg_gru_mu-na_seed-42_20261015_133941",
+  "selected_round": 5,
+  "frozen_threshold": 0.16989916563034058,
+  "validation": {
+    "best_pr_auc": 0.35327723999672006,
+    "round": 5
+  },
+  "test_at_frozen_threshold": {
+    "pr_auc": 0.5413140923617463,
+    "roc_auc": 0.9780029752215386,
+    "f1": 0.569111424541608,
+    "precision": 0.7767083734359962,
+    "recall": 0.44908180300500833,
+    "accuracy": 0.9987967277296163,
+    "tp": 807,
+    "fp": 232,
+    "tn": 1013535,
+    "fn": 990,
+    "threshold": 0.16989916563034058
+  },
+  "test_at_fixed_0_5": {
+    "pr_auc": 0.5413140923617463,
+    "roc_auc": 0.9780029752215386,
+    "f1": 0.49230769230769234,
+    "precision": 0.9034175334323923,
+    "recall": 0.33834168057874237,
+    "accuracy": 0.9987652181447945,
+    "tp": 608,
+    "fp": 65,
+    "tn": 1013702,
+    "fn": 1189,
+    "threshold": 0.5
+  },
+  "duration_seconds": 13537.83767769998
+}

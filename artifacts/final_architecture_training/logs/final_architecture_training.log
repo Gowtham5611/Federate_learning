@@ -1,0 +1,49 @@
+2026-10-18 13:18:20,746 | INFO     | =================================================================
+2026-10-18 13:18:20,747 | INFO     | STARTING FINAL ARCHITECTURE TRAINING: TCN, TRANSFORMER, RESIDUAL MLP
+2026-10-18 13:18:20,747 | INFO     | =================================================================
+2026-10-18 13:18:20,747 | INFO     | Executing Stage A: Smoke Tests...
+2026-10-18 13:18:20,801 | INFO     | Smoke test passed for tcn: loss=0.6396, prox=0.0000
+2026-10-18 13:18:21,269 | INFO     | Smoke test passed for transformer: loss=1.0142, prox=0.0000
+2026-10-18 13:18:21,278 | INFO     | Smoke test passed for residual_mlp: loss=0.7544, prox=0.0000
+2026-10-18 13:18:21,278 | INFO     | Verifying and loading datasets...
+2026-10-18 13:18:21,576 | INFO     | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\train\transactions.csv
+2026-10-18 13:18:21,886 | INFO     | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\train\transactions.csv
+2026-10-18 13:18:22,194 | INFO     | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\train\transactions.csv
+2026-10-18 13:18:22,379 | INFO     | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\validation\transactions.csv
+2026-10-18 13:18:22,535 | INFO     | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\validation\transactions.csv
+2026-10-18 13:18:22,688 | INFO     | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\validation\transactions.csv
+2026-10-18 13:18:22,837 | INFO     | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\test\transactions.csv
+2026-10-18 13:18:22,986 | INFO     | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\test\transactions.csv
+2026-10-18 13:18:23,146 | INFO     | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\test\transactions.csv
+2026-10-18 13:18:23,176 | INFO     | Saved dataset_verification.json
+2026-10-18 13:18:23,444 | INFO     | Built Non-IID client loaders for HI-Small
+2026-10-18 13:18:23,773 | INFO     | Built Non-IID client loaders for LI-Medium
+2026-10-18 13:18:24,093 | INFO     | Built Non-IID client loaders for Combined
+2026-10-18 13:18:24,094 | INFO     | [1/18] Starting Experiment: hi_small_non_iid_fedprox_mu0.1_tcn_seed42 (Dataset=HI-Small, Arch=tcn, mu=0.1)
+2026-10-18 13:18:49,973 | INFO     | [2/18] Starting Experiment: hi_small_non_iid_fedprox_mu1.0_tcn_seed42 (Dataset=HI-Small, Arch=tcn, mu=1.0)
+2026-10-18 13:19:17,389 | INFO     | [3/18] Starting Experiment: hi_small_non_iid_fedprox_mu0.1_transformer_seed42 (Dataset=HI-Small, Arch=transformer, mu=0.1)
+2026-10-18 13:19:50,758 | INFO     | [4/18] Starting Experiment: hi_small_non_iid_fedprox_mu1.0_transformer_seed42 (Dataset=HI-Small, Arch=transformer, mu=1.0)
+2026-10-18 13:20:22,331 | INFO     | [5/18] Starting Experiment: hi_small_non_iid_fedprox_mu0.1_residual_mlp_seed42 (Dataset=HI-Small, Arch=residual_mlp, mu=0.1)
+2026-10-18 13:20:30,396 | INFO     | [6/18] Starting Experiment: hi_small_non_iid_fedprox_mu1.0_residual_mlp_seed42 (Dataset=HI-Small, Arch=residual_mlp, mu=1.0)
+2026-10-18 13:20:38,331 | INFO     | [7/18] Starting Experiment: li_medium_non_iid_fedprox_mu0.1_tcn_seed42 (Dataset=LI-Medium, Arch=tcn, mu=0.1)
+2026-10-18 13:21:03,629 | INFO     | [8/18] Starting Experiment: li_medium_non_iid_fedprox_mu1.0_tcn_seed42 (Dataset=LI-Medium, Arch=tcn, mu=1.0)
+2026-10-18 13:21:28,994 | INFO     | [9/18] Starting Experiment: li_medium_non_iid_fedprox_mu0.1_transformer_seed42 (Dataset=LI-Medium, Arch=transformer, mu=0.1)
+2026-10-18 13:22:02,917 | INFO     | [10/18] Starting Experiment: li_medium_non_iid_fedprox_mu1.0_transformer_seed42 (Dataset=LI-Medium, Arch=transformer, mu=1.0)
+2026-10-18 13:22:34,392 | INFO     | [11/18] Starting Experiment: li_medium_non_iid_fedprox_mu0.1_residual_mlp_seed42 (Dataset=LI-Medium, Arch=residual_mlp, mu=0.1)
+2026-10-18 13:22:43,174 | INFO     | [12/18] Starting Experiment: li_medium_non_iid_fedprox_mu1.0_residual_mlp_seed42 (Dataset=LI-Medium, Arch=residual_mlp, mu=1.0)
+2026-10-18 13:22:52,248 | INFO     | [13/18] Starting Experiment: combined_non_iid_fedprox_mu0.1_tcn_seed42 (Dataset=Combined, Arch=tcn, mu=0.1)
+2026-10-18 13:23:23,962 | INFO     | [14/18] Starting Experiment: combined_non_iid_fedprox_mu1.0_tcn_seed42 (Dataset=Combined, Arch=tcn, mu=1.0)
+2026-10-18 13:24:00,796 | INFO     | [15/18] Starting Experiment: combined_non_iid_fedprox_mu0.1_transformer_seed42 (Dataset=Combined, Arch=transformer, mu=0.1)
+2026-10-18 13:25:13,063 | INFO     | [16/18] Starting Experiment: combined_non_iid_fedprox_mu1.0_transformer_seed42 (Dataset=Combined, Arch=transformer, mu=1.0)
+2026-10-18 13:25:59,832 | INFO     | [17/18] Starting Experiment: combined_non_iid_fedprox_mu0.1_residual_mlp_seed42 (Dataset=Combined, Arch=residual_mlp, mu=0.1)
+2026-10-18 13:26:11,799 | INFO     | [18/18] Starting Experiment: combined_non_iid_fedprox_mu1.0_residual_mlp_seed42 (Dataset=Combined, Arch=residual_mlp, mu=1.0)
+2026-10-18 13:26:25,463 | INFO     | Saved experiment_matrix.csv
+2026-10-18 13:26:25,468 | INFO     | Saved training_history.csv
+2026-10-18 13:26:25,474 | INFO     | Saved evaluation_metrics.csv
+2026-10-18 13:26:25,479 | INFO     | Saved comparison_summary.csv
+2026-10-18 13:26:25,481 | INFO     | Saved checkpoints_manifest.json
+2026-10-18 13:26:25,484 | INFO     | Saved confusion_matrices.json
+2026-10-18 13:26:25,485 | INFO     | Saved failure_log.json
+2026-10-18 13:26:25,486 | INFO     | Generating publication figures...
+2026-10-18 13:26:30,211 | INFO     | Saved all 5 plots to C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\final_architecture_training\plots
+2026-10-18 13:26:30,211 | INFO     | Generating Final Report Markdown...

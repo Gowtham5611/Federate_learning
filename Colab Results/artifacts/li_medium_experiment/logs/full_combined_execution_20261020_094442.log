@@ -1,0 +1,10 @@
+2026-10-20 09:44:42 | INFO     | fedsecureai_full_combined_runner | ================================================================================
+2026-10-20 09:44:42 | INFO     | fedsecureai_full_combined_runner | STARTING FEDSECUREAI FULL COMBINED 12-EXPERIMENT CAMPAIGN
+2026-10-20 09:44:42 | INFO     | fedsecureai_full_combined_runner | Data Root: /content/FedSecureAI_project/Federate_learning/data/processed/ibm_aml/LI-Medium
+2026-10-20 09:44:42 | INFO     | fedsecureai_full_combined_runner | Output Directory: /content/FedSecureAI_project/Federate_learning/artifacts/li_medium_experiment
+2026-10-20 09:44:42 | INFO     | fedsecureai_full_combined_runner | Batch Size: 1024 | Rounds: 5 | Epochs: 1 | Device: cuda
+2026-10-20 09:44:42 | INFO     | fedsecureai_full_combined_runner | ================================================================================
+2026-10-20 09:44:42 | INFO     | fedsecureai_full_combined_runner | Running FedSecureAI Full Combined Preflight Environment & Data Checks...
+2026-10-20 09:44:42 | INFO     | fedsecureai_full_combined_runner | CUDA Detected: Tesla T4 (14.56 GB VRAM)
+2026-10-20 09:44:42 | INFO     | fedsecureai_full_combined_runner | Preflight checks completed with status: PASS
+2026-10-20 09:44:42 | INFO     | fedsecureai_full_combined_runner | Preparing read-only memory-mapped Validation and Test datasets...

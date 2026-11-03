@@ -1,0 +1,40 @@
+2026-10-18 12:31:48,544 | INFO     | =================================================================
+2026-10-18 12:31:48,544 | INFO     | STARTING FEDPROX MU = 1.0 RETRAINING, VALIDATION & EVALUATION
+2026-10-18 12:31:48,544 | INFO     | Datasets: HI-Small, LI-Medium, Combined
+2026-10-18 12:31:48,544 | INFO     | Architectures: GRU, LSTM, BiLSTM | Partitions: IID, Non-IID
+2026-10-18 12:31:48,544 | INFO     | =================================================================
+2026-10-18 12:31:48,548 | INFO     | Loading training, validation, and test datasets...
+2026-10-18 12:31:48,779 | INFO     | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\train\transactions.csv
+2026-10-18 12:31:49,117 | INFO     | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\train\transactions.csv
+2026-10-18 12:31:49,456 | INFO     | Read 100000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\train\transactions.csv
+2026-10-18 12:31:49,632 | INFO     | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\validation\transactions.csv
+2026-10-18 12:31:49,784 | INFO     | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\validation\transactions.csv
+2026-10-18 12:31:49,968 | INFO     | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\validation\transactions.csv
+2026-10-18 12:31:50,143 | INFO     | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\HI-Small\test\transactions.csv
+2026-10-18 12:31:50,339 | INFO     | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\LI-Medium\test\transactions.csv
+2026-10-18 12:31:50,511 | INFO     | Read 50000 row(s) from C:\Users\Acer\OneDrive\Desktop\Federate_learning\data\processed\ibm_aml\Combined\test\transactions.csv
+2026-10-18 12:31:51,130 | INFO     | Loaded client loaders for HI-Small (IID & Non-IID)
+2026-10-18 12:31:51,802 | INFO     | Loaded client loaders for LI-Medium (IID & Non-IID)
+2026-10-18 12:31:52,507 | INFO     | Loaded client loaders for Combined (IID & Non-IID)
+2026-10-18 12:31:52,507 | INFO     | [1/18] Training FedProx mu=1.0: hi_small_iid_fedprox_mu1.0_gru_seed42 (Dataset=HI-Small, Arch=gru, Dist=iid)
+2026-10-18 12:32:17,894 | INFO     | [2/18] Training FedProx mu=1.0: hi_small_non_iid_fedprox_mu1.0_gru_seed42 (Dataset=HI-Small, Arch=gru, Dist=non_iid)
+2026-10-18 12:32:35,904 | INFO     | [3/18] Training FedProx mu=1.0: hi_small_iid_fedprox_mu1.0_lstm_seed42 (Dataset=HI-Small, Arch=lstm, Dist=iid)
+2026-10-18 12:32:54,472 | INFO     | [4/18] Training FedProx mu=1.0: hi_small_non_iid_fedprox_mu1.0_lstm_seed42 (Dataset=HI-Small, Arch=lstm, Dist=non_iid)
+2026-10-18 12:33:12,468 | INFO     | [5/18] Training FedProx mu=1.0: hi_small_iid_fedprox_mu1.0_bilstm_seed42 (Dataset=HI-Small, Arch=bilstm, Dist=iid)
+2026-10-18 12:33:37,565 | INFO     | [6/18] Training FedProx mu=1.0: hi_small_non_iid_fedprox_mu1.0_bilstm_seed42 (Dataset=HI-Small, Arch=bilstm, Dist=non_iid)
+2026-10-18 12:34:02,170 | INFO     | [7/18] Training FedProx mu=1.0: li_medium_iid_fedprox_mu1.0_gru_seed42 (Dataset=LI-Medium, Arch=gru, Dist=iid)
+2026-10-18 12:34:21,262 | INFO     | [8/18] Training FedProx mu=1.0: li_medium_non_iid_fedprox_mu1.0_gru_seed42 (Dataset=LI-Medium, Arch=gru, Dist=non_iid)
+2026-10-18 12:34:42,883 | INFO     | [9/18] Training FedProx mu=1.0: li_medium_iid_fedprox_mu1.0_lstm_seed42 (Dataset=LI-Medium, Arch=lstm, Dist=iid)
+2026-10-18 12:35:01,059 | INFO     | [10/18] Training FedProx mu=1.0: li_medium_non_iid_fedprox_mu1.0_lstm_seed42 (Dataset=LI-Medium, Arch=lstm, Dist=non_iid)
+2026-10-18 12:35:17,903 | INFO     | [11/18] Training FedProx mu=1.0: li_medium_iid_fedprox_mu1.0_bilstm_seed42 (Dataset=LI-Medium, Arch=bilstm, Dist=iid)
+2026-10-18 12:35:46,661 | INFO     | [12/18] Training FedProx mu=1.0: li_medium_non_iid_fedprox_mu1.0_bilstm_seed42 (Dataset=LI-Medium, Arch=bilstm, Dist=non_iid)
+2026-10-18 12:36:21,502 | INFO     | [13/18] Training FedProx mu=1.0: combined_iid_fedprox_mu1.0_gru_seed42 (Dataset=Combined, Arch=gru, Dist=iid)
+2026-10-18 12:36:43,059 | INFO     | [14/18] Training FedProx mu=1.0: combined_non_iid_fedprox_mu1.0_gru_seed42 (Dataset=Combined, Arch=gru, Dist=non_iid)
+2026-10-18 12:37:00,889 | INFO     | [15/18] Training FedProx mu=1.0: combined_iid_fedprox_mu1.0_lstm_seed42 (Dataset=Combined, Arch=lstm, Dist=iid)
+2026-10-18 12:37:18,898 | INFO     | [16/18] Training FedProx mu=1.0: combined_non_iid_fedprox_mu1.0_lstm_seed42 (Dataset=Combined, Arch=lstm, Dist=non_iid)
+2026-10-18 12:37:37,982 | INFO     | [17/18] Training FedProx mu=1.0: combined_iid_fedprox_mu1.0_bilstm_seed42 (Dataset=Combined, Arch=bilstm, Dist=iid)
+2026-10-18 12:38:07,301 | INFO     | [18/18] Training FedProx mu=1.0: combined_non_iid_fedprox_mu1.0_bilstm_seed42 (Dataset=Combined, Arch=bilstm, Dist=non_iid)
+2026-10-18 12:38:35,609 | INFO     | Saved C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\fedprox_mu1_retraining\mu1_experiment_matrix.csv
+2026-10-18 12:38:35,618 | INFO     | Saved C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\fedprox_mu1_retraining\mu1_metrics.csv
+2026-10-18 12:38:35,625 | INFO     | Saved C:\Users\Acer\OneDrive\Desktop\Federate_learning\artifacts\fedprox_mu1_retraining\mu1_training_history.csv
+2026-10-18 12:38:35,625 | INFO     | All 18 FedProx mu=1.0 models trained and evaluated in 407.08 seconds

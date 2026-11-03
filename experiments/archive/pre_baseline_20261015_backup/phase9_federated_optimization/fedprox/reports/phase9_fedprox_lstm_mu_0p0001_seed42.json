@@ -1,0 +1,277 @@
+{
+  "experiment_id": "phase9_fedprox_lstm_mu_0p0001_seed42",
+  "architecture": "lstm",
+  "algorithm": "fedprox",
+  "mu": 0.0001,
+  "seed": 42,
+  "selected_round": 5,
+  "frozen_threshold": 0.5106925368309021,
+  "val_pr_auc": 0.03291007214773813,
+  "val_roc_auc": 0.905938528353478,
+  "val_f1": 0.06890684814972352,
+  "val_recall": 0.07493061979648474,
+  "val_precision": 0.06377952755905512,
+  "val_loss": 0.015321932591268525,
+  "test_pr_auc": 0.18501930208485937,
+  "test_roc_auc": 0.9251670134278637,
+  "test_f1": 0.23140495867768593,
+  "test_recall": 0.15581524763494714,
+  "test_precision": 0.449438202247191,
+  "test_accuracy": 0.998168505382231,
+  "tp": 280,
+  "tn": 1013424,
+  "fp": 343,
+  "fn": 1517,
+  "rounds": [
+    {
+      "round": 1,
+      "aggregation_weights": {
+        "client_1": 0.17720207559949802,
+        "client_2": 0.32215766785157335,
+        "client_3": 0.5006402565489286
+      },
+      "client_train_losses": {
+        "client_1": 0.0400546329699887,
+        "client_2": 0.024951770369513012,
+        "client_3": 0.019873678651472625
+      },
+      "client_sample_counts": {
+        "client_1": 539973,
+        "client_2": 981684,
+        "client_3": 1525559
+      },
+      "validation_loss": 0.09019710238507533,
+      "validation_metrics": {
+        "recall": 0.005550416281221091,
+        "f1": 0.0019270916974466036,
+        "pr_auc": 0.001497121076374852,
+        "precision": 0.001165954139137194,
+        "false_negatives": 1075,
+        "roc_auc": 0.615202446160195,
+        "accuracy": 0.9938802538488427,
+        "tp": 6,
+        "tn": 1009344,
+        "fp": 5140,
+        "fn": 1075,
+        "threshold": 0.5,
+        "positive_rate": 0.0010644321141433585,
+        "loss": 0.09019710238507533,
+        "missed_positive_rate": 0.9944495837187789
+      },
+      "round_seconds": 104.01156619994435,
+      "checkpoint_path": "D:\\Federate_learning\\models\\checkpoints\\federated\\non_iid\\fedprox_tuned\\lstm\\phase9_fedprox_lstm_mu_0p0001_seed42\\round_1.pt",
+      "selected": false,
+      "drift_metrics": {
+        "mean_drift": 6.247269647047911,
+        "weighted_drift": 6.0969968477096135,
+        "max_drift": 6.757898062649433,
+        "min_drift": 5.820032707632263,
+        "pairwise_disagreement": 4.94853743173775,
+        "client_variance": 8.183208668137087,
+        "drift_client_1": 6.757898062649433,
+        "drift_client_2": 6.163878170862037,
+        "drift_client_3": 5.820032707632263
+      }
+    },
+    {
+      "round": 2,
+      "aggregation_weights": {
+        "client_1": 0.17720207559949802,
+        "client_2": 0.32215766785157335,
+        "client_3": 0.5006402565489286
+      },
+      "client_train_losses": {
+        "client_1": 0.005746774723991627,
+        "client_2": 0.004231077459950991,
+        "client_3": 0.0041772051138951076
+      },
+      "client_sample_counts": {
+        "client_1": 539973,
+        "client_2": 981684,
+        "client_3": 1525559
+      },
+      "validation_loss": 0.037693997485484375,
+      "validation_metrics": {
+        "recall": 0.01942645698427382,
+        "f1": 0.014547973675095255,
+        "pr_auc": 0.0038519948782934316,
+        "precision": 0.011627906976744186,
+        "false_negatives": 1060,
+        "roc_auc": 0.7470390355453316,
+        "accuracy": 0.9971986037328975,
+        "tp": 21,
+        "tn": 1012699,
+        "fp": 1785,
+        "fn": 1060,
+        "threshold": 0.5,
+        "positive_rate": 0.0010644321141433585,
+        "loss": 0.037693997485484375,
+        "missed_positive_rate": 0.9805735430157262
+      },
+      "round_seconds": 121.99702120001893,
+      "checkpoint_path": "D:\\Federate_learning\\models\\checkpoints\\federated\\non_iid\\fedprox_tuned\\lstm\\phase9_fedprox_lstm_mu_0p0001_seed42\\round_2.pt",
+      "selected": false,
+      "drift_metrics": {
+        "mean_drift": 2.7702358732452055,
+        "weighted_drift": 2.8412815521319854,
+        "max_drift": 4.029929037163357,
+        "min_drift": 1.8554428983443434,
+        "pairwise_disagreement": 3.413439055908245,
+        "client_variance": 4.004249618609417,
+        "drift_client_1": 1.8554428983443434,
+        "drift_client_2": 4.029929037163357,
+        "drift_client_3": 2.425335684227917
+      }
+    },
+    {
+      "round": 3,
+      "aggregation_weights": {
+        "client_1": 0.17720207559949802,
+        "client_2": 0.32215766785157335,
+        "client_3": 0.5006402565489286
+      },
+      "client_train_losses": {
+        "client_1": 0.005335652512991239,
+        "client_2": 0.0028568138745953013,
+        "client_3": 0.0036631088924789093
+      },
+      "client_sample_counts": {
+        "client_1": 539973,
+        "client_2": 981684,
+        "client_3": 1525559
+      },
+      "validation_loss": 0.02511352253790802,
+      "validation_metrics": {
+        "recall": 0.03330249768732655,
+        "f1": 0.021563342318059297,
+        "pr_auc": 0.008310734138457222,
+        "precision": 0.015943312666076175,
+        "false_negatives": 1045,
+        "roc_auc": 0.8366651585867848,
+        "accuracy": 0.9967830714922236,
+        "tp": 36,
+        "tn": 1012262,
+        "fp": 2222,
+        "fn": 1045,
+        "threshold": 0.5,
+        "positive_rate": 0.0010644321141433585,
+        "loss": 0.02511352253790802,
+        "missed_positive_rate": 0.9666975023126735
+      },
+      "round_seconds": 129.87731600005645,
+      "checkpoint_path": "D:\\Federate_learning\\models\\checkpoints\\federated\\non_iid\\fedprox_tuned\\lstm\\phase9_fedprox_lstm_mu_0p0001_seed42\\round_3.pt",
+      "selected": false,
+      "drift_metrics": {
+        "mean_drift": 1.7958771535919513,
+        "weighted_drift": 1.8060192650387465,
+        "max_drift": 2.632183690997567,
+        "min_drift": 1.3030217129648143,
+        "pairwise_disagreement": 2.370470243648624,
+        "client_variance": 1.9380891901399384,
+        "drift_client_1": 1.3030217129648143,
+        "drift_client_2": 2.632183690997567,
+        "drift_client_3": 1.4524260568134726
+      }
+    },
+    {
+      "round": 4,
+      "aggregation_weights": {
+        "client_1": 0.17720207559949802,
+        "client_2": 0.32215766785157335,
+        "client_3": 0.5006402565489286
+      },
+      "client_train_losses": {
+        "client_1": 0.005232316545007252,
+        "client_2": 0.0023979273863817836,
+        "client_3": 0.0035107637280738517
+      },
+      "client_sample_counts": {
+        "client_1": 539973,
+        "client_2": 981684,
+        "client_3": 1525559
+      },
+      "validation_loss": 0.018825777970334717,
+      "validation_metrics": {
+        "recall": 0.045328399629972246,
+        "f1": 0.03426573426573426,
+        "pr_auc": 0.015764992799587707,
+        "precision": 0.027543563799887576,
+        "false_negatives": 1032,
+        "roc_auc": 0.88319111611836,
+        "accuracy": 0.9972803316380537,
+        "tp": 49,
+        "tn": 1012754,
+        "fp": 1730,
+        "fn": 1032,
+        "threshold": 0.5,
+        "positive_rate": 0.0010644321141433585,
+        "loss": 0.018825777970334717,
+        "missed_positive_rate": 0.9546716003700277
+      },
+      "round_seconds": 104.00099860003684,
+      "checkpoint_path": "D:\\Federate_learning\\models\\checkpoints\\federated\\non_iid\\fedprox_tuned\\lstm\\phase9_fedprox_lstm_mu_0p0001_seed42\\round_4.pt",
+      "selected": false,
+      "drift_metrics": {
+        "mean_drift": 1.4354625038570328,
+        "weighted_drift": 1.4357844161607742,
+        "max_drift": 2.0313161267379845,
+        "min_drift": 1.1056578744619971,
+        "pairwise_disagreement": 1.9735969134162232,
+        "client_variance": 1.333543726473484,
+        "drift_client_1": 1.1056578744619971,
+        "drift_client_2": 2.0313161267379845,
+        "drift_client_3": 1.1694135103711165
+      }
+    },
+    {
+      "round": 5,
+      "aggregation_weights": {
+        "client_1": 0.17720207559949802,
+        "client_2": 0.32215766785157335,
+        "client_3": 0.5006402565489286
+      },
+      "client_train_losses": {
+        "client_1": 0.005189483397326965,
+        "client_2": 0.0021762361475669506,
+        "client_3": 0.003425584146348313
+      },
+      "client_sample_counts": {
+        "client_1": 539973,
+        "client_2": 981684,
+        "client_3": 1525559
+      },
+      "validation_loss": 0.015321932591268525,
+      "validation_metrics": {
+        "recall": 0.07493061979648474,
+        "f1": 0.06890684814972352,
+        "pr_auc": 0.03291007214773813,
+        "precision": 0.06377952755905512,
+        "false_negatives": 1000,
+        "roc_auc": 0.905938528353478,
+        "accuracy": 0.9978445495856986,
+        "tp": 81,
+        "tn": 1013295,
+        "fp": 1189,
+        "fn": 1000,
+        "threshold": 0.5,
+        "positive_rate": 0.0010644321141433585,
+        "loss": 0.015321932591268525,
+        "missed_positive_rate": 0.9250693802035153
+      },
+      "round_seconds": 97.28795100003481,
+      "checkpoint_path": "D:\\Federate_learning\\models\\checkpoints\\federated\\non_iid\\fedprox_tuned\\lstm\\phase9_fedprox_lstm_mu_0p0001_seed42\\round_5.pt",
+      "selected": true,
+      "drift_metrics": {
+        "mean_drift": 1.2817291190605007,
+        "weighted_drift": 1.2864097586263656,
+        "max_drift": 1.740884048662165,
+        "min_drift": 1.013882571816078,
+        "pairwise_disagreement": 1.8000292303867085,
+        "client_variance": 1.1014825361974847,
+        "drift_client_1": 1.013882571816078,
+        "drift_client_2": 1.740884048662165,
+        "drift_client_3": 1.0904207367032592
+      }
+    }
+  ]
+}

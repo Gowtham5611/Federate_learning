@@ -1,0 +1,56 @@
+{
+  "dataset_name": "IBM Transactions for Anti-Money Laundering (HI-Small)",
+  "task": "Binary Transaction Laundering Detection (AML)",
+  "sequence_length": 10,
+  "feature_dimension": 23,
+  "target_column": "is_laundering",
+  "sender_account_column": "from_account",
+  "splits": {
+    "train": {
+      "total_sequences": 3047216,
+      "positive_count": 2299,
+      "negative_count": 3044917,
+      "positive_prevalence_pct": 0.075446,
+      "imbalance_ratio": "1 : 1324.45"
+    },
+    "validation": {
+      "total_sequences": 1015565,
+      "positive_count": 1081,
+      "negative_count": 1014484,
+      "positive_prevalence_pct": 0.106443,
+      "imbalance_ratio": "1 : 938.47"
+    },
+    "test": {
+      "total_sequences": 1015564,
+      "positive_count": 1797,
+      "negative_count": 1013767,
+      "positive_prevalence_pct": 0.176946,
+      "imbalance_ratio": "1 : 564.14"
+    }
+  },
+  "features": [
+    "amount",
+    "is_sar",
+    "payment_currency",
+    "received_currency",
+    "payment_format",
+    "sender_bank",
+    "receiver_bank",
+    "sender_account",
+    "receiver_account",
+    "timestamp_delta",
+    "amount_usd",
+    "flow_rate",
+    "fan_out",
+    "fan_in",
+    "same_bank",
+    "cross_border",
+    "retail_share",
+    "crypto_wire_fx_share",
+    "cu_payment_share",
+    "sender_churn",
+    "receiver_churn",
+    "structuring_flag",
+    "rapid_movement_flag"
+  ]
+}

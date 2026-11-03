@@ -1,0 +1,362 @@
+<USER_REQUEST>
+# FEDSECUREAI — PHASE 12: SHAP EXPLAINABILITY & TYPOLOGY ATTRIBUTIONS
+
+Act as a senior Machine Learning Research Engineer, Federated Learning Specialist, Explainable AI Engineer, and MLOps Architect.
+
+Implement Phase 12 of my existing FedSecureAI project. Follow the existing repository architecture, authoritative experiment results, and roadmap. Prioritize scientific correctness, reproducibility, memory efficiency, and complete verification.
+
+## 1. PROJECT CONTEXT
+
+Repository root:
+
+`c:\Users\Acer\OneDrive\Desktop\Federate_learning`
+
+Project: FedSecureAI — Privacy-Preserving, Explainable, Drift-Aware Federated Anti-Money Laundering Detection.
+
+Datasets:
+- IBM AML HI-Small
+- IBM AML LI-Medium
+
+Active model architectures:
+- GRU
+- LSTM
+- BiLSTM
+
+Existing relevant artifacts:
+- `results/phase8/phase8_report.md`
+- `results/phase8/phase8_report.json`
+- `results/phase8/phase8_data_provenance.csv`
+- `results/phase8/phase8_readiness_decision.md`
+- `results/authoritative_results/experiment_registry.csv`
+- `results/authoritative_results/authoritative_results_readme.md`
+- `results/phase9_11_audit/phase9_11_audit_report.md`
+- `backend/application/dto/analysis.py`
+- Existing model inference, preprocessing, sequence-building, dataset-loading, and calibration modules.
+
+Verify every path before use. If a path is missing, find its real equivalent and record the discrepancy.
+
+## 2. PHASE AND PRESERVATION RULES
+
+The repository roadmap identifies this work as Phase 12: SHAP Explainability.
+
+Important existing statuses:
+- Phase 9: PARTIAL / FROZEN. Never restart the FedProx sweep or SCAFFOLD experiments.
+- Phase 10: Calibration is verified for the HI-Small IID LSTM baseline. LI-Medium calibration remains an outstanding extension.
+- Phase 11: Experiment-matrix analysis is functionally covered by Phase 8.
+
+Do not renumber existing phases or alter their statuses.
+
+Never:
+- Retrain completed experiments.
+- Modify trained model weights or existing checkpoints.
+- Overwrite Phase 7, Phase 8, Phase 9, Phase 10, or Phase 11 artifacts.
+- Modify frozen ensemble coefficients or thresholds.
+- Tune model or explanation parameters on test data.
+- Fabricate feature names, SHAP values, typology mappings, metrics, or completion claims.
+
+Write all new outputs to:
+
+`results/phase12/`
+
+## 3. STAGE 1 — READ-ONLY MODEL AND DATA AUDIT
+
+Before implementing SHAP, inspect the repository and produce:
+
+`results/phase12/phase12_initial_audit.md`
+
+Identify and verify:
+
+1. The authoritative checkpoint for each intended explanation target.
+2. The exact model architecture and configuration associated with each checkpoint.
+3. The original training-time preprocessing pipeline and feature ordering.
+4. Sequence length, input dimensions, batch dimensions, target labels, and output probability semantics.
+5. The matching validation and training datasets or safely accessible processed samples.
+6. The prediction-generation function used by the original model.
+7. The saved prediction arrays and model-to-prediction mapping.
+8. The SHAP version, framework version, hardware, and memory availability.
+9. Existing Phase 10 calibrators and their intended model and dataset.
+10. Actual client-to-typology mappings, if available.
+
+### Champion resolution
+
+Use the Phase 7 champion records as the initial candidates:
+
+- HI-Small: `hi_small_lstm_fedavg_iid_seed42`
+- LI-Medium: `config_5`, BiLSTM FedAvg IID.
+
+The Phase 10 report also identifies an HI-Small LSTM baseline checkpoint named `federated_iid_fedavg_lstm_seed42_20260918T130515`.
+
+Resolve these identities using the experiment registry, manifests, checkpoint metadata, and original inference code. Do not assume similarly named models are interchangeable.
+
+For each candidate, record the exact checkpoint path, dataset, architecture, training mode, distribution, algorithm, seed, and preprocessing contract.
+
+If checkpoint identity or feature alignment cannot be verified, stop that target and document the blocker.
+
+## 4. STAGE 2 — PREDICTION PARITY VERIFICATION
+
+Before calculating explanations:
+
+1. Load the checkpoint using the project's original model-loading code.
+2. Reconstruct a small deterministic sample from the appropriate split.
+3. Generate probabilities through the original inference pipeline.
+4. Compare against saved predictions for the exact same sample and order.
+5. Calculate maximum absolute difference, mean absolute difference, and relevant numerical tolerance.
+6. Verify probabilities are finite and within the valid probability range.
+7. Verify the laundering class index and output interpretation.
+
+Do not compare predictions from different checkpoints, preprocessing pipelines, splits, or sample orders.
+
+If prediction parity fails, stop explainability for that model until the cause is identified.
+
+Save results in:
+
+`results/phase12/phase12_model_verification.csv`
+
+## 5. STAGE 3 — EXPLAINER DESIGN
+
+Use an explainer appropriate for the actual recurrent model and input representation.
+
+Inspect the installed SHAP documentation/API and the project's PyTorch or other model framework before choosing the explainer.
+
+Evaluate:
+- GradientExplainer
+- DeepExplainer
+- KernelExplainer, only if computationally feasible and appropriate
+
+Do not assume TreeSHAP supports GRU, LSTM, or BiLSTM models.
+
+Do not blindly reshape sequence data into tabular data. Preserve temporal and feature dimensions until the explanation method and interpretation contract are established.
+
+Create a prediction wrapper only if necessary. It must:
+- Accept correctly shaped batches.
+- Return laundering-class probabilities or scores as required by the chosen explainer.
+- Preserve sample order.
+- Use evaluation mode and inference-safe operations where appropriate.
+- Handle device placement correctly.
+- Avoid changing model parameters.
+- Document output semantics.
+
+Document why the selected explainer is suitable, its limitations, runtime, and whether its results are exact or approximate.
+
+If no valid explainer can be established, report the limitation instead of generating misleading values.
+
+## 6. STAGE 4 — BACKGROUND AND EXPLANATION SAMPLES
+
+Use strict split separation:
+
+- SHAP background/reference sample: training split only.
+- Main explanation sample: validation split only.
+- Test split: optional final descriptive verification after the explanation method and all settings are frozen.
+
+Use deterministic random seeds and bounded sample sizes.
+
+Start with small configurable samples. Increase them only after confirming runtime and memory safety.
+
+Requirements:
+- Document source split, sample count, sampling method, seed, and sequence dimensions.
+- Include positive and negative examples when available and properly identified from the permitted split.
+- Do not fabricate examples or assume a positive example exists.
+- Do not use test labels to select background samples, examples, features, explainers, or settings.
+- Avoid loading the full HI-Small or LI-Medium dataset into memory.
+- Process explanations in batches and release intermediate tensors when appropriate.
+
+Save:
+
+`results/phase12/phase12_sampling_provenance.csv`
+
+## 7. STAGE 5 — GLOBAL FEATURE ATTRIBUTIONS
+
+For each successfully verified target, calculate global importance using a documented aggregation method, such as mean absolute SHAP value over the explanation sample.
+
+Where mathematically appropriate, report:
+- Feature-level mean absolute attribution.
+- Mean signed attribution.
+- Attribution variability.
+- Rank and rank stability across batches or sample subsets, if assessed.
+- Temporal-position importance, if sequence positions can be interpreted correctly.
+- Feature-group importance, only when the feature-to-group mapping is verified.
+
+Preserve the original feature names and ordering.
+
+If multiple time steps contribute to a feature, explicitly document whether importance is aggregated across time, retained per time step, or summarized in another justified manner.
+
+Do not interpret attribution magnitude as a causal effect or proof of criminal activity.
+
+Save:
+
+`results/phase12/phase12_global_feature_importance.csv`
+
+## 8. STAGE 6 — LOCAL TRANSACTION EXPLANATIONS
+
+Generate individual explanations for a small set of validation transactions.
+
+For each explanation, record:
+- Stable sample identifier or privacy-safe identifier.
+- Dataset and split.
+- Verified model/checkpoint identifier.
+- Original predicted laundering probability.
+- Prediction interpretation.
+- Top positive and negative feature contributions.
+- Feature names and temporal positions, where valid.
+- Explainer and approximation settings.
+- Any explanation-quality warnings.
+
+Never expose sensitive raw transaction identifiers or unnecessary personal information in published artifacts.
+
+Do not claim that the most influential feature alone explains the complete decision.
+
+Save:
+
+`results/phase12/phase12_local_explanations.csv`
+
+## 9. STAGE 7 — TYPOLOGY ATTRIBUTIONS
+
+Inspect the actual dataset and client partition metadata.
+
+Only produce typology-level comparisons if reliable mappings exist for categories such as:
+- Retail-like transactions.
+- Crypto / FX / wire-like activity.
+- Credit-union-like behaviour.
+- Other verified laundering typologies available in the source data.
+
+Do not infer that a transaction belongs to a typology solely because the model assigned it a high laundering probability.
+
+Distinguish:
+1. Actual dataset-provided typology labels.
+2. Federated client partition labels.
+3. Model-predicted risk.
+4. SHAP feature contributions.
+
+These are not interchangeable.
+
+Report sample counts, class composition, and uncertainty for each comparison. Mark categories as insufficiently represented when appropriate.
+
+Do not create unsupported typology attribution results.
+
+## 10. STAGE 8 — CALIBRATED PROBABILITY EXPLANATIONS
+
+Inspect the existing Phase 10 isotonic, Platt, and temperature-scaling artifacts.
+
+The initial explanation target must be the verified uncalibrated champion probability unless a separate calibrated explanation is justified.
+
+If calibrated probabilities are also explained:
+- Verify the calibrator belongs to the exact model and dataset.
+- Preserve the original model probabilities.
+- Explain whether SHAP values describe the base model score or the post-processing calibration function.
+- Do not present explanations of calibrated output as though they automatically explain the original model.
+- Do not transfer the HI-Small calibrator to LI-Medium or another checkpoint without fitting and validating a suitable calibrator using permitted data.
+
+Do not modify any existing calibrator.
+
+## 11. STAGE 9 — EXPLANATION QUALITY CHECKS
+
+Implement checks appropriate to the chosen explainer:
+
+- Correct SHAP output dimensions.
+- Correct feature alignment and sample ordering.
+- Finite attribution values.
+- Baseline and output consistency.
+- Additivity or approximation-error evaluation where supported.
+- Repeatability under fixed sampling and configuration.
+- Sensitivity to reasonable background-sample changes, if feasible.
+- Runtime and memory tracking.
+
+Do not enforce an additivity guarantee that the chosen method does not provide.
+
+Record all failed checks, tolerances, and limitations.
+
+Save:
+
+`results/phase12/phase12_explainer_validation.json`
+
+## 12. STAGE 10 — VISUALIZATIONS
+
+Create appropriate publication-quality plots for verified outputs:
+
+1. Global feature importance bar chart.
+2. SHAP beeswarm or another suitable attribution distribution plot.
+3. Local waterfall plot for selected validation examples.
+4. Temporal-position or feature-group importance plot when supported.
+5. Typology comparison plot only when actual typology labels are available and adequately represented.
+
+Output directory:
+
+`results/phase12/plots/`
+
+Each plot must state the dataset, model identity, explanation split, attribution unit, and relevant caveats.
+
+Do not create empty placeholder plots or misleading comparisons. Use consistent definitions when comparing datasets or models.
+
+## 13. STAGE 11 — TESTING AND REPRODUCIBILITY
+
+Add focused tests for:
+- Checkpoint and model-contract verification.
+- Input/output shapes.
+- Probability semantics.
+- Prediction parity and sample ordering.
+- Deterministic sampling.
+- Training-background versus validation-explanation separation.
+- SHAP output dimensions and feature mapping.
+- Numerical finiteness and explanation-quality checks.
+- Missing dependency and unsupported-explainer handling.
+- Bounded batching and safe failure behaviour.
+- Preservation of all previous phase artifacts.
+
+Use small synthetic inputs for unit tests only. Never present synthetic test values as real AML experiment results.
+
+Run the relevant Phase 12 tests and then the existing test suite.
+
+Record actual commands, exit codes, counts, failures, runtime, and hardware used. Do not claim tests passed unless they actually passed.
+
+## 14. REQUIRED OUTPUTS
+
+Create these files where their contents are supported by actual evidence:
+
+- `results/phase12/phase12_initial_audit.md`
+- `results/phase12/phase12_model_verification.csv`
+- `results/phase12/phase12_sampling_provenance.csv`
+- `results/phase12/phase12_global_feature_importance.csv`
+- `results/phase12/phase12_local_explanations.csv`
+- `results/phase12/phase12_explainer_validation.json`
+- `results/phase12/phase12_discrepancies.csv`
+- `results/phase12/phase12_report.md`
+- `results/phase12/phase12_report.json`
+- `results/phase12/phase12_readiness_decision.md`
+- `results/phase12/plots/`
+
+Do not generate empty files simply to satisfy this list. If an artifact cannot be produced, explain why in the discrepancy report.
+
+Follow the existing project DTO and reporting conventions. Do not change the meaning or contents of Phase8Report.
+
+## 15. FINAL ACCEPTANCE CRITERIA
+
+Phase 12 may be marked GO only when:
+1. Model and checkpoint identity are verified.
+2. Prediction parity passes within a documented tolerance.
+3. Training background and validation explanation samples are correctly separated.
+4. SHAP output dimensions and feature alignment are verified.
+5. Explanation-quality checks are documented.
+6. Generated artifacts are readable and reproducible.
+7. Existing phases and authoritative artifacts remain unchanged.
+8. Tests actually run and their results are recorded.
+9. All scientific limitations are disclosed.
+
+Use CONDITIONAL GO if only a documented subset of models or datasets can be explained correctly.
+
+Use NO-GO if model identity, prediction parity, or feature alignment fails.
+
+Begin with a read-only audit and show me the verified model paths and proposed explanation configuration before executing expensive SHAP computations. Then implement incrementally, test, and generate the final report.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-10-26T20:56:52+05:30.
+
+The user's current state is as follows:
+Active Document: c:\Users\Acer\OneDrive\Desktop\Federate_learning\backend\scripts\audit_and_validate_experiment_suite.py (LANGUAGE_UNSPECIFIED)
+Cursor is on line: 1
+Other open documents:
+- c:\Users\Acer\OneDrive\Desktop\Federate_learning\backend\scripts\run_phase8_analysis.py (LANGUAGE_UNSPECIFIED)
+- c:\Users\Acer\OneDrive\Desktop\Federate_learning\backend\scripts\generate_authoritative_results.py (LANGUAGE_UNSPECIFIED)
+- c:\Users\Acer\OneDrive\Desktop\Federate_learning\backend\scripts\run_phase7_ensemble.py (LANGUAGE_UNSPECIFIED)
+- c:\Users\Acer\OneDrive\Desktop\Federate_learning\tests\test_phase7_ensemble.py (LANGUAGE_UNSPECIFIED)
+- c:\Users\Acer\OneDrive\Desktop\Federate_learning\FEDSECUREAI_RECOVERY_REPORT.md (LANGUAGE_UNSPECIFIED)
+</ADDITIONAL_METADATA>

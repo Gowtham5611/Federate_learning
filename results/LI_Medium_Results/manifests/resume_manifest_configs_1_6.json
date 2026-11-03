@@ -1,0 +1,394 @@
+{
+  "experiment_name": "full_combined_12_experiments",
+  "created_at_utc": "2026-10-20T09:43:03.870622+00:00",
+  "updated_at_utc": "2026-10-20T11:56:32.222890+00:00",
+  "dataset": "IBM AML FULL_COMBINED (HI-Small + LI-Medium Full)",
+  "data_root": "/content/FedSecureAI_project/Federate_learning/data/processed/ibm_aml/LI-Medium",
+  "output_dir": "/content/FedSecureAI_project/Federate_learning/artifacts/li_medium_experiment",
+  "hyperparameters": {
+    "rounds": 5,
+    "local_epochs": 1,
+    "batch_size": 1024,
+    "learning_rate": 0.001,
+    "fedprox_mu": 0.0001,
+    "seed": 42,
+    "device": "cuda"
+  },
+  "configurations": {
+    "config_1": {
+      "config_num": 1,
+      "distribution": "iid",
+      "model": "gru",
+      "algorithm": "fedavg",
+      "mu": 0.0,
+      "status": "COMPLETED",
+      "started_at_utc": "2026-10-20T09:52:27.717702+00:00",
+      "completed_at_utc": "2026-10-20T10:10:42.946388+00:00",
+      "duration_seconds": 1095.21,
+      "best_round": 5,
+      "best_val_pr_auc": 0.1756892321321184,
+      "checkpoint_sha256": "110fbc328fead4ed78cd61b2f240d43502127bda5c60730bb5096d68edefb377",
+      "test_metrics": {
+        "pr_auc": 0.2535982359707042,
+        "roc_auc": 0.9697047498397522,
+        "f1": 0.3168472906403941,
+        "precision": 0.6222910216718266,
+        "recall": 0.21252973830293417,
+        "threshold": 0.23616182804107666,
+        "alerts_per_10k": 0.7813839751276513,
+        "test_loss": 0.0029824934292707016
+      },
+      "round_metrics": [
+        {
+          "round": 1,
+          "val_loss": 0.004277084843256522,
+          "val_pr_auc": 0.029497397167801653,
+          "val_roc_auc": 0.9515201209380394,
+          "time_sec": 220.34
+        },
+        {
+          "round": 2,
+          "val_loss": 0.003533014674523829,
+          "val_pr_auc": 0.13546675848995815,
+          "val_roc_auc": 0.968450272367941,
+          "time_sec": 211.75
+        },
+        {
+          "round": 3,
+          "val_loss": 0.003411642772043934,
+          "val_pr_auc": 0.1609820838572001,
+          "val_roc_auc": 0.9702190354727028,
+          "time_sec": 209.48
+        },
+        {
+          "round": 4,
+          "val_loss": 0.003388112685745739,
+          "val_pr_auc": 0.17033440144826173,
+          "val_roc_auc": 0.9704974880316364,
+          "time_sec": 207.23
+        },
+        {
+          "round": 5,
+          "val_loss": 0.0033446150775932556,
+          "val_pr_auc": 0.1756892321321184,
+          "val_roc_auc": 0.9716827830267976,
+          "time_sec": 209.75
+        }
+      ]
+    },
+    "config_2": {
+      "config_num": 2,
+      "distribution": "iid",
+      "model": "gru",
+      "algorithm": "fedprox",
+      "mu": 0.0001,
+      "status": "COMPLETED",
+      "started_at_utc": "2026-10-20T10:10:42.963862+00:00",
+      "completed_at_utc": "2026-10-20T10:30:56.878543+00:00",
+      "duration_seconds": 1213.91,
+      "best_round": 5,
+      "best_val_pr_auc": 0.06947324103061217,
+      "checkpoint_sha256": "9129e60c41abcc5f2e721132beb1685ba25ca388f7b0137f1cf5a26274ff9ca7",
+      "test_metrics": {
+        "pr_auc": 0.08874614098920751,
+        "roc_auc": 0.9520558185131829,
+        "f1": 0.1418015482054891,
+        "precision": 0.21199368753287742,
+        "recall": 0.10652920962199312,
+        "threshold": 0.08156635612249374,
+        "alerts_per_10k": 2.398592612174635,
+        "test_loss": 0.003584991904735442
+      },
+      "round_metrics": [
+        {
+          "round": 1,
+          "val_loss": 0.004623991809051114,
+          "val_pr_auc": 0.01005922254594681,
+          "val_roc_auc": 0.9186420295445203,
+          "time_sec": 245.5
+        },
+        {
+          "round": 2,
+          "val_loss": 0.004166993855346478,
+          "val_pr_auc": 0.01895305650924283,
+          "val_roc_auc": 0.9441272949696938,
+          "time_sec": 235.61
+        },
+        {
+          "round": 3,
+          "val_loss": 0.003996271497700146,
+          "val_pr_auc": 0.030380391916803105,
+          "val_roc_auc": 0.9531571842966536,
+          "time_sec": 233.82
+        },
+        {
+          "round": 4,
+          "val_loss": 0.0038720215471816496,
+          "val_pr_auc": 0.049225006312498765,
+          "val_roc_auc": 0.9580249368670453,
+          "time_sec": 232.49
+        },
+        {
+          "round": 5,
+          "val_loss": 0.0037768295030747153,
+          "val_pr_auc": 0.06947324103061217,
+          "val_roc_auc": 0.9610813201702949,
+          "time_sec": 231.0
+        }
+      ]
+    },
+    "config_3": {
+      "config_num": 3,
+      "distribution": "iid",
+      "model": "lstm",
+      "algorithm": "fedavg",
+      "mu": 0.0,
+      "status": "COMPLETED",
+      "started_at_utc": "2026-10-20T10:30:56.896161+00:00",
+      "completed_at_utc": "2026-10-20T10:49:38.326315+00:00",
+      "duration_seconds": 1121.42,
+      "best_round": 5,
+      "best_val_pr_auc": 0.16584785575111982,
+      "checkpoint_sha256": "9025a6002a966b6481fe278207d93ed8e5c97aa03eeb6c85b9fb50e3da761df2",
+      "test_metrics": {
+        "pr_auc": 0.24507208024704422,
+        "roc_auc": 0.9686302284243377,
+        "f1": 0.30377554554901287,
+        "precision": 0.4404821697639377,
+        "recall": 0.23182659265133493,
+        "threshold": 0.1525966078042984,
+        "alerts_per_10k": 1.7837330907627122,
+        "test_loss": 0.003018393265126938
+      },
+      "round_metrics": [
+        {
+          "round": 1,
+          "val_loss": 0.004185537260302977,
+          "val_pr_auc": 0.017739587636556652,
+          "val_roc_auc": 0.9476587863400424,
+          "time_sec": 228.93
+        },
+        {
+          "round": 2,
+          "val_loss": 0.0036308571763423217,
+          "val_pr_auc": 0.11277098801923927,
+          "val_roc_auc": 0.9656019712800995,
+          "time_sec": 216.28
+        },
+        {
+          "round": 3,
+          "val_loss": 0.0035619455349010336,
+          "val_pr_auc": 0.1415754891960013,
+          "val_roc_auc": 0.965774026634302,
+          "time_sec": 212.58
+        },
+        {
+          "round": 4,
+          "val_loss": 0.003434833703266788,
+          "val_pr_auc": 0.15683663229448702,
+          "val_roc_auc": 0.9693830184843258,
+          "time_sec": 213.49
+        },
+        {
+          "round": 5,
+          "val_loss": 0.0033944921219764587,
+          "val_pr_auc": 0.16584785575111982,
+          "val_roc_auc": 0.969887914502211,
+          "time_sec": 215.16
+        }
+      ]
+    },
+    "config_4": {
+      "config_num": 4,
+      "distribution": "iid",
+      "model": "lstm",
+      "algorithm": "fedprox",
+      "mu": 0.0001,
+      "status": "COMPLETED",
+      "started_at_utc": "2026-10-20T10:49:38.342973+00:00",
+      "completed_at_utc": "2026-10-20T11:10:26.063643+00:00",
+      "duration_seconds": 1247.71,
+      "best_round": 5,
+      "best_val_pr_auc": 0.06137606383491595,
+      "checkpoint_sha256": "701ac1b36ae5bca5df2c5815761bcbae331aab1d7333632c0244dc08062537de",
+      "test_metrics": {
+        "pr_auc": 0.0894833582616334,
+        "roc_auc": 0.9494870597301127,
+        "f1": 0.12887029288702928,
+        "precision": 0.30892678034102306,
+        "recall": 0.08141686492201956,
+        "threshold": 0.08985179662704468,
+        "alerts_per_10k": 1.1032245058667045,
+        "test_loss": 0.0036121294744878305
+      },
+      "round_metrics": [
+        {
+          "round": 1,
+          "val_loss": 0.004899846559746252,
+          "val_pr_auc": 0.007841502997538568,
+          "val_roc_auc": 0.9004037576647742,
+          "time_sec": 251.85
+        },
+        {
+          "round": 2,
+          "val_loss": 0.004213766543085042,
+          "val_pr_auc": 0.017295007766105198,
+          "val_roc_auc": 0.9387530919775796,
+          "time_sec": 240.62
+        },
+        {
+          "round": 3,
+          "val_loss": 0.00402725702244962,
+          "val_pr_auc": 0.025136036803424945,
+          "val_roc_auc": 0.9504851954195859,
+          "time_sec": 244.23
+        },
+        {
+          "round": 4,
+          "val_loss": 0.003907043879555324,
+          "val_pr_auc": 0.039123124445606845,
+          "val_roc_auc": 0.955840780927887,
+          "time_sec": 238.58
+        },
+        {
+          "round": 5,
+          "val_loss": 0.0038116427811703186,
+          "val_pr_auc": 0.06137606383491595,
+          "val_roc_auc": 0.9588783325725816,
+          "time_sec": 237.06
+        }
+      ]
+    },
+    "config_5": {
+      "config_num": 5,
+      "distribution": "iid",
+      "model": "bilstm",
+      "algorithm": "fedavg",
+      "mu": 0.0,
+      "status": "COMPLETED",
+      "started_at_utc": "2026-10-20T11:10:26.081024+00:00",
+      "completed_at_utc": "2026-10-20T11:31:36.560229+00:00",
+      "duration_seconds": 1270.47,
+      "best_round": 5,
+      "best_val_pr_auc": 0.17689950210601818,
+      "checkpoint_sha256": "bded77c75fcf89ea24af295fd7a5c28110744bf226a1c4c0a386f9924d1087d2",
+      "test_metrics": {
+        "pr_auc": 0.2533981790525074,
+        "roc_auc": 0.9695171364873152,
+        "f1": 0.31678945327646374,
+        "precision": 0.5941818181818181,
+        "recall": 0.21596616441977268,
+        "threshold": 0.23848293721675873,
+        "alerts_per_10k": 0.8934677420516998,
+        "test_loss": 0.0029856331217170758
+      },
+      "round_metrics": [
+        {
+          "round": 1,
+          "val_loss": 0.003998667180867549,
+          "val_pr_auc": 0.05802259637905549,
+          "val_roc_auc": 0.954412786741061,
+          "time_sec": 255.62
+        },
+        {
+          "round": 2,
+          "val_loss": 0.0035398664264587234,
+          "val_pr_auc": 0.1391355521427335,
+          "val_roc_auc": 0.9661071840426672,
+          "time_sec": 243.6
+        },
+        {
+          "round": 3,
+          "val_loss": 0.0034750512737787434,
+          "val_pr_auc": 0.15821344808876545,
+          "val_roc_auc": 0.9679339959828988,
+          "time_sec": 243.22
+        },
+        {
+          "round": 4,
+          "val_loss": 0.0033963542770445343,
+          "val_pr_auc": 0.16894380793571132,
+          "val_roc_auc": 0.9696872867064001,
+          "time_sec": 245.71
+        },
+        {
+          "round": 5,
+          "val_loss": 0.0033463339599578974,
+          "val_pr_auc": 0.17689950210601818,
+          "val_roc_auc": 0.9708970917983772,
+          "time_sec": 244.99
+        }
+      ]
+    },
+    "config_6": {
+      "config_num": 6,
+      "distribution": "iid",
+      "model": "bilstm",
+      "algorithm": "fedprox",
+      "mu": 0.0001,
+      "status": "COMPLETED",
+      "started_at_utc": "2026-10-20T11:31:36.582670+00:00",
+      "completed_at_utc": "2026-10-20T11:56:32.204807+00:00",
+      "duration_seconds": 1495.61,
+      "best_round": 5,
+      "best_val_pr_auc": 0.06020877068670183,
+      "checkpoint_sha256": "4267b5099cf57a74a6f51913aaade863871f83a794a56d0d03e83cda337eee2e",
+      "test_metrics": {
+        "pr_auc": 0.08710250716084407,
+        "roc_auc": 0.9513578442079108,
+        "f1": 0.13628966639544346,
+        "precision": 0.29567519858781993,
+        "recall": 0.08855405762622258,
+        "threshold": 0.08517125993967056,
+        "alerts_per_10k": 1.2777549429341513,
+        "test_loss": 0.0036005487969224684
+      },
+      "round_metrics": [
+        {
+          "round": 1,
+          "val_loss": 0.004881222094393893,
+          "val_pr_auc": 0.00828655533425077,
+          "val_roc_auc": 0.9046985381451428,
+          "time_sec": 290.22
+        },
+        {
+          "round": 2,
+          "val_loss": 0.00422335605933995,
+          "val_pr_auc": 0.018468022260179646,
+          "val_roc_auc": 0.9394561583872449,
+          "time_sec": 287.28
+        },
+        {
+          "round": 3,
+          "val_loss": 0.004029994490990063,
+          "val_pr_auc": 0.028340038646089485,
+          "val_roc_auc": 0.9509078615683652,
+          "time_sec": 283.66
+        },
+        {
+          "round": 4,
+          "val_loss": 0.0039122233597820525,
+          "val_pr_auc": 0.04194828229292441,
+          "val_roc_auc": 0.9560518864598286,
+          "time_sec": 298.3
+        },
+        {
+          "round": 5,
+          "val_loss": 0.003823357498241736,
+          "val_pr_auc": 0.06020877068670183,
+          "val_roc_auc": 0.9589482135376054,
+          "time_sec": 298.29
+        }
+      ]
+    },
+    "config_7": {
+      "config_num": 7,
+      "distribution": "non_iid",
+      "model": "gru",
+      "algorithm": "fedavg",
+      "mu": 0.0,
+      "status": "RUNNING",
+      "started_at_utc": "2026-10-20T11:56:32.222874+00:00"
+    }
+  }
+}

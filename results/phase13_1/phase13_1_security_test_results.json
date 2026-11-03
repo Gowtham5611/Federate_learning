@@ -1,0 +1,145 @@
+{
+  "audit_phase": "Phase 13.1",
+  "audit_type": "Security, Contracts, Bounds & Resilience Verification",
+  "total_tests": 19,
+  "passed_tests": 19,
+  "failed_tests": 0,
+  "execution_time_seconds": 3.23,
+  "test_file": "tests/test_phase13_security_and_contracts.py",
+  "test_cases": [
+    {
+      "test_name": "test_unsupported_dataset_rejected",
+      "category": "Input Validation & Routing",
+      "target": "PredictRequest & get_dataset_metadata",
+      "expected_behavior": "Rejects unknown dataset names with ValidationError / HTTP 404",
+      "status": "PASSED"
+    },
+    {
+      "test_name": "test_malformed_request_body_missing_fields",
+      "category": "Schema Conformance",
+      "target": "PredictRequest, BatchPredictRequest, ExplainRequest",
+      "expected_behavior": "Rejects empty or missing required schema bodies with ValidationError",
+      "status": "PASSED"
+    },
+    {
+      "test_name": "test_incorrect_feature_dimension_56",
+      "category": "Feature Dimension Bounds",
+      "target": "SequenceItem",
+      "expected_behavior": "Rejects 56 features per step (requires exactly 57)",
+      "status": "PASSED"
+    },
+    {
+      "test_name": "test_incorrect_feature_dimension_58",
+      "category": "Feature Dimension Bounds",
+      "target": "SequenceItem",
+      "expected_behavior": "Rejects 58 features per step (requires exactly 57)",
+      "status": "PASSED"
+    },
+    {
+      "test_name": "test_invalid_sequence_lengths",
+      "category": "Temporal Window Bounds",
+      "target": "SequenceItem",
+      "expected_behavior": "Rejects sequence length 0 and length > 10 (exceeding MAX_SEQUENCE_LENGTH)",
+      "status": "PASSED"
+    },
+    {
+      "test_name": "test_nan_rejected",
+      "category": "Numeric Integrity & Sanitization",
+      "target": "SequenceItem",
+      "expected_behavior": "Rejects float NaN values in sequence steps",
+      "status": "PASSED"
+    },
+    {
+      "test_name": "test_pos_inf_rejected",
+      "category": "Numeric Integrity & Sanitization",
+      "target": "SequenceItem",
+      "expected_behavior": "Rejects positive infinity (+Inf) in sequence steps",
+      "status": "PASSED"
+    },
+    {
+      "test_name": "test_neg_inf_rejected",
+      "category": "Numeric Integrity & Sanitization",
+      "target": "SequenceItem",
+      "expected_behavior": "Rejects negative infinity (-Inf) in sequence steps",
+      "status": "PASSED"
+    },
+    {
+      "test_name": "test_non_zero_padding_rejected",
+      "category": "Padding & Leakage Prevention",
+      "target": "SequenceItem",
+      "expected_behavior": "Rejects non-zero entries in steps beyond declared causal length L",
+      "status": "PASSED"
+    },
+    {
+      "test_name": "test_batch_size_above_64_rejected",
+      "category": "Denial-of-Service & Resource Bounds",
+      "target": "BatchPredictRequest",
+      "expected_behavior": "Rejects batch request containing 65 items (exceeding 64 maximum limit)",
+      "status": "PASSED"
+    },
+    {
+      "test_name": "test_invalid_explain_steps",
+      "category": "Compute Bounds & Resource Exhaustion",
+      "target": "ExplainRequest",
+      "expected_behavior": "Enforces Riemann path integration steps bounded within 10 <= steps <= 50",
+      "status": "PASSED"
+    },
+    {
+      "test_name": "test_invalid_explain_top_k",
+      "category": "Output Bounds & Memory Protection",
+      "target": "ExplainRequest",
+      "expected_behavior": "Enforces top_k driver count bounded within 1 <= top_k <= 20",
+      "status": "PASSED"
+    },
+    {
+      "test_name": "test_checkpoint_hash_mismatch_fails_closed",
+      "category": "Model Integrity & Provenance",
+      "target": "ModelService._load_single_model",
+      "expected_behavior": "Refuses to load corrupted/tampered weights, raising ModelIntegrityError",
+      "status": "PASSED"
+    },
+    {
+      "test_name": "test_checkpoint_missing_fails_closed",
+      "category": "Model Integrity & Provenance",
+      "target": "ModelService._load_single_model",
+      "expected_behavior": "Refuses to start when checkpoint file is missing, raising ModelIntegrityError",
+      "status": "PASSED"
+    },
+    {
+      "test_name": "test_unloaded_model_raises_503_in_route",
+      "category": "Fail-Closed Service Behavior",
+      "target": "POST /predict",
+      "expected_behavior": "Returns HTTP 503 Service Unavailable when model is not loaded or missing",
+      "status": "PASSED"
+    },
+    {
+      "test_name": "test_mismatched_model_name_rejected",
+      "category": "Routing & Cross-Dataset Protection",
+      "target": "PredictRequest",
+      "expected_behavior": "Rejects LI-Medium model name passed with HI-Small dataset payload",
+      "status": "PASSED"
+    },
+    {
+      "test_name": "test_concurrent_prediction_requests",
+      "category": "Concurrency & Thread Safety",
+      "target": "ModelService.predict_sequence",
+      "expected_behavior": "25 concurrent thread executions complete without race conditions or memory corruption",
+      "status": "PASSED"
+    },
+    {
+      "test_name": "test_sensitive_data_absent_from_logs",
+      "category": "Privacy & Data Protection",
+      "target": "RequestTimingAndPrivacyMiddleware / logger",
+      "expected_behavior": "Logs contain zero transaction features or client account identifiers",
+      "status": "PASSED"
+    },
+    {
+      "test_name": "test_authentication_mechanism_status",
+      "category": "Authentication & Access Control",
+      "target": "All API Endpoints",
+      "expected_behavior": "Audits presence/absence of auth; confirms endpoints are unauthenticated (BLOCKER for protected deployments)",
+      "status": "PASSED"
+    }
+  ]
+}
+

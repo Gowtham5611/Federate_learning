@@ -1,0 +1,12 @@
+2026-10-20 15:27:46 | INFO     | fedsecureai_full_combined_runner | ================================================================================
+2026-10-20 15:27:46 | INFO     | fedsecureai_full_combined_runner | STARTING FEDSECUREAI FULL COMBINED 12-EXPERIMENT CAMPAIGN
+2026-10-20 15:27:46 | INFO     | fedsecureai_full_combined_runner | Data Root: /content/FedSecureAI_project/Federate_learning/colab work and results/data/processed/ibm_aml/LI-Medium
+2026-10-20 15:27:46 | INFO     | fedsecureai_full_combined_runner | Output Directory: /content/drive/MyDrive/FedSecureAI_LI_Medium_configs_7_12
+2026-10-20 15:27:46 | INFO     | fedsecureai_full_combined_runner | Batch Size: 4096 | Rounds: 5 | Epochs: 1 | Device: cuda
+2026-10-20 15:27:46 | INFO     | fedsecureai_full_combined_runner | ================================================================================
+2026-10-20 15:27:46 | INFO     | fedsecureai_full_combined_runner | Running FedSecureAI Full Combined Preflight Environment & Data Checks...
+2026-10-20 15:27:46 | INFO     | fedsecureai_full_combined_runner | CUDA Detected: Tesla T4 (14.56 GB VRAM)
+2026-10-20 15:27:46 | ERROR    | fedsecureai_full_combined_runner | Missing transactions CSV for split train at /content/FedSecureAI_project/Federate_learning/colab work and results/data/processed/ibm_aml/LI-Medium/train/transactions.csv
+2026-10-20 15:27:46 | ERROR    | fedsecureai_full_combined_runner | Missing transactions CSV for split validation at /content/FedSecureAI_project/Federate_learning/colab work and results/data/processed/ibm_aml/LI-Medium/validation/transactions.csv
+2026-10-20 15:27:46 | ERROR    | fedsecureai_full_combined_runner | Missing transactions CSV for split test at /content/FedSecureAI_project/Federate_learning/colab work and results/data/processed/ibm_aml/LI-Medium/test/transactions.csv
+2026-10-20 15:27:46 | INFO     | fedsecureai_full_combined_runner | Preflight checks completed with status: FAIL

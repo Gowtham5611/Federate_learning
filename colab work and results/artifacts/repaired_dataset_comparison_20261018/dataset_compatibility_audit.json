@@ -1,0 +1,124 @@
+{
+  "timestamp_utc": "2026-10-18T05:41:21.256552+00:00",
+  "elapsed_seconds": 0.8134608000000298,
+  "raw_files": {
+    "hi_small": {
+      "file_name": "HI-Small_Trans.csv",
+      "size_bytes": 475664282,
+      "sha256": "b19d39f515523373f991b689c07e11e7b0b95c17a2c27a87d91584ae16c5b040",
+      "total_rows": 5078345,
+      "positive_count": 5177,
+      "negative_count": 5073168,
+      "prevalence": 0.0010194266045335635,
+      "first_timestamp": "2022-09-01 00:00:00",
+      "last_timestamp": "2022-09-18 16:18:00",
+      "splits": {
+        "train": {
+          "rows": 3047216,
+          "positive": 2299,
+          "negative": 3044917
+        },
+        "validation": {
+          "rows": 1015565,
+          "positive": 1081,
+          "negative": 1014484
+        },
+        "test": {
+          "rows": 1015564,
+          "positive": 1797,
+          "negative": 1013767
+        }
+      }
+    },
+    "li_medium": {
+      "file_name": "LI-Medium_Trans.csv",
+      "size_bytes": 2976436978,
+      "sha256": "0fc89584453c97472b1bfde7ca746e21d7167140c22a6c4875272b197a4a3910",
+      "total_rows": 31251483,
+      "positive_count": 16041,
+      "negative_count": 31235442,
+      "prevalence": 0.0005132876414216886,
+      "first_timestamp": "2022-09-01 00:00:00",
+      "last_timestamp": "2022-09-27 14:58:00",
+      "splits": {
+        "train": {
+          "rows": 18752217,
+          "positive": 8138,
+          "negative": 18744079
+        },
+        "validation": {
+          "rows": 6250154,
+          "positive": 4120,
+          "negative": 6246034
+        },
+        "test": {
+          "rows": 6249112,
+          "positive": 3783,
+          "negative": 6245329
+        }
+      }
+    }
+  },
+  "schema_compatibility": {
+    "columns_identical": true,
+    "raw_columns": [
+      "Timestamp",
+      "From Bank",
+      "Account",
+      "To Bank",
+      "Account.1",
+      "Amount Received",
+      "Receiving Currency",
+      "Amount Paid",
+      "Payment Currency",
+      "Payment Format",
+      "Is Laundering"
+    ],
+    "engineered_features_count": 23,
+    "engineered_features": [
+      "amount_paid_log",
+      "amount_received_log",
+      "amount_mismatch",
+      "same_currency",
+      "same_bank",
+      "self_transfer",
+      "payment_format_code",
+      "payment_currency_code",
+      "receiving_currency_code",
+      "minute_of_day_sin",
+      "minute_of_day_cos",
+      "day_of_week_sin",
+      "day_of_week_cos",
+      "is_weekend",
+      "is_night",
+      "sender_prior_count_log",
+      "sender_prior_amount_log",
+      "sender_seconds_since_prior_log",
+      "sender_has_prior",
+      "receiver_prior_count_log",
+      "receiver_prior_amount_log",
+      "receiver_seconds_since_prior_log",
+      "receiver_has_prior"
+    ],
+    "categorical_currencies_count": 15,
+    "categorical_currencies_match": true,
+    "categorical_formats_count": 7,
+    "categorical_formats_match": true,
+    "processed_feature_dimension": 57,
+    "target_definitions_equivalent": true,
+    "target_mapping": {
+      "0": "Legitimate",
+      "1": "Laundering"
+    }
+  },
+  "overlap_and_leakage_audit": {
+    "sample_size_evaluated": 100000,
+    "exact_duplicate_transactions_found": 0,
+    "hi_sample_distinct_accounts": 81352,
+    "li_sample_distinct_accounts": 82912,
+    "shared_accounts_count": 394,
+    "account_overlap_ratio": 0.004843150752286361,
+    "assessment": "HI-Small and LI-Medium are distinct synthetic multi-agent AML simulation realizations generated with different parameters (HI: High Illicit ratio, 0.1019%; LI: Low Illicit ratio, 0.0513%). There is zero exact transaction overlap between the datasets. Account IDs are independently sampled and pseudo-randomly assigned in the simulation. When combining datasets, a dataset_source column ('hi_small' vs 'li_medium') must be tracked."
+  },
+  "compatibility_verdict": "COMPATIBLE"
+}

@@ -1,0 +1,133 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fedsecureai"
+version = "0.1.0"
+description = "Privacy-Preserving Federated Deep Learning for Anti-Money Laundering Detection"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+
+# Runtime dependencies are pinned in requirements/base.txt, which is the
+# authoritative list. They are mirrored here only as loose constraints.
+dependencies = [
+    "PyYAML>=6.0",
+    "python-dotenv>=1.0",
+    "kaggle>=1.6",
+    "pandas>=2.2",
+    "numpy>=2.0",
+    # On a machine without an NVIDIA GPU, install from the CPU index instead of
+    # letting the resolver pick the default (CUDA) wheel - see requirements/base.txt.
+    "torch>=2.2",
+    "scikit-learn>=1.4",
+]
+
+[tool.setuptools]
+# The importable packages live in the backend source tree; `frontend/` is not
+# a Python distribution and is not packaged here.
+package-dir = { "" = "backend" }
+packages = ["domain", "application", "infrastructure", "interfaces"]
+
+# =============================================================================
+# Linting / formatting
+# =============================================================================
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["data", "logs", "reports", "models", "experiments/runs"]
+# First-party import detection for isort: project modules are rooted at
+# `backend/`, not at the repository root.
+src = ["backend"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # import sorting
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # bugbear
+    "C4",   # comprehensions
+    "SIM",  # simplify
+    "ARG",  # unused arguments
+    "PTH",  # use pathlib
+    "RET",  # return statements
+    "D",    # docstrings
+]
+ignore = [
+    "D203",  # conflicts with D211
+    "D213",  # conflicts with D212
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+# Test functions are self-describing; a docstring per test adds noise.
+# ARG002: test doubles must honour an interface, so some overrides legitimately
+# ignore a parameter the real implementation uses.
+"backend/tests/**" = ["D103", "ARG002"]
+
+# =============================================================================
+# Static typing
+# =============================================================================
+[tool.mypy]
+strict = true
+warn_unreachable = true
+exclude = ["^data/", "^logs/", "^models/", "^experiments/runs/"]
+# Project modules are rooted at `backend/`, so `import domain` resolves the same
+# way for mypy as it does at runtime (see `pythonpath` in pytest.ini and the
+# root `main.py` shim). `frontend/` is a separate root and carries its own
+# package marker, which keeps `frontend.interfaces` from colliding with the
+# backend's `interfaces`.
+mypy_path = "backend"
+# No per-module relaxations for our own code: tests are held to the same
+# strictness as source.
+#
+# `python_version` is deliberately NOT pinned. It used to be "3.11" (the runtime
+# floor in `requires-python`), but numpy's bundled stubs now require 3.12+ syntax
+# and fail to parse when mypy is told to assume 3.11 - a combination that cannot
+# occur in reality, because a Python 3.11 environment resolves to an older numpy
+# whose stubs do parse. Unpinned, mypy checks against the interpreter it runs on,
+# which is the version whose installed stubs it is actually reading. The 3.11
+# runtime floor is asserted by `requires-python` and ruff's `target-version`.
+
+# The Kaggle SDK ships no type information. This override applies to the
+# third-party package only, never to project modules.
+[[tool.mypy.overrides]]
+module = ["kaggle.*"]
+ignore_missing_imports = true
+
+# scikit-learn ships no py.typed marker either. Only three functions are imported
+# from it (average_precision_score, roc_auc_score, precision_recall_curve), and
+# each result is cast to float or sliced as an array at the call site, so nothing
+# untyped escapes the adapter.
+[[tool.mypy.overrides]]
+module = ["sklearn.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["scipy.*"]
+ignore_missing_imports = true
+
+# =============================================================================
+# Coverage
+# =============================================================================
+[tool.coverage.run]
+source = [
+    "backend/domain",
+    "backend/application",
+    "backend/infrastructure",
+    "backend/interfaces",
+]
+omit = ["*/__init__.py"]
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+
+# NOTE: pytest configuration lives in pytest.ini (single source of truth) and is
+# intentionally not duplicated here.

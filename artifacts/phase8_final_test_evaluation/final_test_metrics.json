@@ -1,0 +1,129 @@
+{
+  "timestamp": "2026-10-18T05:19:16.384832+00:00",
+  "dataset": "IBM Transactions for Anti-Money Laundering (HI-Small)",
+  "split": "test",
+  "sequence_count": 1015564,
+  "positive_count": 1797,
+  "negative_count": 1013767,
+  "prevalence": 0.0017694601226510588,
+  "ensemble_config": {
+    "alpha": 1.0,
+    "frozen_threshold": 0.13,
+    "fixed_threshold": 0.5,
+    "iid_model_id": "federated_iid_fedavg_lstm_seed42_20260918T130515",
+    "non_iid_model_id": "federated_non_iid_fedavg_bilstm_seed42_20260922T162100"
+  },
+  "metrics": {
+    "Best_IID_FedAvg_LSTM": {
+      "model_name": "Best_IID_FedAvg_LSTM",
+      "pr_auc": 0.5437487622964784,
+      "roc_auc": 0.9768667654460036,
+      "brier_score": 0.0010918626787989102,
+      "expected_calibration_error": 0.0004938644397588376,
+      "evaluations": {
+        "threshold_0.13": {
+          "threshold": 0.13,
+          "accuracy": 0.9987465093288065,
+          "f1": 0.5718129835183317,
+          "precision": 0.7227891156462585,
+          "recall": 0.4730105731775181,
+          "tp": 850,
+          "fp": 326,
+          "tn": 1013441,
+          "fn": 947,
+          "false_positive_rate": 0.0003215729058057719,
+          "missed_positive_rate": 0.526989426822482,
+          "false_alerts_per_10k": 3.210038953724236
+        },
+        "threshold_0.50": {
+          "threshold": 0.5,
+          "accuracy": 0.9987839269607823,
+          "f1": 0.5097260817784836,
+          "precision": 0.889196675900277,
+          "recall": 0.3572621035058431,
+          "tp": 642,
+          "fp": 80,
+          "tn": 1013687,
+          "fn": 1155,
+          "false_positive_rate": 7.891359651675385e-05,
+          "missed_positive_rate": 0.6427378964941569,
+          "false_alerts_per_10k": 0.7877396205458248
+        }
+      }
+    },
+    "Best_NonIID_FedAvg_BiLSTM": {
+      "model_name": "Best_NonIID_FedAvg_BiLSTM",
+      "pr_auc": 0.2433659520767326,
+      "roc_auc": 0.9303116600878686,
+      "brier_score": 0.0026139707921902676,
+      "expected_calibration_error": 0.006393277140060083,
+      "evaluations": {
+        "threshold_0.13": {
+          "threshold": 0.13,
+          "accuracy": 0.9845721195316101,
+          "f1": 0.11339972838388411,
+          "precision": 0.06311811023622048,
+          "recall": 0.5575959933222037,
+          "tp": 1002,
+          "fp": 14873,
+          "tn": 998894,
+          "fn": 795,
+          "false_positive_rate": 0.014671024012421,
+          "missed_positive_rate": 0.44240400667779634,
+          "false_alerts_per_10k": 146.45064220472565
+        },
+        "threshold_0.50": {
+          "threshold": 0.5,
+          "accuracy": 0.9974496929784828,
+          "f1": 0.25745412844036697,
+          "precision": 0.26552335895919577,
+          "recall": 0.2498608792431831,
+          "tp": 449,
+          "fp": 1242,
+          "tn": 1012525,
+          "fn": 1348,
+          "false_positive_rate": 0.0012251335859226036,
+          "missed_positive_rate": 0.7501391207568169,
+          "false_alerts_per_10k": 12.22965760897393
+        }
+      }
+    },
+    "Frozen_Hybrid_Ensemble": {
+      "model_name": "Frozen_Hybrid_Ensemble",
+      "pr_auc": 0.5437487622964784,
+      "roc_auc": 0.9768667654460036,
+      "brier_score": 0.0010918626787989102,
+      "expected_calibration_error": 0.0004938644397588376,
+      "evaluations": {
+        "threshold_0.13": {
+          "threshold": 0.13,
+          "accuracy": 0.9987465093288065,
+          "f1": 0.5718129835183317,
+          "precision": 0.7227891156462585,
+          "recall": 0.4730105731775181,
+          "tp": 850,
+          "fp": 326,
+          "tn": 1013441,
+          "fn": 947,
+          "false_positive_rate": 0.0003215729058057719,
+          "missed_positive_rate": 0.526989426822482,
+          "false_alerts_per_10k": 3.210038953724236
+        },
+        "threshold_0.50": {
+          "threshold": 0.5,
+          "accuracy": 0.9987839269607823,
+          "f1": 0.5097260817784836,
+          "precision": 0.889196675900277,
+          "recall": 0.3572621035058431,
+          "tp": 642,
+          "fp": 80,
+          "tn": 1013687,
+          "fn": 1155,
+          "false_positive_rate": 7.891359651675385e-05,
+          "missed_positive_rate": 0.6427378964941569,
+          "false_alerts_per_10k": 0.7877396205458248
+        }
+      }
+    }
+  }
+}

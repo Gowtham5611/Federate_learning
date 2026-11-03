@@ -1,0 +1,61 @@
+{
+  "config_num": 5,
+  "distribution": "iid",
+  "model": "bilstm",
+  "algorithm": "fedavg",
+  "mu": 0.0,
+  "status": "COMPLETED",
+  "started_at_utc": "2026-10-20T11:10:26.081024+00:00",
+  "completed_at_utc": "2026-10-20T11:31:36.560229+00:00",
+  "duration_seconds": 1270.47,
+  "best_round": 5,
+  "best_val_pr_auc": 0.17689950210601818,
+  "checkpoint_sha256": "bded77c75fcf89ea24af295fd7a5c28110744bf226a1c4c0a386f9924d1087d2",
+  "test_metrics": {
+    "pr_auc": 0.2533981790525074,
+    "roc_auc": 0.9695171364873152,
+    "f1": 0.31678945327646374,
+    "precision": 0.5941818181818181,
+    "recall": 0.21596616441977268,
+    "threshold": 0.23848293721675873,
+    "alerts_per_10k": 0.8934677420516998,
+    "test_loss": 0.0029856331217170758
+  },
+  "round_metrics": [
+    {
+      "round": 1,
+      "val_loss": 0.003998667180867549,
+      "val_pr_auc": 0.05802259637905549,
+      "val_roc_auc": 0.954412786741061,
+      "time_sec": 255.62
+    },
+    {
+      "round": 2,
+      "val_loss": 0.0035398664264587234,
+      "val_pr_auc": 0.1391355521427335,
+      "val_roc_auc": 0.9661071840426672,
+      "time_sec": 243.6
+    },
+    {
+      "round": 3,
+      "val_loss": 0.0034750512737787434,
+      "val_pr_auc": 0.15821344808876545,
+      "val_roc_auc": 0.9679339959828988,
+      "time_sec": 243.22
+    },
+    {
+      "round": 4,
+      "val_loss": 0.0033963542770445343,
+      "val_pr_auc": 0.16894380793571132,
+      "val_roc_auc": 0.9696872867064001,
+      "time_sec": 245.71
+    },
+    {
+      "round": 5,
+      "val_loss": 0.0033463339599578974,
+      "val_pr_auc": 0.17689950210601818,
+      "val_roc_auc": 0.9708970917983772,
+      "time_sec": 244.99
+    }
+  ]
+}

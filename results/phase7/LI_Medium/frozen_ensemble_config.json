@@ -1,0 +1,31 @@
+{
+  "dataset": "LI-Medium",
+  "iid_model": {
+    "checkpoint_path": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\results\\LI_Medium_Results\\checkpoints\\config_5\\global_best.pt",
+    "checkpoint_sha256": "bded77c75fcf89ea24af295fd7a5c28110744bf226a1c4c0a386f9924d1087d2",
+    "frozen_standalone_threshold": 0.2384829968214035,
+    "validation_pr_auc": 0.1768994987778397
+  },
+  "noniid_model": {
+    "checkpoint_path": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\results\\LI_Medium_Results\\checkpoints\\config_9\\global_best.pt",
+    "checkpoint_sha256": "91ea59ef4ad8d183006bda47c44b91d7ce8ea1f52c43f3f548b2763a2b0f3653",
+    "frozen_standalone_threshold": 0.3342503607273102,
+    "validation_pr_auc": 0.0504994209541733
+  },
+  "ensemble": {
+    "formula": "P_ensemble = alpha * P_IID + (1 - alpha) * P_NonIID",
+    "selected_alpha": 1.0,
+    "frozen_threshold": 0.2384829968214035,
+    "calibration_applied": "NONE (continuous probabilities preserved)",
+    "validation_pr_auc": 0.1768994987778397,
+    "validation_roc_auc": 0.9708970904577208,
+    "validation_f1": 0.2157957718388512,
+    "validation_alerts_per_10k": 1.4303647558124168
+  },
+  "provenance": {
+    "validation_split_path": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\data\\processed\\ibm_aml\\LI-Medium\\validation\\transactions.csv",
+    "validation_split_sha256": "0e4c0369464d91ab1c3c672a105dc06a8c100f1ec341d6cb8f6820a8fc5bbcb1",
+    "freezing_timestamp": "2026-10-21T22:11:37.341439",
+    "tie_breaking_policy": "pr_auc_descending, then f1_descending, then recall_descending"
+  }
+}

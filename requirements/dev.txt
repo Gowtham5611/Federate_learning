@@ -1,0 +1,12 @@
+# =============================================================================
+# Development dependencies
+# =============================================================================
+# Inherits base + test rather than restating them, so no package is pinned
+# in two places.
+# =============================================================================
+-r test.txt
+
+ruff>=0.5.0
+mypy>=1.10
+types-PyYAML>=6.0.12
+pandas-stubs>=2.2

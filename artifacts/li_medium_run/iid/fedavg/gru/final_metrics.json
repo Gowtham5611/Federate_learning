@@ -1,0 +1,13 @@
+{
+  "config_num": 1,
+  "experiment_id": "fedsecureai_li_iid_fedavg_gru_mu-na_seed-42",
+  "best_round": 5,
+  "best_val_pr_auc": 0.0053810579443654095,
+  "test_pr_auc": 0.0006902281095938708,
+  "test_roc_auc": 0.5205091720772452,
+  "test_f1": 0.0,
+  "test_precision": 0.0,
+  "test_recall": 0.0,
+  "decision_threshold": 0.8588013052940369,
+  "duration_seconds": 93.35978300007991
+}
