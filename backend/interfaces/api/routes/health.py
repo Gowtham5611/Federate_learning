@@ -38,7 +38,9 @@ except ModuleNotFoundError:
 
 router = APIRouter(tags=["Health & Metadata"])
 
-BASE_DIR = Path(__file__).resolve().parents[4]
+_BACKEND_DIR = Path(__file__).resolve().parents[3]
+_ROOT_DIR = _BACKEND_DIR.parent
+BASE_DIR = _BACKEND_DIR if (_BACKEND_DIR / "data").exists() else _ROOT_DIR
 
 
 def _get_expanded_feature_names(dataset: str) -> List[str]:

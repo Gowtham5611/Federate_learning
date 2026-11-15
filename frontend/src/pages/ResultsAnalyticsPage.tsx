@@ -1,5 +1,9 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { apiService } from '../services/apiService';
 import { CsvEvaluateResponse, MultiModelEvaluateResponse } from '../types/api';
+import { ValidityBanner } from '../components/ValidityBanner';
+import { WhyNoAlertsCard } from '../components/WhyNoAlertsCard';
+import { type OperatingPointKey } from '../components/OperatingPointSelector';
 import {
   BarChart2,
   TrendingUp,
@@ -12,11 +16,14 @@ import {
   Sliders,
   RefreshCw,
   Download,
-  Layers,
-  Award,
   HelpCircle,
+  FileText,
 } from 'lucide-react';
 import { formatMetric, formatPercent, formatRatioPercent } from '../utils/formatters';
+import { FlaggedTransactionsTable, TableFilterMode } from '../components/FlaggedTransactionsTable';
+import { PerformanceHeatmap } from '../components/PerformanceHeatmap';
+import { EvaluationPieChart } from '../components/EvaluationPieChart';
+import { TransactionRiskHeatmap } from '../components/TransactionRiskHeatmap';
 
 interface ResultsAnalyticsPageProps {
   result: CsvEvaluateResponse | null;
@@ -52,12 +59,67 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
 
   const defaultThreshold = result.decision_threshold ?? 0.337784;
   const [threshold, setThreshold] = useState<number>(defaultThreshold);
+  const [sliderDisplayVal, setSliderDisplayVal] = useState<number>(defaultThreshold);
+  const sliderDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [selectedOperatingPoint, setSelectedOperatingPoint] = useState<OperatingPointKey>('frozen');
+  const [isManualSliderActive, setIsManualSliderActive] = useState<boolean>(false);
   const [showExplainPanel, setShowExplainPanel] = useState<boolean>(false);
+  const [activeTableFilter, setActiveTableFilter] = useState<TableFilterMode>('flagged');
+  const [heatmapCellFilter, setHeatmapCellFilter] = useState<{
+    timeBucket: string;
+    riskBand: string;
+    minScore: number;
+    maxScore: number;
+  } | null>(null);
+
+  // Active operating point helper
+  const activeOp = useMemo(() => {
+    const ops = result.operating_points || result.evaluation_metrics?.operating_points;
+    if (!ops) return null;
+    if (selectedOperatingPoint === 'zero_diagnostic') return ops.zero_diagnostic || null;
+    if (selectedOperatingPoint === 'budget_500') return ops.alert_budgets?.['500'] || null;
+    if (selectedOperatingPoint === 'budget_10') return ops.alert_budgets?.['10'] || null;
+    if (selectedOperatingPoint === 'budget_50') return ops.alert_budgets?.['50'] || null;
+    if (selectedOperatingPoint === 'budget_100') return ops.alert_budgets?.['100'] || null;
+    if (selectedOperatingPoint === 'best_f1') return ops.best_f1_on_file || null;
+    return ops.frozen || null;
+  }, [result, selectedOperatingPoint]);
 
   // Sync threshold with new result
   useEffect(() => {
     setThreshold(result.decision_threshold ?? 0.337784);
+    setSelectedOperatingPoint('frozen');
+    setIsManualSliderActive(false);
   }, [result.decision_threshold, result.filename]);
+
+  const handleSelectOperatingPoint = (point: OperatingPointKey) => {
+    setSelectedOperatingPoint(point);
+    setIsManualSliderActive(false);
+    const ops = result.operating_points || result.evaluation_metrics?.operating_points;
+    if (!ops) return;
+
+    if (point === 'zero_diagnostic') {
+      if (ops.zero_diagnostic) {
+        setThreshold(ops.zero_diagnostic.threshold);
+      } else {
+        setThreshold(0.0);
+      }
+    } else if (point === 'budget_500' && ops.alert_budgets?.['500']) {
+      setThreshold(ops.alert_budgets['500'].threshold);
+    } else if (point === 'budget_10' && ops.alert_budgets?.['10']) {
+      setThreshold(ops.alert_budgets['10'].threshold);
+    } else if (point === 'budget_50' && ops.alert_budgets?.['50']) {
+      setThreshold(ops.alert_budgets['50'].threshold);
+    } else if (point === 'budget_100' && ops.alert_budgets?.['100']) {
+      setThreshold(ops.alert_budgets['100'].threshold);
+    } else if (point === 'best_f1' && ops.best_f1_on_file) {
+      setThreshold(ops.best_f1_on_file.threshold);
+    } else if (ops.frozen) {
+      setThreshold(ops.frozen.threshold);
+    } else {
+      setThreshold(defaultThreshold);
+    }
+  };
 
   const hasMetrics = Boolean(result.has_labels && result.evaluation_metrics);
   const staticMetrics = result.evaluation_metrics;
@@ -66,6 +128,54 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
   const computed = useMemo(() => {
     const preds = result.predictions || [];
     const total = preds.length > 0 ? preds.length : (result.total_rows || result.evaluated_sequences || 0);
+
+    // If an operating point is selected and the user has not manually adjusted the continuous slider,
+    // use the exact authoritative operating point metrics from server-side evaluation
+    if (!isManualSliderActive && activeOp) {
+      const tp = activeOp.tp ?? 0;
+      const fp = activeOp.fp ?? 0;
+      const fn = activeOp.fn ?? 0;
+      const tn = activeOp.tn ?? 0;
+      const flagged = activeOp.alerts ?? (tp + fp);
+      const cleared = total - flagged;
+      const precision = activeOp.precision ?? (flagged > 0 ? tp / flagged : null);
+      const recall = activeOp.recall ?? ((tp + fn) > 0 ? tp / (tp + fn) : 0);
+      const specificity = activeOp.specificity ?? ((tn + fp) > 0 ? tn / (tn + fp) : 0);
+      const f1_score = activeOp.f1_score ?? (precision && recall ? (2 * precision * recall) / (precision + recall) : 0);
+      const accuracy = activeOp.accuracy ?? ((tp + tn) / total);
+      const balanced_accuracy = activeOp.balanced_accuracy ?? ((recall + specificity) / 2);
+      const mcc = activeOp.mcc ?? 0;
+      const cohen_kappa = activeOp.cohen_kappa ?? 0;
+      const fpr = fp + tn > 0 ? fp / (fp + tn) : 0;
+      const fnr = tp + fn > 0 ? fn / (tp + fn) : 0;
+      const fdr = tp + fp > 0 ? fp / (tp + fp) : 0;
+      const npv = tn + fn > 0 ? tn / (tn + fn) : 0;
+
+      return {
+        total,
+        flagged,
+        cleared,
+        tp,
+        fp,
+        fn,
+        tn,
+        accuracy,
+        precision,
+        recall,
+        sensitivity: recall,
+        specificity,
+        f1_score,
+        f2_score: activeOp.f2_score ?? staticMetrics?.f2_score ?? null,
+        balanced_accuracy,
+        mcc,
+        cohen_kappa,
+        fpr,
+        fnr,
+        fdr,
+        npv,
+        alertCount: flagged,
+      };
+    }
 
     let tp = 0;
     let fp = 0;
@@ -154,11 +264,15 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
     const f1_score =
       precision !== null && recall > 0 && precision + recall > 0
         ? (2 * precision * recall) / (precision + recall)
+        : (tp === 0 && (tp + fn) > 0)
+        ? 0.0
         : null;
 
     const f2_score =
       precision !== null && recall > 0 && 4 * precision + recall > 0
         ? (5 * precision * recall) / (4 * precision + recall)
+        : (tp === 0 && (tp + fn) > 0)
+        ? 0.0
         : null;
 
     const balanced_accuracy = (recall + specificity) / 2;
@@ -255,8 +369,6 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
     URL.revokeObjectURL(url);
   };
 
-  const presetThresholds = [0.10, 0.20, 0.30, 0.337784, 0.35, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90];
-
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
@@ -272,7 +384,20 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => {
+              const pid = result.prediction_id || result.download_id;
+              if (pid) {
+                window.open(apiService.getPdfReportUrl(pid, selectedOperatingPoint, activeTableFilter), '_blank');
+              }
+            }}
+            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/60 text-indigo-300 text-xs font-semibold transition cursor-pointer"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>Download Evaluation Report (PDF)</span>
+          </button>
+
           <button
             onClick={handleDownloadPredictions}
             className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-300 text-xs font-semibold transition cursor-pointer"
@@ -291,79 +416,132 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
         </div>
       </div>
 
-      {/* Interactive Decision Threshold Adjustment Bar */}
+      {/* Upload Validity Banner */}
+      <ValidityBanner banner={result.validity_banner} />
+
+      {/* Diagnostic "Why no alerts?" card when alerts <= 5 or payload present */}
+      <WhyNoAlertsCard
+        whyNoAlerts={result.why_no_alerts}
+        alertCount={computed.alertCount}
+        threshold={threshold}
+        onSelectOperatingPoint={handleSelectOperatingPoint}
+      />
+
+      {/* Active Decision Threshold Control (Single Unified Setting) */}
       <div className="bg-slate-900/90 border border-indigo-500/30 rounded-2xl p-5 shadow-xl space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center space-x-2.5">
             <Sliders className="w-5 h-5 text-indigo-400" />
             <div>
-              <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-                <span>Interactive Decision Threshold (What-If Sensitivity Analysis)</span>
-                <span className="px-2 py-0.5 rounded text-[11px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-700/60">
+              <h3 className="text-sm font-bold text-white flex items-center space-x-2 flex-wrap gap-1">
+                <span>Active Decision Threshold:</span>
+                <span className={`px-2.5 py-0.5 rounded text-xs font-mono font-bold border ${
+                  Math.abs(threshold - 0.0) < 1e-4
+                    ? 'bg-amber-950 text-amber-300 border-amber-600/60'
+                    : 'bg-indigo-950 text-indigo-300 border-indigo-700/60'
+                }`}>
                   θ = {threshold.toFixed(4)}
+                  {Math.abs(threshold - 0.0) < 1e-4
+                    ? ' (Diagnostic Baseline)'
+                    : Math.abs(threshold - defaultThreshold) < 1e-4
+                    ? ' (Operational Serving)'
+                    : ' (Custom Cutoff)'}
                 </span>
-                {Math.abs(threshold - defaultThreshold) > 1e-4 && (
-                  <span className="text-[10px] text-amber-400 font-mono">
-                    (Model Default: {defaultThreshold.toFixed(4)})
+              </h3>
+              <p className="text-[11px] text-slate-400 mt-1">
+                {Math.abs(threshold - 0.0) < 1e-4 ? (
+                  <span className="text-amber-300">
+                    Diagnostic setting active: decision rule <code className="font-mono font-bold">score ≥ 0.0</code> flags every valid non-negative score ({computed.flagged.toLocaleString()} flagged). This is a diagnostic baseline and not an operational serving setting.
+                  </span>
+                ) : (
+                  <span>
+                    Frozen operational serving threshold: <code className="text-indigo-300 font-mono font-bold">θ* = {defaultThreshold.toFixed(4)}</code> (validation-optimal F1). All displayed metrics, confusion counts, pie charts, heatmap, and transaction rows reflect this active threshold only.
                   </span>
                 )}
-              </h3>
-              <p className="text-[11px] text-slate-400">
-                Operational serving threshold frozen at θ* = {defaultThreshold.toFixed(4)} (validation-optimal F1). Adjust slider to explore trade-offs between Caught Laundering (Recall), False Alarms (Alerts/10k), and Precision.
               </p>
             </div>
           </div>
 
-          {Math.abs(threshold - defaultThreshold) > 1e-4 && (
-            <button
-              onClick={() => setThreshold(defaultThreshold)}
-              className="flex items-center space-x-1 text-xs text-indigo-400 hover:text-indigo-300 font-mono transition cursor-pointer"
-            >
-              <RefreshCw className="w-3 h-3" />
-              <span>Reset to Default ({defaultThreshold.toFixed(4)})</span>
-            </button>
-          )}
-        </div>
+          <div className="flex items-center space-x-2 shrink-0">
+            {Math.abs(threshold - 0.0) < 1e-4 ? (
+              <button
+                type="button"
+                onClick={() => {
+                  if (sliderDebounceRef.current) clearTimeout(sliderDebounceRef.current);
+                  setThreshold(defaultThreshold);
+                  setSliderDisplayVal(defaultThreshold);
+                  setSelectedOperatingPoint('frozen');
+                  setIsManualSliderActive(false);
+                }}
+                className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 transition flex items-center space-x-1.5 cursor-pointer"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>Return to Serving Threshold ({defaultThreshold.toFixed(4)})</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  if (sliderDebounceRef.current) clearTimeout(sliderDebounceRef.current);
+                  setThreshold(0.0);
+                  setSliderDisplayVal(0.0);
+                  setSelectedOperatingPoint('zero_diagnostic');
+                  setIsManualSliderActive(true);
+                }}
+                className="px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-amber-950/60 text-amber-300 border border-amber-700/50 text-xs font-semibold transition flex items-center space-x-1.5 cursor-pointer"
+              >
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                <span>Threshold 0 Diagnostic</span>
+              </button>
+            )}
 
-        {/* Slider Input */}
-        <div className="space-y-2">
-          <input
-            type="range"
-            min="0.10"
-            max="0.90"
-            step="0.005"
-            value={threshold}
-            onChange={(e) => setThreshold(parseFloat(e.target.value))}
-            className="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-indigo-500 border border-slate-800"
-          />
-          <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
-            <span>0.10 (Aggressive Detection / High Recall)</span>
-            <span>0.50 (Balanced Baseline)</span>
-            <span>0.90 (Conservative / High Precision)</span>
+            {Math.abs(threshold - defaultThreshold) > 1e-4 && Math.abs(threshold - 0.0) >= 1e-4 && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (sliderDebounceRef.current) clearTimeout(sliderDebounceRef.current);
+                  setThreshold(defaultThreshold);
+                  setSliderDisplayVal(defaultThreshold);
+                  setSelectedOperatingPoint('frozen');
+                  setIsManualSliderActive(false);
+                }}
+                className="px-2.5 py-1.5 rounded-xl text-xs text-indigo-400 hover:text-indigo-300 font-mono transition border border-indigo-800/50 bg-indigo-950/40 cursor-pointer"
+              >
+                Reset ({defaultThreshold.toFixed(4)})
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Quick Presets */}
-        <div className="flex items-center space-x-1.5 flex-wrap gap-1.5 pt-1">
-          <span className="text-[11px] font-mono text-slate-400 mr-2">Quick Presets:</span>
-          {presetThresholds.map((preset) => {
-            const isMatch = Math.abs(threshold - preset) < 0.005;
-            const isDefault = Math.abs(preset - defaultThreshold) < 0.001;
-            return (
-              <button
-                key={preset}
-                onClick={() => setThreshold(preset)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-mono transition cursor-pointer ${
-                  isMatch
-                    ? 'bg-indigo-600 text-white font-bold shadow-md shadow-indigo-600/30'
-                    : 'bg-slate-950 text-slate-300 hover:bg-slate-800 border border-slate-800'
-                }`}
-              >
-                {preset.toFixed(isDefault ? 4 : 2)}
-                {isDefault && ' ★'}
-              </button>
-            );
-          })}
+        {/* Continuous Active Slider */}
+        <div className="space-y-1.5">
+          <input
+            type="range"
+            min="0.00"
+            max="1.00"
+            step="0.005"
+            value={sliderDisplayVal}
+            onChange={(e) => {
+              const val = parseFloat(e.target.value);
+              setSliderDisplayVal(val);
+              setIsManualSliderActive(true);
+              if (sliderDebounceRef.current) clearTimeout(sliderDebounceRef.current);
+              sliderDebounceRef.current = setTimeout(() => {
+                setThreshold(val);
+                if (Math.abs(val - 0.0) < 1e-4) {
+                  setSelectedOperatingPoint('zero_diagnostic');
+                } else if (Math.abs(val - defaultThreshold) < 1e-4) {
+                  setSelectedOperatingPoint('frozen');
+                }
+              }, 60);
+            }}
+            className="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-indigo-500 border border-slate-800"
+          />
+          <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
+            <span>0.00 (Diagnostic: Flags All Valid Scores)</span>
+            <span>θ* = {defaultThreshold.toFixed(4)} (Operational Serving Threshold)</span>
+            <span>1.00 (Zero Tolerance / 0 Alerts)</span>
+          </div>
         </div>
       </div>
 
@@ -421,12 +599,12 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
             {/* 1. Headline PR-AUC */}
             <div className="bg-slate-900 border border-emerald-500/30 rounded-2xl p-4 shadow-md bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/20">
-              <span className="text-[10px] text-emerald-400 font-mono uppercase font-bold block">★ Headline PR-AUC</span>
+              <span className="text-[10px] text-emerald-400 font-mono uppercase font-bold block">★ Headline PR-AUC (Threshold-Invariant)</span>
               <span className="text-2xl font-black font-mono text-emerald-400 mt-1 block">
                 {formatMetric(staticMetrics.pr_auc, 4)}
               </span>
               <span className="text-[10px] text-slate-400 font-mono block truncate">
-                {staticMetrics.pr_auc_lift ? `${staticMetrics.pr_auc_lift.toFixed(1)}x Lift` : 'Primary Metric'}
+                {staticMetrics.pr_auc_lift ? `${staticMetrics.pr_auc_lift.toFixed(1)}x Lift` : 'Ranking Invariant'}
                 {staticMetrics.pr_auc_ci_lower ? ` [${staticMetrics.pr_auc_ci_lower.toFixed(2)}, ${staticMetrics.pr_auc_ci_upper?.toFixed(2)}]` : ''}
               </span>
             </div>
@@ -513,7 +691,7 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
             </div>
 
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">ROC-AUC</span>
+              <span className="text-[10px] text-slate-400 font-mono uppercase block">ROC-AUC (Threshold-Invariant)</span>
               <span className="text-xl font-black font-mono text-indigo-400 mt-1 block">
                 {formatMetric(staticMetrics.roc_auc, 4)}
               </span>
@@ -589,41 +767,100 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
           {/* Dynamic Confusion Matrix and Probability Discrimination */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Confusion Matrix */}
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-                  <Target className="w-4 h-4 text-emerald-400" />
-                  <span>Dynamic Confusion Matrix (at θ = {threshold.toFixed(4)})</span>
-                </h3>
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                <div className="flex items-center space-x-2">
+                  <Target className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <h3 className="text-sm font-bold text-white tracking-tight">
+                    Confusion Matrix
+                  </h3>
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border ${
+                      !isManualSliderActive && selectedOperatingPoint === 'frozen'
+                        ? 'bg-indigo-950 text-indigo-300 border-indigo-700/60'
+                        : !isManualSliderActive && selectedOperatingPoint === 'budget_500'
+                        ? 'bg-emerald-950 text-emerald-300 border-emerald-700/60'
+                        : 'bg-amber-950 text-amber-300 border-amber-700/60'
+                    }`}
+                  >
+                    {!isManualSliderActive && selectedOperatingPoint === 'frozen'
+                      ? 'FIXED THRESHOLD (θ* = 0.3378)'
+                      : !isManualSliderActive && selectedOperatingPoint === 'budget_500'
+                      ? 'FIXED CAPACITY: 50 / 1k (TOP-1,000)'
+                      : `CUSTOM CUTOFF (θ = ${threshold.toFixed(4)})`}
+                  </span>
+                </div>
                 <span className="text-xs font-mono text-slate-400">
-                  Total Evaluated: <strong>{computed.total}</strong>
+                  Total: <strong className="text-white">{computed.total.toLocaleString()}</strong> rows
                 </span>
               </div>
 
+              {/* 2x2 Grid with high contrast & explicit subtitles */}
               <div className="grid grid-cols-2 gap-3 text-center font-mono">
-                <div className="bg-emerald-950/40 border border-emerald-800/60 p-4 rounded-2xl">
-                  <span className="text-[10px] text-emerald-400 font-bold block">TRUE POSITIVES (TP)</span>
-                  <span className="text-3xl font-black text-white mt-1 block">{computed.tp}</span>
-                  <span className="text-[10px] text-slate-400 mt-1 block">Laundering Correctly Flagged</span>
+                <div className="bg-emerald-950/40 border border-emerald-800/60 p-3.5 sm:p-4 rounded-2xl">
+                  <span className="text-[10px] text-emerald-400 font-bold block uppercase tracking-wider">
+                    TRUE POSITIVES (TP)
+                  </span>
+                  <span className="text-2xl sm:text-3xl font-black text-white mt-1 block">
+                    {computed.tp.toLocaleString()}
+                  </span>
+                  <span className="text-[10px] text-slate-400 mt-1 block">
+                    Laundering Correctly Flagged
+                  </span>
                 </div>
 
-                <div className="bg-amber-950/40 border border-amber-800/60 p-4 rounded-2xl">
-                  <span className="text-[10px] text-amber-400 font-bold block">FALSE POSITIVES (FP)</span>
-                  <span className="text-3xl font-black text-white mt-1 block">{computed.fp}</span>
-                  <span className="text-[10px] text-slate-400 mt-1 block">False Alarms (Legitimate Flagged)</span>
+                <div className="bg-amber-950/40 border border-amber-800/60 p-3.5 sm:p-4 rounded-2xl">
+                  <span className="text-[10px] text-amber-400 font-bold block uppercase tracking-wider">
+                    FALSE POSITIVES (FP)
+                  </span>
+                  <span className="text-2xl sm:text-3xl font-black text-white mt-1 block">
+                    {computed.fp.toLocaleString()}
+                  </span>
+                  <span className="text-[10px] text-slate-400 mt-1 block">
+                    False Alarms (Legitimate Flagged)
+                  </span>
                 </div>
 
-                <div className="bg-rose-950/40 border border-rose-800/60 p-4 rounded-2xl">
-                  <span className="text-[10px] text-rose-400 font-bold block">FALSE NEGATIVES (FN)</span>
-                  <span className="text-3xl font-black text-white mt-1 block">{computed.fn}</span>
-                  <span className="text-[10px] text-slate-400 mt-1 block">Missed Laundering Transactions</span>
+                <div className="bg-rose-950/40 border border-rose-800/60 p-3.5 sm:p-4 rounded-2xl">
+                  <span className="text-[10px] text-rose-400 font-bold block uppercase tracking-wider">
+                    FALSE NEGATIVES (FN)
+                  </span>
+                  <span className="text-2xl sm:text-3xl font-black text-white mt-1 block">
+                    {computed.fn.toLocaleString()}
+                  </span>
+                  <span className="text-[10px] text-slate-400 mt-1 block">
+                    Missed Laundering Transactions
+                  </span>
                 </div>
 
-                <div className="bg-slate-950 border border-slate-800 p-4 rounded-2xl">
-                  <span className="text-[10px] text-slate-400 font-bold block">TRUE NEGATIVES (TN)</span>
-                  <span className="text-3xl font-black text-white mt-1 block">{computed.tn}</span>
-                  <span className="text-[10px] text-slate-400 mt-1 block">Legitimate Correctly Cleared</span>
+                <div className="bg-slate-950 border border-slate-800 p-3.5 sm:p-4 rounded-2xl">
+                  <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wider">
+                    TRUE NEGATIVES (TN)
+                  </span>
+                  <span className="text-2xl sm:text-3xl font-black text-white mt-1 block">
+                    {computed.tn.toLocaleString()}
+                  </span>
+                  <span className="text-[10px] text-slate-400 mt-1 block">
+                    Legitimate Correctly Cleared
+                  </span>
                 </div>
+              </div>
+
+              {/* Mathematical Arithmetic Reconciliation Bar */}
+              <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800/80 text-[10px] sm:text-[11px] font-mono text-slate-300 space-y-1">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-900 pb-1">
+                  <span>Actual Positives (TP+FN): <strong className="text-white">{(computed.tp + computed.fn).toLocaleString()}</strong></span>
+                  <span>Actual Negatives (FP+TN): <strong className="text-white">{(computed.fp + computed.tn).toLocaleString()}</strong></span>
+                  <span>Alerts (TP+FP): <strong className="text-amber-400">{computed.alertCount.toLocaleString()}</strong></span>
+                  <span>Sum: <strong className="text-emerald-400">{(computed.tp + computed.fp + computed.fn + computed.tn).toLocaleString()}</strong></span>
+                </div>
+                <p className="text-[10px] text-slate-400 leading-normal pt-0.5">
+                  {!isManualSliderActive && selectedOperatingPoint === 'frozen'
+                    ? 'Fixed threshold policy: all scores ≥ 0.3378 generate alerts (2,016 alerts). Alert volume is unconstrained.'
+                    : !isManualSliderActive && selectedOperatingPoint === 'budget_500'
+                    ? 'Fixed capacity policy: strictly caps alerts at top 1,000 transactions (50 per 1,000 tx). Effective cutoff score is ≈ 0.4645.'
+                    : `Continuous slider active at cutoff θ = ${threshold.toFixed(4)}. Alert count: ${computed.alertCount.toLocaleString()}.`}
+                </p>
               </div>
             </div>
 
@@ -833,6 +1070,30 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
               </div>
             </div>
           )}
+
+          {/* Empirical Distribution Pie Charts (Confusion, Actual, Predicted) */}
+          <EvaluationPieChart
+            tp={computed.tp}
+            fp={computed.fp}
+            fn={computed.fn}
+            tn={computed.tn}
+            totalRows={computed.total}
+            hasLabels={hasMetrics}
+            threshold={threshold}
+            activeModeName={
+              selectedOperatingPoint === 'budget_500'
+                ? 'Fixed Capacity: 50 alerts / 1,000 tx (1,000 Alerts Capped)'
+                : selectedOperatingPoint === 'budget_10'
+                ? 'Fixed Capacity: 10 alerts / 10k tx'
+                : selectedOperatingPoint === 'budget_50'
+                ? 'Fixed Capacity: 50 alerts / 10k tx'
+                : selectedOperatingPoint === 'budget_100'
+                ? 'Fixed Capacity: 100 alerts / 10k tx'
+                : selectedOperatingPoint === 'best_f1'
+                ? 'Best F1 On Batch (What-If)'
+                : `Fixed Canonical Threshold (θ = ${threshold.toFixed(4)})`
+            }
+          />
         </div>
       ) : (
         /* Scenario B: Unlabeled CSV Notice */
@@ -877,95 +1138,28 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
         </div>
       )}
 
-      {/* Multi-Model Comparison Table (When Multi-Model Evaluation is run) */}
+      {/* Multi-Model Comparison (When Multi-Model Evaluation is run) */}
       {multiModelResult && multiModelResult.models && multiModelResult.models.length > 0 && (
-        <div className="bg-slate-900 border border-violet-700/50 rounded-3xl p-6 shadow-xl space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
-            <div>
-              <h3 className="text-base font-bold text-white flex items-center space-x-2">
-                <Layers className="w-5 h-5 text-violet-400" />
-                <span>Multi-Model Comparative Evaluation ({multiModelResult.models_evaluated_count} Models)</span>
-              </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Identical preprocessed sequences ({multiModelResult.total_transactions} tx) evaluated across centralized and federated architectures.
-              </p>
-            </div>
-            <span className="text-xs font-mono text-violet-300 bg-violet-950/60 px-3 py-1 rounded-xl border border-violet-800">
-              Execution: {multiModelResult.execution_time_ms} ms
-            </span>
-          </div>
-
-          <div className="overflow-x-auto rounded-2xl border border-slate-800">
-            <table className="w-full text-xs text-left text-slate-300 font-mono">
-              <thead className="bg-slate-950 text-slate-400 uppercase text-[10px]">
-                <tr>
-                  <th className="px-3.5 py-3 border-b border-slate-800">Model Name</th>
-                  <th className="px-3 py-3 border-b border-slate-800">Type</th>
-                  <th className="px-2.5 py-3 border-b border-slate-800 text-center">Threshold</th>
-                  <th className="px-2.5 py-3 border-b border-slate-800 text-center">Flagged (%)</th>
-                  <th className="px-2.5 py-3 border-b border-slate-800 text-center">F1-Score</th>
-                  <th className="px-2.5 py-3 border-b border-slate-800 text-center">PR-AUC</th>
-                  <th className="px-2.5 py-3 border-b border-slate-800 text-center">ROC-AUC</th>
-                  <th className="px-2.5 py-3 border-b border-slate-800 text-center">Accuracy</th>
-                  <th className="px-2.5 py-3 border-b border-slate-800 text-center">Precision</th>
-                  <th className="px-2.5 py-3 border-b border-slate-800 text-center">Recall</th>
-                  <th className="px-2.5 py-3 border-b border-slate-800 text-center">MCC</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/60">
-                {multiModelResult.models.map((m) => {
-                  const isTopPrAuc =
-                    multiModelResult.models.every((other) => (m.pr_auc ?? 0) >= (other.pr_auc ?? 0));
-                  const isTopF1 =
-                    multiModelResult.models.every((other) => (m.f1_score ?? 0) >= (other.f1_score ?? 0));
-
-                  return (
-                    <tr key={m.model_id} className="hover:bg-slate-800/40 transition">
-                      <td className="px-3.5 py-2.5 font-bold text-white whitespace-nowrap">
-                        <div className="flex items-center space-x-1.5">
-                          {isTopPrAuc && <Award className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
-                          <span>{m.model_name}</span>
-                        </div>
-                      </td>
-                      <td className="px-3 py-2.5 text-slate-400 whitespace-nowrap">
-                        <span className="px-2 py-0.5 rounded text-[10px] bg-slate-950 border border-slate-800">
-                          {m.model_type}
-                        </span>
-                      </td>
-                      <td className="px-2.5 py-2.5 text-center text-slate-300">
-                        {m.decision_threshold.toFixed(4)}
-                      </td>
-                      <td className="px-2.5 py-2.5 text-center text-amber-300">
-                        {m.flagged_count} ({m.laundering_percentage.toFixed(1)}%)
-                      </td>
-                      <td className={`px-2.5 py-2.5 text-center font-bold ${isTopF1 ? 'text-amber-400' : 'text-slate-200'}`}>
-                        {formatMetric(m.f1_score, 4, 'N/A')}
-                      </td>
-                      <td className={`px-2.5 py-2.5 text-center font-bold ${isTopPrAuc ? 'text-emerald-400' : 'text-slate-200'}`}>
-                        {formatMetric(m.pr_auc, 4, 'N/A')}
-                      </td>
-                      <td className="px-2.5 py-2.5 text-center text-indigo-300">
-                        {formatMetric(m.roc_auc, 4, 'N/A')}
-                      </td>
-                      <td className="px-2.5 py-2.5 text-center text-slate-300">
-                        {formatPercent(m.accuracy, 1)}
-                      </td>
-                      <td className="px-2.5 py-2.5 text-center text-emerald-300">
-                        {formatPercent(m.precision, 1, 'N/A')}
-                      </td>
-                      <td className="px-2.5 py-2.5 text-center text-indigo-300">
-                        {formatPercent(m.recall, 1, 'N/A')}
-                      </td>
-                      <td className="px-2.5 py-2.5 text-center text-violet-300">
-                        {formatMetric(m.mcc, 4, 'N/A')}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <PerformanceHeatmap
+          models={multiModelResult.models.map((m) => ({
+            ...m,
+            config_id: m.model_name,
+            test_pr_auc: m.pr_auc,
+            test_roc_auc: m.roc_auc,
+            test_f1: m.f1_score,
+            test_precision: m.precision,
+            test_recall: m.recall,
+            test_specificity: m.specificity,
+            test_accuracy: m.accuracy,
+            test_balanced_accuracy: m.balanced_accuracy,
+            test_mcc: m.mcc,
+            test_cohen_kappa: m.cohen_kappa,
+            brier_score: m.brier_score,
+            alerts_per_10k: m.laundering_percentage != null ? m.laundering_percentage * 100 : undefined,
+          }))}
+          title={`Multi-Model Evaluation Matrix (${multiModelResult.models_evaluated_count} Models)`}
+          subtitle={`Evaluated on ${multiModelResult.total_transactions.toLocaleString()} preprocessed sequences across centralized and federated architectures.`}
+        />
       )}
 
       {/* Transaction Risk Score Distribution (Always available) */}
@@ -1059,6 +1253,46 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Real Uploaded-CSV Temporal Risk Heatmap */}
+      <TransactionRiskHeatmap
+        predictions={result.predictions || []}
+        activeThreshold={threshold}
+        hasLabels={hasMetrics}
+        selectedCell={
+          heatmapCellFilter
+            ? { timeBucket: heatmapCellFilter.timeBucket, riskBand: heatmapCellFilter.riskBand }
+            : null
+        }
+        onSelectCell={setHeatmapCellFilter}
+      />
+
+      {/* Itemized Transaction Evaluation Records & Triage Table */}
+      <FlaggedTransactionsTable
+        predictions={result.predictions || []}
+        activeThreshold={threshold}
+        activeModeName={
+          selectedOperatingPoint === 'zero_diagnostic'
+            ? 'Diagnostic Only — Not Serving Threshold (θ = 0.0000)'
+            : selectedOperatingPoint === 'budget_500'
+            ? 'Fixed Capacity: 50 alerts / 1,000 tx (1,000 Alerts Capped)'
+            : selectedOperatingPoint === 'budget_10'
+            ? 'Fixed Capacity: 10 alerts / 10k tx'
+            : selectedOperatingPoint === 'budget_50'
+            ? 'Fixed Capacity: 50 alerts / 10k tx'
+            : selectedOperatingPoint === 'budget_100'
+            ? 'Fixed Capacity: 100 alerts / 10k tx'
+            : selectedOperatingPoint === 'best_f1'
+            ? 'Best F1 On Batch (What-If)'
+            : `Fixed Canonical Threshold (θ = ${threshold.toFixed(4)})`
+        }
+        hasLabels={hasMetrics}
+        dataset={result.dataset}
+        modelName={result.model_name || result.model_id || 'Federated Neural Classifier'}
+        heatmapFilter={heatmapCellFilter}
+        onClearHeatmapFilter={() => setHeatmapCellFilter(null)}
+        onFilterChange={setActiveTableFilter}
+      />
     </div>
   );
 };

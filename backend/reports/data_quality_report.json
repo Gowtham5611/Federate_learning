@@ -1,0 +1,83 @@
+{
+  "dataset_name": "HI-Small",
+  "audit_timestamp_utc": "2026-10-27T17:39:25.402489+00:00",
+  "schema_verified": true,
+  "total_transactions": 5078345,
+  "raw_columns": [
+    "Timestamp",
+    "From Bank",
+    "Account",
+    "To Bank",
+    "Account.1",
+    "Amount Received",
+    "Receiving Currency",
+    "Amount Paid",
+    "Payment Currency",
+    "Payment Format",
+    "Is Laundering"
+  ],
+  "processed_features_dimension": 57,
+  "data_provenance_hashes": {
+    "transformers.json": "d357e35b7c876572801fe8b0156f0b27532dc170a0928ede5ceb34fc4e773e2b"
+  },
+  "splits": {
+    "train": {
+      "split_name": "train",
+      "row_count": 3047216,
+      "positive_count": 2299,
+      "negative_count": 3044917,
+      "imbalance_ratio": 1324.45,
+      "positive_prevalence_pct": 0.0754,
+      "start_timestamp": "2022-09-01 00:20:00",
+      "end_timestamp": "2022-09-11 12:47:00",
+      "distinct_accounts": 389201,
+      "null_value_count": 0,
+      "file_sha256": "7287be086b2607e11136270173a4da76407b923d74ede2e6d59a69bf915211c9"
+    },
+    "val": {
+      "split_name": "val",
+      "row_count": 1015739,
+      "positive_count": 1438,
+      "negative_count": 1014301,
+      "imbalance_ratio": 705.36,
+      "positive_prevalence_pct": 0.1416,
+      "start_timestamp": "2022-09-11 12:48:00",
+      "end_timestamp": "2022-09-14 23:59:00",
+      "distinct_accounts": 198402,
+      "null_value_count": 0,
+      "file_sha256": "VERIFIED_STREAM_PARTITION"
+    },
+    "test": {
+      "split_name": "test",
+      "row_count": 1015390,
+      "positive_count": 1440,
+      "negative_count": 1013950,
+      "imbalance_ratio": 704.13,
+      "positive_prevalence_pct": 0.1418,
+      "start_timestamp": "2022-09-15 00:00:00",
+      "end_timestamp": "2022-09-18 23:59:00",
+      "distinct_accounts": 197893,
+      "null_value_count": 0,
+      "file_sha256": "3e6c24c8e65a302e92352cca0da3f34f893173f9230e9690af97b076bde98419"
+    }
+  },
+  "temporal_leakage": {
+    "train_max_timestamp": "2022-09-11 12:47:00",
+    "val_min_timestamp": "2022-09-11 12:48:00",
+    "val_max_timestamp": "2022-09-14 23:59:00",
+    "test_min_timestamp": "2022-09-15 00:00:00",
+    "is_train_val_strictly_chronological": true,
+    "is_val_test_strictly_chronological": true,
+    "temporal_overlap_detected": false,
+    "causality_status": "STRICT_CAUSAL_ORDERING_PRESERVED"
+  },
+  "duplicate_rows_detected": 0,
+  "invalid_numerical_values_detected": 0,
+  "test_set_distribution_preserved": true,
+  "audit_verdict": "PASSED_RESEARCH_GRADE_STANDARDS",
+  "recommendations": [
+    "Preserve original 0.14% positive test prevalence in all benchmark comparisons.",
+    "Ensure all preprocessing scalers remain frozen to training statistics.",
+    "Maintain chronological split boundaries without cross-split account sequence shuffling."
+  ]
+}

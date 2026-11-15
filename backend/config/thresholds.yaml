@@ -5,6 +5,8 @@
 thresholds:
   HI-Small: 0.337784
   LI-Medium: 0.238483
+  lightgbm_tabular_fallback: 0.801919
+  tabular_fallback: 0.801919
 
 default_dataset: "HI-Small"
 default_threshold: 0.337784

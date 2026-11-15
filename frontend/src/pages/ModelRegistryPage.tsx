@@ -23,6 +23,8 @@ import {
   Cpu,
 } from 'lucide-react';
 import { formatPercent } from '../utils/formatters';
+import { ComparativeBarChart } from '../components/ComparativeBarChart';
+import { PerformanceHeatmap } from '../components/PerformanceHeatmap';
 
 interface ModelRegistryPageProps {
   models: BenchmarkModelRecord[];
@@ -39,7 +41,6 @@ export const ModelRegistryPage: React.FC<ModelRegistryPageProps> = ({
   onNavigateToCsvEval,
 }) => {
   const [activeSection, setActiveSection] = useState<'comparison' | 'heatmap' | 'curves' | 'tradeoffs' | 'communication'>('comparison');
-  const [selectedMetric, setSelectedMetric] = useState<'test_pr_auc' | 'test_roc_auc' | 'test_f1' | 'test_precision' | 'test_recall'>('test_pr_auc');
   const [searchQuery, setSearchQuery] = useState('');
   const [paradigmFilter, setParadigmFilter] = useState<'ALL' | 'IID' | 'Non-IID' | 'Centralized'>('ALL');
   const [archFilter, setArchFilter] = useState<'ALL' | 'GRU' | 'LSTM' | 'BILSTM'>('ALL');
@@ -51,7 +52,6 @@ export const ModelRegistryPage: React.FC<ModelRegistryPageProps> = ({
   const [thresholds, setThresholds] = useState<ThresholdTradeoffPoint[]>([]);
   const [communication, setCommunication] = useState<CommunicationEfficiencyRecord[]>([]);
   const [clientPartition, setClientPartition] = useState<ClientPartitionResponse | null>(null);
-  const [hoveredCell, setHoveredCell] = useState<{ model: string; metric: string; value: number } | null>(null);
 
   useEffect(() => {
     const fetchAdditionalArtifacts = async () => {
@@ -169,70 +169,81 @@ export const ModelRegistryPage: React.FC<ModelRegistryPageProps> = ({
 
       {/* Serving Champion Card */}
       {championModel && (
-        <div className="bg-gradient-to-r from-slate-900 via-indigo-950/30 to-slate-900 border border-indigo-500/40 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+        <div className="bg-slate-50 dark:bg-gradient-to-r dark:from-slate-900 dark:via-indigo-950/30 dark:to-slate-900 border border-slate-300 dark:border-indigo-500/40 rounded-3xl p-6 shadow-md dark:shadow-xl relative overflow-hidden">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-emerald-950 text-emerald-400 border border-emerald-800/80 flex items-center space-x-1">
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800/80 flex items-center space-x-1">
                   <Award className="w-3.5 h-3.5" />
                   <span>ACTIVE SERVING CHAMPION</span>
                 </span>
-                <span className="text-xs font-mono text-slate-400">{selectedDataset} Pipeline</span>
+                <span className="text-xs font-mono text-slate-500 dark:text-slate-400">{selectedDataset} Pipeline</span>
               </div>
-              <h2 className="text-xl font-bold font-mono text-white tracking-tight">{championModel.model_name}</h2>
-              <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
+              <h2 className="text-xl font-bold font-mono text-slate-900 dark:text-white tracking-tight">{championModel.model_name}</h2>
+              <p className="text-xs text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
                 Trained with {championModel.algorithm} on {championModel.distribution} data partitions across 5 rounds.
-                Canonical serving threshold frozen at <strong className="font-mono text-amber-400">{(selectedDataset === 'HI-Small' ? 0.337784 : championModel.threshold).toFixed(4)}</strong> exclusively
+                Canonical serving threshold frozen at <strong className="font-mono text-amber-700 dark:text-amber-400">{(selectedDataset === 'HI-Small' ? 0.337784 : championModel.threshold).toFixed(4)}</strong> exclusively
                 on validation data. Evaluated against complete 100% held-out test split ({selectedDataset === 'HI-Small' ? '1,015,564' : '6,249,112'} test sequences).
               </p>
-              <div className="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1">
+              <div className="bg-white dark:bg-slate-950/70 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-[11px] text-slate-600 dark:text-slate-400 space-y-1">
                 <div>
-                  <span className="text-emerald-400 font-semibold">Centralized Parity: </span>
+                  <span className="text-emerald-700 dark:text-emerald-400 font-semibold">Centralized Parity: </span>
                   <span>99.77% Retention vs Best Centralized LSTM (0.4760 vs 0.4771); 115.6% vs Mean Centralized Baselines (0.4119).</span>
                 </div>
                 <div>
-                  <span className="text-amber-400 font-semibold">Hybrid Ensemble Provenance: </span>
+                  <span className="text-amber-700 dark:text-amber-400 font-semibold">Hybrid Ensemble Provenance: </span>
                   <span>Validation grid search selected α* = 1.00 (mathematically identical to IID Champion; Non-IID blending degraded validation PR-AUC).</span>
                 </div>
               </div>
-              <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-slate-400 pt-1">
-                <span>Architecture: <strong className="text-slate-200">{championModel.architecture}</strong></span>
+              <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-slate-500 dark:text-slate-400 pt-1">
+                <span>Architecture: <strong className="text-slate-900 dark:text-slate-200">{championModel.architecture}</strong></span>
                 <span>•</span>
-                <span>Feature Dim: <strong className="text-slate-200">57 inputs</strong></span>
+                <span>Feature Dim: <strong className="text-slate-900 dark:text-slate-200">57 inputs</strong></span>
                 <span>•</span>
-                <span>Sequence Length: <strong className="text-slate-200">10 steps</strong></span>
+                <span>Sequence Length: <strong className="text-slate-900 dark:text-slate-200">10 steps</strong></span>
                 <span>•</span>
-                <span>Alerts/10k: <strong className="text-slate-200">{championModel.alerts_per_10k.toFixed(1)}</strong></span>
+                <span>Alerts/10k: <strong className="text-slate-900 dark:text-slate-200">{selectedDataset === 'HI-Small' ? '8.62' : championModel.alerts_per_10k.toFixed(1)}</strong></span>
+                {selectedDataset === 'HI-Small' && (
+                  <>
+                    <span>•</span>
+                    <span>Precision: <strong className="text-slate-900 dark:text-slate-200">0.8183</strong></span>
+                    <span>•</span>
+                    <span>Recall: <strong className="text-slate-900 dark:text-slate-200">0.3984</strong></span>
+                  </>
+                )}
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="grid grid-cols-3 gap-3 bg-slate-950/80 p-4 rounded-2xl border border-slate-800 text-center font-mono">
-                <div>
-                  <span className="text-[10px] text-slate-400 uppercase block">PR-AUC</span>
-                  <span className="text-lg font-bold text-emerald-400 mt-1 block">
+            <div className="flex flex-col xl:flex-row items-stretch xl:items-center gap-4 shrink-0">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-white dark:bg-slate-950/90 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 text-center font-mono min-w-[280px]">
+                <div className="bg-slate-50 dark:bg-slate-900/80 p-2.5 rounded-xl border border-emerald-200 dark:border-emerald-900/40">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider block">PR-AUC</span>
+                  <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-1 block">
                     {championModel.test_pr_auc.toFixed(4)}
                   </span>
+                  <span className="text-[9px] text-slate-500 font-sans block mt-0.5">Primary Ranking</span>
                 </div>
-                <div>
-                  <span className="text-[10px] text-slate-400 uppercase block">ROC-AUC</span>
-                  <span className="text-lg font-bold text-indigo-300 mt-1 block">
+                <div className="bg-slate-50 dark:bg-slate-900/80 p-2.5 rounded-xl border border-indigo-200 dark:border-indigo-900/40">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider block">ROC-AUC</span>
+                  <span className="text-xl font-bold text-indigo-600 dark:text-indigo-300 mt-1 block">
                     {championModel.test_roc_auc.toFixed(4)}
                   </span>
+                  <span className="text-[9px] text-slate-500 font-sans block mt-0.5">Global Discrim.</span>
                 </div>
-                <div>
-                  <span className="text-[10px] text-slate-400 uppercase block">F1-Score</span>
-                  <span className="text-lg font-bold text-white mt-1 block">
-                    {championModel.test_f1.toFixed(4)}
+                <div className="bg-slate-50 dark:bg-slate-900/80 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700/40">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider block">F1-Score</span>
+                  <span className="text-xl font-bold text-slate-900 dark:text-white mt-1 block">
+                    {selectedDataset === 'HI-Small' ? '0.5359' : championModel.test_f1.toFixed(4)}
                   </span>
+                  <span className="text-[9px] text-slate-500 font-sans block mt-0.5">Harmonic Mean</span>
                 </div>
               </div>
 
               <button
                 onClick={() => onNavigateToCsvEval(selectedDataset)}
-                className="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition shadow-lg shadow-indigo-600/30 whitespace-nowrap cursor-pointer"
+                className="px-6 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition shadow-lg shadow-indigo-600/30 whitespace-nowrap cursor-pointer flex items-center justify-center space-x-2"
               >
-                Score CSV with Champion
+                <span>Score CSV with Champion</span>
               </button>
             </div>
           </div>
@@ -366,126 +377,13 @@ export const ModelRegistryPage: React.FC<ModelRegistryPageProps> = ({
       {/* SECTION 1: COMPARATIVE BAR CHARTS & HEAD-TO-HEAD PARADIGM COMPARISONS */}
       {activeSection === 'comparison' && (
         <div className="space-y-6">
-          {/* Main Bar Chart Container */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
-              <div>
-                <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-                  <BarChart2 className="w-4 h-4 text-indigo-400" />
-                  <span>Model Performance Benchmark Across 100% Held-Out Test Set</span>
-                </h3>
-                <p className="text-[11px] text-slate-400 mt-0.5">
-                  Click a metric below to compare model ranking and alert metrics across all configurations.
-                </p>
-              </div>
-
-              {/* Metric Selector Buttons */}
-              <div className="flex flex-wrap items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
-                {(
-                  [
-                    ['test_pr_auc', 'PR-AUC'],
-                    ['test_roc_auc', 'ROC-AUC'],
-                    ['test_f1', 'F1-Score'],
-                    ['test_precision', 'Precision'],
-                    ['test_recall', 'Recall'],
-                  ] as const
-                ).map(([key, label]) => (
-                  <button
-                    key={key}
-                    onClick={() => setSelectedMetric(key)}
-                    className={`px-2.5 py-1 rounded-lg font-mono text-[11px] transition cursor-pointer ${
-                      selectedMetric === key ? 'bg-indigo-600 text-white font-bold' : 'text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Responsive SVG Bar Chart */}
-            <div className="h-72 w-full flex items-center justify-center pt-2">
-              <svg className="w-full h-full" viewBox="0 0 800 240">
-                <line x1="60" y1="20" x2="60" y2="190" stroke="#334155" strokeWidth="1" />
-                <line x1="60" y1="190" x2="780" y2="190" stroke="#334155" strokeWidth="1" />
-                <line x1="60" y1="105" x2="780" y2="105" stroke="#1e293b" strokeDasharray="3 3" />
-                <line x1="60" y1="20" x2="780" y2="20" stroke="#1e293b" strokeDasharray="3 3" />
-
-                <text x="50" y="24" fill="#64748b" fontSize="9" textAnchor="end">1.0</text>
-                <text x="50" y="108" fill="#64748b" fontSize="9" textAnchor="end">0.5</text>
-                <text x="50" y="193" fill="#64748b" fontSize="9" textAnchor="end">0.0</text>
-
-                {(() => {
-                  const mList = filteredModels;
-                  if (!mList.length) return null;
-                  const barSlotWidth = (780 - 70) / mList.length;
-                  const barW = Math.min(32, barSlotWidth * 0.7);
-
-                  return mList.map((m, idx) => {
-                    const x = 75 + idx * barSlotWidth;
-                    const val = Number(m[selectedMetric]) || 0;
-                    const clamped = Math.max(0, Math.min(1.0, val));
-                    const h = Math.max(2, clamped * 170);
-                    const y = 190 - h;
-
-                    const isChamp =
-                      (selectedDataset === 'HI-Small' && m.model_name.includes('hi_small_lstm_fedavg_iid_seed42')) ||
-                      (selectedDataset === 'LI-Medium' && m.config_id === 'config_5');
-
-                    const fill = isChamp
-                      ? '#10b981'
-                      : m.algorithm.includes('FedProx')
-                      ? '#f59e0b'
-                      : m.distribution === 'Non-IID'
-                      ? '#6366f1'
-                      : '#8b5cf6';
-
-                    return (
-                      <g key={m.config_id} className="cursor-pointer group" onClick={() => setSelectedModelId(m.config_id)}>
-                        <rect x={x} y={y} width={barW} height={h} rx="3" fill={fill} />
-                        {/* Value label on top */}
-                        <text x={x + barW / 2} y={y - 4} fill="#cbd5e1" fontSize="8" fontFamily="monospace" textAnchor="middle">
-                          {val.toFixed(2)}
-                        </text>
-                        {/* Config ID on X-axis */}
-                        <text
-                          x={x + barW / 2}
-                          y="205"
-                          fill={isChamp ? '#34d399' : '#94a3b8'}
-                          fontSize="8"
-                          fontFamily="monospace"
-                          fontWeight={isChamp ? 'bold' : 'normal'}
-                          textAnchor="middle"
-                        >
-                          {m.config_id.replace('config_', 'c_')}
-                        </text>
-                      </g>
-                    );
-                  });
-                })()}
-              </svg>
-            </div>
-
-            {/* Legend */}
-            <div className="flex flex-wrap items-center justify-center gap-6 text-[10px] font-mono border-t border-slate-800 pt-3">
-              <span className="flex items-center space-x-1.5 text-emerald-400 font-bold">
-                <span className="w-3 h-3 bg-emerald-500 rounded inline-block" />
-                <span>Serving Champion</span>
-              </span>
-              <span className="flex items-center space-x-1.5 text-purple-400">
-                <span className="w-3 h-3 bg-purple-500 rounded inline-block" />
-                <span>FedAvg (IID)</span>
-              </span>
-              <span className="flex items-center space-x-1.5 text-indigo-400">
-                <span className="w-3 h-3 bg-indigo-500 rounded inline-block" />
-                <span>FedAvg (Non-IID)</span>
-              </span>
-              <span className="flex items-center space-x-1.5 text-amber-400">
-                <span className="w-3 h-3 bg-amber-500 rounded inline-block" />
-                <span>FedProx (μ=0.0001)</span>
-              </span>
-            </div>
-          </div>
+          {/* Main Comparative Bar Chart Component */}
+          <ComparativeBarChart
+            models={filteredModels}
+            selectedModelId={selectedModelId}
+            onSelectModel={setSelectedModelId}
+            selectedDataset={selectedDataset}
+          />
 
           {/* 4 Head-to-Head Comparative Cards: Architecture, Federated Algorithm, IID vs Non-IID, Centralized vs Federated */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -544,7 +442,7 @@ export const ModelRegistryPage: React.FC<ModelRegistryPageProps> = ({
                 </div>
               </div>
               <p className="text-[10px] text-slate-500 leading-normal">
-                Empirical observation: On this dataset, FedProx (μ=0.0001) underperformed FedAvg across both IID and Non-IID splits. Observed gradient dampening under extreme label skew is documented as an empirical finding.
+                FedProx (mu=0.0001) scored lower than FedAvg in these runs; the cause is untested.
               </p>
             </div>
 
@@ -609,7 +507,7 @@ export const ModelRegistryPage: React.FC<ModelRegistryPageProps> = ({
                 </div>
               </div>
               <p className="text-[10px] text-slate-500 leading-normal">
-                FedSecureAI achieves 99.8% retention of peak centralized performance (0.4760 vs 0.4771) while maintaining complete privacy.
+                FedSecureAI achieves 99.8% retention of peak centralized performance (0.4760 vs 0.4771) with privacy-preserving federated aggregation.
               </p>
             </div>
           </div>
@@ -618,102 +516,11 @@ export const ModelRegistryPage: React.FC<ModelRegistryPageProps> = ({
 
       {/* SECTION 2: PERFORMANCE HEATMAP */}
       {activeSection === 'heatmap' && (
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
-            <div>
-              <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-                <Layers className="w-4 h-4 text-indigo-400" />
-                <span>Cross-Configuration Performance Heatmap</span>
-              </h3>
-              <p className="text-[11px] text-slate-400 mt-0.5">
-                Rows represent individual neural architectures; columns represent key evaluation metrics. Hover for exact figures.
-              </p>
-            </div>
-            {hoveredCell && (
-              <div className="text-xs font-mono bg-slate-950 px-3 py-1.5 rounded-xl border border-indigo-500/50 text-indigo-300">
-                {hoveredCell.model} • {hoveredCell.metric}: <strong>{hoveredCell.value.toFixed(4)}</strong>
-              </div>
-            )}
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs font-mono">
-              <thead>
-                <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 uppercase text-[10px]">
-                  <th className="py-2.5 px-3">Configuration</th>
-                  <th className="py-2.5 px-3">Architecture</th>
-                  <th className="py-2.5 px-3">Distribution</th>
-                  <th className="py-2.5 px-3">Algorithm</th>
-                  <th className="py-2.5 px-3 text-right">PR-AUC</th>
-                  <th className="py-2.5 px-3 text-right">ROC-AUC</th>
-                  <th className="py-2.5 px-3 text-right">F1-Score</th>
-                  <th className="py-2.5 px-3 text-right">Precision</th>
-                  <th className="py-2.5 px-3 text-right">Recall</th>
-                  <th className="py-2.5 px-3 text-right">Alerts/10k</th>
-                  <th className="py-2.5 px-3 text-right">Brier</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/60">
-                {filteredModels.map((m) => {
-                  const getHeatBg = (val: number, maxVal = 1.0) => {
-                    const ratio = Math.max(0, Math.min(1.0, val / maxVal));
-                    if (ratio >= 0.8) return 'bg-emerald-950/70 text-emerald-300 font-bold';
-                    if (ratio >= 0.5) return 'bg-indigo-950/60 text-indigo-300';
-                    if (ratio >= 0.3) return 'bg-amber-950/50 text-amber-300';
-                    return 'bg-slate-950 text-slate-400';
-                  };
-
-                  return (
-                    <tr key={m.config_id} className="hover:bg-slate-800/40 transition">
-                      <td className="py-2 px-3 font-bold text-white">{m.config_id}</td>
-                      <td className="py-2 px-3 text-slate-300">{m.architecture}</td>
-                      <td className="py-2 px-3 text-slate-400">{m.distribution}</td>
-                      <td className="py-2 px-3 text-slate-400">{m.algorithm}</td>
-
-                      <td
-                        className={`py-2 px-3 text-right ${getHeatBg(m.test_pr_auc, 0.5)}`}
-                        onMouseEnter={() => setHoveredCell({ model: m.config_id, metric: 'PR-AUC', value: m.test_pr_auc })}
-                        onMouseLeave={() => setHoveredCell(null)}
-                      >
-                        {m.test_pr_auc.toFixed(4)}
-                      </td>
-                      <td
-                        className={`py-2 px-3 text-right ${getHeatBg(m.test_roc_auc, 1.0)}`}
-                        onMouseEnter={() => setHoveredCell({ model: m.config_id, metric: 'ROC-AUC', value: m.test_roc_auc })}
-                        onMouseLeave={() => setHoveredCell(null)}
-                      >
-                        {m.test_roc_auc.toFixed(4)}
-                      </td>
-                      <td
-                        className={`py-2 px-3 text-right ${getHeatBg(m.test_f1, 0.6)}`}
-                        onMouseEnter={() => setHoveredCell({ model: m.config_id, metric: 'F1-Score', value: m.test_f1 })}
-                        onMouseLeave={() => setHoveredCell(null)}
-                      >
-                        {m.test_f1.toFixed(4)}
-                      </td>
-                      <td
-                        className={`py-2 px-3 text-right ${getHeatBg(m.test_precision, 1.0)}`}
-                        onMouseEnter={() => setHoveredCell({ model: m.config_id, metric: 'Precision', value: m.test_precision })}
-                        onMouseLeave={() => setHoveredCell(null)}
-                      >
-                        {m.test_precision.toFixed(4)}
-                      </td>
-                      <td
-                        className={`py-2 px-3 text-right ${getHeatBg(m.test_recall, 0.5)}`}
-                        onMouseEnter={() => setHoveredCell({ model: m.config_id, metric: 'Recall', value: m.test_recall })}
-                        onMouseLeave={() => setHoveredCell(null)}
-                      >
-                        {m.test_recall.toFixed(4)}
-                      </td>
-                      <td className="py-2 px-3 text-right text-slate-300">{m.alerts_per_10k.toFixed(1)}</td>
-                      <td className="py-2 px-3 text-right text-slate-400">{m.brier_score.toFixed(4)}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <PerformanceHeatmap
+          models={filteredModels}
+          selectedModelId={selectedModelId}
+          onSelectModel={setSelectedModelId}
+        />
       )}
 
       {/* SECTION 3: TRAINING & VALIDATION CONVERGENCE CURVES */}

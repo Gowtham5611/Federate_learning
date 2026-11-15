@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, HTTPException, Response, status
+from fastapi import APIRouter, HTTPException, Query, Response, status
 from pydantic import BaseModel, Field
 
 try:
@@ -55,7 +55,7 @@ class CsvPredictRequest(BaseModel):
     model_id: Optional[str] = Field("auto", description="Target model to use for prediction (or 'auto')")
     dataset: Optional[str] = Field(None, description="Legacy dataset pipeline parameter")
     filename: Optional[str] = Field("upload.csv", description="Origin filename")
-    row_limit: Optional[int] = Field(5000, ge=1, le=1000000, description="Max rows to process (up to 1,000,000)")
+    row_limit: Optional[int] = Field(None, ge=1, le=1000000, description="Max rows to process (None for all uploaded rows, up to 1,000,000)")
     user_mappings: Optional[Dict[str, str]] = Field(None, description="Optional field overrides")
     column_mapping: Optional[Dict[str, str]] = Field(None, description="Alias for user_mappings")
     tenant_id: Optional[str] = Field("default_tenant", description="Tenant or session ID for isolated persistent account history")
@@ -373,6 +373,84 @@ def download_prediction_csv(prediction_id: str) -> Response:
     return Response(
         content=csv_content,
         media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
+    )
+
+
+# ==============================================================================
+# 6b. Prediction History & Stored Evaluation Runs
+# ==============================================================================
+
+
+@router.get("/predictions/history")
+@router.get("/api/predictions/history")
+@router.get("/api/v1/predictions/history")
+def get_prediction_history() -> List[Dict[str, Any]]:
+    """Retrieve historical evaluation run records stored in backend artifacts."""
+    service = CsvEvaluationService()
+    return service.list_prediction_history()
+
+
+@router.get("/predictions/{prediction_id}")
+@router.get("/api/predictions/{prediction_id}")
+@router.get("/api/v1/predictions/{prediction_id}")
+def get_saved_prediction(prediction_id: str) -> Dict[str, Any]:
+    """Retrieve a completed evaluation run and its itemized predictions by run ID."""
+    service = CsvEvaluationService()
+    res = service.get_prediction_result(prediction_id)
+    if not res:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Prediction session '{prediction_id}' not found on server.",
+        )
+    return res
+
+
+@router.post("/predictions/clear-history")
+@router.post("/api/predictions/clear-history")
+@router.post("/api/v1/predictions/clear-history")
+def clear_prediction_history() -> Dict[str, Any]:
+    """Clear in-memory evaluation cache."""
+    service = CsvEvaluationService()
+    service._prediction_cache.clear()
+    return {"status": "ok", "message": "In-memory prediction cache cleared successfully."}
+
+
+# ==============================================================================
+# 7. Download Evaluation Report as PDF
+# ==============================================================================
+
+
+@router.get("/predict/report/{prediction_id}.pdf")
+@router.get("/predict/{prediction_id}/report.pdf")
+@router.get("/predictions/{prediction_id}/report.pdf")
+@router.get("/api/predict/report/{prediction_id}.pdf")
+@router.get("/api/v1/predict/report/{prediction_id}.pdf")
+@router.get("/api/v1/predictions/{prediction_id}/report.pdf")
+def download_prediction_pdf_report(
+    prediction_id: str,
+    operating_point: Optional[str] = Query(None, description="Selected operating mode, e.g. frozen or budget_500"),
+    filter: Optional[str] = Query(None, description="Selected transaction filter: all, suspicious, legitimate, etc."),
+) -> Response:
+    """Download comprehensive evaluation report as a publication-grade PDF."""
+    service = CsvEvaluationService()
+    res = service.get_prediction_pdf_report(prediction_id, operating_point=operating_point, filter_mode=filter)
+    if not res:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Prediction session '{prediction_id}' not found. Please upload and evaluate your CSV first.",
+        )
+
+    if res[0] == "EXPIRED":
+        raise HTTPException(
+            status_code=status.HTTP_410_GONE,
+            detail=f"Prediction session '{prediction_id}' has expired or was removed.",
+        )
+
+    pdf_bytes, filename = res
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
         headers={"Content-Disposition": f"attachment; filename={filename}"},
     )
 

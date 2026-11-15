@@ -9,6 +9,8 @@ CONFIG_PATH = Path(__file__).resolve().parent / "thresholds.yaml"
 _DEFAULT_THRESHOLDS: Dict[str, float] = {
     "HI-Small": 0.337784,
     "LI-Medium": 0.238483,
+    "lightgbm_tabular_fallback": 0.801919,
+    "tabular_fallback": 0.801919,
 }
 
 _CACHED_CONFIG: Optional[Dict[str, Any]] = None
@@ -46,6 +48,9 @@ def get_canonical_threshold(dataset_or_model: str) -> float:
         return float(thresholds[dataset_or_model])
 
     name_lower = dataset_or_model.lower()
+    if "lightgbm" in name_lower or "tabular" in name_lower:
+        return float(thresholds.get("lightgbm_tabular_fallback", 0.801919))
+
     if "li_medium" in name_lower or "li-medium" in name_lower:
         return float(thresholds.get("LI-Medium", 0.238483))
 

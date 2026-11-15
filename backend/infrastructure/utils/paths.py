@@ -27,10 +27,14 @@ DATASETS_DIR: Path = PROJECT_ROOT / "datasets"
 
 
 def resolve(relative_path: str | Path) -> Path:
-    """Resolve a project-relative path against :data:`PROJECT_ROOT`.
+    """Resolve a project-relative path against :data:`PROJECT_ROOT` or :data:`BACKEND_ROOT`.
 
     Absolute paths are returned unchanged, so configuration values may use
     either form.
     """
     path = Path(relative_path)
-    return path if path.is_absolute() else PROJECT_ROOT / path
+    if path.is_absolute():
+        return path
+    if (BACKEND_ROOT / path).exists():
+        return BACKEND_ROOT / path
+    return PROJECT_ROOT / path

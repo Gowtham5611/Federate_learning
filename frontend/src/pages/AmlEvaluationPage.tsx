@@ -7,6 +7,11 @@ import {
   UniversalCsvInspectionResponse,
 } from '../types/api';
 import { apiService, ApiError } from '../services/apiService';
+import { ValidityBanner } from '../components/ValidityBanner';
+import { WhyNoAlertsCard } from '../components/WhyNoAlertsCard';
+import { OperatingPointSelector, OperatingPointKey } from '../components/OperatingPointSelector';
+import { EvaluationMetricsGrid } from '../components/EvaluationMetricsGrid';
+import { ModelRoutingCard } from '../components/ModelRoutingCard';
 import {
   Upload,
   FileSpreadsheet,
@@ -29,7 +34,7 @@ import {
   ChevronUp,
   Layers,
 } from 'lucide-react';
-import { formatMetric } from '../utils/formatters';
+
 
 interface AmlEvaluationPageProps {
   currentResult: CsvEvaluateResponse | null;
@@ -39,35 +44,6 @@ interface AmlEvaluationPageProps {
   onNavigateTab: (tab: 'evaluation' | 'analytics' | 'history' | 'models' | 'ensemble') => void;
 }
 
-// Built-in demonstration datasets
-const SAMPLE_SYNTHETIC_CSV = `timestamp,sender_account,receiver_account,transaction_amount,transaction_type,currency,is_fraud,structuring_flag
-2022-09-01 09:15:00,ACC_749102,ACC_839104,12450.00,TRANSFER,USD,0,0
-2022-09-01 09:20:00,ACC_109284,ACC_491823,890.50,PAYMENT,USD,0,0
-2022-09-01 09:45:00,ACC_749102,ACC_901842,48500.00,WIRE,EUR,1,1
-2022-09-01 10:12:00,ACC_381920,ACC_839104,320.00,DEBIT,USD,0,0
-2022-09-01 10:30:00,ACC_491823,ACC_109284,95000.00,CASH_OUT,USD,1,1
-2022-09-01 11:05:00,ACC_610293,ACC_501928,1540.25,TRANSFER,GBP,0,0
-2022-09-01 11:40:00,ACC_901842,ACC_749102,75000.00,TRANSFER,USD,1,1
-2022-09-01 12:15:00,ACC_204918,ACC_381920,450.00,PAYMENT,USD,0,0
-2022-09-01 13:00:00,ACC_839104,ACC_491823,120000.00,WIRE,EUR,1,1
-2022-09-01 13:45:00,ACC_501928,ACC_610293,2100.00,DEBIT,USD,0,0
-2022-09-01 14:10:00,ACC_109284,ACC_749102,14300.00,TRANSFER,USD,0,0
-2022-09-01 14:50:00,ACC_491823,ACC_901842,62000.00,CASH_OUT,USD,1,1
-2022-09-01 15:20:00,ACC_381920,ACC_204918,520.00,PAYMENT,USD,0,0
-2022-09-01 15:55:00,ACC_839104,ACC_610293,88000.00,WIRE,USD,1,1
-2022-09-01 16:30:00,ACC_749102,ACC_109284,1850.00,TRANSFER,USD,0,0`;
-
-const SAMPLE_UNLABELED_CSV = `Timestamp,From Bank,Account,To Bank,Account.1,Amount Received,Receiving Currency,Amount Paid,Payment Currency,Payment Format
-2022/09/01 09:00,102,ACC_91028,102,ACC_81920,5420.00,US Dollar,5420.00,US Dollar,ACH
-2022/09/01 09:14,204,ACC_49182,102,ACC_10294,1280.50,US Dollar,1280.50,US Dollar,Credit Card
-2022/09/01 09:30,305,ACC_77491,305,ACC_88392,67400.00,Euro,67400.00,Euro,Wire
-2022/09/01 10:05,102,ACC_28190,102,ACC_49182,950.00,US Dollar,950.00,US Dollar,Cheque
-2022/09/01 10:45,401,ACC_10294,204,ACC_91028,84200.00,US Dollar,84200.00,US Dollar,Wire
-2022/09/01 11:20,204,ACC_81920,305,ACC_77491,15200.00,UK Pound,15200.00,UK Pound,ACH
-2022/09/01 12:00,102,ACC_88392,102,ACC_28190,430.00,US Dollar,430.00,US Dollar,Credit Card
-2022/09/01 12:40,305,ACC_91028,401,ACC_10294,115000.00,US Dollar,115000.00,US Dollar,Wire
-2022/09/01 13:15,401,ACC_49182,204,ACC_81920,2800.00,US Dollar,2800.00,US Dollar,ACH
-2022/09/01 14:00,102,ACC_77491,102,ACC_88392,92500.00,Euro,92500.00,Euro,Wire`;
 
 export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
   currentResult,
@@ -80,7 +56,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
   const [csvContent, setCsvContent] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
   const [fileSizeStr, setFileSizeStr] = useState<string>('');
-  const [rowLimit, setRowLimit] = useState<number>(5000);
+  const [rowLimit, setRowLimit] = useState<number | undefined>(undefined);
   const [customThreshold, setCustomThreshold] = useState<string>('');
 
   // Model Registry & Compatibility state
@@ -108,6 +84,54 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
   const [evaluating, setEvaluating] = useState<boolean>(false);
   const [multiModelEvaluating, setMultiModelEvaluating] = useState<boolean>(false);
   const [apiError, setApiError] = useState<string | null>(null);
+
+  // Operating point selection state
+  const [selectedOperatingPoint, setSelectedOperatingPoint] = useState<OperatingPointKey>('frozen');
+
+  // Active operating point metrics helper
+  const activeOp = React.useMemo(() => {
+    if (!currentResult) return null;
+    const ops = currentResult.operating_points || currentResult.evaluation_metrics?.operating_points;
+    if (!ops) return null;
+    if (selectedOperatingPoint === 'budget_500') return ops.alert_budgets?.['500'] || null;
+    if (selectedOperatingPoint === 'budget_10') return ops.alert_budgets?.['10'] || null;
+    if (selectedOperatingPoint === 'budget_50') return ops.alert_budgets?.['50'] || null;
+    if (selectedOperatingPoint === 'budget_100') return ops.alert_budgets?.['100'] || null;
+    if (selectedOperatingPoint === 'best_f1') return ops.best_f1_on_file || null;
+    return ops.frozen || null;
+  }, [currentResult, selectedOperatingPoint]);
+
+  const handleDownloadPdfReport = () => {
+    if (!currentResult) return;
+    const pid = currentResult.prediction_id || currentResult.download_id;
+    if (pid) {
+      window.open(apiService.getPdfReportUrl(pid, selectedOperatingPoint), '_blank');
+    }
+  };
+
+  const handleRunFallbackModel = async () => {
+    if (!csvContent || csvContent.trim().length === 0) return;
+    setEvaluating(true);
+    setApiError(null);
+    try {
+      const thresholdVal = customThreshold !== '' ? parseFloat(customThreshold) : 0.337784;
+      const resp = await apiService.predictCsv({
+        csv_content: csvContent,
+        model_id: 'auto',
+        filename: fileName || 'transactions.csv',
+        column_mapping: Object.keys(customMappings || {}).length > 0 ? customMappings : undefined,
+        row_limit: rowLimit,
+        threshold: thresholdVal,
+        fallback_model: 'tabular',
+      });
+      onEvaluationComplete(resp);
+    } catch (err: unknown) {
+      const msg = err instanceof ApiError ? err.message : err instanceof Error ? err.message : 'Fallback evaluation failed';
+      setApiError(msg);
+    } finally {
+      setEvaluating(false);
+    }
+  };
 
   const formatFileSize = (bytes: number): string => {
     if (bytes < 1024) return `${bytes} B`;
@@ -244,51 +268,6 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
     }
   };
 
-  // Quick demonstration sample loaders
-  const handleLoadSample = async (variant: 'standard' | 'synthetic' | 'unlabeled') => {
-    setApiError(null);
-    setEvaluating(true);
-    setTrainSuccessMessage(null);
-
-    try {
-      let text = '';
-      let sampleName = '';
-
-      if (variant === 'synthetic') {
-        text = SAMPLE_SYNTHETIC_CSV;
-        sampleName = 'synthetic_mobile_banking.csv';
-      } else if (variant === 'unlabeled') {
-        text = SAMPLE_UNLABELED_CSV;
-        sampleName = 'unlabeled_transactions_stream.csv';
-      } else {
-        const url = apiService.getSampleCsvUrl('HI-Small');
-        const resp = await fetch(url);
-        if (!resp.ok) {
-          throw new Error(`Failed to download demo transactions (${resp.status})`);
-        }
-        text = await resp.text();
-        sampleName = 'standard_aml_sample_25.csv';
-      }
-
-      setCsvContent(text);
-      setFileName(sampleName);
-      setFileSizeStr(formatFileSize(text.length));
-
-      await analyzeUploadedCsv(text, sampleName);
-
-      const evalResult = await apiService.predictCsv({
-        csv_content: text,
-        filename: sampleName,
-        row_limit: rowLimit,
-      });
-      onEvaluationComplete(evalResult);
-    } catch (err: unknown) {
-      const msg = err instanceof ApiError ? err.message : err instanceof Error ? err.message : 'Demo loading failed';
-      setApiError(msg);
-    } finally {
-      setEvaluating(false);
-    }
-  };
 
   // Mode A: Run AML Prediction
   const handleRunPrediction = async () => {
@@ -302,7 +281,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
 
     try {
       const modelToUse = selectedModelId || 'auto';
-      const thresholdVal = customThreshold !== '' ? parseFloat(customThreshold) : undefined;
+      const thresholdVal = customThreshold !== '' ? parseFloat(customThreshold) : 0.337784;
       const resp = await apiService.predictCsv({
         csv_content: csvContent,
         model_id: modelToUse,
@@ -336,7 +315,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
     setApiError(null);
 
     try {
-      const thresholdVal = customThreshold !== '' ? parseFloat(customThreshold) : undefined;
+      const thresholdVal = customThreshold !== '' ? parseFloat(customThreshold) : 0.337784;
       const resp = await apiService.evaluateMultiModel({
         csv_content: csvContent,
         filename: fileName || 'transactions.csv',
@@ -523,9 +502,9 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
             </button>
             <button
               onClick={() => onNavigateTab('history')}
-              className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition cursor-pointer"
+              className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-300 dark:border-slate-700 transition cursor-pointer"
             >
-              <History className="w-3.5 h-3.5" />
+              <History className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />
               <span>Predictions ({currentResult.predictions?.length || 0})</span>
             </button>
           </div>
@@ -644,59 +623,21 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
                     </div>
                   </div>
                 )}
+
+                {/* Automatic Model Routing Strategy Card */}
+                <ModelRoutingCard
+                  inspection={inspection}
+                  selectedModelId={selectedModelId}
+                  onSelectModel={setSelectedModelId}
+                />
               </div>
             )}
           </div>
 
-          {/* Quick-Load Controls & Model Selector */}
+          {/* Evaluation Settings & Model Selector */}
           <div className="w-full lg:w-88 space-y-4">
-            <label className="block text-xs font-mono uppercase text-slate-400 font-semibold">
-              Instant Demonstration Data
-            </label>
-
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={() => handleLoadSample('standard')}
-                disabled={evaluating}
-                className="w-full text-left p-3 rounded-xl bg-slate-950/80 hover:bg-indigo-950/40 border border-slate-800 hover:border-indigo-600/60 transition flex items-center justify-between text-xs disabled:opacity-50 cursor-pointer"
-              >
-                <div>
-                  <div className="font-semibold text-white">Load Standard AML Batch</div>
-                  <div className="text-[10px] text-slate-400 font-mono">25 multi-currency transactions (labeled)</div>
-                </div>
-                <ArrowRight className="w-4 h-4 text-indigo-400" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleLoadSample('synthetic')}
-                disabled={evaluating}
-                className="w-full text-left p-3 rounded-xl bg-slate-950/80 hover:bg-violet-950/40 border border-slate-800 hover:border-violet-600/60 transition flex items-center justify-between text-xs disabled:opacity-50 cursor-pointer"
-              >
-                <div>
-                  <div className="font-semibold text-white">Load Synthetic Banking CSV</div>
-                  <div className="text-[10px] text-slate-400 font-mono">Aliased fields + Target Leakage Protection</div>
-                </div>
-                <ArrowRight className="w-4 h-4 text-violet-400" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleLoadSample('unlabeled')}
-                disabled={evaluating}
-                className="w-full text-left p-3 rounded-xl bg-slate-950/80 hover:bg-emerald-950/40 border border-slate-800 hover:border-emerald-600/60 transition flex items-center justify-between text-xs disabled:opacity-50 cursor-pointer"
-              >
-                <div>
-                  <div className="font-semibold text-white">Load Unlabeled Stream</div>
-                  <div className="text-[10px] text-slate-400 font-mono">10 live banking stream transactions</div>
-                </div>
-                <ArrowRight className="w-4 h-4 text-emerald-400" />
-              </button>
-            </div>
-
             {/* Model Selection Dropdown */}
-            <div className="pt-2 space-y-2">
+            <div className="space-y-2">
               <label className="block text-xs font-mono uppercase text-slate-400 font-semibold flex items-center justify-between">
                 <span>AML Model Selection</span>
                 <span className="text-[10px] text-indigo-400 font-normal">
@@ -711,6 +652,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
                 <optgroup label="Best Available & Ensemble">
                   <option value="auto">Auto-Detect Best Matching Model (Validation PR-AUC)</option>
                   <option value="ensemble_hybrid">Hybrid Ensemble (α* = 1.00 FedProx/FedAvg)</option>
+                  <option value="lightgbm_tabular_fallback">Fallback: no sequence history (LightGBM)</option>
                 </optgroup>
 
                 <optgroup label="Centralized Baseline Models">
@@ -765,7 +707,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
                 <div className="flex items-center justify-between text-xs text-slate-400 font-mono">
                   <span>Decision Threshold:</span>
                   <span className="text-indigo-400 font-bold">
-                    {customThreshold !== '' ? customThreshold : 'Model Frozen Default'}
+                    {customThreshold !== '' ? customThreshold : '0.3378 (Frozen Default)'}
                   </span>
                 </div>
                 <div className="flex items-center space-x-1.5 flex-wrap gap-1">
@@ -801,17 +743,19 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
               <div className="flex items-center justify-between text-xs text-slate-400 font-mono pt-1">
                 <span>Row Limit:</span>
                 <select
-                  value={rowLimit}
-                  onChange={(e) => setRowLimit(Number(e.target.value))}
+                  value={rowLimit ?? ''}
+                  onChange={(e) => setRowLimit(e.target.value === '' ? undefined : Number(e.target.value))}
                   className="bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-lg px-2 py-1"
                 >
-                  <option value={500}>500 rows</option>
-                  <option value={1000}>1,000 rows</option>
-                  <option value={5000}>5,000 rows (Default)</option>
-                  <option value={20000}>20,000 rows</option>
-                  <option value={100000}>100,000 rows</option>
-                  <option value={500000}>500,000 rows</option>
-                  <option value={1000000}>1,000,000 rows (Max)</option>
+                  <option value="">All Uploaded Rows (Dynamic)</option>
+                  <option value="500">500 rows</option>
+                  <option value="1000">1,000 rows</option>
+                  <option value="5000">5,000 rows</option>
+                  <option value="20000">20,000 rows</option>
+                  <option value="50000">50,000 rows</option>
+                  <option value="100000">100,000 rows</option>
+                  <option value="500000">500,000 rows</option>
+                  <option value="1000000">1,000,000 rows (Max)</option>
                 </select>
               </div>
             </div>
@@ -1071,28 +1015,47 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
             </div>
           )}
 
-          <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
             <h2 className="text-lg font-bold text-white flex items-center space-x-2">
               <CheckCircle2 className="w-5 h-5 text-emerald-400" />
               <span>Evaluation Summary for {currentResult.filename}</span>
             </h2>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={handleDownloadPdfReport}
+                className="text-xs bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/60 text-indigo-300 px-3 py-1.5 rounded-xl font-semibold flex items-center space-x-1.5 transition cursor-pointer"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>Download Evaluation Report (PDF)</span>
+              </button>
               <button
                 onClick={handleDownloadPredictions}
-                className="text-xs text-emerald-400 hover:text-emerald-300 font-semibold flex items-center space-x-1 cursor-pointer mr-3"
+                className="text-xs bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-300 px-3 py-1.5 rounded-xl font-semibold flex items-center space-x-1.5 transition cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Download Predictions CSV</span>
               </button>
               <button
                 onClick={() => onNavigateTab('analytics')}
-                className="text-xs text-indigo-400 hover:text-indigo-300 font-semibold flex items-center space-x-1 cursor-pointer"
+                className="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-1.5 rounded-xl font-semibold flex items-center space-x-1 transition cursor-pointer"
               >
                 <span>Full Analytics</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
+
+          {/* Upload Validity Banner */}
+          <ValidityBanner banner={currentResult.validity_banner} />
+
+          {/* Diagnostic "Why no alerts?" card when alerts <= 5 or payload present */}
+          <WhyNoAlertsCard
+            whyNoAlerts={currentResult.why_no_alerts}
+            alertCount={activeOp ? activeOp.alerts : currentResult.flagged_laundering_count}
+            threshold={activeOp?.threshold ?? currentResult.decision_threshold}
+            onSelectOperatingPoint={setSelectedOperatingPoint}
+            onRunFallbackModel={handleRunFallbackModel}
+          />
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
@@ -1107,7 +1070,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
                 <span>Suspicious Flagged</span>
               </span>
               <span className="text-2xl font-black font-mono text-rose-400 mt-1 block">
-                {currentResult.flagged_laundering_count}
+                {activeOp ? activeOp.alerts : currentResult.flagged_laundering_count}
               </span>
             </div>
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
@@ -1116,13 +1079,15 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
                 <span>Legitimate Cleared</span>
               </span>
               <span className="text-2xl font-black font-mono text-emerald-400 mt-1 block">
-                {currentResult.cleared_count}
+                {activeOp
+                  ? (currentResult.total_rows || currentResult.evaluated_sequences) - activeOp.alerts
+                  : currentResult.cleared_count}
               </span>
             </div>
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">High-Risk Count</span>
+              <span className="text-[10px] text-slate-400 font-mono uppercase block">Active Threshold</span>
               <span className="text-2xl font-black font-mono text-amber-400 mt-1 block">
-                {currentResult.risk_counts?.high_risk ?? currentResult.flagged_laundering_count}
+                {(activeOp?.threshold ?? currentResult.decision_threshold).toFixed(4)}
               </span>
             </div>
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
@@ -1139,45 +1104,42 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
             </div>
           </div>
 
-          {/* If Ground Truth Available, show Verification Metrics Strip */}
-          {currentResult.evaluation_metrics && (
-            <div className="p-4 rounded-2xl bg-indigo-950/30 border border-indigo-700/40 space-y-3">
-              <div className="text-xs font-mono uppercase text-indigo-300 font-bold flex items-center justify-between">
-                <span>Ground Truth Verification Metrics</span>
-                <span className="text-[10px] text-indigo-400 font-normal">Supervised Evaluation</span>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
-                <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
-                  <span className="text-[10px] text-slate-400 block">F1-Score</span>
-                  <span className="text-xl font-bold font-mono text-white mt-0.5 block">
-                    {formatMetric(currentResult.evaluation_metrics.f1_score, 4)}
-                  </span>
+          {/* Operating Point Selector & Complete Supervised 8-Metrics Grid */}
+          {currentResult.has_labels && currentResult.evaluation_metrics && (
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                <div>
+                  <h3 className="text-lg font-bold text-white flex items-center space-x-2">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                    <span>Supervised AML Evaluation Metrics (Ground-Truth Verified)</span>
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    Decision threshold: <strong className="text-amber-400 font-mono">{(activeOp?.threshold ?? currentResult.decision_threshold).toFixed(4)}</strong> on positive class (Is Laundering = 1).
+                  </p>
                 </div>
-                <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
-                  <span className="text-[10px] text-slate-400 block">Precision</span>
-                  <span className="text-xl font-bold font-mono text-white mt-0.5 block">
-                    {formatMetric(currentResult.evaluation_metrics.precision, 4)}
+                <div className="flex items-center space-x-2">
+                  <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-800">
+                    LABEL-AWARE
                   </span>
-                </div>
-                <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
-                  <span className="text-[10px] text-slate-400 block">Recall</span>
-                  <span className="text-xl font-bold font-mono text-white mt-0.5 block">
-                    {formatMetric(currentResult.evaluation_metrics.recall, 4)}
-                  </span>
-                </div>
-                <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
-                  <span className="text-[10px] text-slate-400 block">ROC-AUC</span>
-                  <span className="text-xl font-bold font-mono text-indigo-300 mt-0.5 block">
-                    {formatMetric(currentResult.evaluation_metrics.roc_auc, 4)}
-                  </span>
-                </div>
-                <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
-                  <span className="text-[10px] text-slate-400 block">PR-AUC</span>
-                  <span className="text-xl font-bold font-mono text-indigo-300 mt-0.5 block">
-                    {formatMetric(currentResult.evaluation_metrics.pr_auc, 4)}
+                  <span className="px-2.5 py-1 rounded-full text-[11px] font-mono text-slate-400 bg-slate-950 border border-slate-800">
+                    {activeOp?.name || 'Frozen Canonical'}
                   </span>
                 </div>
               </div>
+
+              {/* Operating Points Selector */}
+              <OperatingPointSelector
+                operatingPoints={currentResult.operating_points || currentResult.evaluation_metrics?.operating_points}
+                selectedPoint={selectedOperatingPoint}
+                onSelectPoint={setSelectedOperatingPoint}
+                defaultThreshold={currentResult.decision_threshold}
+              />
+
+              {/* Complete 8-Metrics Grid */}
+              <EvaluationMetricsGrid
+                metrics={currentResult.evaluation_metrics}
+                activeOp={activeOp}
+              />
             </div>
           )}
 
@@ -1185,45 +1147,45 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div
               onClick={() => onNavigateTab('analytics')}
-              className="p-5 bg-gradient-to-br from-slate-900 to-indigo-950/40 border border-slate-800 hover:border-indigo-600/60 rounded-2xl cursor-pointer transition shadow-lg group"
+              className="p-5 bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-indigo-950/40 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 rounded-2xl cursor-pointer transition shadow-sm hover:shadow-md group"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="p-2.5 rounded-xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30">
+                  <div className="p-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-600/20 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30">
                     <BarChart2 className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-white group-hover:text-indigo-300 transition">
+                    <h3 className="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition">
                       Detailed Metrics & Visual Analytics
                     </h3>
-                    <p className="text-xs text-slate-400 mt-0.5">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
                       Inspect Confusion Matrix, ROC curve, Precision-Recall curve, and risk score distribution.
                     </p>
                   </div>
                 </div>
-                <ArrowRight className="w-5 h-5 text-slate-500 group-hover:text-indigo-400 transition" />
+                <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition" />
               </div>
             </div>
 
             <div
               onClick={() => onNavigateTab('history')}
-              className="p-5 bg-gradient-to-br from-slate-900 to-violet-950/40 border border-slate-800 hover:border-violet-600/60 rounded-2xl cursor-pointer transition shadow-lg group"
+              className="p-5 bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-violet-950/40 border border-slate-200 dark:border-slate-800 hover:border-violet-500 rounded-2xl cursor-pointer transition shadow-sm hover:shadow-md group"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="p-2.5 rounded-xl bg-violet-600/20 text-violet-400 border border-violet-500/30">
+                  <div className="p-2.5 rounded-xl bg-violet-50 dark:bg-violet-600/20 text-violet-600 dark:text-violet-400 border border-violet-200 dark:border-violet-500/30">
                     <History className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-white group-hover:text-violet-300 transition">
+                    <h3 className="font-bold text-slate-900 dark:text-white group-hover:text-violet-600 dark:group-hover:text-violet-300 transition">
                       Transaction-Level Prediction Results
                     </h3>
-                    <p className="text-xs text-slate-400 mt-0.5">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
                       Search, sort, filter by risk level, explain individual transactions, and export CSV.
                     </p>
                   </div>
                 </div>
-                <ArrowRight className="w-5 h-5 text-slate-500 group-hover:text-violet-400 transition" />
+                <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition" />
               </div>
             </div>
           </div>

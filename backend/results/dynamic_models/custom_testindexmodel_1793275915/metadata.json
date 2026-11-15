@@ -1,0 +1,53 @@
+{
+  "model_id": "custom_testindexmodel_1793275915",
+  "model_name": "TestIndexModel",
+  "model_type": "RandomForest",
+  "dataset_name": "Custom (TestIndexModel)",
+  "target_column": "is_laundering",
+  "feature_columns": [
+    "amount"
+  ],
+  "categorical_columns": [],
+  "numerical_columns": [
+    "amount"
+  ],
+  "preprocessing_version": "dynamic_v1",
+  "model_version": "1.0.0",
+  "input_shape": [
+    1
+  ],
+  "class_labels": [
+    "Legitimate",
+    "Laundering"
+  ],
+  "training_timestamp": "2026-10-29T12:11:55.538261+00:00",
+  "frozen_threshold": 0.1,
+  "is_sequence_model": false,
+  "required_sequence_fields": [],
+  "description": "User-trained AML model 'TestIndexModel' trained on 40 rows across 1 features.",
+  "is_builtin": false,
+  "checkpoint_path": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\results\\dynamic_models\\custom_testindexmodel_1793275915\\model.joblib",
+  "expected_sha256": null,
+  "pipeline_artifact_path": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\results\\dynamic_models\\custom_testindexmodel_1793275915\\preprocessor.joblib",
+  "training_metrics": {
+    "validation_roc_auc": 1.0,
+    "validation_pr_auc": 1.0,
+    "validation_f1": 1.0,
+    "validation_precision": 1.0,
+    "validation_recall": 1.0,
+    "confusion_matrix": [
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        4
+      ]
+    ],
+    "train_samples": 32,
+    "val_samples": 8,
+    "class_imbalance_ratio": 1.0,
+    "training_time_seconds": 0.667
+  }
+}

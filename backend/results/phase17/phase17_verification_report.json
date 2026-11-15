@@ -1,0 +1,61 @@
+{
+  "phase": "Phase 17: Professional Research Dashboard Reconstruction & CSV Evaluation",
+  "project": "FedSecureAI — Privacy-Preserving, Explainable, Drift-Aware Federated AML Detection",
+  "verification_timestamp": "2026-10-27T19:35:00Z",
+  "readiness_verdict": "GO",
+  "summary": {
+    "total_tests_executed": 118,
+    "total_tests_passed": 118,
+    "total_failures": 0,
+    "execution_duration_seconds": 11.90,
+    "frontend_build_status": "SUCCESS",
+    "css_bundle_kb": 31.23,
+    "js_bundle_kb": 255.68
+  },
+  "datasets": {
+    "HI-Small": {
+      "champion_model": "hi_small_lstm_fedavg_iid_seed42",
+      "architecture": "LSTM (1 layer, hidden_size=64)",
+      "frozen_threshold": 0.3377837836742401,
+      "parameter_count": 31553,
+      "test_pr_auc": 0.475977,
+      "test_roc_auc": 0.955481,
+      "test_f1": 0.535928,
+      "test_precision": 0.818286,
+      "test_recall": 0.398442
+    },
+    "LI-Medium": {
+      "champion_model": "config_5_bilstm_fedavg_iid",
+      "architecture": "BiLSTM (1 layer, hidden_size=64)",
+      "frozen_threshold": 0.2384829968214035,
+      "parameter_count": 63105,
+      "test_pr_auc": 0.253398,
+      "test_roc_auc": 0.969517,
+      "test_f1": 0.316789,
+      "test_precision": 0.594182,
+      "test_recall": 0.215966
+    }
+  },
+  "csv_evaluator": {
+    "supported_schemas": [
+      "IBM AML Raw 11-column Format",
+      "IBM AML Processed 27-column Format"
+    ],
+    "max_file_size_bytes": 10485760,
+    "default_row_limit": 5000,
+    "max_row_limit": 10000,
+    "verified_on_sample_batches": [
+      "hi_small_sample_25.csv",
+      "li_medium_sample_25.csv",
+      "hi_small_raw_sample_25.csv"
+    ]
+  },
+  "provenance_sources": {
+    "benchmark_models": "results/phase8/phase8_summary.csv",
+    "round_level_curves": "results/phase8/round_level_analysis.csv",
+    "threshold_tradeoffs": "results/phase8/threshold_tradeoff_analysis.csv",
+    "ablation_findings": "results/phase8/phase8_report.json",
+    "ensemble_config": "results/phase7/HI_Small/frozen_ensemble_config.json"
+  }
+}
+

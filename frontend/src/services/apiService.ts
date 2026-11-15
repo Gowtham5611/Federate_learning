@@ -309,6 +309,7 @@ export const apiService = {
     column_mapping?: Record<string, string>;
     row_limit?: number;
     threshold?: number;
+    fallback_model?: string;
   }): Promise<CsvEvaluateResponse> {
     try {
       return await request<CsvEvaluateResponse>('/api/v1/predict/csv', {
@@ -437,6 +438,17 @@ export const apiService = {
   },
 
   /**
+   * Get direct evaluation PDF report download URL with selected operating mode and filter.
+   */
+  getPdfReportUrl(id: string, operatingPoint?: string, filter?: string): string {
+    const params = new URLSearchParams();
+    if (operatingPoint) params.set('operating_point', operatingPoint);
+    if (filter) params.set('filter', filter);
+    const q = params.toString();
+    return `${API_BASE}/api/v1/predict/report/${id}.pdf${q ? `?${q}` : ''}`;
+  },
+
+  /**
    * Run validation-only IID + Non-IID ensemble grid search and single-pass test evaluation.
    */
   async evaluateEnsemble(payload: {
@@ -472,6 +484,52 @@ export const apiService = {
     } catch (err) {
       if (err instanceof ApiError && err.status === 404) {
         return await request<any>(`/ensemble/summary?dataset=${dataset}`);
+      }
+      throw err;
+    }
+  },
+
+  /**
+   * Fetch list of saved historical prediction runs from backend artifacts.
+   */
+  async getPredictionHistory(): Promise<any[]> {
+    try {
+      return await request<any[]>('/api/v1/predictions/history');
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 404) {
+        return await request<any[]>('/predictions/history');
+      }
+      throw err;
+    }
+  },
+
+  /**
+   * Fetch a saved prediction run by its run ID.
+   */
+  async getPredictionRun(predictionId: string): Promise<CsvEvaluateResponse> {
+    try {
+      return await request<CsvEvaluateResponse>(`/api/v1/predictions/${predictionId}`);
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 404) {
+        return await request<CsvEvaluateResponse>(`/predictions/${predictionId}`);
+      }
+      throw err;
+    }
+  },
+
+  /**
+   * Clear in-memory prediction cache.
+   */
+  async clearPredictionHistory(): Promise<{ status: string; message: string }> {
+    try {
+      return await request<{ status: string; message: string }>('/api/v1/predictions/clear-history', {
+        method: 'POST',
+      });
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 404) {
+        return await request<{ status: string; message: string }>('/predictions/clear-history', {
+          method: 'POST',
+        });
       }
       throw err;
     }

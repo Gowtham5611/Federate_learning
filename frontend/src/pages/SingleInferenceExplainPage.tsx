@@ -60,7 +60,7 @@ export const SingleInferenceExplainPage: React.FC<SingleInferenceExplainPageProp
   useEffect(() => {
     if (passedTransactionItem) {
       const seq: SequenceItem = {
-        features: passedTransactionItem.sequence_features,
+        features: passedTransactionItem.sequence_features || [],
         length: passedTransactionItem.sequence_length,
         sample_id: `CSV_ROW_${passedTransactionItem.row_id}`,
       };

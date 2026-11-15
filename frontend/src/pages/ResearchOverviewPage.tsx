@@ -142,22 +142,26 @@ export const ResearchOverviewPage: React.FC<ResearchOverviewPageProps> = ({
                   <span>Authoritative Test Split Performance (1,015,564 sequences)</span>
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
                 </div>
-                <div className="grid grid-cols-4 gap-2 text-center">
-                  <div>
-                    <span className="text-[10px] text-slate-400 block">PR-AUC</span>
-                    <span className="text-base font-bold font-mono text-emerald-400">0.4760</span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                  <div className="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800">
+                    <span className="text-[10px] text-slate-400 block font-sans">PR-AUC</span>
+                    <span className="text-base font-bold font-mono text-emerald-400 block mt-0.5">0.4760</span>
+                    <span className="text-[9px] text-slate-500 block font-sans">Primary</span>
                   </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 block">ROC-AUC</span>
-                    <span className="text-base font-bold font-mono text-indigo-300">0.9555</span>
+                  <div className="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800">
+                    <span className="text-[10px] text-slate-400 block font-sans">ROC-AUC</span>
+                    <span className="text-base font-bold font-mono text-indigo-300 block mt-0.5">0.9555</span>
+                    <span className="text-[9px] text-slate-500 block font-sans">Discrimination</span>
                   </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 block">F1-Score</span>
-                    <span className="text-base font-bold font-mono text-white">0.5359</span>
+                  <div className="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800">
+                    <span className="text-[10px] text-slate-400 block font-sans">F1-Score</span>
+                    <span className="text-base font-bold font-mono text-white block mt-0.5">0.5359</span>
+                    <span className="text-[9px] text-slate-500 block font-sans">Balance</span>
                   </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 block">Precision</span>
-                    <span className="text-base font-bold font-mono text-white">0.8183</span>
+                  <div className="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800">
+                    <span className="text-[10px] text-slate-400 block font-sans">Precision</span>
+                    <span className="text-base font-bold font-mono text-white block mt-0.5">0.8183</span>
+                    <span className="text-[9px] text-slate-500 block font-sans">Alert PPV</span>
                   </div>
                 </div>
               </div>
@@ -235,22 +239,26 @@ export const ResearchOverviewPage: React.FC<ResearchOverviewPageProps> = ({
                   <span>Authoritative Test Split Performance (6,249,112 sequences)</span>
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
                 </div>
-                <div className="grid grid-cols-4 gap-2 text-center">
-                  <div>
-                    <span className="text-[10px] text-slate-400 block">PR-AUC</span>
-                    <span className="text-base font-bold font-mono text-emerald-400">0.2534</span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                  <div className="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800">
+                    <span className="text-[10px] text-slate-400 block font-sans">PR-AUC</span>
+                    <span className="text-base font-bold font-mono text-emerald-400 block mt-0.5">0.2534</span>
+                    <span className="text-[9px] text-slate-500 block font-sans">Primary</span>
                   </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 block">ROC-AUC</span>
-                    <span className="text-base font-bold font-mono text-violet-300">0.9695</span>
+                  <div className="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800">
+                    <span className="text-[10px] text-slate-400 block font-sans">ROC-AUC</span>
+                    <span className="text-base font-bold font-mono text-violet-300 block mt-0.5">0.9695</span>
+                    <span className="text-[9px] text-slate-500 block font-sans">Discrimination</span>
                   </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 block">F1-Score</span>
-                    <span className="text-base font-bold font-mono text-white">0.3168</span>
+                  <div className="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800">
+                    <span className="text-[10px] text-slate-400 block font-sans">F1-Score</span>
+                    <span className="text-base font-bold font-mono text-white block mt-0.5">0.3168</span>
+                    <span className="text-[9px] text-slate-500 block font-sans">Balance</span>
                   </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 block">Precision</span>
-                    <span className="text-base font-bold font-mono text-white">0.5942</span>
+                  <div className="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800">
+                    <span className="text-[10px] text-slate-400 block font-sans">Precision</span>
+                    <span className="text-base font-bold font-mono text-white block mt-0.5">0.5942</span>
+                    <span className="text-[9px] text-slate-500 block font-sans">Alert PPV</span>
                   </div>
                 </div>
               </div>

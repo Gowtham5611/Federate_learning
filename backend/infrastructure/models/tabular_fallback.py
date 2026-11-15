@@ -81,3 +81,4 @@ class TabularFallbackModel:
         X = df_features[FEATURE_COLS].to_numpy(dtype=np.float32)
         probs = self.booster.predict(X)
         return probs.astype(np.float64)
+

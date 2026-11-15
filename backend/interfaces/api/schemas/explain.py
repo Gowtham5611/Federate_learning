@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import List, Literal
+from typing import Any, Dict, List, Literal
 from pydantic import BaseModel, Field, model_validator
 
 from .common import (
@@ -23,26 +23,46 @@ class DriverAttribution(BaseModel):
 
 
 class ExplainRequest(BaseModel):
-    """Request payload for Integrated Gradients feature attribution.
+    """Request payload for model-aware feature attribution (Integrated Gradients or Tree SHAP).
 
     Attributes:
         dataset: Target dataset ('HI-Small' or 'LI-Medium').
-        model_name: Model identifier (defaults to champion).
-        sequence: Single sequence window of shape (L, 57).
+        model_name: Optional model identifier.
+        sequence: Single sequence window of shape (L, 57) for recurrent models.
+        tabular_features: Dict or vector of 23 engineered features for tabular fallback.
+        prediction_id: Optional cached prediction ID to look up features on demand.
+        row_id: Optional 1-based row ID within cached prediction batch.
+        transaction_id: Optional transaction ID within cached prediction batch.
         steps: Number of Riemann integration steps (10 <= steps <= 50, default 25).
         top_k: Top positive and negative drivers to extract (1 <= top_k <= 20, default 5).
     """
     dataset: SupportedDataset = Field(
-        ...,
+        default="HI-Small",
         description="Dataset identifier ('HI-Small' or 'LI-Medium').",
     )
     model_name: str | None = Field(
         default=None,
-        description="Optional model identifier. Defaults to dataset champion.",
+        description="Optional model identifier. Defaults to dataset champion or tabular fallback.",
     )
-    sequence: SequenceItem = Field(
-        ...,
-        description="Single sequence to explain.",
+    sequence: SequenceItem | None = Field(
+        default=None,
+        description="Single sequence to explain (for recurrent models).",
+    )
+    tabular_features: Dict[str, float] | List[float] | None = Field(
+        default=None,
+        description="Tabular feature vector or mapping of 23 tabular features (for LightGBM fallback).",
+    )
+    prediction_id: str | None = Field(
+        default=None,
+        description="Cached prediction batch identifier from CSV evaluation.",
+    )
+    transaction_id: str | None = Field(
+        default=None,
+        description="Transaction ID within cached prediction batch.",
+    )
+    row_id: int | None = Field(
+        default=None,
+        description="1-based row index within cached prediction batch.",
     )
     steps: int = Field(
         default=25,
@@ -58,14 +78,22 @@ class ExplainRequest(BaseModel):
     )
 
     @model_validator(mode="after")
-    def validate_model_selection(self) -> ExplainRequest:
-        expected_model = SUPPORTED_MODELS_BY_DATASET[self.dataset]
-        if self.model_name is not None and self.model_name != expected_model:
-            raise ValueError(
-                f"Model '{self.model_name}' is not valid for dataset '{self.dataset}'. Expected '{expected_model}'."
-            )
+    def validate_inputs(self) -> ExplainRequest:
+        has_seq = self.sequence is not None and getattr(self.sequence, "features", None) is not None and len(self.sequence.features) > 0
+        has_tab = self.tabular_features is not None
+        has_lookup = bool(self.prediction_id and (self.row_id is not None or self.transaction_id is not None))
+
+        if not (has_seq or has_tab or has_lookup):
+            if self.sequence is not None:
+                raise ValueError("Sequence features cannot be empty. Must provide at least 1 feature timestep.")
+            raise ValueError("Must provide either 'sequence', 'tabular_features', or 'prediction_id' with 'row_id'/'transaction_id'.")
+
         if self.model_name is None:
-            self.model_name = expected_model
+            if has_tab or (not has_seq and has_lookup):
+                self.model_name = "lightgbm_tabular_fallback"
+            else:
+                self.model_name = SUPPORTED_MODELS_BY_DATASET.get(self.dataset, "centralized_lstm")
+
         return self
 
 

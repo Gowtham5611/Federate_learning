@@ -14,7 +14,9 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/research", tags=["Research & Experiment Artifacts"])
 
-BASE_DIR = Path(__file__).resolve().parents[4]
+_BACKEND_DIR = Path(__file__).resolve().parents[3]
+_ROOT_DIR = _BACKEND_DIR.parent
+BASE_DIR = _BACKEND_DIR if (_BACKEND_DIR / "results").exists() else _ROOT_DIR
 
 
 @router.get("/overview")
@@ -220,14 +222,18 @@ def get_ablation_summary() -> Dict[str, Any]:
 @router.get("/sample-csv/{dataset}")
 def download_sample_csv(dataset: str) -> Response:
     """Download a verified demonstration CSV for a dataset."""
-    if dataset not in ("HI-Small", "LI-Medium"):
+    if dataset in ("threshold-trigger-demo", "demo-trigger", "threshold_trigger_demo_only.csv"):
+        path = BASE_DIR / "data/demo/threshold_trigger_demo_only.csv"
+        file_name = "threshold_trigger_demo_only.csv"
+    elif dataset in ("HI-Small", "LI-Medium"):
+        file_name = "hi_small_sample_25.csv" if dataset == "HI-Small" else "li_medium_sample_25.csv"
+        path = BASE_DIR / f"data/demo_samples/{file_name}"
+    else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Sample CSV only available for HI-Small or LI-Medium.",
+            detail=f"Sample CSV only available for HI-Small, LI-Medium, or threshold-trigger-demo.",
         )
 
-    file_name = "hi_small_sample_25.csv" if dataset == "HI-Small" else "li_medium_sample_25.csv"
-    path = BASE_DIR / f"data/demo_samples/{file_name}"
     if not path.exists():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

@@ -6,7 +6,7 @@ export type SupportedDataset = 'HI-Small' | 'LI-Medium';
 
 export type DecisionLabel = 'FLAGGED_LAUNDERING' | 'CLEARED_LEGITIMATE';
 
-export type ExplanationMethod = 'integrated_gradients';
+export type ExplanationMethod = 'integrated_gradients' | 'tree_shap' | 'lightgbm_tree_attribution';
 
 export interface HealthResponse {
   status: string;
@@ -75,7 +75,11 @@ export interface DriverAttribution {
 export interface ExplainRequest {
   dataset: SupportedDataset;
   model_name?: string;
-  sequence: SequenceItem;
+  sequence?: SequenceItem;
+  tabular_features?: Record<string, number> | number[];
+  prediction_id?: string;
+  transaction_id?: string;
+  row_id?: number;
   steps?: number;
   top_k?: number;
 }
@@ -172,11 +176,43 @@ export interface OperatingPointMetrics {
   description?: string;
   budget_per_10k?: number;
   target_alerts?: number;
+  actual_alerts?: number;
+  operating_mode?: 'fixed_threshold' | 'fixed_capacity' | 'what_if_diagnostic';
+  is_hard_capacity?: boolean;
+  tie_rule?: string;
   label?: string;
+}
+
+export type OperatingPoint = OperatingPointMetrics;
+
+export interface WhyNoAlertsAction {
+  action_id: string;
+  label: string;
+  description: string;
+  suggested_threshold?: number;
+  shift_delta?: number;
+  fallback_model_id?: string;
+}
+
+export interface WhyNoAlerts {
+  alerts_count: number;
+  threshold: number;
+  max_score: number;
+  mean_score: number;
+  pct_rows_ge_3_prior: number;
+  uploaded_positive_prevalence: number | null;
+  training_prior: number;
+  prevalence_ratio: number | null;
+  logit_shift_delta: number | null;
+  unique_sender_ratio: number;
+  is_short_history: boolean;
+  explanation: string;
+  actions: WhyNoAlertsAction[];
 }
 
 export interface OperatingPointsMap {
   frozen?: OperatingPointMetrics;
+  zero_diagnostic?: OperatingPointMetrics;
   alert_budgets?: Record<string, OperatingPointMetrics>;
   best_f1_on_file?: OperatingPointMetrics;
 }
@@ -243,6 +279,10 @@ export interface EvaluationMetrics {
 export interface TransactionPredictionItem {
   row_id: number;
   transaction_id?: string;
+  sender_name?: string | null;
+  receiver_name?: string | null;
+  transaction_name?: string | null;
+  customer_name?: string | null;
   timestamp: string;
   from_account: string;
   to_account: string;
@@ -263,7 +303,8 @@ export interface TransactionPredictionItem {
   missing_feature_ratio?: number;
   is_history_sufficient?: boolean;
   usable_history_note?: string | null;
-  sequence_features: number[][]; // (10, 57) for on-demand explainability
+  sequence_features?: number[][]; // (10, 57) for on-demand recurrent explainability
+  tabular_features?: Record<string, number> | number[]; // 23 engineered features for tabular fallback
 }
 
 export interface ValidityBannerDiagnostics {
@@ -347,6 +388,8 @@ export interface CsvEvaluateResponse {
   };
   download_id?: string;
   download_url?: string;
+  prediction_id?: string;
+  why_no_alerts?: WhyNoAlerts;
 }
 
 // --- Universal CSV & Dynamic Model Types ---
@@ -364,6 +407,14 @@ export interface UniversalCsvInspectionResponse {
   can_construct_sequences?: boolean;
   column_types?: Record<string, string>;
   semantic_mappings?: Record<string, string | null>;
+  // Automatic Model Routing Strategy
+  routing_decision?: 'ALLOW_RECURRENT_MODELS' | 'RECOMMEND_TABULAR_FALLBACK' | 'REQUEST_MISSING_FEATURES';
+  recommended_model_id?: string;
+  recommended_model_name?: string;
+  routing_reason?: string;
+  unique_sender_ratio?: number;
+  average_sequence_depth?: number;
+  sequence_sufficiency_status?: 'SUFFICIENT' | 'INSUFFICIENT_COLD_START' | 'MISSING_FEATURES';
   // Legacy & Alternate field names
   detected_delimiter?: string;
   detected_encoding?: string;

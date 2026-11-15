@@ -1,0 +1,70 @@
+{
+  "model_id": "custom_custom_aml_classifier_1794161341",
+  "model_name": "Custom_AML_Classifier",
+  "model_type": "HistGradientBoosting",
+  "dataset_name": "Custom (Custom_AML_Classifier)",
+  "target_column": "Is Laundering",
+  "feature_columns": [
+    "From Bank",
+    "Account",
+    "To Bank",
+    "Account.1",
+    "Amount Received",
+    "Receiving Currency",
+    "Amount Paid",
+    "Payment Currency",
+    "Payment Format"
+  ],
+  "categorical_columns": [
+    "Receiving Currency",
+    "Payment Currency",
+    "Payment Format"
+  ],
+  "numerical_columns": [
+    "From Bank",
+    "Account",
+    "To Bank",
+    "Account.1",
+    "Amount Received",
+    "Amount Paid"
+  ],
+  "preprocessing_version": "dynamic_v1",
+  "model_version": "1.0.0",
+  "input_shape": [
+    9
+  ],
+  "class_labels": [
+    "Legitimate",
+    "Laundering"
+  ],
+  "training_timestamp": "2026-11-08T18:09:01.033014+00:00",
+  "frozen_threshold": 0.65,
+  "is_sequence_model": false,
+  "required_sequence_fields": [],
+  "description": "User-trained AML model 'Custom_AML_Classifier' trained on 20000 rows across 9 features.",
+  "is_builtin": false,
+  "checkpoint_path": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\results\\dynamic_models\\custom_custom_aml_classifier_1794161341\\model.joblib",
+  "expected_sha256": null,
+  "pipeline_artifact_path": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\results\\dynamic_models\\custom_custom_aml_classifier_1794161341\\preprocessor.joblib",
+  "training_metrics": {
+    "validation_roc_auc": 0.9911,
+    "validation_pr_auc": 0.9773,
+    "validation_f1": 0.9264,
+    "validation_precision": 0.8995,
+    "validation_recall": 0.955,
+    "confusion_matrix": [
+      [
+        2672,
+        128
+      ],
+      [
+        54,
+        1146
+      ]
+    ],
+    "train_samples": 16000,
+    "val_samples": 4000,
+    "class_imbalance_ratio": 2.33,
+    "training_time_seconds": 5.741
+  }
+}

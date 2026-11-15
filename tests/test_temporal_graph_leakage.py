@@ -86,3 +86,4 @@ def test_two_hop_cycle_detection():
     assert feat["cycle_two_hop_indicator"].iloc[2] == 1.0
     # Row 3: C -> D (no previous D -> C) -> 0
     assert feat["cycle_two_hop_indicator"].iloc[3] == 0.0
+

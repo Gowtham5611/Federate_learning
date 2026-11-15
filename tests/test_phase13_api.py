@@ -292,7 +292,8 @@ def test_explain_endpoint(client):
 
 # 8. Real Prediction Parity Verification Test
 def test_authoritative_prediction_parity_hi_small(client):
-    saved_npz_path = BASE_DIR / "results/phase7/HI_Small/validation_predictions/iid_validation_predictions.npz"
+    results_base = BASE_DIR / "backend" / "results" if (BASE_DIR / "backend" / "results").exists() else BASE_DIR / "results"
+    saved_npz_path = results_base / "phase7/HI_Small/validation_predictions/iid_validation_predictions.npz"
     assert saved_npz_path.exists()
     
     saved_data = np.load(saved_npz_path)
@@ -305,7 +306,8 @@ def test_authoritative_prediction_parity_hi_small(client):
     from domain.enums.model_architecture import ModelArchitecture
     from domain.enums.split_name import SplitName
     
-    data_dir = BASE_DIR / "data/processed/ibm_aml/HI-Small"
+    data_base = BASE_DIR / "backend" / "data" if (BASE_DIR / "backend" / "data").exists() else BASE_DIR / "data"
+    data_dir = data_base / "processed/ibm_aml/HI-Small"
     provider = ProcessedSequenceProvider(data_dir)
     cfg = TrainingConfig(architecture=ModelArchitecture.LSTM, batch_size=64, hidden_size=64, num_layers=1, row_limit=500)
     ds = provider.load(SplitName.VALIDATION, cfg)

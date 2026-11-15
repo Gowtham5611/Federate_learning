@@ -1,0 +1,286 @@
+{
+  "test_slice_5000.csv": [
+    {
+      "model_id": "centralized_lstm",
+      "model_name": "Centralized Baseline (LSTM)",
+      "total_records": 5000,
+      "positive_records": 12,
+      "negative_records": 4988,
+      "decision_threshold": 0.703287,
+      "pr_auc": 0.39248693285547165,
+      "roc_auc": 0.8630379577653033,
+      "precision": 0.6666666666666666,
+      "recall": 0.3333333333333333,
+      "f1_score": 0.4444444444444444,
+      "accuracy": 0.998,
+      "mcc": 0.4705545475543426,
+      "confusion_matrix": {
+        "tp": 4,
+        "fp": 2,
+        "tn": 4986,
+        "fn": 8
+      },
+      "calibration": {
+        "brier_score": 0.014953746563321999,
+        "ece": 0.056222640799999994
+      },
+      "probability_distribution": {
+        "min": 1e-06,
+        "p25": 0.00156975,
+        "median": 0.019252,
+        "mean": 0.0586226408,
+        "p75": 0.064326,
+        "max": 0.766423,
+        "std": 0.10769684001379137
+      },
+      "flagged_alerts": 6
+    },
+    {
+      "model_id": "hi_small_lstm_fedavg_iid_seed42",
+      "model_name": "hi_small_lstm_fedavg_iid_seed42",
+      "total_records": 5000,
+      "positive_records": 12,
+      "negative_records": 4988,
+      "decision_threshold": 0.337784,
+      "pr_auc": 0.43366143450972,
+      "roc_auc": 0.8793521117348303,
+      "precision": 1.0,
+      "recall": 0.25,
+      "f1_score": 0.4,
+      "accuracy": 0.9982,
+      "mcc": 0.49954952691189963,
+      "confusion_matrix": {
+        "tp": 3,
+        "fp": 0,
+        "tn": 4988,
+        "fn": 9
+      },
+      "calibration": {
+        "brier_score": 0.0022284796915162,
+        "ece": 0.0060855598
+      },
+      "probability_distribution": {
+        "min": 3e-06,
+        "p25": 0.00030825,
+        "median": 0.001584,
+        "mean": 0.007629441799999999,
+        "p75": 0.0041335,
+        "max": 0.501582,
+        "std": 0.026362680238105774
+      },
+      "flagged_alerts": 3
+    },
+    {
+      "model_id": "hi_small_lstm_fedprox_mu0.0001_seed42",
+      "model_name": "Federated LSTM (FedProx mu=0.0001 Non-IID)",
+      "total_records": 5000,
+      "positive_records": 12,
+      "negative_records": 4988,
+      "decision_threshold": 0.36,
+      "pr_auc": 0.10572770566579337,
+      "roc_auc": 0.7994603715584069,
+      "precision": 1.0,
+      "recall": 0.08333333333333333,
+      "f1_score": 0.15384615384615385,
+      "accuracy": 0.9978,
+      "mcc": 0.28835735351469455,
+      "confusion_matrix": {
+        "tp": 1,
+        "fp": 0,
+        "tn": 4988,
+        "fn": 11
+      },
+      "calibration": {
+        "brier_score": 0.004624063929834,
+        "ece": 0.0282356008
+      },
+      "probability_distribution": {
+        "min": 2e-06,
+        "p25": 0.00080275,
+        "median": 0.014461499999999999,
+        "mean": 0.030420752800000003,
+        "p75": 0.04091275,
+        "max": 0.46288,
+        "std": 0.04426088260434141
+      },
+      "flagged_alerts": 1
+    },
+    {
+      "model_id": "lightgbm_tabular_fallback",
+      "model_name": "Fallback: no sequence history (LightGBM)",
+      "total_records": 5000,
+      "positive_records": 12,
+      "negative_records": 4988,
+      "decision_threshold": 0.337784,
+      "pr_auc": 0.5157241984485278,
+      "roc_auc": 0.9864758754343759,
+      "precision": 0.6666666666666666,
+      "recall": 0.5,
+      "f1_score": 0.5714285714285714,
+      "accuracy": 0.9982,
+      "mcc": 0.5764824473562943,
+      "confusion_matrix": {
+        "tp": 6,
+        "fp": 3,
+        "tn": 4985,
+        "fn": 6
+      },
+      "calibration": {
+        "brier_score": 0.0015163605912694002,
+        "ece": 0.0011624405999999998
+      },
+      "probability_distribution": {
+        "min": 0.0,
+        "p25": 4.4e-05,
+        "median": 7.1e-05,
+        "mean": 0.0029614518,
+        "p75": 0.000146,
+        "max": 1.0,
+        "std": 0.03625560362903474
+      },
+      "flagged_alerts": 9
+    }
+  ],
+  "ibm_aml_schema_synthetic_20000.csv": [
+    {
+      "model_id": "centralized_lstm",
+      "model_name": "Centralized Baseline (LSTM)",
+      "total_records": 20000,
+      "positive_records": 6000,
+      "negative_records": 14000,
+      "decision_threshold": 0.703287,
+      "pr_auc": 0.2821780028337244,
+      "roc_auc": 0.5212960476190476,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "accuracy": 0.7,
+      "mcc": 0.0,
+      "confusion_matrix": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 14000,
+        "fn": 6000
+      },
+      "calibration": {
+        "brier_score": 0.2999445911659632,
+        "ece": 0.29921344215
+      },
+      "probability_distribution": {
+        "min": 4e-06,
+        "p25": 2.8e-05,
+        "median": 6e-05,
+        "mean": 0.00078655785,
+        "p75": 0.000268,
+        "max": 0.019286,
+        "std": 0.0018621204880064494
+      },
+      "flagged_alerts": 0
+    },
+    {
+      "model_id": "hi_small_lstm_fedavg_iid_seed42",
+      "model_name": "hi_small_lstm_fedavg_iid_seed42",
+      "total_records": 20000,
+      "positive_records": 6000,
+      "negative_records": 14000,
+      "decision_threshold": 0.337784,
+      "pr_auc": 0.2814386547687594,
+      "roc_auc": 0.5236493571428572,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "accuracy": 0.7,
+      "mcc": 0.0,
+      "confusion_matrix": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 14000,
+        "fn": 6000
+      },
+      "calibration": {
+        "brier_score": 0.29978139737782045,
+        "ece": 0.29911667675
+      },
+      "probability_distribution": {
+        "min": 1.5e-05,
+        "p25": 0.000111,
+        "median": 0.000232,
+        "mean": 0.0008833232500000001,
+        "p75": 0.000665,
+        "max": 0.018171,
+        "std": 0.0018070467222679766
+      },
+      "flagged_alerts": 0
+    },
+    {
+      "model_id": "hi_small_lstm_fedprox_mu0.0001_seed42",
+      "model_name": "Federated LSTM (FedProx mu=0.0001 Non-IID)",
+      "total_records": 20000,
+      "positive_records": 6000,
+      "negative_records": 14000,
+      "decision_threshold": 0.36,
+      "pr_auc": 0.3222999510746271,
+      "roc_auc": 0.598695142857143,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "accuracy": 0.7,
+      "mcc": 0.0,
+      "confusion_matrix": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 14000,
+        "fn": 6000
+      },
+      "calibration": {
+        "brier_score": 0.2994048088804905,
+        "ece": 0.29877390575
+      },
+      "probability_distribution": {
+        "min": 3.2e-05,
+        "p25": 0.000235,
+        "median": 0.000515,
+        "mean": 0.00122609425,
+        "p75": 0.001271,
+        "max": 0.016005,
+        "std": 0.0018847475641493576
+      },
+      "flagged_alerts": 0
+    },
+    {
+      "model_id": "lightgbm_tabular_fallback",
+      "model_name": "Fallback: no sequence history (LightGBM)",
+      "total_records": 20000,
+      "positive_records": 6000,
+      "negative_records": 14000,
+      "decision_threshold": 0.337784,
+      "pr_auc": 0.2938285890257732,
+      "roc_auc": 0.4491863214285715,
+      "precision": 0.8656716417910447,
+      "recall": 0.009666666666666667,
+      "f1_score": 0.019119828580847206,
+      "accuracy": 0.70245,
+      "mcc": 0.07156584901711542,
+      "confusion_matrix": {
+        "tp": 58,
+        "fp": 9,
+        "tn": 13991,
+        "fn": 5942
+      },
+      "calibration": {
+        "brier_score": 0.29302198336944874,
+        "ece": 0.28895733045
+      },
+      "probability_distribution": {
+        "min": 0.0,
+        "p25": 1e-06,
+        "median": 5e-06,
+        "mean": 0.01109790855,
+        "p75": 0.000628,
+        "max": 0.978257,
+        "std": 0.04491651918019235
+      },
+      "flagged_alerts": 67
+    }
+  ]
+}

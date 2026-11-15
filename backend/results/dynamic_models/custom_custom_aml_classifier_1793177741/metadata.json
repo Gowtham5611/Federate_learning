@@ -1,0 +1,100 @@
+{
+  "model_id": "custom_custom_aml_classifier_1793177741",
+  "model_name": "Custom_AML_Classifier",
+  "model_type": "HistGradientBoosting",
+  "dataset_name": "Custom (Custom_AML_Classifier)",
+  "target_column": "self_transfer",
+  "feature_columns": [
+    "timestamp",
+    "amount_paid_log",
+    "amount_received_log",
+    "amount_mismatch",
+    "same_currency",
+    "same_bank",
+    "payment_format_code",
+    "payment_currency_code",
+    "receiving_currency_code",
+    "minute_of_day_sin",
+    "minute_of_day_cos",
+    "day_of_week_sin",
+    "day_of_week_cos",
+    "is_weekend",
+    "is_night",
+    "sender_prior_count_log",
+    "sender_prior_amount_log",
+    "sender_seconds_since_prior_log",
+    "sender_has_prior",
+    "receiver_prior_count_log",
+    "receiver_prior_amount_log",
+    "receiver_seconds_since_prior_log",
+    "receiver_has_prior",
+    "is_laundering"
+  ],
+  "categorical_columns": [
+    "timestamp"
+  ],
+  "numerical_columns": [
+    "amount_paid_log",
+    "amount_received_log",
+    "amount_mismatch",
+    "same_currency",
+    "same_bank",
+    "payment_format_code",
+    "payment_currency_code",
+    "receiving_currency_code",
+    "minute_of_day_sin",
+    "minute_of_day_cos",
+    "day_of_week_sin",
+    "day_of_week_cos",
+    "is_weekend",
+    "is_night",
+    "sender_prior_count_log",
+    "sender_prior_amount_log",
+    "sender_seconds_since_prior_log",
+    "sender_has_prior",
+    "receiver_prior_count_log",
+    "receiver_prior_amount_log",
+    "receiver_seconds_since_prior_log",
+    "receiver_has_prior",
+    "is_laundering"
+  ],
+  "preprocessing_version": "dynamic_v1",
+  "model_version": "1.0.0",
+  "input_shape": [
+    24
+  ],
+  "class_labels": [
+    "Legitimate",
+    "Laundering"
+  ],
+  "training_timestamp": "2026-10-28T08:55:41.589261+00:00",
+  "frozen_threshold": 0.1,
+  "is_sequence_model": false,
+  "required_sequence_fields": [],
+  "description": "User-trained AML model 'Custom_AML_Classifier' trained on 25 rows across 24 features.",
+  "is_builtin": false,
+  "checkpoint_path": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\results\\dynamic_models\\custom_custom_aml_classifier_1793177741\\model.joblib",
+  "expected_sha256": null,
+  "pipeline_artifact_path": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\results\\dynamic_models\\custom_custom_aml_classifier_1793177741\\preprocessor.joblib",
+  "training_metrics": {
+    "validation_roc_auc": NaN,
+    "validation_pr_auc": 0.0,
+    "validation_f1": 0.0,
+    "validation_precision": 0.0,
+    "validation_recall": 0.0,
+    "confusion_matrix": [
+      [
+        0,
+        5
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "train_samples": 20,
+    "val_samples": 5,
+    "class_imbalance_ratio": 19.0,
+    "training_time_seconds": 0.284
+  }
+}

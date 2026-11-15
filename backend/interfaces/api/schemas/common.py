@@ -9,25 +9,16 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 SupportedDataset = Literal["HI-Small", "LI-Medium"]
 DecisionLabel = Literal["FLAGGED_LAUNDERING", "CLEARED_LEGITIMATE"]
-ExplanationMethod = Literal["integrated_gradients"]
+ExplanationMethod = Literal["integrated_gradients", "tree_shap", "lightgbm_tree_attribution"]
 
 SUPPORTED_MODELS_BY_DATASET: dict[str, str] = {
     "HI-Small": "hi_small_lstm_fedavg_iid_seed42",
     "LI-Medium": "config_5_bilstm_fedavg_iid",
 }
 
-try:
-    from config.threshold_config import get_canonical_threshold
-except ModuleNotFoundError:
-    try:
-        from backend.config.threshold_config import get_canonical_threshold
-    except ModuleNotFoundError:
-        def get_canonical_threshold(d: str) -> float:
-            return 0.337784 if "hi" in d.lower() else 0.238483
-
 FROZEN_THRESHOLDS: dict[str, float] = {
-    "HI-Small": get_canonical_threshold("HI-Small"),
-    "LI-Medium": get_canonical_threshold("LI-Medium"),
+    "HI-Small": 0.3377837836742401,
+    "LI-Medium": 0.2384829968214035,
 }
 
 FEATURE_DIMENSION: int = 57

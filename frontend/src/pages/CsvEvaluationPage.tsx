@@ -78,10 +78,11 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const pageSize = 20;
 
-  // Operating point selection state ('frozen' | 'budget_10' | 'budget_50' | 'budget_100' | 'best_f1')
+  // Operating point selection state ('frozen' | 'budget_10' | 'budget_50' | 'budget_100' | 'budget_500' | 'best_f1')
+  // Default matches user preference: 50 alerts per 1,000 transactions (500 per 10k)
   const [selectedOperatingPoint, setSelectedOperatingPoint] = useState<
-    'frozen' | 'budget_10' | 'budget_50' | 'budget_100' | 'best_f1'
-  >('frozen');
+    'frozen' | 'budget_10' | 'budget_50' | 'budget_100' | 'budget_500' | 'best_f1'
+  >('budget_500');
 
   // Active operating point helper
   const activeOp = React.useMemo(() => {
@@ -89,6 +90,9 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
     const ops = result.operating_points || result.evaluation_metrics?.operating_points;
     if (!ops) return null;
 
+    if (selectedOperatingPoint === 'budget_500') {
+      return ops.alert_budgets?.['500'] || ops.alert_budgets?.['50'] || null;
+    }
     if (selectedOperatingPoint === 'budget_10') {
       return ops.alert_budgets?.['10'] || null;
     }
@@ -796,6 +800,18 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
                   <div className="flex flex-wrap gap-2 pt-1">
                     <button
                       type="button"
+                      onClick={() => setSelectedOperatingPoint('budget_500')}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition border cursor-pointer ${
+                        selectedOperatingPoint === 'budget_500'
+                          ? 'bg-emerald-600 text-white border-emerald-500 shadow-md shadow-emerald-600/30'
+                          : 'bg-slate-900 text-emerald-400/90 border-slate-800 hover:text-emerald-300'
+                      }`}
+                    >
+                      Capacity: 50 / 1,000 tx [Preferred]
+                    </button>
+
+                    <button
+                      type="button"
                       onClick={() => setSelectedOperatingPoint('frozen')}
                       className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition border cursor-pointer ${
                         selectedOperatingPoint === 'frozen'
@@ -815,7 +831,7 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
                           : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
                       }`}
                     >
-                      Alert Budget (10 / 10k)
+                      Capacity: 10 / 10k (1 / 1k)
                     </button>
 
                     <button
@@ -827,7 +843,7 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
                           : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
                       }`}
                     >
-                      Alert Budget (50 / 10k)
+                      Capacity: 50 / 10k (5 / 1k)
                     </button>
 
                     <button
@@ -839,7 +855,7 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
                           : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
                       }`}
                     >
-                      Alert Budget (100 / 10k)
+                      Capacity: 100 / 10k (10 / 1k)
                     </button>
 
                     <button
@@ -851,7 +867,7 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
                           : 'bg-slate-900 text-amber-400/80 border-slate-800 hover:text-amber-300'
                       }`}
                     >
-                      Best F1 on File (What-If)
+                      Best F1 on File (Diagnostic What-If)
                     </button>
                   </div>
 
@@ -868,7 +884,7 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
                     <div className="text-[11px] font-sans text-slate-300 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 flex items-center space-x-2">
                       <Info className="w-4 h-4 shrink-0 text-indigo-400" />
                       <span>
-                        <strong>Fixed Alert Capacity:</strong> Evaluates top-ranked transactions targeting {activeOp?.alerts_per_10k ?? 0} alerts per 10k transactions ({activeOp?.alerts ?? 0} alerts total) at cutoff score {displayedThreshold.toFixed(4)}.
+                        <strong>Fixed Alert Capacity (Top-K):</strong> Evaluates top-ranked transactions targeting {activeOp?.alerts_per_10k ?? 0} alerts per 10k transactions ({((activeOp?.alerts_per_10k ?? 0) / 10).toFixed(1)} alerts per 1,000 transactions; {activeOp?.alerts ?? 0} alerts total) at cutoff score {displayedThreshold.toFixed(4)}.
                       </span>
                     </div>
                   )}

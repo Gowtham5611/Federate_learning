@@ -86,6 +86,58 @@ class UniversalCsvReader:
         self.default_chunk_size = default_chunk_size
         self.max_preview_rows = max_preview_rows
 
+    @staticmethod
+    def sanitize_duplicate_headers(
+        text: str,
+        delimiter: str = ",",
+    ) -> Tuple[str, bool, List[str]]:
+        """Detect and disambiguate duplicate column headers before dataframe parsing.
+
+        Assigns stable, predictable column names (e.g. 'Account', 'Account.1', 'Account.2')
+        while preserving row integrity.
+        Returns:
+            (sanitized_text, has_duplicates, sanitized_column_list)
+        """
+        if not text or not text.strip():
+            return text, False, []
+
+        lines = text.splitlines(keepends=True)
+        if not lines:
+            return text, False, []
+
+        header_line = lines[0].rstrip("\r\n")
+        try:
+            reader = csv.reader(io.StringIO(header_line), delimiter=delimiter)
+            raw_cols = next(reader)
+        except Exception:
+            raw_cols = [c.strip() for c in header_line.split(delimiter)]
+
+        seen_counts: Dict[str, int] = {}
+        sanitized_cols: List[str] = []
+        has_duplicates = False
+
+        for col in raw_cols:
+            col_clean = str(col).strip().lstrip("\ufeff")
+            if col_clean not in seen_counts:
+                seen_counts[col_clean] = 0
+                sanitized_cols.append(col_clean)
+            else:
+                has_duplicates = True
+                seen_counts[col_clean] += 1
+                sanitized_cols.append(f"{col_clean}.{seen_counts[col_clean]}")
+
+        if not has_duplicates:
+            return text, False, raw_cols
+
+        out_io = io.StringIO()
+        writer = csv.writer(out_io, delimiter=delimiter, lineterminator="")
+        writer.writerow(sanitized_cols)
+        new_header_line = out_io.getvalue()
+
+        original_ending = "\r\n" if lines[0].endswith("\r\n") else ("\n" if lines[0].endswith("\n") else "")
+        new_lines = [new_header_line + original_ending] + lines[1:]
+        return "".join(new_lines), True, sanitized_cols
+
     def detect_encoding(self, raw_bytes: bytes) -> str:
         """Detect text encoding, handling BOM markers and common variants."""
         if not raw_bytes:
@@ -223,9 +275,14 @@ class UniversalCsvReader:
             )
 
         delimiter = self.detect_delimiter("\n".join(lines[:20]))
+        text, had_dups, disambiguated_cols = self.sanitize_duplicate_headers(text, delimiter=delimiter)
 
         # Read preview DataFrame safely
         warnings: List[str] = []
+        if had_dups:
+            warnings.append(
+                "Header contained duplicate column names; automatically disambiguated with stable names (e.g. Account, Account.1) before dataframe parsing."
+            )
         try:
             preview_df = pd.read_csv(
                 io.StringIO(text),
@@ -314,6 +371,7 @@ class UniversalCsvReader:
         text, _ = self.decode_text(
             data if not isinstance(data, Path) else Path(data).read_bytes()
         )
+        text, _, _ = self.sanitize_duplicate_headers(text, delimiter=meta.detected_delimiter)
 
         try:
             df = pd.read_csv(
@@ -355,6 +413,7 @@ class UniversalCsvReader:
         text, _ = self.decode_text(
             data if not isinstance(data, Path) else Path(data).read_bytes()
         )
+        text, _, _ = self.sanitize_duplicate_headers(text, delimiter=meta.detected_delimiter)
 
         reader = pd.read_csv(
             io.StringIO(text),

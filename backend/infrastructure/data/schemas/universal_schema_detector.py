@@ -108,6 +108,13 @@ class UniversalSchemaReport:
     can_construct_sequences: bool
     missing_sequence_concepts: List[str]
     warnings: List[str] = field(default_factory=list)
+    routing_decision: str = "ALLOW_RECURRENT_MODELS"
+    recommended_model_id: str = "hi_small_lstm_fedavg_iid_seed42"
+    recommended_model_name: str = "HI-Small Champion (Federated LSTM FedAvg IID)"
+    routing_reason: str = ""
+    unique_sender_ratio: float = 1.0
+    average_sequence_depth: float = 1.0
+    sequence_sufficiency_status: str = "SUFFICIENT"
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert report to JSON-serializable dictionary."""
@@ -273,6 +280,63 @@ class UniversalSchemaDetector:
 
         can_construct_sequences = len(missing_seq_concepts) == 0
 
+        # 5. Model Routing Strategy & Sequence History Depth Analysis
+        from_acc_col = detected_concepts.get("from_account")
+        unique_senders = int(df[from_acc_col].nunique()) if (from_acc_col and from_acc_col in df.columns) else total_rows
+        unique_sender_ratio = round(float(unique_senders / max(1, total_rows)), 4)
+        avg_sequence_depth = round(float(total_rows / max(1, unique_senders)), 2)
+
+        tabular_feature_names = {
+            "amount_paid_log", "amount_received_log", "amount_mismatch",
+            "same_currency", "same_bank", "self_transfer", "payment_format_code",
+            "payment_currency_code", "receiving_currency_code", "minute_of_day_sin",
+            "minute_of_day_cos", "day_of_week_sin", "day_of_week_cos", "is_weekend",
+            "is_night", "sender_prior_count_log", "sender_prior_amount_log",
+            "sender_seconds_since_prior_log", "sender_has_prior",
+            "receiver_prior_count_log", "receiver_prior_amount_log",
+            "receiver_seconds_since_prior_log", "receiver_has_prior",
+        }
+        has_direct_tabular_features = tabular_feature_names.issubset(set(df.columns))
+
+        has_prior_history = (
+            "sender_has_prior" in df.columns and float(df["sender_has_prior"].mean()) >= 0.5
+        )
+
+        if not can_construct_sequences and not has_direct_tabular_features:
+            routing_decision = "REQUEST_MISSING_FEATURES"
+            recommended_model_id = ""
+            recommended_model_name = "None (Features Missing)"
+            sequence_sufficiency_status = "MISSING_FEATURES"
+            routing_reason = (
+                f"Missing critical transaction features ({', '.join(missing_seq_concepts)}). "
+                "Please provide column mappings or upload a dataset with timestamp, sender account, receiver account, and amount."
+            )
+        elif total_rows >= 100 and not has_prior_history and (unique_sender_ratio > 0.92 or avg_sequence_depth < 1.15):
+            routing_decision = "RECOMMEND_TABULAR_FALLBACK"
+            recommended_model_id = "lightgbm_tabular_fallback"
+            recommended_model_name = "Fallback: no sequence history (LightGBM)"
+            sequence_sufficiency_status = "INSUFFICIENT_COLD_START"
+            routing_reason = (
+                f"Insufficient historical sequence context detected ({unique_sender_ratio * 100:.1f}% unique senders, "
+                f"avg depth {avg_sequence_depth:.1f} tx/sender). Recurrent sequence models (LSTM/GRU/BiLSTM) require multi-step "
+                "temporal history per account and will produce conservative baseline probabilities without historical bursts. "
+                "The validated Tabular Fallback Model (LightGBM) is recommended for single-transaction scoring."
+            )
+        else:
+            routing_decision = "ALLOW_RECURRENT_MODELS"
+            if "li_medium" in filename.lower():
+                recommended_model_id = "config_5_bilstm_fedavg_iid"
+                recommended_model_name = "LI-Medium Champion (Federated BiLSTM FedAvg IID)"
+            else:
+                recommended_model_id = "hi_small_lstm_fedavg_iid_seed42"
+                recommended_model_name = "HI-Small Champion (Federated LSTM FedAvg IID)"
+            sequence_sufficiency_status = "SUFFICIENT"
+            routing_reason = (
+                f"Sufficient temporal sequence context detected ({unique_sender_ratio * 100:.1f}% unique senders, "
+                f"avg depth {avg_sequence_depth:.1f} transactions per sender). Compatible with recurrent sequence models "
+                "(FedAvg LSTM, GRU, BiLSTM)."
+            )
+
         return UniversalSchemaReport(
             filename=filename,
             total_rows=total_rows,
@@ -292,6 +356,13 @@ class UniversalSchemaDetector:
             can_construct_sequences=can_construct_sequences,
             missing_sequence_concepts=missing_seq_concepts,
             warnings=warnings,
+            routing_decision=routing_decision,
+            recommended_model_id=recommended_model_id,
+            recommended_model_name=recommended_model_name,
+            routing_reason=routing_reason,
+            unique_sender_ratio=unique_sender_ratio,
+            average_sequence_depth=avg_sequence_depth,
+            sequence_sufficiency_status=sequence_sufficiency_status,
         )
 
     def check_compatibility(
@@ -351,12 +422,25 @@ class UniversalSchemaDetector:
         if is_direct_processed:
             compatible = True
             suggested_action = "Dataset directly matches model feature dimensions. Ready for prediction."
-        elif meta.is_sequence_model and len(missing_required) == 0:
+        elif meta.model_id == "lightgbm_tabular_fallback" and (is_direct_processed or schema_report.can_construct_sequences):
             compatible = True
             suggested_action = (
-                "Compatible transaction stream detected. Fields will be automatically mapped "
-                "and preprocessed into sequence windows for inference."
+                "Tabular model is fully compatible with single-transaction and multi-transaction records. "
+                "Does not require sequence history."
             )
+        elif meta.is_sequence_model and len(missing_required) == 0:
+            compatible = True
+            if schema_report.sequence_sufficiency_status == "INSUFFICIENT_COLD_START":
+                suggested_action = (
+                    f"Compatible schema detected, but file lacks account history ({schema_report.average_sequence_depth:.1f} tx/sender). "
+                    f"Recurrent {meta.model_type} will evaluate single-transaction windows with low prior probabilities. "
+                    "Consider using Tabular Fallback (LightGBM)."
+                )
+            else:
+                suggested_action = (
+                    "Compatible transaction stream detected. Fields will be automatically mapped "
+                    "and preprocessed into sequence windows for inference."
+                )
         elif not meta.is_sequence_model and not is_direct_processed:
             # Check overlap
             missing = list(expected_cols - uploaded_cols)

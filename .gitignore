@@ -42,6 +42,16 @@ data/partitions/*
 !data/partitions/.gitkeep
 data/cache/*
 !data/cache/.gitkeep
+backend/data/raw/*
+!backend/data/raw/.gitkeep
+backend/data/interim/*
+!backend/data/interim/.gitkeep
+backend/data/processed/*
+!backend/data/processed/.gitkeep
+backend/data/partitions/*
+!backend/data/partitions/.gitkeep
+backend/data/cache/*
+!backend/data/cache/.gitkeep
 
 # =============================================================================
 # Model artefacts
@@ -50,6 +60,15 @@ models/checkpoints/*
 !models/checkpoints/.gitkeep
 models/artifacts/*
 !models/artifacts/.gitkeep
+backend/models/checkpoints/*
+!backend/models/checkpoints/.gitkeep
+backend/models/artifacts/*
+!backend/models/artifacts/.gitkeep
+backend/results/uploads/*
+!backend/results/uploads/.gitkeep
+scratch/
+archive/zips/
+archive/audits/
 
 # =============================================================================
 # Experiment runs and evaluation output
@@ -84,6 +103,18 @@ reports/*
 *.parquet
 *.feather
 *.zip
+*.npz
+*.npy
+*.mmap
+*.mmap_*
+backend/results/diagnostics/*
+!backend/results/diagnostics/.gitkeep
+backend/results/LI_Medium_Results/archives/
+backend/experiments/archive/
+backend/experiments/results/
+artifacts/
+archive/
+scratch/
 *.tar
 *.tar.gz
 *.gz

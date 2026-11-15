@@ -34,7 +34,9 @@ from interfaces.api.schemas.predict import BatchPredictItemResult
 logger = logging.getLogger(__name__)
 
 # Base directory for resolving relative paths
-BASE_DIR = Path(__file__).resolve().parents[4]
+_BACKEND_DIR = Path(__file__).resolve().parents[3]
+_ROOT_DIR = _BACKEND_DIR.parent
+BASE_DIR = _BACKEND_DIR if (_BACKEND_DIR / "results").exists() else _ROOT_DIR
 
 MODEL_REGISTRY: Dict[str, Dict[str, Any]] = {
     "HI-Small": {

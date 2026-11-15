@@ -108,3 +108,4 @@ def test_alert_budgets_consistency(eval_service):
     best_f1_op = ops["best_f1_on_file"]
     assert best_f1_op["f1_score"] >= em["f1_score"]
     assert "what-if" in best_f1_op["label"]
+

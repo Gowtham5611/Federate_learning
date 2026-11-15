@@ -11,8 +11,8 @@ from starlette.status import HTTP_413_CONTENT_TOO_LARGE
 
 logger = logging.getLogger("fedsecureai.api")
 
-# 2 MB request body limit
-MAX_CONTENT_LENGTH = 2 * 1024 * 1024
+# 100 MB request body limit to support large CSV evaluation files (e.g. 50k - 200k rows)
+MAX_CONTENT_LENGTH = 100 * 1024 * 1024
 
 
 class RequestTimingAndPrivacyMiddleware(BaseHTTPMiddleware):

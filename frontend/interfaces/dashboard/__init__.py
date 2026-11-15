@@ -1,1 +1,0 @@
-"""Interactive dashboard entry point."""

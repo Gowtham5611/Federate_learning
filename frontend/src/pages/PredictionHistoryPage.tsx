@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { CsvEvaluateResponse, TransactionPredictionItem } from '../types/api';
 import {
   History,
@@ -9,20 +9,43 @@ import {
   ShieldAlert,
   ShieldCheck,
   X,
+  FileText,
+  RotateCcw,
+  CheckCircle2,
+  Trash2,
 } from 'lucide-react';
 import { apiService } from '../services/apiService';
-import { formatMetric } from '../utils/formatters';
+
+interface HistoricalRunItem {
+  prediction_id: string;
+  filename: string;
+  model_id: string;
+  model_name: string;
+  decision_threshold: number;
+  total_rows: number;
+  flagged_count: number;
+  has_labels: boolean;
+  created_at: number;
+  created_at_iso: string;
+  eval_metrics?: any;
+}
 
 interface PredictionHistoryPageProps {
   result: CsvEvaluateResponse | null;
   onNavigateToUpload: () => void;
+  onSelectHistoricalRun?: (runId: string) => void;
+  onClearSavedResults?: () => void;
 }
 
 export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
   result,
   onNavigateToUpload,
+  onSelectHistoricalRun,
+  onClearSavedResults,
 }) => {
-  const [statusFilter, setStatusFilter] = useState<'ALL' | 'SUSPICIOUS' | 'LEGITIMATE'>('ALL');
+  const [historyRuns, setHistoryRuns] = useState<HistoricalRunItem[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'FLAGGED' | 'NEEDS_REVIEW' | 'CLEARED'>('FLAGGED');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const pageSize = 20;
@@ -31,149 +54,153 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
   const [inspectingItem, setInspectingItem] = useState<TransactionPredictionItem | null>(null);
   const [explaining, setExplaining] = useState<boolean>(false);
   const [explanationData, setExplanationData] = useState<{
-    positiveDrivers: { feature_name: string; attribution_score: number }[];
-    negativeDrivers: { feature_name: string; attribution_score: number }[];
+    positiveDrivers: { feature_name: string; attribution_score: number; feature_group?: string }[];
+    negativeDrivers: { feature_name: string; attribution_score: number; feature_group?: string }[];
+    method?: string;
+    modelName?: string;
+    predictedProbability?: number;
+    decisionThreshold?: number;
+    decision?: string;
+    historyWarning?: string | null;
   } | null>(null);
   const [explainError, setExplainError] = useState<string | null>(null);
 
-  if (!result || !result.predictions || result.predictions.length === 0) {
-    return (
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center space-y-4 max-w-2xl mx-auto my-12 shadow-xl animate-fade-in">
-        <div className="w-16 h-16 rounded-2xl bg-indigo-950/80 text-indigo-400 flex items-center justify-center mx-auto border border-indigo-700/50">
-          <History className="w-8 h-8" />
-        </div>
-        <h2 className="text-xl font-bold text-white">No Predictions Available</h2>
-        <p className="text-xs text-slate-400 max-w-md mx-auto">
-          Please upload and evaluate a banking transaction CSV in the AML Evaluation tab to inspect individual transaction scores, actual labels, and predicted statuses.
-        </p>
-        <button
-          onClick={onNavigateToUpload}
-          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition"
-        >
-          <Upload className="w-4 h-4" />
-          <span>Go to AML Evaluation</span>
-        </button>
-      </div>
-    );
-  }
+  // Load historical runs from backend
+  const fetchRuns = async () => {
+    setLoadingHistory(true);
+    try {
+      const runs = await apiService.getPredictionHistory();
+      setHistoryRuns(runs || []);
+    } catch (err) {
+      console.warn('Failed to fetch prediction history:', err);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRuns();
+  }, [result?.prediction_id]);
+
+  const activeThreshold = result?.decision_threshold ?? 0.337784;
+  const hasLabels = Boolean(result?.has_labels);
+
+  // Filtered transactions for active run
+  const { filteredRows, flaggedCount, clearedCount, fnCount } = useMemo(() => {
+    const preds = result?.predictions || [];
+    let flagged = 0;
+    let cleared = 0;
+    let fn = 0;
+
+    preds.forEach((item) => {
+      const prob = Number(item.predicted_probability ?? 0);
+      const isAlert = prob >= activeThreshold;
+      if (isAlert) flagged++;
+      else cleared++;
+
+      if (hasLabels) {
+        const isLaunderingLabel =
+          item.ground_truth_label === 1 ||
+          item.actual_label === 'SUSPICIOUS' ||
+          (item as any)['Is Laundering'] === 1 ||
+          (item as any)['is_laundering'] === 1;
+        if (isLaunderingLabel && !isAlert) fn++;
+      }
+    });
+
+    const filtered = preds.filter((item) => {
+      const prob = Number(item.predicted_probability ?? 0);
+      const isAlert = prob >= activeThreshold;
+      const isLaunderingLabel =
+        item.ground_truth_label === 1 ||
+        item.actual_label === 'SUSPICIOUS' ||
+        (item as any)['Is Laundering'] === 1 ||
+        (item as any)['is_laundering'] === 1;
+
+      if (statusFilter === 'FLAGGED' && !isAlert) return false;
+      if (statusFilter === 'CLEARED' && isAlert) return false;
+      if (statusFilter === 'NEEDS_REVIEW' && !(isLaunderingLabel && !isAlert)) return false;
+
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        const txId = String(item.transaction_id || `TX_${String(item.row_id).padStart(5, '0')}`).toLowerCase();
+        const fromAcc = String(item.from_account || '').toLowerCase();
+        const toAcc = String(item.to_account || '').toLowerCase();
+        const amtStr = String(item.amount || '');
+
+        const match =
+          txId.includes(q) ||
+          fromAcc.includes(q) ||
+          toAcc.includes(q) ||
+          amtStr.includes(q) ||
+          String(item.row_id) === q;
+        if (!match) return false;
+      }
+
+      return true;
+    });
+
+    return { filteredRows: filtered, flaggedCount: flagged, clearedCount: cleared, fnCount: fn };
+  }, [result?.predictions, activeThreshold, hasLabels, statusFilter, searchQuery]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
+  const paginatedRows = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredRows.slice(start, start + pageSize);
+  }, [filteredRows, currentPage, pageSize]);
 
   // Handle Export CSV
   const handleExportCsv = () => {
-    if (result.download_url) {
-      window.open(result.download_url, '_blank');
+    if (!result) return;
+    const pid = result.prediction_id || result.download_id;
+    if (pid) {
+      window.open(apiService.getPredictionsDownloadUrl(pid), '_blank');
       return;
     }
-    if (result.download_id) {
-      window.open(apiService.getPredictionsDownloadUrl(result.download_id), '_blank');
-      return;
-    }
-
-    const headers = [
-      'Transaction ID',
-      'Row ID',
-      'Timestamp',
-      'Sender Account',
-      'Receiver Account',
-      'Amount',
-      'Laundering Probability',
-      'Predicted Label',
-      'Actual Label',
-      'Risk Level',
-      'Final Status',
-    ];
-
-    const rows = result.predictions.map((p) => {
-      const predLabel = p.predicted_label || (p.decision === 'FLAGGED_LAUNDERING' || p.decision === 'SUSPICIOUS' ? 'SUSPICIOUS' : 'LEGITIMATE');
-      let actLabel = 'UNLABELED';
-      if (p.ground_truth_label !== null) {
-        actLabel = p.ground_truth_label === 1 ? 'SUSPICIOUS' : 'LEGITIMATE';
-      }
-      const riskLevel = (p as any).risk_level || (p.predicted_probability >= 0.7 ? 'High Risk' : p.predicted_probability >= 0.3 ? 'Medium Risk' : 'Low Risk');
-
-      return [
-        p.transaction_id || `TX_${p.row_id.toString().padStart(5, '0')}`,
-        p.row_id,
-        p.timestamp,
-        p.from_account,
-        p.to_account,
-        p.amount,
-        p.predicted_probability,
-        predLabel,
-        actLabel,
-        riskLevel,
-        predLabel,
-      ];
-    });
-
-    const csvStr = [
-      headers.join(','),
-      ...rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')),
-    ].join('\n');
-
-    const blob = new Blob([csvStr], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `aml_predictions_${Date.now()}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
   };
 
-  // Filter items
-  const filtered = result.predictions.filter((item) => {
-    const isSuspicious =
-      item.predicted_label === 'SUSPICIOUS' ||
-      item.status === 'SUSPICIOUS' ||
-      item.decision === 'SUSPICIOUS' ||
-      item.decision === 'FLAGGED_LAUNDERING';
-
-    if (statusFilter === 'SUSPICIOUS' && !isSuspicious) return false;
-    if (statusFilter === 'LEGITIMATE' && isSuspicious) return false;
-
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      const match =
-        item.from_account.toLowerCase().includes(q) ||
-        item.to_account.toLowerCase().includes(q) ||
-        item.timestamp.toLowerCase().includes(q) ||
-        (item.transaction_id && item.transaction_id.toLowerCase().includes(q)) ||
-        String(item.row_id) === q;
-      if (!match) return false;
-    }
-
-    return true;
-  });
-
-  const totalPages = Math.ceil(filtered.length / pageSize) || 1;
-  const paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-
-  // Handle Inspect Feature Attributions
+  // Inspect attribution
   const handleInspect = async (item: TransactionPredictionItem) => {
+    if (!result) return;
     setInspectingItem(item);
     setExplanationData(null);
     setExplainError(null);
     setExplaining(true);
 
     try {
+      const runPid = (result as any).prediction_id || result.download_id || (result as any).run_id;
       const resp = await apiService.explain({
         dataset: result.dataset || 'HI-Small',
-        sequence: {
+        model_name: (result as any).model_id || result.model_name || 'HI-Small',
+        prediction_id: runPid,
+        row_id: item.row_id,
+        transaction_id: item.transaction_id,
+        sequence: item.sequence_features && item.sequence_features.length > 0 ? {
           features: item.sequence_features,
-          length: item.sequence_length,
+          length: item.sequence_length || item.sequence_features.length,
           sample_id: item.transaction_id || `TX_${item.row_id}`,
-        },
-        steps: 32,
+        } : undefined,
+        tabular_features: item.tabular_features,
+        steps: 25,
       });
 
       setExplanationData({
         positiveDrivers: resp.top_positive_drivers.map((d) => ({
           feature_name: d.feature_name,
           attribution_score: d.attribution,
+          feature_group: d.feature_group,
         })),
         negativeDrivers: resp.top_negative_drivers.map((d) => ({
           feature_name: d.feature_name,
           attribution_score: d.attribution,
+          feature_group: d.feature_group,
         })),
+        method: resp.method,
+        modelName: resp.model_name,
+        predictedProbability: resp.predicted_probability,
+        decisionThreshold: resp.decision_threshold,
+        decision: resp.decision,
+        historyWarning: resp.history_warning,
       });
     } catch (err: unknown) {
       setExplainError(err instanceof Error ? err.message : 'Explainability generation failed');
@@ -189,303 +216,495 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center space-x-2">
             <History className="w-7 h-7 text-indigo-400" />
-            <span>Transaction Prediction Results</span>
+            <span>Evaluation Run History & Triage</span>
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Displaying {result.predictions.length} scored transactions with predicted laundering probability, actual label, and final status.
+            Persisted evaluation run artifacts, compliance triage queues, and auditable transaction-level records.
           </p>
         </div>
 
-        <button
-          onClick={handleExportCsv}
-          className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition cursor-pointer"
-        >
-          <Download className="w-3.5 h-3.5" />
-          <span>Download Results CSV</span>
-        </button>
+        <div className="flex items-center space-x-2">
+          {onClearSavedResults && (
+            <button
+              onClick={onClearSavedResults}
+              className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-900 hover:bg-rose-950/60 text-slate-300 hover:text-rose-300 border border-slate-800 hover:border-rose-700/50 text-xs font-semibold transition cursor-pointer"
+            >
+              <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+              <span>Clear Saved Results</span>
+            </button>
+          )}
+
+          {result && (
+            <button
+              onClick={handleExportCsv}
+              className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Download Active CSV</span>
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Main Table Card */}
+      {/* Section 1: Saved Evaluation Runs Table */}
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
-        {/* Search & Filter Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center space-x-2 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
-            <button
-              onClick={() => {
-                setStatusFilter('ALL');
-                setCurrentPage(1);
-              }}
-              className={`px-3 py-1.5 rounded-lg transition font-medium cursor-pointer ${
-                statusFilter === 'ALL' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              All ({result.predictions.length})
-            </button>
-            <button
-              onClick={() => {
-                setStatusFilter('SUSPICIOUS');
-                setCurrentPage(1);
-              }}
-              className={`px-3 py-1.5 rounded-lg transition font-medium cursor-pointer ${
-                statusFilter === 'SUSPICIOUS' ? 'bg-rose-600 text-white' : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              Suspicious ({result.flagged_laundering_count})
-            </button>
-            <button
-              onClick={() => {
-                setStatusFilter('LEGITIMATE');
-                setCurrentPage(1);
-              }}
-              className={`px-3 py-1.5 rounded-lg transition font-medium cursor-pointer ${
-                statusFilter === 'LEGITIMATE' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              Legitimate ({result.cleared_count})
-            </button>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2.5">
+            <RotateCcw className="w-5 h-5 text-indigo-400" />
+            <div>
+              <h2 className="text-base font-bold text-white tracking-tight">
+                Persisted Evaluation Runs
+              </h2>
+              <p className="text-xs text-slate-400">
+                Saved run artifacts available in backend storage. Selecting a run restores its exact evaluated state and metrics without re-computation.
+              </p>
+            </div>
           </div>
 
-          <div className="relative w-full sm:w-72">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setCurrentPage(1);
-              }}
-              placeholder="Search by transaction ID, account..."
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none"
-            />
-          </div>
+          <span className="text-xs font-mono text-indigo-400 font-bold bg-indigo-950/80 px-2.5 py-1 rounded-xl border border-indigo-800/60">
+            {historyRuns.length} Runs Available
+          </span>
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto border border-slate-800 rounded-2xl">
-          <table className="w-full text-left border-collapse text-xs">
+        <div className="overflow-x-auto rounded-2xl border border-slate-800">
+          <table className="w-full text-left border-collapse text-xs font-mono">
             <thead>
-              <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 font-mono uppercase text-[10px]">
-                <th className="py-3 px-3">Transaction ID</th>
-                <th className="py-3 px-3">Timestamp</th>
-                <th className="py-3 px-3">Sender Account</th>
-                <th className="py-3 px-3">Receiver Account</th>
-                <th className="py-3 px-3 text-right">Amount</th>
-                <th className="py-3 px-3">Laundering Probability</th>
-                <th className="py-3 px-3 text-center">Actual Label</th>
-                <th className="py-3 px-3 text-center">Predicted Label</th>
-                <th className="py-3 px-3 text-center">Final Status</th>
-                <th className="py-3 px-3 text-center">Model Applied</th>
-                <th className="py-3 px-3 text-right">Threshold</th>
-                <th className="py-3 px-3 text-center">Explain</th>
+              <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 uppercase text-[10px]">
+                <th className="py-3 px-3">Run ID</th>
+                <th className="py-3 px-3">Source CSV File</th>
+                <th className="py-3 px-3">Model Architecture</th>
+                <th className="py-3 px-3 text-center">Threshold</th>
+                <th className="py-3 px-3 text-right">Rows</th>
+                <th className="py-3 px-3 text-right">Model Alerts</th>
+                <th className="py-3 px-3 text-center">Outcomes (TP / FP / FN)</th>
+                <th className="py-3 px-3 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 font-mono">
-              {paginated.map((item) => {
-                const txId = item.transaction_id || `TX_${item.row_id.toString().padStart(5, '0')}`;
-                const isSuspicious =
-                  item.predicted_label === 'SUSPICIOUS' ||
-                  item.status === 'SUSPICIOUS' ||
-                  item.decision === 'SUSPICIOUS' ||
-                  item.decision === 'FLAGGED_LAUNDERING';
-                const probPct = formatMetric((item.predicted_probability ?? 0) * 100, 2, '0.00');
-
-                let actualBadge = <span className="text-slate-500">Unlabeled</span>;
-                if (item.ground_truth_label !== null) {
-                  if (item.ground_truth_label === 1) {
-                    actualBadge = (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-950 text-rose-300 border border-rose-800">
-                        SUSPICIOUS
-                      </span>
-                    );
-                  } else {
-                    actualBadge = (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-950 text-slate-300 border border-slate-800">
-                        LEGITIMATE
-                      </span>
-                    );
-                  }
-                }
-
-                return (
-                  <tr key={item.row_id} className="hover:bg-slate-800/40 transition">
-                    <td className="py-2.5 px-3 text-indigo-400 font-bold">{txId}</td>
-                    <td className="py-2.5 px-3 text-slate-300 font-sans">{item.timestamp}</td>
-                    <td className="py-2.5 px-3 text-slate-300 font-bold truncate max-w-[110px]" title={item.from_account}>
-                      {item.from_account}
-                    </td>
-                    <td className="py-2.5 px-3 text-slate-400 truncate max-w-[110px]" title={item.to_account}>
-                      {item.to_account}
-                    </td>
-                    <td className="py-2.5 px-3 text-right text-slate-200">
-                      ${item.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </td>
-                    <td className="py-2.5 px-3">
-                      <div className="flex items-center space-x-2">
-                        <span className={`w-12 font-bold ${isSuspicious ? 'text-rose-400' : 'text-slate-300'}`}>
-                          {probPct}%
-                        </span>
-                        <div className="w-16 bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${isSuspicious ? 'bg-rose-500' : 'bg-emerald-500'}`}
-                            style={{ width: `${Math.min(100, Math.max(2, item.predicted_probability * 100))}%` }}
-                          />
+            <tbody className="divide-y divide-slate-800/60">
+              {historyRuns.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="py-6 text-center text-slate-500 text-xs">
+                    {loadingHistory ? 'Loading saved evaluation runs...' : 'No historical evaluation runs found in storage.'}
+                  </td>
+                </tr>
+              ) : (
+                historyRuns.slice(0, 8).map((run) => {
+                  const isActive = result?.prediction_id === run.prediction_id;
+                  const metrics = run.eval_metrics || {};
+                  return (
+                    <tr
+                      key={run.prediction_id}
+                      className={`hover:bg-slate-800/40 transition ${isActive ? 'bg-indigo-950/20' : ''}`}
+                    >
+                      <td className="py-2.5 px-3 font-bold text-white whitespace-nowrap">
+                        <div className="flex items-center space-x-1.5">
+                          {isActive && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
+                          <span className={isActive ? 'text-indigo-300 font-bold' : 'text-slate-300'}>
+                            {run.prediction_id}
+                          </span>
                         </div>
-                      </div>
-                    </td>
-                    <td className="py-2.5 px-3 text-center">{actualBadge}</td>
-                    <td className="py-2.5 px-3 text-center">
-                      <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                          isSuspicious
-                            ? 'bg-rose-950/80 text-rose-300 border border-rose-800/80'
-                            : 'bg-emerald-950/60 text-emerald-300 border border-emerald-800/60'
-                        }`}
-                      >
-                        {isSuspicious ? 'SUSPICIOUS' : 'LEGITIMATE'}
-                      </span>
-                    </td>
-                    <td className="py-2.5 px-3 text-center">
-                      <span
-                        className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-bold ${
-                          isSuspicious
-                            ? 'bg-rose-900/60 text-rose-200 border border-rose-700'
-                            : 'bg-emerald-900/60 text-emerald-200 border border-emerald-700'
-                        }`}
-                      >
-                        {isSuspicious ? <ShieldAlert className="w-3 h-3" /> : <ShieldCheck className="w-3 h-3" />}
-                        <span>{isSuspicious ? 'SUSPICIOUS' : 'LEGITIMATE'}</span>
-                      </span>
-                    </td>
-                    <td className="py-2.5 px-3 text-center text-slate-400 text-[10px] truncate max-w-[120px]" title={result.model_name}>
-                      {result.model_name.length > 16 ? result.model_name.slice(0, 16) + '…' : result.model_name}
-                    </td>
-                    <td className="py-2.5 px-3 text-right text-amber-400 font-bold">
-                      {(item.decision_threshold || result.decision_threshold).toFixed(4)}
-                    </td>
-                    <td className="py-2.5 px-3 text-center">
-                      <button
-                        onClick={() => handleInspect(item)}
-                        className="px-2 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/40 text-[10px] font-semibold transition inline-flex items-center space-x-1 cursor-pointer"
-                      >
-                        <Eye className="w-3 h-3" />
-                        <span>Inspect</span>
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+                      </td>
+                      <td className="py-2.5 px-3 text-slate-200 font-medium truncate max-w-[180px]">
+                        {run.filename}
+                      </td>
+                      <td className="py-2.5 px-3 text-slate-400 text-[11px] truncate max-w-[180px]">
+                        {run.model_name}
+                      </td>
+                      <td className="py-2.5 px-3 text-center font-bold text-amber-300 whitespace-nowrap">
+                        θ = {run.decision_threshold.toFixed(4)}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-bold text-white whitespace-nowrap">
+                        {run.total_rows.toLocaleString()}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-bold whitespace-nowrap">
+                        <span className={run.flagged_count > 0 ? 'text-rose-400' : 'text-slate-400'}>
+                          {run.flagged_count.toLocaleString()}
+                        </span>
+                      </td>
+                      <td className="py-2.5 px-3 text-center text-[10px] whitespace-nowrap">
+                        {run.has_labels && metrics.tp !== undefined ? (
+                          <span className="text-slate-300">
+                            TP: <strong className="text-emerald-400">{metrics.tp}</strong> · FP: <strong className="text-rose-400">{metrics.fp}</strong> · FN: <strong className="text-amber-400">{metrics.fn}</strong>
+                          </span>
+                        ) : (
+                          <span className="text-slate-500 italic">Score-Only</span>
+                        )}
+                      </td>
+                      <td className="py-2.5 px-3 text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end space-x-1.5">
+                          {onSelectHistoricalRun && (
+                            <button
+                              onClick={() => onSelectHistoricalRun(run.prediction_id)}
+                              className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition cursor-pointer ${
+                                isActive
+                                  ? 'bg-emerald-950 text-emerald-300 border border-emerald-700/60'
+                                  : 'bg-indigo-600 hover:bg-indigo-500 text-white'
+                              }`}
+                            >
+                              {isActive ? 'Active Run' : 'Load Run'}
+                            </button>
+                          )}
+                          <button
+                            onClick={() => window.open(apiService.getPdfReportUrl(run.prediction_id), '_blank')}
+                            title="Download PDF Report"
+                            className="p-1 rounded-lg bg-slate-950 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 transition"
+                          >
+                            <FileText className="w-3.5 h-3.5 text-indigo-400" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
+      </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between text-xs text-slate-400 font-mono pt-2">
-            <span>
-              Page {currentPage} of {totalPages} ({filtered.length} total matched)
-            </span>
-            <div className="flex items-center space-x-1">
+      {/* Section 2: Active Run Itemized Transaction Triage Table */}
+      {result ? (
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+            <div>
+              <div className="flex items-center space-x-2">
+                <ShieldAlert className="w-5 h-5 text-indigo-400" />
+                <h2 className="text-base font-bold text-white tracking-tight">
+                  Itemized Transactions for Run <span className="font-mono text-indigo-300">{result.prediction_id}</span>
+                </h2>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">
+                  {filteredRows.length.toLocaleString()} Matches
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 mt-1">
+                Distinguish model alerts from under-review false negatives and cleared normal records under active cutoff <code className="text-amber-300">θ = {activeThreshold.toFixed(4)}</code>.
+              </p>
+            </div>
+
+            {/* Status Filter Tabs */}
+            <div className="flex flex-wrap items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
               <button
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-40 cursor-pointer"
+                onClick={() => {
+                  setStatusFilter('FLAGGED');
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-1.5 rounded-lg transition font-medium cursor-pointer flex items-center space-x-1.5 ${
+                  statusFilter === 'FLAGGED' ? 'bg-rose-600 text-white font-bold' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <span>Flagged (Model Alerts)</span>
+                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
+                  statusFilter === 'FLAGGED' ? 'bg-rose-900 text-white' : 'bg-slate-800 text-slate-300'
+                }`}>
+                  {flaggedCount.toLocaleString()}
+                </span>
+              </button>
+
+              {hasLabels && (
+                <button
+                  onClick={() => {
+                    setStatusFilter('NEEDS_REVIEW');
+                    setCurrentPage(1);
+                  }}
+                  className={`px-3 py-1.5 rounded-lg transition font-medium cursor-pointer flex items-center space-x-1.5 ${
+                    statusFilter === 'NEEDS_REVIEW' ? 'bg-amber-600 text-white font-bold' : 'text-amber-400 hover:text-amber-200'
+                  }`}
+                >
+                  <span>Needs Review (False Negatives)</span>
+                  <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
+                    statusFilter === 'NEEDS_REVIEW' ? 'bg-amber-950 text-amber-200 border border-amber-700' : 'bg-slate-800 text-amber-300'
+                  }`}>
+                    {fnCount.toLocaleString()}
+                  </span>
+                </button>
+              )}
+
+              <button
+                onClick={() => {
+                  setStatusFilter('CLEARED');
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-1.5 rounded-lg transition font-medium cursor-pointer flex items-center space-x-1.5 ${
+                  statusFilter === 'CLEARED' ? 'bg-emerald-600 text-white font-bold' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <span>Legitimate Cleared</span>
+                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
+                  statusFilter === 'CLEARED' ? 'bg-emerald-900 text-white' : 'bg-slate-800 text-slate-300'
+                }`}>
+                  {clearedCount.toLocaleString()}
+                </span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setStatusFilter('ALL');
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-1.5 rounded-lg transition font-medium cursor-pointer flex items-center space-x-1.5 ${
+                  statusFilter === 'ALL' ? 'bg-indigo-600 text-white font-bold' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <span>All Transactions</span>
+                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
+                  statusFilter === 'ALL' ? 'bg-indigo-900 text-white' : 'bg-slate-800 text-slate-300'
+                }`}>
+                  {(result.predictions || []).length.toLocaleString()}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Search bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="relative flex-1 max-w-md">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
+                placeholder="Search by transaction ID, account, amount..."
+                className="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition font-mono"
+              />
+            </div>
+          </div>
+
+          {/* Itemized Table */}
+          <div className="overflow-x-auto rounded-2xl border border-slate-800">
+            <table className="w-full text-left border-collapse text-xs font-mono">
+              <thead>
+                <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 uppercase text-[10px]">
+                  <th className="py-3 px-3">Row Ref</th>
+                  <th className="py-3 px-3">Routing (From → To)</th>
+                  <th className="py-3 px-3">Timestamp</th>
+                  <th className="py-3 px-3 text-right">Amount</th>
+                  <th className="py-3 px-3 text-right">Risk Score</th>
+                  <th className="py-3 px-3 text-center">Model Decision</th>
+                  <th className="py-3 px-3 text-center">CSV Ground Truth</th>
+                  <th className="py-3 px-3">Evaluation Outcome & Handling</th>
+                  <th className="py-3 px-2 text-center">Inspect</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/60">
+                {paginatedRows.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="py-8 text-center text-slate-500 text-xs">
+                      No transaction records match the current filter.
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedRows.map((item) => {
+                    const prob = Number(item.predicted_probability ?? 0);
+                    const isAlert = prob >= activeThreshold;
+                    const isLaunderingLabel =
+                      item.ground_truth_label === 1 ||
+                      item.actual_label === 'SUSPICIOUS' ||
+                      (item as any)['Is Laundering'] === 1 ||
+                      (item as any)['is_laundering'] === 1;
+                    const isLegitLabel =
+                      item.ground_truth_label === 0 ||
+                      item.actual_label === 'LEGITIMATE' ||
+                      (item as any)['Is Laundering'] === 0 ||
+                      (item as any)['is_laundering'] === 0;
+
+                    let outcomeBadge = (
+                      <span className="text-slate-400 text-[11px]">
+                        Cleared Legitimate (TN)
+                      </span>
+                    );
+
+                    if (isAlert) {
+                      outcomeBadge = isLaunderingLabel ? (
+                        <span className="text-emerald-400 text-[11px] font-bold">
+                          True Positive (TP) — Alert Confirmed
+                        </span>
+                      ) : (
+                        <span className="text-rose-400 text-[11px]">
+                          False Positive (FP) — False Alarm
+                        </span>
+                      );
+                    } else if (hasLabels && isLaunderingLabel) {
+                      outcomeBadge = (
+                        <span className="text-amber-300 text-[11px] font-bold">
+                          False Negative (FN) — Needs Review
+                        </span>
+                      );
+                    }
+
+                    return (
+                      <tr key={item.row_id} className="hover:bg-slate-800/40 transition">
+                        <td className="py-2.5 px-3 font-bold text-white whitespace-nowrap">
+                          {item.transaction_id || `TX_${String(item.row_id).padStart(5, '0')}`}
+                        </td>
+                        <td className="py-2.5 px-3 text-slate-300">
+                          <div className="truncate max-w-[150px]">
+                            <span className="text-slate-400">{item.from_account}</span>
+                            <span className="text-slate-500 mx-1">→</span>
+                            <span className="text-slate-300">{item.to_account}</span>
+                          </div>
+                        </td>
+                        <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">
+                          {String(item.timestamp || '').slice(0, 16)}
+                        </td>
+                        <td className="py-2.5 px-3 text-right font-bold text-white whitespace-nowrap">
+                          {Number(item.amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </td>
+                        <td className="py-2.5 px-3 text-right whitespace-nowrap">
+                          <span className={`font-bold ${isAlert ? 'text-rose-400' : 'text-emerald-400'}`}>
+                            {prob.toFixed(4)}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3 text-center whitespace-nowrap">
+                          {isAlert ? (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-950/80 text-rose-300 border border-rose-700/60 inline-flex items-center space-x-1">
+                              <ShieldAlert className="w-3 h-3 text-rose-400" />
+                              <span>FLAGGED ALERT</span>
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-700/60 inline-flex items-center space-x-1">
+                              <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                              <span>CLEARED</span>
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-2.5 px-3 text-center whitespace-nowrap">
+                          {hasLabels ? (
+                            isLaunderingLabel ? (
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-950 text-purple-300 border border-purple-800">
+                                Laundering (1)
+                              </span>
+                            ) : isLegitLabel ? (
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
+                                Legitimate (0)
+                              </span>
+                            ) : (
+                              <span className="text-slate-500 text-[10px]">Unknown</span>
+                            )
+                          ) : (
+                            <span className="text-slate-500 text-[10px] italic">Unlabeled</span>
+                          )}
+                        </td>
+                        <td className="py-2.5 px-3">
+                          {outcomeBadge}
+                        </td>
+                        <td className="py-2.5 px-2 text-center whitespace-nowrap">
+                          <button
+                            onClick={() => handleInspect(item)}
+                            className="p-1.5 rounded-lg bg-slate-950 hover:bg-indigo-950/80 text-slate-400 hover:text-indigo-300 border border-slate-800 hover:border-indigo-700/60 transition cursor-pointer"
+                            title="Inspect Feature Attributions"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          <div className="flex items-center justify-between pt-2 text-xs font-mono text-slate-400">
+            <span>
+              Page {currentPage} of {totalPages} ({filteredRows.length.toLocaleString()} transactions)
+            </span>
+            <div className="flex items-center space-x-2">
+              <button
+                disabled={currentPage <= 1}
+                onClick={() => setCurrentPage((p) => p - 1)}
+                className="px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800 disabled:opacity-40 hover:text-white transition cursor-pointer"
               >
                 Previous
               </button>
               <button
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-40 cursor-pointer"
+                disabled={currentPage >= totalPages}
+                onClick={() => setCurrentPage((p) => p + 1)}
+                className="px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800 disabled:opacity-40 hover:text-white transition cursor-pointer"
               >
                 Next
               </button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-10 text-center space-y-4 max-w-xl mx-auto shadow-xl">
+          <History className="w-10 h-10 text-indigo-400 mx-auto" />
+          <h3 className="text-base font-bold text-white">No Evaluation Currently Active</h3>
+          <p className="text-xs text-slate-400">
+            Select a saved evaluation run from the table above or upload a new transaction CSV in the AML Evaluation tab.
+          </p>
+          <button
+            onClick={onNavigateToUpload}
+            className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition cursor-pointer"
+          >
+            <Upload className="w-4 h-4" />
+            <span>Go to AML Evaluation</span>
+          </button>
+        </div>
+      )}
 
-      {/* Feature Attribution Inspection Modal */}
+      {/* Attribution Explanation Modal */}
       {inspectingItem && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
-            <button
-              onClick={() => setInspectingItem(null)}
-              className="absolute right-4 top-4 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div>
-              <h3 className="text-base font-bold text-white flex items-center space-x-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl max-w-lg w-full space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center space-x-2">
                 <Eye className="w-5 h-5 text-indigo-400" />
-                <span>Feature Attribution: {inspectingItem.transaction_id || `TX_${inspectingItem.row_id}`}</span>
-              </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Integrated Gradients attribution showing top drivers influencing the prediction score.
-              </p>
-            </div>
-
-            {explaining && (
-              <div className="py-8 text-center space-y-2">
-                <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                <div className="text-xs text-slate-400 font-mono">Computing axiomatic feature attributions...</div>
+                <h3 className="text-sm font-bold text-white">
+                  Transaction Feature Attribution: {inspectingItem.transaction_id || `TX_${inspectingItem.row_id}`}
+                </h3>
               </div>
-            )}
-
-            {explainError && (
-              <div className="p-3 bg-rose-950/60 border border-rose-800/80 rounded-xl text-xs text-rose-300">
-                {explainError}
-              </div>
-            )}
-
-            {explanationData && (
-              <div className="space-y-4 pt-1">
-                {/* Positive Drivers */}
-                <div className="space-y-2">
-                  <div className="text-xs font-mono font-bold text-rose-400 uppercase">
-                    Risk-Increasing Features (Pushed toward Suspicious)
-                  </div>
-                  <div className="space-y-1.5">
-                    {explanationData.positiveDrivers.slice(0, 4).map((d, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center justify-between p-2 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono"
-                      >
-                        <span className="text-slate-300">{d.feature_name}</span>
-                        <span className="font-bold text-rose-400">+{formatMetric(d.attribution_score, 4)}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Negative Drivers */}
-                <div className="space-y-2">
-                  <div className="text-xs font-mono font-bold text-emerald-400 uppercase">
-                    Risk-Decreasing Features (Pushed toward Legitimate)
-                  </div>
-                  <div className="space-y-1.5">
-                    {explanationData.negativeDrivers.slice(0, 4).map((d, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center justify-between p-2 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono"
-                      >
-                        <span className="text-slate-300">{d.feature_name}</span>
-                        <span className="font-bold text-emerald-400">{formatMetric(d.attribution_score, 4)}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="pt-2 flex justify-end">
               <button
                 onClick={() => setInspectingItem(null)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold"
+                className="text-slate-400 hover:text-white p-1 rounded-lg transition"
               >
-                Close
+                <X className="w-4 h-4" />
               </button>
             </div>
+
+            {explaining ? (
+              <div className="py-8 text-center text-xs text-slate-400 space-y-2">
+                <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto" />
+                <p>Generating Integrated Gradients attributions...</p>
+              </div>
+            ) : explainError ? (
+              <div className="p-3 rounded-xl bg-rose-950/50 border border-rose-800/50 text-xs text-rose-300">
+                {explainError}
+              </div>
+            ) : explanationData ? (
+              <div className="space-y-4 text-xs font-mono">
+                <div className="flex items-center justify-between bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                  <span className="text-slate-400">Predicted Probability:</span>
+                  <span className="font-bold text-rose-400">
+                    {(explanationData.predictedProbability ?? inspectingItem.predicted_probability).toFixed(4)}
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  <span className="text-[11px] text-emerald-400 font-bold block">Top Suspicious Drivers (+)</span>
+                  {explanationData.positiveDrivers.slice(0, 5).map((d) => (
+                    <div key={d.feature_name} className="flex items-center justify-between text-[11px]">
+                      <span className="text-slate-300 truncate max-w-[200px]">{d.feature_name}</span>
+                      <span className="text-emerald-400 font-bold">+{d.attribution_score.toFixed(4)}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="space-y-2">
+                  <span className="text-[11px] text-slate-400 font-bold block">Top Mitigating Drivers (-)</span>
+                  {explanationData.negativeDrivers.slice(0, 5).map((d) => (
+                    <div key={d.feature_name} className="flex items-center justify-between text-[11px]">
+                      <span className="text-slate-400 truncate max-w-[200px]">{d.feature_name}</span>
+                      <span className="text-slate-500 font-bold">{d.attribution_score.toFixed(4)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
       )}

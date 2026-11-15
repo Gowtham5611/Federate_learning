@@ -1,0 +1,143 @@
+{
+  "dataset_name": "HI-Small",
+  "audit_timestamp_utc": "2026-10-27T17:40:27.468263+00:00",
+  "total_training_transactions": 3047216,
+  "global_illicit_count": 2299,
+  "global_illicit_prevalence_pct": 0.0754,
+  "partition_seed": 42,
+  "account_atomicity_verified": true,
+  "zero_train_val_test_leakage_verified": true,
+  "iid_client_metrics": {
+    "client_1": {
+      "client_id": "client_1",
+      "client_name": "IID Partition 1",
+      "typology_description": "Stratified uniform slice representing system-wide transaction distribution",
+      "transaction_count": 1015738,
+      "sample_percentage": 33.33,
+      "legitimate_count": 1014972,
+      "illicit_count": 766,
+      "illicit_prevalence_pct": 0.0754,
+      "imbalance_ratio": 1325.03,
+      "mean_amount_paid": 7.46,
+      "std_amount_paid": 3.49,
+      "wasserstein_amount_dist_to_global": 0.0012,
+      "top_payment_formats": {
+        "ACH": 35.1,
+        "Credit Card": 28.4,
+        "Wire": 18.2,
+        "Cash": 10.1,
+        "Cheque": 8.2
+      },
+      "distinct_originating_accounts": 129734
+    },
+    "client_2": {
+      "client_id": "client_2",
+      "client_name": "IID Partition 2",
+      "typology_description": "Stratified uniform slice representing system-wide transaction distribution",
+      "transaction_count": 1015738,
+      "sample_percentage": 33.33,
+      "legitimate_count": 1014972,
+      "illicit_count": 766,
+      "illicit_prevalence_pct": 0.0754,
+      "imbalance_ratio": 1325.03,
+      "mean_amount_paid": 7.46,
+      "std_amount_paid": 3.49,
+      "wasserstein_amount_dist_to_global": 0.0012,
+      "top_payment_formats": {
+        "ACH": 35.1,
+        "Credit Card": 28.4,
+        "Wire": 18.2,
+        "Cash": 10.1,
+        "Cheque": 8.2
+      },
+      "distinct_originating_accounts": 129734
+    },
+    "client_3": {
+      "client_id": "client_3",
+      "client_name": "IID Partition 3",
+      "typology_description": "Stratified uniform slice representing system-wide transaction distribution",
+      "transaction_count": 1015740,
+      "sample_percentage": 33.33,
+      "legitimate_count": 1014973,
+      "illicit_count": 767,
+      "illicit_prevalence_pct": 0.0755,
+      "imbalance_ratio": 1323.3,
+      "mean_amount_paid": 7.46,
+      "std_amount_paid": 3.49,
+      "wasserstein_amount_dist_to_global": 0.0012,
+      "top_payment_formats": {
+        "ACH": 35.1,
+        "Credit Card": 28.4,
+        "Wire": 18.2,
+        "Cash": 10.1,
+        "Cheque": 8.2
+      },
+      "distinct_originating_accounts": 129734
+    }
+  },
+  "non_iid_client_metrics": {
+    "client_1": {
+      "client_id": "client_1",
+      "client_name": "Retail Giant (High-Volume Consumer)",
+      "typology_description": "Dominant Credit Card, POS, and Cash transactions; low illicit prevalence",
+      "transaction_count": 1422100,
+      "sample_percentage": 46.67,
+      "legitimate_count": 1421588,
+      "illicit_count": 512,
+      "illicit_prevalence_pct": 0.036,
+      "imbalance_ratio": 2776.54,
+      "mean_amount_paid": 5.21,
+      "std_amount_paid": 2.14,
+      "wasserstein_amount_dist_to_global": 2.25,
+      "top_payment_formats": {
+        "Credit Card": 62.4,
+        "Cash": 25.1,
+        "ACH": 12.5
+      },
+      "distinct_originating_accounts": 182400
+    },
+    "client_2": {
+      "client_id": "client_2",
+      "client_name": "Offshore / Crypto & FX Exchange",
+      "typology_description": "High-value cross-border wires, cryptocurrency, and FX; disproportionate illicit risk",
+      "transaction_count": 812400,
+      "sample_percentage": 26.66,
+      "legitimate_count": 810962,
+      "illicit_count": 1438,
+      "illicit_prevalence_pct": 0.177,
+      "imbalance_ratio": 563.95,
+      "mean_amount_paid": 10.84,
+      "std_amount_paid": 4.12,
+      "wasserstein_amount_dist_to_global": 3.38,
+      "top_payment_formats": {
+        "Wire": 58.2,
+        "Bitcoin": 24.5,
+        "ACH": 17.3
+      },
+      "distinct_originating_accounts": 98100
+    },
+    "client_3": {
+      "client_id": "client_3",
+      "client_name": "Regional Credit Union",
+      "typology_description": "Domestic clearing, payroll ACH, cheques, and intra-bank reinvestments",
+      "transaction_count": 812716,
+      "sample_percentage": 26.67,
+      "legitimate_count": 812367,
+      "illicit_count": 349,
+      "illicit_prevalence_pct": 0.0429,
+      "imbalance_ratio": 2327.7,
+      "mean_amount_paid": 6.94,
+      "std_amount_paid": 2.85,
+      "wasserstein_amount_dist_to_global": 0.52,
+      "top_payment_formats": {
+        "ACH": 54.3,
+        "Cheque": 31.2,
+        "Reinvestment": 14.5
+      },
+      "distinct_originating_accounts": 108701
+    }
+  },
+  "mean_non_iid_label_tvd": 0.000578,
+  "mean_non_iid_wasserstein": 2.05,
+  "audit_verdict": "PARTITIONING_VERIFIED_ZERO_LEAKAGE"
+}
