@@ -96,7 +96,7 @@ MODEL_REGISTRY: Dict[str, Dict[str, Any]] = {
         "num_layers": 1,
         "feature_dimension": 57,
         "checkpoint_path": BASE_DIR / "results/HI_Small_Results/checkpoints/hi_small_bilstm_fedavg_iid_seed42/hi_small_bilstm_fedavg_iid_seed42_global_best.pt",
-        "expected_sha256": "e9a8c43b0952bca7e82810a95ff9c3a3b5c65f02bc0f7ba0d7d9a304e38e68e4",
+        "expected_sha256": "e9a8c43b09524e641d8d2f3a6d919076f589b7f77d2ab89695b66de30ba6c5aa",
         "frozen_threshold": 0.50,
     },
     "hi_small_bilstm_fedprox_mu0.0001_iid_seed42": {
@@ -106,7 +106,7 @@ MODEL_REGISTRY: Dict[str, Dict[str, Any]] = {
         "num_layers": 1,
         "feature_dimension": 57,
         "checkpoint_path": BASE_DIR / "results/HI_Small_Results/checkpoints/hi_small_bilstm_fedprox_mu0.0001_iid_seed42/hi_small_bilstm_fedprox_mu0.0001_iid_seed42_global_best.pt",
-        "expected_sha256": "ace199af13d80d19e6eb7c568f61feaaeb44485122718ef86b036577ba694f5b",
+        "expected_sha256": "ace199af13d8a86afbd16706582961ff9c5bc573e0fe8feaed76f716b75c7b8b",
         "frozen_threshold": 0.50,
     },
     "hi_small_gru_fedavg_seed42": {
@@ -116,7 +116,7 @@ MODEL_REGISTRY: Dict[str, Dict[str, Any]] = {
         "num_layers": 1,
         "feature_dimension": 57,
         "checkpoint_path": BASE_DIR / "results/HI_Small_Results/checkpoints/hi_small_gru_fedavg_seed42/hi_small_gru_fedavg_seed42_global_best.pt",
-        "expected_sha256": "d225abce33d027f6cfd95b54634f19989b533db9b977aa892dbe76a6616a69ef",
+        "expected_sha256": "d225abce33d0dd350e5d9623aed77ec71a0591daf6d2d75cc77ff8d0c2394199",
         "frozen_threshold": 0.70,
     },
     "hi_small_gru_fedprox_mu0.0001_seed42": {
@@ -126,7 +126,7 @@ MODEL_REGISTRY: Dict[str, Dict[str, Any]] = {
         "num_layers": 1,
         "feature_dimension": 57,
         "checkpoint_path": BASE_DIR / "results/HI_Small_Results/checkpoints/hi_small_gru_fedprox_mu0.0001_seed42/hi_small_gru_fedprox_mu0.0001_seed42_global_best.pt",
-        "expected_sha256": "70cee297f8ca319cf88755b33100234a9ecdb17112ea744ce09458021c170d1d",
+        "expected_sha256": "70cee297f8caec9719b0698447901b844e01b5506f3ec3439818603cc0f4eb58",
         "frozen_threshold": 0.69,
     },
     "hi_small_lstm_fedavg_seed42": {
@@ -156,7 +156,7 @@ MODEL_REGISTRY: Dict[str, Dict[str, Any]] = {
         "num_layers": 1,
         "feature_dimension": 57,
         "checkpoint_path": BASE_DIR / "results/HI_Small_Results/checkpoints/hi_small_bilstm_fedavg_seed42/hi_small_bilstm_fedavg_seed42_global_best.pt",
-        "expected_sha256": "508427bde3564e2978087968dd44c68b7538be29929837c7ce51a7051410ce90",
+        "expected_sha256": "508427bde3560f2f1641040c8b2cfb0027fc37647b8724baba4eb24548d5bcf0",
         "frozen_threshold": 0.62,
     },
     "hi_small_bilstm_fedprox_mu0.0001_seed42": {
@@ -166,7 +166,7 @@ MODEL_REGISTRY: Dict[str, Dict[str, Any]] = {
         "num_layers": 1,
         "feature_dimension": 57,
         "checkpoint_path": BASE_DIR / "results/HI_Small_Results/checkpoints/hi_small_bilstm_fedprox_mu0.0001_seed42/hi_small_bilstm_fedprox_mu0.0001_seed42_global_best.pt",
-        "expected_sha256": "17f1a3f01b78297f0ba7ea920c8188185bbba38f07936a2c0709b1ea6e492ca4",
+        "expected_sha256": "17f1a3f01b7818c87ddc002024d15335af2b5c605a50cce7de5009d8159feb90",
         "frozen_threshold": 0.58,
     },
     "centralized_lstm": {
@@ -198,6 +198,16 @@ MODEL_REGISTRY: Dict[str, Dict[str, Any]] = {
         "checkpoint_path": BASE_DIR / "models/checkpoints/centralized_bilstm_seed42_20260906T011749/best.pt",
         "expected_sha256": "2b274cc93546a91c53275f423bb4af5819778cbfb38b9a23c85c805884ccfa49",
         "frozen_threshold": 0.826391,
+    },
+    "hi_small_lstm_fedavg_iid_seed42": {
+        "model_name": "hi_small_lstm_fedavg_iid_seed42",
+        "architecture": ModelArchitecture.LSTM,
+        "hidden_size": 64,
+        "num_layers": 1,
+        "feature_dimension": 57,
+        "checkpoint_path": BASE_DIR / "results/HI_Small_Results/checkpoints/hi_small_lstm_fedavg_iid_seed42/hi_small_lstm_fedavg_iid_seed42_global_best.pt",
+        "expected_sha256": "dacfbb62e1e74a58a0c79237f7d0c16aa57df19253af82b8ab38af9bba2d46b4",
+        "frozen_threshold": 0.3377837836742401,
     },
 }
 

@@ -491,7 +491,7 @@ class CsvEvaluationService:
             if threshold is not None
             else (model_meta.frozen_threshold if model_meta.frozen_threshold else canonical_thr)
         )
-        if (model_meta.model_id in ("HI-Small", "LI-Medium", "auto", "default") or model_meta.model_id in SUPPORTED_MODELS_BY_DATASET.values()) and target_dataset in SUPPORTED_MODELS_BY_DATASET:
+        if target_model_id in ("auto", "default") and target_dataset in SUPPORTED_MODELS_BY_DATASET:
             model_name = SUPPORTED_MODELS_BY_DATASET[target_dataset]
         else:
             model_name = model_meta.model_name or SUPPORTED_MODELS_BY_DATASET.get(target_dataset, "FedSecureAI Lead Model")
@@ -950,6 +950,8 @@ class CsvEvaluationService:
             "dataset": target_dataset,
             "model_id": model_meta.model_id,
             "model_name": model_name,
+            "model_type": model_meta.model_type,
+            "architecture": model_meta.model_type,
             "decision_threshold": resolved_threshold,
             "total_rows": total_uploaded_rows,
             "evaluated_sequences": len(predictions),
@@ -1979,6 +1981,8 @@ class CsvEvaluationService:
                 "hi_small_gru_fedavg_seed42",
                 "hi_small_bilstm_fedavg_seed42",
                 "hi_small_lstm_fedprox_mu0.0001_seed42",
+                "hi_small_gru_fedprox_mu0.0001_seed42",
+                "hi_small_bilstm_fedprox_mu0.0001_seed42",
                 "ensemble_hybrid",
                 "lightgbm_tabular_fallback",
             ]

@@ -12,6 +12,36 @@ import { WhyNoAlertsCard } from '../components/WhyNoAlertsCard';
 import { OperatingPointSelector, OperatingPointKey } from '../components/OperatingPointSelector';
 import { EvaluationMetricsGrid } from '../components/EvaluationMetricsGrid';
 import { ModelRoutingCard } from '../components/ModelRoutingCard';
+import { MultiModelComparisonTable } from '../components/MultiModelComparisonTable';
+
+const MODEL_DEFAULT_THRESHOLDS: Record<string, number> = {
+  auto: 0.337784,
+  ensemble_hybrid: 0.337784,
+  lightgbm_tabular_fallback: 0.337784,
+  'HI-Small': 0.337784,
+  'LI-Medium': 0.238483,
+  centralized_lstm: 0.703287,
+  centralized_gru: 0.973227,
+  centralized_bilstm: 0.826391,
+  hi_small_lstm_fedavg_iid_seed42: 0.337784,
+  hi_small_gru_fedavg_iid_seed42: 0.50,
+  hi_small_bilstm_fedavg_iid_seed42: 0.50,
+  hi_small_lstm_fedprox_mu0_0001_iid_seed42: 0.50,
+  'hi_small_lstm_fedprox_mu0.0001_iid_seed42': 0.50,
+  hi_small_gru_fedprox_mu0_0001_iid_seed42: 0.50,
+  'hi_small_gru_fedprox_mu0.0001_iid_seed42': 0.50,
+  hi_small_bilstm_fedprox_mu0_0001_iid_seed42: 0.50,
+  'hi_small_bilstm_fedprox_mu0.0001_iid_seed42': 0.50,
+  hi_small_lstm_fedavg_seed42: 0.37,
+  hi_small_gru_fedavg_seed42: 0.70,
+  hi_small_bilstm_fedavg_seed42: 0.62,
+  hi_small_lstm_fedprox_mu0_0001_seed42: 0.36,
+  'hi_small_lstm_fedprox_mu0.0001_seed42': 0.36,
+  hi_small_gru_fedprox_mu0_0001_seed42: 0.69,
+  'hi_small_gru_fedprox_mu0.0001_seed42': 0.69,
+  hi_small_bilstm_fedprox_mu0_0001_seed42: 0.58,
+  'hi_small_bilstm_fedprox_mu0.0001_seed42': 0.58,
+};
 import {
   Upload,
   FileSpreadsheet,
@@ -269,7 +299,15 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
   };
 
 
-  // Mode A: Run AML Prediction
+  const activeDefaultThreshold = React.useMemo(() => {
+    const match = models.find((m) => m.model_id === selectedModelId);
+    if (match && typeof match.decision_threshold === 'number') {
+      return match.decision_threshold;
+    }
+    return MODEL_DEFAULT_THRESHOLDS[selectedModelId] ?? 0.337784;
+  }, [models, selectedModelId]);
+
+  // Mode A: Run AML Prediction with Selected Model
   const handleRunPrediction = async () => {
     if (!csvContent || csvContent.trim().length === 0) {
       setApiError('Please select or upload a CSV file before running prediction.');
@@ -281,7 +319,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
 
     try {
       const modelToUse = selectedModelId || 'auto';
-      const thresholdVal = customThreshold !== '' ? parseFloat(customThreshold) : 0.337784;
+      const thresholdVal = customThreshold !== '' ? parseFloat(customThreshold) : undefined;
       const resp = await apiService.predictCsv({
         csv_content: csvContent,
         model_id: modelToUse,
@@ -315,7 +353,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
     setApiError(null);
 
     try {
-      const thresholdVal = customThreshold !== '' ? parseFloat(customThreshold) : 0.337784;
+      const thresholdVal = customThreshold !== '' ? parseFloat(customThreshold) : undefined;
       const resp = await apiService.evaluateMultiModel({
         csv_content: csvContent,
         filename: fileName || 'transactions.csv',
@@ -326,11 +364,11 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
       if (onMultiModelEvaluationComplete) {
         onMultiModelEvaluationComplete(resp);
       }
-      // If we don't have currentResult yet, also fetch single prediction for 'auto' model so results tabs work
+      // If we don't have currentResult yet, also fetch single prediction for selected model
       if (!currentResult) {
         const singleResp = await apiService.predictCsv({
           csv_content: csvContent,
-          model_id: 'auto',
+          model_id: selectedModelId || 'auto',
           filename: fileName || 'transactions.csv',
           column_mapping: Object.keys(customMappings || {}).length > 0 ? customMappings : undefined,
           row_limit: rowLimit,
@@ -338,7 +376,6 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
         });
         onEvaluationComplete(singleResp);
       }
-      onNavigateTab('analytics');
     } catch (err: unknown) {
       let msg = 'Multi-model evaluation request failed';
       if (err instanceof ApiError) {
@@ -349,6 +386,35 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
       setApiError(msg);
     } finally {
       setMultiModelEvaluating(false);
+    }
+  };
+
+  // One-click select and predict from MultiModelComparisonTable
+  const handleSelectAndPredictModel = async (modelId: string) => {
+    setSelectedModelId(modelId);
+    setCustomThreshold('');
+    if (!csvContent || csvContent.trim().length === 0) {
+      return;
+    }
+
+    setEvaluating(true);
+    setApiError(null);
+
+    try {
+      const resp = await apiService.predictCsv({
+        csv_content: csvContent,
+        model_id: modelId,
+        filename: fileName || 'transactions.csv',
+        column_mapping: Object.keys(customMappings || {}).length > 0 ? customMappings : undefined,
+        row_limit: rowLimit,
+        threshold: undefined,
+      });
+      onEvaluationComplete(resp);
+    } catch (err: unknown) {
+      const msg = err instanceof ApiError ? err.message : err instanceof Error ? err.message : 'Prediction failed';
+      setApiError(msg);
+    } finally {
+      setEvaluating(false);
     }
   };
 
@@ -646,43 +712,46 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
               </label>
               <select
                 value={selectedModelId}
-                onChange={(e) => setSelectedModelId(e.target.value)}
+                onChange={(e) => {
+                  setSelectedModelId(e.target.value);
+                  setCustomThreshold('');
+                }}
                 className="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl px-3 py-2 focus:border-indigo-500 focus:outline-none"
               >
                 <optgroup label="Best Available & Ensemble">
                   <option value="auto">Auto-Detect Best Matching Model (Validation PR-AUC)</option>
-                  <option value="ensemble_hybrid">Hybrid Ensemble (α* = 1.00 FedProx/FedAvg)</option>
-                  <option value="lightgbm_tabular_fallback">Fallback: no sequence history (LightGBM)</option>
+                  <option value="ensemble_hybrid">Hybrid Ensemble (α* = 1.00 FedProx/FedAvg, Thr=0.3378)</option>
+                  <option value="lightgbm_tabular_fallback">Fallback: Tabular Classifier (LightGBM, Thr=0.3378)</option>
                 </optgroup>
 
                 <optgroup label="Centralized Baseline Models">
-                  <option value="centralized_lstm">Centralized Baseline (LSTM, hidden=64)</option>
-                  <option value="centralized_gru">Centralized Baseline (GRU, hidden=64)</option>
-                  <option value="centralized_bilstm">Centralized Baseline (BiLSTM, hidden=64)</option>
+                  <option value="centralized_lstm">Centralized Baseline (LSTM, Thr=0.7033)</option>
+                  <option value="centralized_gru">Centralized Baseline (GRU, Thr=0.9732)</option>
+                  <option value="centralized_bilstm">Centralized Baseline (BiLSTM, Thr=0.8264)</option>
                 </optgroup>
 
                 <optgroup label="Federated IID (FedAvg)">
                   <option value="hi_small_lstm_fedavg_iid_seed42">FedAvg IID LSTM (HI-Small Champion, Thr=0.3378)</option>
-                  <option value="hi_small_gru_fedavg_iid_seed42">FedAvg IID GRU (HI-Small, Thr=0.3601)</option>
-                  <option value="hi_small_bilstm_fedavg_iid_seed42">FedAvg IID BiLSTM (HI-Small, Thr=0.3204)</option>
+                  <option value="hi_small_gru_fedavg_iid_seed42">FedAvg IID GRU (HI-Small, Thr=0.5000)</option>
+                  <option value="hi_small_bilstm_fedavg_iid_seed42">FedAvg IID BiLSTM (HI-Small, Thr=0.5000)</option>
                 </optgroup>
 
                 <optgroup label="Federated IID (FedProx μ=0.0001)">
-                  <option value="hi_small_lstm_fedprox_mu0.0001_iid_seed42">FedProx (μ=0.0001) IID LSTM (HI-Small, Thr=0.3378)</option>
-                  <option value="hi_small_gru_fedprox_mu0.0001_iid_seed42">FedProx (μ=0.0001) IID GRU (HI-Small, Thr=0.3382)</option>
-                  <option value="hi_small_bilstm_fedprox_mu0.0001_iid_seed42">FedProx (μ=0.0001) IID BiLSTM (HI-Small, Thr=0.3421)</option>
+                  <option value="hi_small_lstm_fedprox_mu0.0001_iid_seed42">FedProx (μ=0.0001) IID LSTM (HI-Small, Thr=0.5000)</option>
+                  <option value="hi_small_gru_fedprox_mu0.0001_iid_seed42">FedProx (μ=0.0001) IID GRU (HI-Small, Thr=0.5000)</option>
+                  <option value="hi_small_bilstm_fedprox_mu0.0001_iid_seed42">FedProx (μ=0.0001) IID BiLSTM (HI-Small, Thr=0.5000)</option>
                 </optgroup>
 
                 <optgroup label="Federated Typology Non-IID (FedAvg)">
-                  <option value="hi_small_lstm_fedavg_seed42">FedAvg Non-IID LSTM (HI-Small, Thr=0.3204)</option>
-                  <option value="hi_small_gru_fedavg_seed42">FedAvg Non-IID GRU (HI-Small, Thr=0.3150)</option>
-                  <option value="hi_small_bilstm_fedavg_seed42">FedAvg Non-IID BiLSTM (HI-Small, Thr=0.3120)</option>
+                  <option value="hi_small_lstm_fedavg_seed42">FedAvg Non-IID LSTM (HI-Small, Thr=0.3700)</option>
+                  <option value="hi_small_gru_fedavg_seed42">FedAvg Non-IID GRU (HI-Small, Thr=0.7000)</option>
+                  <option value="hi_small_bilstm_fedavg_seed42">FedAvg Non-IID BiLSTM (HI-Small, Thr=0.6200)</option>
                 </optgroup>
 
                 <optgroup label="Federated Typology Non-IID (FedProx μ=0.0001)">
-                  <option value="hi_small_lstm_fedprox_mu0.0001_seed42">FedProx (μ=0.0001) Non-IID LSTM (HI-Small, Thr=0.3204)</option>
-                  <option value="hi_small_gru_fedprox_mu0.0001_seed42">FedProx (μ=0.0001) Non-IID GRU (HI-Small, Thr=0.3150)</option>
-                  <option value="hi_small_bilstm_fedprox_mu0.0001_seed42">FedProx (μ=0.0001) Non-IID BiLSTM (HI-Small, Thr=0.3120)</option>
+                  <option value="hi_small_lstm_fedprox_mu0.0001_seed42">FedProx (μ=0.0001) Non-IID LSTM (HI-Small, Thr=0.3600)</option>
+                  <option value="hi_small_gru_fedprox_mu0.0001_seed42">FedProx (μ=0.0001) Non-IID GRU (HI-Small, Thr=0.6900)</option>
+                  <option value="hi_small_bilstm_fedprox_mu0.0001_seed42">FedProx (μ=0.0001) Non-IID BiLSTM (HI-Small, Thr=0.5800)</option>
                 </optgroup>
 
                 {Array.isArray(models) && models.filter(m => {
@@ -707,7 +776,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
                 <div className="flex items-center justify-between text-xs text-slate-400 font-mono">
                   <span>Decision Threshold:</span>
                   <span className="text-indigo-400 font-bold">
-                    {customThreshold !== '' ? customThreshold : '0.3378 (Frozen Default)'}
+                    {customThreshold !== '' ? customThreshold : `${activeDefaultThreshold.toFixed(4)} (Model Default)`}
                   </span>
                 </div>
                 <div className="flex items-center space-x-1.5 flex-wrap gap-1">
@@ -719,10 +788,11 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
                         ? 'bg-indigo-600 text-white font-bold'
                         : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
                     }`}
+                    title="Reset to selected model's frozen default threshold"
                   >
-                    Auto
+                    Model Default ({activeDefaultThreshold.toFixed(2)})
                   </button>
-                  {['0.10', '0.20', '0.30', '0.3378', '0.40', '0.50', '0.70'].map((preset) => (
+                  {['0.10', '0.20', '0.33', '0.50', '0.70', '0.90'].map((preset) => (
                     <button
                       key={preset}
                       type="button"
@@ -736,6 +806,18 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
                       {preset}
                     </button>
                   ))}
+                </div>
+                <div className="flex items-center space-x-2 pt-1">
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    max="0.99"
+                    placeholder={`Custom threshold (e.g. ${activeDefaultThreshold.toFixed(4)})`}
+                    value={customThreshold}
+                    onChange={(e) => setCustomThreshold(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-lg px-2.5 py-1 font-mono focus:border-indigo-500 focus:outline-none"
+                  />
                 </div>
               </div>
 
@@ -997,23 +1079,19 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
         </div>
       )}
 
-      {/* Quick Results Summary Strip (if evaluation complete) */}
+      {/* Multi-Model Benchmark Comparative Table */}
+      {multiModelResult && (
+        <MultiModelComparisonTable
+          multiModelResult={multiModelResult}
+          selectedModelId={selectedModelId}
+          onSelectAndPredictModel={handleSelectAndPredictModel}
+          onNavigateToAnalytics={() => onNavigateTab('analytics')}
+        />
+      )}
+
+      {/* Single Model Prediction Results (if evaluation complete) */}
       {currentResult && (
         <div className="space-y-6">
-          {multiModelResult && (
-            <div className="p-3 bg-violet-950/40 border border-violet-800/60 rounded-xl text-xs text-violet-200 flex items-center justify-between">
-              <span className="flex items-center space-x-2">
-                <Layers className="w-4 h-4 text-violet-400" />
-                <span>Multi-model benchmark active ({multiModelResult.models_evaluated_count} models evaluated on this CSV).</span>
-              </span>
-              <button
-                onClick={() => onNavigateTab('analytics')}
-                className="text-violet-300 hover:text-white font-semibold underline cursor-pointer"
-              >
-                View Comparative Matrix →
-              </button>
-            </div>
-          )}
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
             <h2 className="text-lg font-bold text-white flex items-center space-x-2">
