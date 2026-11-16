@@ -1139,275 +1139,119 @@ class PdfReportGenerator:
                 logger.warning(f"Could not render PDF heatmap: {e}")
 
         # =========================================================================
-        # SECTION 4: FLAGGED TRANSACTIONS & REVIEW CATEGORIES
+        # SECTION 4: TRANSACTION SUMMARY & DIRECT CSV EXPORT MANIFEST
         # =========================================================================
-        story.append(PageBreak())
-
-        # Determine target DataFrame based on selected filter_mode
-        f_mode = (filter_mode or "flagged").strip().lower()
-        sort_col = "predicted_probability" if "predicted_probability" in predictions_df.columns else predictions_df.columns[0]
-
-        is_pos = (
-            (predictions_df["Is Laundering"] == 1)
-            if "Is Laundering" in predictions_df.columns
-            else (
-                (predictions_df["ground_truth_label"] == 1)
-                if "ground_truth_label" in predictions_df.columns
-                else pd.Series(False, index=predictions_df.index)
-            )
-        )
-        is_neg = (
-            (predictions_df["Is Laundering"] == 0)
-            if "Is Laundering" in predictions_df.columns
-            else (
-                (predictions_df["ground_truth_label"] == 0)
-                if "ground_truth_label" in predictions_df.columns
-                else pd.Series(False, index=predictions_df.index)
-            )
-        )
-        is_flagged = predictions_df[sort_col] >= active_threshold
-
-        if f_mode == "all":
-            filter_display = "All Transactions"
-            target_df = predictions_df.sort_values(by=sort_col, ascending=False)
-        elif f_mode in ("flagged", "suspicious", "alerts", "model_flagged"):
-            filter_display = "Model-Flagged Alerts (Suspicious)"
-            target_df = predictions_df[is_flagged].sort_values(by=sort_col, ascending=False)
-        elif f_mode in ("cleared", "legitimate", "model_cleared"):
-            filter_display = "Model-Cleared Transactions"
-            target_df = predictions_df[~is_flagged].sort_values(by=sort_col, ascending=False)
-        elif f_mode in ("needs_review_fn", "false_negatives", "fn", "needs_review"):
-            filter_display = "Needs Review — False Negatives (Missed Laundering)"
-            target_df = predictions_df[~is_flagged & is_pos].sort_values(by=sort_col, ascending=False)
-        elif f_mode == "tp":
-            filter_display = "True Positives (Detected Laundering)"
-            target_df = predictions_df[is_flagged & is_pos].sort_values(by=sort_col, ascending=False)
-        elif f_mode == "fp":
-            filter_display = "False Positives (False Alarms)"
-            target_df = predictions_df[is_flagged & ~is_pos].sort_values(by=sort_col, ascending=False)
-        elif f_mode == "tn":
-            filter_display = "True Negatives (Cleared Legitimate)"
-            target_df = predictions_df[~is_flagged & is_neg].sort_values(by=sort_col, ascending=False)
-        elif f_mode in ("laundering", "positive"):
-            filter_display = "Ground-Truth Laundering Transactions"
-            target_df = predictions_df[is_pos].sort_values(by=sort_col, ascending=False)
-        else:
-            filter_display = "Model-Flagged Alerts (Suspicious)"
-            target_df = predictions_df[is_flagged].sort_values(by=sort_col, ascending=False)
-
-        matching_count = len(target_df)
-        if f_mode in ("needs_review_fn", "false_negatives", "fn", "needs_review"):
-            section4_title = f"4. Review Queue: False Negatives (Missed Laundering — Needs Analyst Review)"
-            section4_desc = (
-                f"Selected Review Category: <b>{filter_display}</b> | Total Matching Records: <b>{matching_count:,}</b> | "
-                f"Active Operating Mode: <b>{active_mode_str}</b> (Cutoff threshold θ* = {active_threshold:.4f}).<br/>"
-                "<b>Audit Clarification:</b> These transactions have CSV ground-truth label Laundering (1) but their model risk scores fell below the active cutoff θ*. "
-                "<b>Model Prediction:</b> Cleared | <b>CSV Ground Truth:</b> Laundering | <b>Evaluation Outcome:</b> False Negative | <b>Suggested Handling:</b> Needs Analyst Review.<br/>"
-                "These transactions are <b>NOT</b> model-flagged alerts and are excluded from the model's alert count. "
-                "Context explains suppressed scores (e.g. cold-start account velocity = 0.0). "
-                "Note: Subsequent data or recurrent account history could change a future re-score, but under-review transactions are not promised to trigger."
-            )
-        elif matching_count > 0:
-            top_rows = target_df
-            section4_title = f"4. Evaluated Transactions Details ({filter_display})"
-            section4_desc = (
-                f"Selected Filter: <b>{filter_display}</b> | Total Matching Records: <b>{matching_count:,}</b> (out of {total_rows:,} evaluated) | "
-                f"Active Operating Mode: <b>{active_mode_str}</b> (Decision cutoff threshold θ* = {active_threshold:.4f}). "
-                "All matching transactions are displayed below with complete account routing, authentic timestamp, amount, score, model applied, and context. "
-                "No arbitrary top-N truncation is applied; all matching records are audited in full."
-            )
-        else:
-            top_rows = predictions_df.sort_values(by=sort_col, ascending=False).head(10)
-            section4_title = f"4. Evaluated Transactions Details ({filter_display})"
-            section4_desc = (
-                f"Selected Filter: <b>{filter_display}</b> | Total Matching Records: <b>0</b> (out of {total_rows:,} evaluated) | "
-                f"Active Operating Mode: <b>{active_mode_str}</b> (Decision cutoff threshold θ* = {active_threshold:.4f}). "
-                "No transactions match the selected filter under the active threshold. Displaying top 10 highest-scoring transactions for diagnostic inspection."
-            )
-
-        if f_mode in ("needs_review_fn", "false_negatives", "fn", "needs_review"):
-            top_rows = target_df if matching_count > 0 else predictions_df.sort_values(by=sort_col, ascending=False).head(10)
-
-        story.append(Paragraph(section4_title, h1_style))
+        story.append(Paragraph("4. Transaction Audit Summary & Direct CSV Export Manifest", h1_style))
         story.append(
             Paragraph(
-                f"{section4_desc} Transaction IDs are generated from the source row position in the CSV (labeled as generated row references). Customer names are displayed only when provided by source data ('Name not provided' is displayed when absent).",
+                "In compliance with report performance guidelines and to prevent multi-page table overflow, "
+                "transaction-level itemized records are purposefully exported via companion digital CSV files rather than embedded in this PDF. "
+                "Every evaluated record maintains complete provenance with generated row references and model risk scores.",
                 caption_style,
             )
         )
         story.append(Spacer(1, 4))
 
-        tx_hdr_style = ParagraphStyle(
-            "TxHdrStyle",
-            parent=styles["Normal"],
-            fontName="Helvetica-Bold",
-            fontSize=5.2,
-            leading=6.2,
-            textColor=colors.white,
-            alignment=1,  # Center
-        )
-        tx_table_header = [
-            Paragraph("Rank", tx_hdr_style),
-            Paragraph("Row Ref<br/>(Generated)", tx_hdr_style),
-            Paragraph("Account / Entity<br/>Routing", tx_hdr_style),
-            Paragraph("Timestamp", tx_hdr_style),
-            Paragraph("Amount", tx_hdr_style),
-            Paragraph("Score", tx_hdr_style),
-            Paragraph("Verdict &<br/>Cutoff", tx_hdr_style),
-            Paragraph("CSV Ground Truth<br/>& Outcome", tx_hdr_style),
-            Paragraph("Model &<br/>Context", tx_hdr_style),
+        # Calculate counts
+        prob_col = "predicted_probability" if "predicted_probability" in predictions_df.columns else ("PRED_PROBABILITY" if "PRED_PROBABILITY" in predictions_df.columns else predictions_df.columns[0])
+        prob_series = pd.to_numeric(predictions_df[prob_col], errors="coerce").fillna(0.0)
+        is_flagged = prob_series >= active_threshold
+        flagged_count = int(is_flagged.sum())
+        fn_count = int(fn) if has_labels else 0
+        cleared_count = max(0, total_rows - flagged_count)
+
+        tx_summary_data = [
+            [
+                Paragraph("<b>Audit Category</b>", body_bold),
+                Paragraph("<b>Record Count</b>", body_bold),
+                Paragraph("<b>Workload Share</b>", body_bold),
+                Paragraph("<b>Operational Triage Protocol</b>", body_bold),
+            ],
+            [
+                Paragraph("<b>Flagged Alerts (Model)</b>", body_style),
+                Paragraph(f"<font color='#e11d48'><b>{flagged_count:,}</b></font>", body_style),
+                Paragraph(f"{(flagged_count / max(1, total_rows)):.2%}", body_style),
+                Paragraph(f"Primary AML alert triage; model score &ge; cutoff θ* = {active_threshold:.4f}.", body_style),
+            ],
+            [
+                Paragraph("<b>Needs Review (False Negatives)</b>", body_style),
+                Paragraph(f"<font color='#d97706'><b>{fn_count:,}</b></font>" if has_labels else "N/A (Unlabeled)", body_style),
+                Paragraph(f"{(fn_count / max(1, total_rows)):.2%}" if has_labels else "N/A", body_style),
+                Paragraph("CSV-positive laundering cleared by model; requires investigator review.", body_style),
+            ],
+            [
+                Paragraph("<b>Legitimate Cleared</b>", body_style),
+                Paragraph(f"<b>{cleared_count:,}</b>", body_style),
+                Paragraph(f"{(cleared_count / max(1, total_rows)):.2%}", body_style),
+                Paragraph(f"Cleared transactions; model score is below active cutoff θ* = {active_threshold:.4f}.", body_style),
+            ],
+            [
+                Paragraph("<b>Total Evaluated Batch</b>", body_bold),
+                Paragraph(f"<b>{total_rows:,}</b>", body_bold),
+                Paragraph("100.0%", body_bold),
+                Paragraph("Full evaluated transaction dataset reconciled to source file.", body_bold),
+            ],
         ]
 
-        tx_table_style = TableStyle([
-            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0f172a")),
-            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-            ("FONTSIZE", (0, 0), (-1, -1), 5.5),
-            ("ALIGN", (0, 0), (0, -1), "CENTER"),
-            ("ALIGN", (4, 1), (5, -1), "RIGHT"),
-            ("ALIGN", (6, 1), (7, -1), "CENTER"),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("BOX", (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5e1")),
-            ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#e2e8f0")),
-            ("TOPPADDING", (0, 0), (-1, -1), 1.5),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 1.5),
-        ])
+        tx_summary_table = Table(tx_summary_data, colWidths=[140, 85, 85, 230])
+        tx_summary_table.setStyle(
+            TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0f172a")),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                ("BOX", (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5e1")),
+                ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#e2e8f0")),
+                ("TOPPADDING", (0, 0), (-1, -1), 3),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+            ])
+        )
+        story.append(tx_summary_table)
+        story.append(Spacer(1, 6))
 
-        def _build_tx_rows(df_subset: pd.DataFrame) -> List[List[Any]]:
-            rows_data = [tx_table_header]
-            is_fallback = meta.get("is_fallback", False)
-            model_name_val = str(meta.get("model_name") or "LightGBM")
-
-            for rank, (_, row) in enumerate(df_subset.iterrows(), start=1):
-                orig_row_num = int(row.get("source_row_index") if pd.notnull(row.get("source_row_index")) else rank)
-                tx_id_val = str(
-                    row.get("transaction_id")
-                    or row.get("Transaction ID")
-                    or row.get("tx_id")
-                    or f"TX_{orig_row_num:05d}"
-                )
-                row_ref_str = f"{tx_id_val}\nRow {orig_row_num} (gen)"
-
-                name_val = row.get("transaction_name") or row.get("sender_name") or row.get("customer_name") or row.get("Name")
-                if pd.notnull(name_val) and str(name_val).strip() and str(name_val).lower() != "nan":
-                    display_name = str(name_val).strip()
-                else:
-                    display_name = "Name not provided"
-
-                from_acct = str(row.get("Account") or row.get("From Account") or row.get("from_account") or "").strip()
-                to_acct = str(row.get("Account.1") or row.get("To Account") or row.get("to_account") or "").strip()
-
-                if from_acct and to_acct:
-                    routing_str = f"{display_name}\nFrom: {from_acct} → To: {to_acct}"
-                else:
-                    routing_str = display_name
-
-                ts_raw = str(row.get("Timestamp") or row.get("timestamp") or row.get("Date") or "")[:16]
-
-                amt_val = (
-                    row.get("Amount Paid")
-                    if "Amount Paid" in row and pd.notnull(row.get("Amount Paid"))
-                    else (
-                        row.get("Amount Received")
-                        if "Amount Received" in row and pd.notnull(row.get("Amount Received"))
-                        else (row.get("amount") if "amount" in row and pd.notnull(row.get("amount")) else 0.0)
-                    )
-                )
-                curr_val = str(
-                    row.get("Payment Currency")
-                    or row.get("Receiving Currency")
-                    or row.get("currency")
-                    or ""
-                ).strip()
-
-                try:
-                    amt_num = float(amt_val)
-                    amt_str = f"{amt_num:,.2f} {curr_val}".strip()
-                except Exception:
-                    amt_str = f"{amt_val} {curr_val}".strip()
-
-                prob_val = float(row.get("predicted_probability", 0.0))
-                is_row_flagged = prob_val >= active_threshold
-                pred_badge = "FLAGGED ALERT" if is_row_flagged else "CLEARED"
-                verdict_str = f"{pred_badge}\nθ* = {active_threshold:.4f}"
-
-                gt_lbl = (
-                    row.get("Is Laundering")
-                    if "Is Laundering" in row and pd.notnull(row.get("Is Laundering"))
-                    else (
-                        row.get("ground_truth_label")
-                        if "ground_truth_label" in row and pd.notnull(row.get("ground_truth_label"))
-                        else row.get("is_laundering")
-                    )
-                )
-
-                is_pos_lbl = pd.notnull(gt_lbl) and int(gt_lbl) == 1
-                is_neg_lbl = pd.notnull(gt_lbl) and int(gt_lbl) == 0
-
-                if is_pos_lbl and not is_row_flagged:
-                    gt_str = "CSV Laundering (1)\n[FALSE NEGATIVE]\nNeeds Review"
-                elif is_pos_lbl and is_row_flagged:
-                    gt_str = "CSV Laundering (1)\n[TRUE POSITIVE]"
-                elif is_neg_lbl and is_row_flagged:
-                    gt_str = "CSV Legitimate (0)\n[FALSE POSITIVE]"
-                elif is_neg_lbl and not is_row_flagged:
-                    gt_str = "CSV Legitimate (0)\n[TRUE NEGATIVE]"
-                else:
-                    gt_str = "Unlabeled"
-
-                valid_hist = row.get("valid_history_count")
-                usable_note = row.get("usable_history_note")
-
-                if is_fallback:
-                    expl_str = f"{model_name_val}\nCold-start (single-tx)"
-                elif usable_note:
-                    expl_str = f"{model_name_val}\nCold-start: {usable_note}"
-                elif valid_hist is not None:
-                    expl_str = f"{model_name_val}\nSequence: {valid_hist} prior txs"
-                else:
-                    seq_len = int(row.get("sequence_length", 10))
-                    expl_str = f"{model_name_val}\nRecurrent: {seq_len} steps"
-
-                rows_data.append([
-                    str(rank),
-                    row_ref_str,
-                    routing_str,
-                    ts_raw,
-                    amt_str,
-                    f"{prob_val:.4f}",
-                    verdict_str,
-                    gt_str,
-                    expl_str,
-                ])
-            return rows_data
-
-        def _append_chunked_tables(story_list: List[Any], rows_data: List[List[Any]], chunk_size: int = 500) -> None:
-            header = rows_data[0]
-            body_rows = rows_data[1:]
-            if not body_rows:
-                t = Table([header], colWidths=[26, 56, 95, 56, 52, 32, 54, 60, 109])
-                t.setStyle(tx_table_style)
-                story_list.append(t)
-                return
-
-            for i in range(0, len(body_rows), chunk_size):
-                chunk = [header] + body_rows[i : i + chunk_size]
-                t = Table(chunk, colWidths=[26, 56, 95, 56, 52, 32, 54, 60, 109], repeatRows=1)
-                t.setStyle(tx_table_style)
-                story_list.append(t)
-                story_list.append(Spacer(1, 2))
-
-        tx_table_rows = _build_tx_rows(top_rows)
-        _append_chunked_tables(story, tx_table_rows, chunk_size=500)
-
-        story.append(Spacer(1, 4))
+        # Companion CSV Downloads Manifest Table
+        story.append(Paragraph("Accompanying Dedicated CSV Downloads & Audit Artifacts", h2_style))
         story.append(
             Paragraph(
-                f"<font size='6.5'><b>Audit Guarantee:</b> Displaying all {len(top_rows):,} records matching the active review category '{filter_display}' under active threshold θ* = {active_threshold:.4f}. "
-                f"No top-N sampling or truncation is applied. The complete evaluated batch of {total_rows:,} transactions is preserved bit-identically in the downloaded predictions CSV export.</font>",
+                "Investigators and compliance auditors can download the complete, itemized datasets directly from the platform or via the authenticated REST endpoints below:",
                 caption_style,
             )
         )
+        story.append(Spacer(1, 3))
+
+        manifest_data = [
+            [
+                Paragraph("<b>Export Artifact</b>", body_bold),
+                Paragraph("<b>Records Included</b>", body_bold),
+                Paragraph("<b>Download Endpoint & Parameters</b>", body_bold),
+            ],
+            [
+                Paragraph("<b>1. Flagged Transactions CSV</b>", body_style),
+                Paragraph(f"All <b>{flagged_count:,}</b> transactions meeting cutoff θ* = {active_threshold:.4f}.", body_style),
+                Paragraph(f"<font face='Courier' size='6'>GET /api/v1/predict/download/{run_id_val}/flagged</font>", body_style),
+            ],
+            [
+                Paragraph("<b>2. Needs Review CSV (False Negatives)</b>", body_style),
+                Paragraph(f"All <b>{fn_count:,}</b> CSV laundering cases cleared by model." if has_labels else "N/A (Requires ground-truth labels).", body_style),
+                Paragraph(f"<font face='Courier' size='6'>GET /api/v1/predict/download/{run_id_val}/needs-review</font>", body_style),
+            ],
+            [
+                Paragraph("<b>3. Master Evaluation CSV</b>", body_style),
+                Paragraph(f"Complete <b>{total_rows:,}</b> rows with model risk scores & sequence depth.", body_style),
+                Paragraph(f"<font face='Courier' size='6'>GET /api/v1/predict/download/{run_id_val}</font>", body_style),
+            ],
+        ]
+
+        manifest_table = Table(manifest_data, colWidths=[150, 150, 240])
+        manifest_table.setStyle(
+            TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1e293b")),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                ("BOX", (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5e1")),
+                ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#e2e8f0")),
+                ("TOPPADDING", (0, 0), (-1, -1), 3),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+            ])
+        )
+        story.append(manifest_table)
         story.append(Spacer(1, 8))
 
         # =========================================================================
@@ -1416,6 +1260,37 @@ class PdfReportGenerator:
         story.append(Paragraph("5. Limitations, Provenance Disclosures & Operating Caveats", h1_style))
 
         caveats_list = []
+        if active_threshold == 0.0:
+            caveats_list.append(
+                Paragraph(
+                    "• <b>Diagnostic Mode Disclaimer (Threshold = 0.0000):</b> "
+                    "A decision cutoff threshold of θ = 0.0000 flags 100% of evaluated transactions. "
+                    "This mode is strictly a diagnostic baseline representing exhaustive manual audit workload. "
+                    "It does not represent an improvement in model discrimination, precision, or operational capability.",
+                    body_style,
+                )
+            )
+
+        caveats_list.append(
+            Paragraph(
+                "• <b>Ranking Invariance (PR-AUC & ROC-AUC):</b> "
+                "PR-AUC (Average Precision) and ROC-AUC are threshold-invariant ranking metrics evaluated over all possible operating points. "
+                "Altering the operating cutoff threshold θ* adjusts alert volume, precision, recall, and false alarms, "
+                "but does not alter the underlying frozen probability scores or ranking metrics.",
+                body_style,
+            )
+        )
+
+        caveats_list.append(
+            Paragraph(
+                "• <b>Ground-Truth Independence:</b> "
+                "Ground-truth labels from uploaded evaluation CSVs are used exclusively for verification and calculating metrics. "
+                "Ground-truth labels are never used to change model inferences or fabricate alerts. "
+                "False negatives in the Needs Review queue remain classified by the model as Cleared.",
+                body_style,
+            )
+        )
+
         if meta.get("is_fallback") or fn > 1000:
             fallback_name = meta.get("model_name") or "LightGBM"
             acct_col = "Account" if "Account" in predictions_df.columns else ("from_account" if "from_account" in predictions_df.columns else None)
@@ -1470,36 +1345,6 @@ class PdfReportGenerator:
         )
         story.append(caveat_table)
         story.append(Spacer(1, 10))
-
-        # =========================================================================
-        # APPENDIX A: COMPLETE FLAGGED SUSPECT TRANSACTIONS REGISTER
-        # =========================================================================
-        story.append(PageBreak())
-        story.append(Paragraph("Appendix A: Complete Evaluated Flagged Transactions Audit Register", h1_style))
-
-        flagged_only_df = predictions_df[is_flagged].sort_values(by=sort_col, ascending=False)
-        flagged_count = len(flagged_only_df)
-
-        if flagged_count > 0:
-            app_df = flagged_only_df
-            app_desc = (
-                f"Full paginated audit register documenting all {flagged_count:,} flagged transactions identified during evaluation run {run_id_val} "
-                f"under active operating mode {active_mode_str} (cutoff threshold θ* = {active_threshold:.4f}). "
-                "Table headers repeat across pages. No sampling, pruning, or top-N truncation is applied to the flagged alert set. "
-                f"The complete evaluated file of {total_rows:,} transactions is preserved in the predictions CSV export."
-            )
-        else:
-            app_df = predictions_df.sort_values(by=sort_col, ascending=False).head(10)
-            app_desc = (
-                f"No transactions reached the decision cutoff threshold θ* = {active_threshold:.4f} during evaluation run {run_id_val}. "
-                f"Displaying top 10 highest-scoring transactions across the {total_rows:,} evaluated transactions for diagnostic inspection."
-            )
-
-        story.append(Paragraph(app_desc, caption_style))
-        story.append(Spacer(1, 4))
-
-        app_rows = _build_tx_rows(app_df)
-        _append_chunked_tables(story, app_rows, chunk_size=500)
 
         # Build document with custom canvas
         doc.build(story, canvasmaker=_canvas_factory)

@@ -139,6 +139,22 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
     }
   };
 
+  const handleDownloadFlaggedCsv = () => {
+    if (!currentResult) return;
+    const pid = currentResult.prediction_id || currentResult.download_id;
+    if (pid) {
+      window.open(apiService.getFlaggedCsvDownloadUrl(pid), '_blank');
+    }
+  };
+
+  const handleDownloadNeedsReviewCsv = () => {
+    if (!currentResult) return;
+    const pid = currentResult.prediction_id || currentResult.download_id;
+    if (pid) {
+      window.open(apiService.getNeedsReviewCsvDownloadUrl(pid), '_blank');
+    }
+  };
+
   const handleRunFallbackModel = async () => {
     if (!csvContent || csvContent.trim().length === 0) return;
     setEvaluating(true);
@@ -1100,18 +1116,36 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
             </h2>
             <div className="flex flex-wrap items-center gap-2">
               <button
+                onClick={handleDownloadFlaggedCsv}
+                className="text-xs bg-rose-950/80 hover:bg-rose-900 border border-rose-700/60 text-rose-300 px-3 py-1.5 rounded-xl font-semibold flex items-center space-x-1.5 transition cursor-pointer"
+                title="Download CSV containing all transactions flagged by active model threshold or documented rule"
+              >
+                <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
+                <span>Download Flagged CSV</span>
+              </button>
+              {currentResult.has_labels && ((currentResult.evaluation_metrics as any)?.fn > 0 || (currentResult.evaluation_metrics?.confusion_matrix?.fn ?? 0) > 0) && (
+                <button
+                  onClick={handleDownloadNeedsReviewCsv}
+                  className="text-xs bg-amber-950/80 hover:bg-amber-900 border border-amber-700/60 text-amber-300 px-3 py-1.5 rounded-xl font-semibold flex items-center space-x-1.5 transition cursor-pointer"
+                  title="Download CSV containing ground-truth positive laundering cases cleared by model"
+                >
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Download Needs Review CSV</span>
+                </button>
+              )}
+              <button
                 onClick={handleDownloadPdfReport}
                 className="text-xs bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/60 text-indigo-300 px-3 py-1.5 rounded-xl font-semibold flex items-center space-x-1.5 transition cursor-pointer"
               >
                 <FileText className="w-3.5 h-3.5" />
-                <span>Download Evaluation Report (PDF)</span>
+                <span>Download Report (PDF)</span>
               </button>
               <button
                 onClick={handleDownloadPredictions}
-                className="text-xs bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-300 px-3 py-1.5 rounded-xl font-semibold flex items-center space-x-1.5 transition cursor-pointer"
+                className="text-xs bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 px-3 py-1.5 rounded-xl font-semibold flex items-center space-x-1.5 transition cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>Download Predictions CSV</span>
+                <span>Master CSV</span>
               </button>
               <button
                 onClick={() => onNavigateTab('analytics')}

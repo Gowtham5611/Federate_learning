@@ -389,21 +389,51 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
             onClick={() => {
               const pid = result.prediction_id || result.download_id;
               if (pid) {
+                window.open(apiService.getFlaggedCsvDownloadUrl(pid, threshold), '_blank');
+              }
+            }}
+            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-rose-950/80 hover:bg-rose-900 border border-rose-700/60 text-rose-300 text-xs font-semibold transition cursor-pointer"
+            title="Download CSV containing all transactions flagged by active model threshold or documented rule"
+          >
+            <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
+            <span>Download Flagged CSV</span>
+          </button>
+
+          {hasMetrics && computed.fn > 0 && (
+            <button
+              onClick={() => {
+                const pid = result.prediction_id || result.download_id;
+                if (pid) {
+                  window.open(apiService.getNeedsReviewCsvDownloadUrl(pid, threshold), '_blank');
+                }
+              }}
+              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-amber-950/80 hover:bg-amber-900 border border-amber-700/60 text-amber-300 text-xs font-semibold transition cursor-pointer"
+              title="Download CSV containing ground-truth positive laundering cases cleared by model"
+            >
+              <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+              <span>Download Needs Review CSV</span>
+            </button>
+          )}
+
+          <button
+            onClick={() => {
+              const pid = result.prediction_id || result.download_id;
+              if (pid) {
                 window.open(apiService.getPdfReportUrl(pid, selectedOperatingPoint, activeTableFilter), '_blank');
               }
             }}
             className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/60 text-indigo-300 text-xs font-semibold transition cursor-pointer"
           >
             <FileText className="w-3.5 h-3.5" />
-            <span>Download Evaluation Report (PDF)</span>
+            <span>Download Report (PDF)</span>
           </button>
 
           <button
             onClick={handleDownloadPredictions}
-            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-300 text-xs font-semibold transition cursor-pointer"
+            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>Download Predictions CSV</span>
+            <span>Master CSV</span>
           </button>
 
           <button
@@ -855,11 +885,9 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
                   <span>Sum: <strong className="text-emerald-400">{(computed.tp + computed.fp + computed.fn + computed.tn).toLocaleString()}</strong></span>
                 </div>
                 <p className="text-[10px] text-slate-400 leading-normal pt-0.5">
-                  {!isManualSliderActive && selectedOperatingPoint === 'frozen'
-                    ? 'Fixed threshold policy: all scores ≥ 0.3378 generate alerts (2,016 alerts). Alert volume is unconstrained.'
-                    : !isManualSliderActive && selectedOperatingPoint === 'budget_500'
-                    ? 'Fixed capacity policy: strictly caps alerts at top 1,000 transactions (50 per 1,000 tx). Effective cutoff score is ≈ 0.4645.'
-                    : `Continuous slider active at cutoff θ = ${threshold.toFixed(4)}. Alert count: ${computed.alertCount.toLocaleString()}.`}
+                  {Math.abs(threshold - 0.0) < 1e-4
+                    ? 'Diagnostic threshold 0.0000: flags 100% of non-negative transactions. Workload diagnostic only; not an operational recommendation.'
+                    : `Active decision policy: cutoff threshold θ* = ${threshold.toFixed(4)}. Alerts: ${computed.alertCount.toLocaleString()} (${((computed.alertCount / Math.max(1, computed.total)) * 100).toFixed(2)}% alert rate). Cleared: ${(computed.tn + computed.fn).toLocaleString()}.`}
                 </p>
               </div>
             </div>

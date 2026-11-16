@@ -353,10 +353,20 @@ def train_model_from_csv(request: CsvTrainRequest) -> Dict[str, Any]:
 @router.get("/api/v1/predictions/{prediction_id}/download")
 @router.get("/api/v1/predict/download/{prediction_id}")
 @router.get("/api/v1/predict/{prediction_id}/download")
-def download_prediction_csv(prediction_id: str) -> Response:
+def download_prediction_csv(
+    prediction_id: str,
+    type: Optional[str] = Query("all", description="Download filter type: 'all', 'flagged', or 'needs_review'"),
+    threshold: Optional[float] = Query(None, description="Optional custom threshold override"),
+) -> Response:
     """Download itemized prediction records as a standard CSV file."""
     service = CsvEvaluationService()
-    res = service.get_prediction_download(prediction_id)
+    f_mode = (type or "all").strip().lower()
+
+    if f_mode in ("flagged", "alerts", "suspicious", "needs_review", "needs_review_fn", "false_negatives", "fn"):
+        res = service.get_filtered_csv(prediction_id, filter_type=f_mode, threshold=threshold)
+    else:
+        res = service.get_prediction_download(prediction_id)
+
     if not res:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -369,6 +379,64 @@ def download_prediction_csv(prediction_id: str) -> Response:
             detail=f"Prediction session '{prediction_id}' has deliberately expired or was removed.",
         )
 
+    csv_content, filename = res
+    return Response(
+        content=csv_content,
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
+    )
+
+
+@router.get("/predict/download/{prediction_id}/flagged")
+@router.get("/api/v1/predict/download/{prediction_id}/flagged")
+@router.get("/predictions/{prediction_id}/download/flagged")
+@router.get("/api/v1/predictions/{prediction_id}/download/flagged")
+def download_flagged_csv(
+    prediction_id: str,
+    threshold: Optional[float] = Query(None, description="Optional custom threshold override"),
+) -> Response:
+    """Download only transactions flagged by active model threshold or documented rule."""
+    service = CsvEvaluationService()
+    res = service.get_filtered_csv(prediction_id, filter_type="flagged", threshold=threshold)
+    if not res:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Prediction session '{prediction_id}' not found.",
+        )
+    if res[0] == "EXPIRED":
+        raise HTTPException(
+            status_code=status.HTTP_410_GONE,
+            detail=f"Prediction session '{prediction_id}' has expired.",
+        )
+    csv_content, filename = res
+    return Response(
+        content=csv_content,
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
+    )
+
+
+@router.get("/predict/download/{prediction_id}/needs-review")
+@router.get("/api/v1/predict/download/{prediction_id}/needs-review")
+@router.get("/predictions/{prediction_id}/download/needs-review")
+@router.get("/api/v1/predictions/{prediction_id}/download/needs-review")
+def download_needs_review_csv(
+    prediction_id: str,
+    threshold: Optional[float] = Query(None, description="Optional custom threshold override"),
+) -> Response:
+    """Download false negatives in labeled evaluation data (ground-truth positive, model cleared)."""
+    service = CsvEvaluationService()
+    res = service.get_filtered_csv(prediction_id, filter_type="needs_review", threshold=threshold)
+    if not res:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Prediction session '{prediction_id}' not found.",
+        )
+    if res[0] == "EXPIRED":
+        raise HTTPException(
+            status_code=status.HTTP_410_GONE,
+            detail=f"Prediction session '{prediction_id}' has expired.",
+        )
     csv_content, filename = res
     return Response(
         content=csv_content,

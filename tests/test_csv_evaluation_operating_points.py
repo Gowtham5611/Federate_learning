@@ -9,6 +9,16 @@ import pytest
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(PROJECT_ROOT / "backend"))
+
+def _resolve_data_path(rel_path: str) -> Path:
+    p1 = PROJECT_ROOT / rel_path
+    if p1.exists():
+        return p1
+    p2 = PROJECT_ROOT / "backend" / rel_path
+    if p2.exists():
+        return p2
+    return p1
 
 from backend.interfaces.api.services.csv_evaluation_service import CsvEvaluationService
 
@@ -20,18 +30,18 @@ def eval_service():
 
 def test_zero_alerts_numeric_metrics(eval_service):
     """Verify that a labeled file generating 0 alerts produces numeric F1=0, Recall=0, Specificity=1.0, BalancedAcc=0.5, Precision=None."""
-    csv_path = PROJECT_ROOT / "data/demo/demo_ibm_aml_500.csv"
+    csv_path = _resolve_data_path("data/demo_slices/test_slice_500.csv")
     with open(csv_path, "rb") as f:
         content = f.read()
 
-    res = eval_service.evaluate_csv_bytes(content, filename="demo_500.csv", dataset="HI-Small", row_limit=5000)
+    res = eval_service.evaluate_csv_bytes(content, filename="test_slice_500.csv", dataset="HI-Small", row_limit=5000)
 
     assert res["status"] == "success"
     assert res["has_labels"] is True
     em = res["evaluation_metrics"]
     assert em is not None
 
-    # Zero alerts triggered
+    # Zero alerts triggered at canonical threshold
     assert em["alert_count"] == 0
     assert em["tp"] == 0
     assert em["fp"] == 0
@@ -65,9 +75,11 @@ def test_zero_alerts_numeric_metrics(eval_service):
 
 def test_score_only_mode_for_unlabeled_csv(eval_service):
     """Verify that an unlabeled CSV enters Score-Only Mode without crashing or empty cards."""
-    csv_path = PROJECT_ROOT / "data/demo/demo_no_labels_500.csv"
-    with open(csv_path, "rb") as f:
-        content = f.read()
+    csv_path = _resolve_data_path("data/demo_slices/test_slice_500.csv")
+    df = pd.read_csv(csv_path)
+    label_cols = [c for c in df.columns if str(c).strip().lower() in ("is laundering", "is_laundering", "label")]
+    df_unlabeled = df.drop(columns=label_cols)
+    content = df_unlabeled.to_csv(index=False).encode("utf-8")
 
     res = eval_service.evaluate_csv_bytes(content, filename="demo_no_labels.csv", dataset="HI-Small", row_limit=5000)
 
@@ -84,7 +96,7 @@ def test_score_only_mode_for_unlabeled_csv(eval_service):
 
 def test_alert_budgets_consistency(eval_service):
     """Verify that alert budgets (10, 50, 100 per 10k) produce monotonically non-decreasing alerts and valid metrics."""
-    csv_path = PROJECT_ROOT / "data/demo_slices/test_slice_5000.csv"
+    csv_path = _resolve_data_path("data/demo_slices/test_slice_5000.csv")
     with open(csv_path, "rb") as f:
         content = f.read()
 

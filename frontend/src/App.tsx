@@ -59,10 +59,23 @@ export const App: React.FC = () => {
   const [selectedDataset, setSelectedDataset] = useState<SupportedDataset>('HI-Small');
   const [researchModels, setResearchModels] = useState<BenchmarkModelRecord[]>([]);
 
-  // Clear any stale auto-loaded run ID on startup
+  // Restore active run reference from backend storage on reload without re-evaluating
   useEffect(() => {
     try {
-      localStorage.removeItem('fedsecureai_active_run_id');
+      const savedRunId = localStorage.getItem('fedsecureai_active_run_id');
+      if (savedRunId && !currentResult) {
+        apiService
+          .getPredictionRun(savedRunId)
+          .then((res) => {
+            if (res && (res.prediction_id || res.download_id)) {
+              setCurrentResult(res);
+              setActiveRunId(res.prediction_id || res.download_id || savedRunId);
+            }
+          })
+          .catch(() => {
+            localStorage.removeItem('fedsecureai_active_run_id');
+          });
+      }
     } catch {
       // Ignore
     }

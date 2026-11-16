@@ -1678,6 +1678,204 @@ class CsvEvaluationService:
 
         return None
 
+    def get_filtered_csv(
+        self,
+        prediction_id: str,
+        filter_type: str = "flagged",
+        threshold: Optional[float] = None,
+    ) -> Optional[Tuple[str, str]]:
+        """Retrieve dedicated filtered CSV export for flagged alerts or needs-review false negatives."""
+        csv_file = UPLOAD_DIR / f"{prediction_id}.csv"
+        meta_file = UPLOAD_DIR / f"{prediction_id}_meta.json"
+
+        if not csv_file.exists():
+            return None
+
+        meta: Dict[str, Any] = {}
+        if meta_file.exists():
+            try:
+                meta = json.loads(meta_file.read_text(encoding="utf-8"))
+                if meta.get("is_expired"):
+                    return "EXPIRED", f"{filter_type}_{prediction_id}.csv"
+            except Exception:
+                pass
+
+        try:
+            df = pd.read_csv(csv_file)
+            act_thresh = float(threshold) if threshold is not None else float(meta.get("decision_threshold", 0.337784))
+
+            # Determine probability series
+            prob_col = None
+            for candidate in ("predicted_probability", "PRED_PROBABILITY", "score", "risk_score"):
+                if candidate in df.columns:
+                    prob_col = candidate
+                    break
+
+            if prob_col is None:
+                prob_s = pd.Series(0.0, index=df.index)
+            else:
+                prob_s = pd.to_numeric(df[prob_col], errors="coerce").fillna(0.0)
+
+            # Determine ground truth series
+            gt_col = None
+            for candidate in ("Is Laundering", "is_laundering", "ground_truth_label", "actual_label", "label"):
+                if candidate in df.columns:
+                    gt_col = candidate
+                    break
+
+            if gt_col is not None:
+                if df[gt_col].dtype == object:
+                    gt_s = df[gt_col].astype(str).str.upper().map(
+                        lambda x: 1 if "SUSPICIOUS" in x or "1" in x else (0 if "LEGITIMATE" in x or "0" in x else -1)
+                    )
+                else:
+                    gt_s = pd.to_numeric(df[gt_col], errors="coerce").fillna(-1).astype(int)
+                has_labels = bool((gt_s >= 0).any())
+            else:
+                gt_s = pd.Series(-1, index=df.index)
+                has_labels = False
+
+            f_mode = filter_type.strip().lower()
+            is_flagged = prob_s >= act_thresh
+
+            if f_mode in ("flagged", "alerts", "suspicious"):
+                mask = is_flagged
+                out_filename = f"flagged_transactions_{prediction_id}.csv"
+            elif f_mode in ("needs_review", "needs_review_fn", "false_negatives", "fn"):
+                mask = (gt_s == 1) & (~is_flagged) if has_labels else pd.Series(False, index=df.index)
+                out_filename = f"needs_review_false_negatives_{prediction_id}.csv"
+            elif f_mode in ("cleared", "legitimate"):
+                mask = ~is_flagged
+                out_filename = f"cleared_transactions_{prediction_id}.csv"
+            else:
+                mask = pd.Series(True, index=df.index)
+                out_filename = f"all_evaluated_transactions_{prediction_id}.csv"
+
+            filtered_df = df[mask].copy()
+
+            records = []
+            for rank, (idx, row) in enumerate(filtered_df.iterrows(), start=1):
+                p_val = float(prob_s.iloc[idx])
+                row_flagged = p_val >= act_thresh
+                lbl_val = int(gt_s.iloc[idx])
+
+                orig_row_num = int(row.get("source_row_index") if pd.notnull(row.get("source_row_index")) else (idx + 1))
+                tx_id_raw = str(row.get("transaction_id") or row.get("Transaction ID") or row.get("tx_id") or "")
+                if tx_id_raw and tx_id_raw.lower() != "nan":
+                    row_ref = f"{tx_id_raw} (Row_{orig_row_num} gen)"
+                else:
+                    row_ref = f"Row_{orig_row_num} (generated)"
+
+                # Customer name handling: "Name not provided" if absent
+                name_cand = row.get("transaction_name") or row.get("sender_name") or row.get("customer_name") or row.get("Name")
+                if pd.notnull(name_cand) and str(name_cand).strip() and str(name_cand).lower() != "nan":
+                    sender_name = str(name_cand).strip()
+                else:
+                    sender_name = "Name not provided"
+
+                recv_name_cand = row.get("receiver_name") or row.get("beneficiary_name")
+                if pd.notnull(recv_name_cand) and str(recv_name_cand).strip() and str(recv_name_cand).lower() != "nan":
+                    receiver_name = str(recv_name_cand).strip()
+                else:
+                    receiver_name = "Name not provided"
+
+                from_acct = str(row.get("Account") or row.get("From Account") or row.get("from_account") or "").strip()
+                to_acct = str(row.get("Account.1") or row.get("To Account") or row.get("to_account") or "").strip()
+                ts_val = str(row.get("Timestamp") or row.get("timestamp") or row.get("Date") or "").strip()
+
+                amt_val = (
+                    row.get("Amount Paid")
+                    if "Amount Paid" in row and pd.notnull(row.get("Amount Paid"))
+                    else (
+                        row.get("Amount Received")
+                        if "Amount Received" in row and pd.notnull(row.get("Amount Received"))
+                        else (row.get("amount") if "amount" in row and pd.notnull(row.get("amount")) else 0.0)
+                    )
+                )
+                try:
+                    amt_num = float(amt_val)
+                except Exception:
+                    amt_num = 0.0
+
+                curr_val = str(row.get("Payment Currency") or row.get("Receiving Currency") or row.get("currency") or "").strip()
+
+                if lbl_val == 1:
+                    gt_display = "1 (Laundering)"
+                elif lbl_val == 0:
+                    gt_display = "0 (Legitimate)"
+                else:
+                    gt_display = "Unlabeled"
+
+                pred_display = "FLAGGED_ALERT" if row_flagged else "CLEARED"
+
+                if lbl_val == 1 and row_flagged:
+                    outcome = "TRUE_POSITIVE"
+                    status_str = "FLAGGED_ALERT"
+                    handling_str = "High Priority AML Triage"
+                    expl_str = f"Model score ({p_val:.4f}) >= cutoff ({act_thresh:.4f}) on CSV positive laundering transaction."
+                elif lbl_val == 0 and row_flagged:
+                    outcome = "FALSE_POSITIVE"
+                    status_str = "FLAGGED_ALERT"
+                    handling_str = "Investigator Review (False Alarm)"
+                    expl_str = f"Model score ({p_val:.4f}) >= cutoff ({act_thresh:.4f}) on CSV legitimate transaction."
+                elif lbl_val == 1 and not row_flagged:
+                    outcome = "FALSE_NEGATIVE"
+                    status_str = "NEEDS_REVIEW_FALSE_NEGATIVE"
+                    handling_str = "Needs Review - CSV Ground-Truth Positive Cleared by Model"
+                    expl_str = f"CSV laundering label (1) missed by model; score ({p_val:.4f}) < cutoff ({act_thresh:.4f})."
+                elif lbl_val == 0 and not row_flagged:
+                    outcome = "TRUE_NEGATIVE"
+                    status_str = "CLEARED_LEGITIMATE"
+                    handling_str = "Cleared Legitimate"
+                    expl_str = f"Model score ({p_val:.4f}) < cutoff ({act_thresh:.4f}) on CSV legitimate transaction."
+                else:
+                    outcome = "UNLABELED"
+                    status_str = "FLAGGED_ALERT" if row_flagged else "CLEARED_LEGITIMATE"
+                    handling_str = "Score-Based Triage" if row_flagged else "Cleared"
+                    expl_str = f"Model score ({p_val:.4f}) {'meets' if row_flagged else 'below'} cutoff ({act_thresh:.4f})."
+
+                rec = {
+                    "row_reference": row_ref,
+                    "timestamp": ts_val,
+                    "from_account": from_acct,
+                    "to_account": to_acct,
+                    "sender_name": sender_name,
+                    "receiver_name": receiver_name,
+                    "amount": amt_num,
+                    "currency": curr_val,
+                    "predicted_probability": round(p_val, 6),
+                    "active_threshold": round(act_thresh, 6),
+                    "csv_ground_truth_label": gt_display,
+                    "model_prediction": pred_display,
+                    "evaluation_outcome": outcome,
+                    "status": status_str,
+                    "suggested_handling": handling_str,
+                    "model_name": meta.get("model_name", "FedSecureAI Model"),
+                    "explanation": expl_str,
+                }
+                records.append(rec)
+
+            out_df = pd.DataFrame(records)
+            if out_df.empty:
+                empty_cols = [
+                    "row_reference", "timestamp", "from_account", "to_account",
+                    "sender_name", "receiver_name", "amount", "currency",
+                    "predicted_probability", "active_threshold", "csv_ground_truth_label",
+                    "model_prediction", "evaluation_outcome", "status", "suggested_handling",
+                    "model_name", "explanation"
+                ]
+                empty_rec = {c: "" for c in empty_cols}
+                empty_rec["row_reference"] = "NO_MATCHING_RECORDS"
+                empty_rec["explanation"] = f"No records matched filter '{f_mode}' under threshold {act_thresh:.4f} across {len(df):,} evaluated transactions."
+                out_df = pd.DataFrame([empty_rec])
+
+            csv_buf = io.StringIO()
+            out_df.to_csv(csv_buf, index=False)
+            return csv_buf.getvalue(), out_filename
+        except Exception as e:
+            logger.error("Failed to generate filtered CSV for %s: %s", prediction_id, e, exc_info=True)
+            raise
+
     def get_prediction_pdf_report(
         self,
         prediction_id: str,

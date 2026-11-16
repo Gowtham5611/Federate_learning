@@ -438,6 +438,22 @@ export const apiService = {
   },
 
   /**
+   * Get direct Flagged Alerts CSV download URL.
+   */
+  getFlaggedCsvDownloadUrl(id: string, threshold?: number): string {
+    const q = threshold !== undefined ? `?threshold=${threshold}` : '';
+    return `${API_BASE}/api/v1/predict/download/${id}/flagged${q}`;
+  },
+
+  /**
+   * Get direct Needs Review (False Negatives) CSV download URL.
+   */
+  getNeedsReviewCsvDownloadUrl(id: string, threshold?: number): string {
+    const q = threshold !== undefined ? `?threshold=${threshold}` : '';
+    return `${API_BASE}/api/v1/predict/download/${id}/needs-review${q}`;
+  },
+
+  /**
    * Get direct evaluation PDF report download URL with selected operating mode and filter.
    */
   getPdfReportUrl(id: string, operatingPoint?: string, filter?: string): string {
