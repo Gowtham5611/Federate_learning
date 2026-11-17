@@ -59,28 +59,6 @@ export const App: React.FC = () => {
   const [selectedDataset, setSelectedDataset] = useState<SupportedDataset>('HI-Small');
   const [researchModels, setResearchModels] = useState<BenchmarkModelRecord[]>([]);
 
-  // Restore active run reference from backend storage on reload without re-evaluating
-  useEffect(() => {
-    try {
-      const savedRunId = localStorage.getItem('fedsecureai_active_run_id');
-      if (savedRunId && !currentResult) {
-        apiService
-          .getPredictionRun(savedRunId)
-          .then((res) => {
-            if (res && (res.prediction_id || res.download_id)) {
-              setCurrentResult(res);
-              setActiveRunId(res.prediction_id || res.download_id || savedRunId);
-            }
-          })
-          .catch(() => {
-            localStorage.removeItem('fedsecureai_active_run_id');
-          });
-      }
-    } catch {
-      // Ignore
-    }
-  }, []);
-
   // Fetch initial health and model registry
   const checkHealth = async () => {
     setLoadingHealth(true);

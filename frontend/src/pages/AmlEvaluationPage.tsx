@@ -114,38 +114,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
   // Execution states
   const [evaluating, setEvaluating] = useState<boolean>(false);
   const [multiModelEvaluating, setMultiModelEvaluating] = useState<boolean>(false);
-  const [loadingDemo, setLoadingDemo] = useState<boolean>(false);
   const [apiError, setApiError] = useState<string | null>(null);
-
-  const handleLoadDemo = async () => {
-    setLoadingDemo(true);
-    setApiError(null);
-    try {
-      const response = await fetch('/demo_slices/test_slice_500.csv');
-      if (!response.ok) {
-        throw new Error('Could not retrieve demo slice from static server.');
-      }
-      const text = await response.text();
-      setCsvContent(text);
-      setFileName('test_slice_500.csv');
-      setFileSizeStr(formatFileSize(new Blob([text]).size));
-      await analyzeUploadedCsv(text, 'test_slice_500.csv');
-
-      // Auto-evaluate against HI-Small champion model
-      const resp = await apiService.predictCsv({
-        csv_content: text,
-        model_id: 'HI-Small',
-        filename: 'test_slice_500.csv',
-        threshold: 0.337784,
-      });
-      onEvaluationComplete(resp);
-    } catch (err: unknown) {
-      const msg = err instanceof ApiError ? err.message : err instanceof Error ? err.message : 'Demo slice evaluation failed';
-      setApiError(msg);
-    } finally {
-      setLoadingDemo(false);
-    }
-  };
 
   // Operating point selection state
   const [selectedOperatingPoint, setSelectedOperatingPoint] = useState<OperatingPointKey>('frozen');
@@ -155,7 +124,8 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
     if (!currentResult) return null;
     const ops = currentResult.operating_points || currentResult.evaluation_metrics?.operating_points;
     if (!ops) return null;
-    if (selectedOperatingPoint === 'budget_500') return ops.alert_budgets?.['500'] || null;
+    if (selectedOperatingPoint === 'ensemble_hybrid') return ops.frozen || null;
+    if (selectedOperatingPoint === 'zero_diagnostic') return ops.zero_diagnostic || null;
     if (selectedOperatingPoint === 'budget_10') return ops.alert_budgets?.['10'] || null;
     if (selectedOperatingPoint === 'budget_50') return ops.alert_budgets?.['50'] || null;
     if (selectedOperatingPoint === 'budget_100') return ops.alert_budgets?.['100'] || null;
@@ -316,7 +286,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
     }
   };
 
-  // Handle local file selection
+  // Handle local file selection with auto-predict
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -336,13 +306,36 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
     setFileName(file.name);
     setFileSizeStr(formatFileSize(file.size));
     setTrainSuccessMessage(null);
+    setEvaluating(true);
+    setApiError(null);
 
     try {
       const text = await file.text();
       setCsvContent(text);
       await analyzeUploadedCsv(text, file.name);
-    } catch (err) {
-      setApiError('Failed to read file content: ' + String(err));
+
+      // Auto-predict immediately on upload
+      const modelToUse = selectedModelId || 'auto';
+      const thresholdVal = customThreshold !== '' ? parseFloat(customThreshold) : undefined;
+      const resp = await apiService.predictCsv({
+        csv_content: text,
+        model_id: modelToUse,
+        filename: file.name,
+        column_mapping: Object.keys(customMappings || {}).length > 0 ? customMappings : undefined,
+        row_limit: rowLimit,
+        threshold: thresholdVal,
+      });
+      onEvaluationComplete(resp);
+    } catch (err: unknown) {
+      let msg = 'Evaluation request failed';
+      if (err instanceof ApiError) {
+        msg = err.message;
+      } else if (err instanceof Error) {
+        msg = err.message;
+      }
+      setApiError(msg);
+    } finally {
+      setEvaluating(false);
     }
   };
 
@@ -625,8 +618,8 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
         )}
       </div>
 
-      {/* Executive Key Findings Strip with 1-Click Demo Mode Button */}
-      <KeyFindingsStrip onLoadDemo={handleLoadDemo} loadingDemo={loadingDemo} />
+      {/* Executive Key Findings Strip */}
+      <KeyFindingsStrip />
 
       {/* Main Upload & Configuration Container */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-xl space-y-6">
@@ -635,17 +628,8 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
           <div className="flex-1 space-y-4">
             <div className="flex items-center justify-between">
               <label className="block text-xs font-mono uppercase text-slate-500 dark:text-slate-400 font-semibold">
-                Select or Drop Any Transaction CSV
+                Select or Drop Any Transaction CSV (Auto-Predicts on Upload)
               </label>
-              <button
-                type="button"
-                onClick={handleLoadDemo}
-                disabled={loadingDemo}
-                className="text-[11px] font-mono text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer"
-              >
-                <Sparkles className="w-3 h-3" />
-                <span>Load Sample Slice (test_slice_500.csv)</span>
-              </button>
             </div>
             <div className="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-500/80 dark:hover:border-indigo-500/80 rounded-2xl p-6 text-center transition bg-slate-50/60 dark:bg-slate-950/40 relative">
               <input

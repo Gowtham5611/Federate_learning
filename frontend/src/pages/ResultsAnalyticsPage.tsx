@@ -77,7 +77,7 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
     const ops = result.operating_points || result.evaluation_metrics?.operating_points;
     if (!ops) return null;
     if (selectedOperatingPoint === 'zero_diagnostic') return ops.zero_diagnostic || null;
-    if (selectedOperatingPoint === 'budget_500') return ops.alert_budgets?.['500'] || null;
+    if (selectedOperatingPoint === 'ensemble_hybrid') return ops.frozen || null;
     if (selectedOperatingPoint === 'budget_10') return ops.alert_budgets?.['10'] || null;
     if (selectedOperatingPoint === 'budget_50') return ops.alert_budgets?.['50'] || null;
     if (selectedOperatingPoint === 'budget_100') return ops.alert_budgets?.['100'] || null;
@@ -104,8 +104,8 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
       } else {
         setThreshold(0.0);
       }
-    } else if (point === 'budget_500' && ops.alert_budgets?.['500']) {
-      setThreshold(ops.alert_budgets['500'].threshold);
+    } else if (point === 'ensemble_hybrid') {
+      setThreshold(ops.frozen ? ops.frozen.threshold : defaultThreshold);
     } else if (point === 'budget_10' && ops.alert_budgets?.['10']) {
       setThreshold(ops.alert_budgets['10'].threshold);
     } else if (point === 'budget_50' && ops.alert_budgets?.['50']) {
@@ -808,15 +808,19 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
                     className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border ${
                       !isManualSliderActive && selectedOperatingPoint === 'frozen'
                         ? 'bg-indigo-950 text-indigo-300 border-indigo-700/60'
-                        : !isManualSliderActive && selectedOperatingPoint === 'budget_500'
-                        ? 'bg-emerald-950 text-emerald-300 border-emerald-700/60'
-                        : 'bg-amber-950 text-amber-300 border-amber-700/60'
+                        : !isManualSliderActive && selectedOperatingPoint === 'ensemble_hybrid'
+                        ? 'bg-purple-950 text-purple-300 border-purple-700/60'
+                        : !isManualSliderActive && selectedOperatingPoint === 'zero_diagnostic'
+                        ? 'bg-amber-950 text-amber-300 border-amber-700/60'
+                        : 'bg-slate-900 text-slate-300 border-slate-700'
                     }`}
                   >
                     {!isManualSliderActive && selectedOperatingPoint === 'frozen'
                       ? 'FIXED THRESHOLD (θ* = 0.3378)'
-                      : !isManualSliderActive && selectedOperatingPoint === 'budget_500'
-                      ? 'FIXED CAPACITY: 50 / 1k (TOP-1,000)'
+                      : !isManualSliderActive && selectedOperatingPoint === 'ensemble_hybrid'
+                      ? 'HYBRID ENSEMBLE (α* = 1.00)'
+                      : !isManualSliderActive && selectedOperatingPoint === 'zero_diagnostic'
+                      ? 'THRESHOLD 0 DIAGNOSTIC'
                       : `CUSTOM CUTOFF (θ = ${threshold.toFixed(4)})`}
                   </span>
                 </div>
@@ -1109,8 +1113,10 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
             hasLabels={hasMetrics}
             threshold={threshold}
             activeModeName={
-              selectedOperatingPoint === 'budget_500'
-                ? 'Fixed Capacity: 50 alerts / 1,000 tx (1,000 Alerts Capped)'
+              selectedOperatingPoint === 'ensemble_hybrid'
+                ? 'Phase 7 Hybrid Ensemble: α* = 1.00 Blended Policy'
+                : selectedOperatingPoint === 'zero_diagnostic'
+                ? 'Diagnostic Only — Not Serving Threshold (θ = 0.0000)'
                 : selectedOperatingPoint === 'budget_10'
                 ? 'Fixed Capacity: 10 alerts / 10k tx'
                 : selectedOperatingPoint === 'budget_50'
@@ -1304,10 +1310,10 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
         predictions={result.predictions || []}
         activeThreshold={threshold}
         activeModeName={
-          selectedOperatingPoint === 'zero_diagnostic'
+          selectedOperatingPoint === 'ensemble_hybrid'
+            ? 'Phase 7 Hybrid Ensemble: α* = 1.00 Blended Policy'
+            : selectedOperatingPoint === 'zero_diagnostic'
             ? 'Diagnostic Only — Not Serving Threshold (θ = 0.0000)'
-            : selectedOperatingPoint === 'budget_500'
-            ? 'Fixed Capacity: 50 alerts / 1,000 tx (1,000 Alerts Capped)'
             : selectedOperatingPoint === 'budget_10'
             ? 'Fixed Capacity: 10 alerts / 10k tx'
             : selectedOperatingPoint === 'budget_50'

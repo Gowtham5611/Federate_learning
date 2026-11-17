@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Scale, Users, ChevronDown, ChevronUp, Sparkles, RefreshCw } from 'lucide-react';
+import { ShieldCheck, Scale, Users, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 
 interface KeyFindingsStripProps {
-  onLoadDemo?: () => void;
-  loadingDemo?: boolean;
   className?: string;
 }
 
 export const KeyFindingsStrip: React.FC<KeyFindingsStripProps> = ({
-  onLoadDemo,
-  loadingDemo = false,
   className = '',
 }) => {
   const [collapsed, setCollapsed] = useState<boolean>(false);
@@ -38,19 +34,6 @@ export const KeyFindingsStrip: React.FC<KeyFindingsStripProps> = ({
         </div>
 
         <div className="flex items-center space-x-2 shrink-0">
-          {onLoadDemo && (
-            <button
-              type="button"
-              onClick={onLoadDemo}
-              disabled={loadingDemo}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-semibold shadow-sm shadow-indigo-600/30 transition cursor-pointer focus-visible:ring-2 focus-visible:ring-indigo-500 outline-none"
-              title="1-Click Demo: Loads pre-validated benchmark test slice (500 transactions) and runs model evaluation"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${loadingDemo ? 'animate-spin' : ''}`} />
-              <span>{loadingDemo ? 'Loading Slice...' : '1-Click Demo (500 tx)'}</span>
-            </button>
-          )}
-
           <button
             type="button"
             onClick={() => setCollapsed((prev) => !prev)}

@@ -1,9 +1,27 @@
 import React, { useState } from 'react';
 import { OperatingPointsMap, OperatingPointMetrics } from '../types/api';
 import { formatMetric, formatPercent } from '../utils/formatters';
-import { Sliders, ShieldCheck, Target, ChevronDown, ChevronUp, AlertCircle, HelpCircle } from 'lucide-react';
+import {
+  Sliders,
+  Target,
+  ChevronDown,
+  ChevronUp,
+  AlertCircle,
+  HelpCircle,
+  Scale,
+  Activity,
+  CheckCircle2,
+  AlertTriangle,
+} from 'lucide-react';
 
-export type OperatingPointKey = 'frozen' | 'zero_diagnostic' | 'budget_10' | 'budget_50' | 'budget_100' | 'budget_500' | 'best_f1';
+export type OperatingPointKey =
+  | 'frozen'
+  | 'ensemble_hybrid'
+  | 'zero_diagnostic'
+  | 'budget_10'
+  | 'budget_50'
+  | 'budget_100'
+  | 'best_f1';
 
 interface OperatingPointSelectorProps {
   operatingPoints?: OperatingPointsMap | null;
@@ -24,7 +42,7 @@ export const OperatingPointSelector: React.FC<OperatingPointSelectorProps> = ({
 
   const getPointByKey = (key: OperatingPointKey): OperatingPointMetrics | null => {
     if (key === 'zero_diagnostic') return operatingPoints.zero_diagnostic || null;
-    if (key === 'budget_500') return operatingPoints.alert_budgets?.['500'] || null;
+    if (key === 'ensemble_hybrid') return operatingPoints.frozen || null;
     if (key === 'budget_10') return operatingPoints.alert_budgets?.['10'] || null;
     if (key === 'budget_50') return operatingPoints.alert_budgets?.['50'] || null;
     if (key === 'budget_100') return operatingPoints.alert_budgets?.['100'] || null;
@@ -33,13 +51,12 @@ export const OperatingPointSelector: React.FC<OperatingPointSelectorProps> = ({
   };
 
   const frozenOp = getPointByKey('frozen');
-  const budget500Op = getPointByKey('budget_500');
   const zeroOp = getPointByKey('zero_diagnostic');
   const activeOp = getPointByKey(selectedPoint);
 
   const activeCutoff = activeOp?.threshold ?? (selectedPoint === 'zero_diagnostic' ? 0.0 : defaultThreshold);
   const isFixedThreshold = selectedPoint === 'frozen';
-  const isFixedCapacity50 = selectedPoint === 'budget_500';
+  const isHybridEnsemble = selectedPoint === 'ensemble_hybrid';
   const isZeroDiagnostic = selectedPoint === 'zero_diagnostic';
 
   return (
@@ -59,8 +76,8 @@ export const OperatingPointSelector: React.FC<OperatingPointSelectorProps> = ({
                 className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border ${
                   isFixedThreshold
                     ? 'bg-indigo-950 text-indigo-300 border-indigo-700/60'
-                    : isFixedCapacity50
-                    ? 'bg-emerald-950 text-emerald-300 border-emerald-700/60'
+                    : isHybridEnsemble
+                    ? 'bg-purple-950 text-purple-300 border-purple-700/60'
                     : isZeroDiagnostic
                     ? 'bg-amber-950 text-amber-300 border-amber-700/60'
                     : 'bg-slate-900 text-slate-300 border-slate-700'
@@ -69,15 +86,15 @@ export const OperatingPointSelector: React.FC<OperatingPointSelectorProps> = ({
                 ACTIVE:{' '}
                 {isFixedThreshold
                   ? 'FIXED SERVING THRESHOLD'
-                  : isFixedCapacity50
-                  ? 'FIXED CAPACITY (50/1k)'
+                  : isHybridEnsemble
+                  ? 'HYBRID ENSEMBLE (α* = 1.00)'
                   : isZeroDiagnostic
                   ? 'THRESHOLD 0 DIAGNOSTIC'
                   : activeOp?.name || selectedPoint}
               </span>
             </div>
             <p className="text-[11px] text-slate-400">
-              Select between the operational serving threshold ($\theta^* = {(frozenOp?.threshold ?? defaultThreshold).toFixed(4)}$), investigative capacity, or the zero-threshold diagnostic.
+              Select between the operational serving threshold (θ* = {(frozenOp?.threshold ?? defaultThreshold).toFixed(4)}), the Phase 7 Hybrid Ensemble policy, or the zero-threshold diagnostic baseline.
             </p>
           </div>
         </div>
@@ -93,7 +110,7 @@ export const OperatingPointSelector: React.FC<OperatingPointSelectorProps> = ({
             <strong className="text-white font-bold">{activeOp?.alerts?.toLocaleString() ?? 0}</strong>
           </div>
           <div className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center space-x-1.5">
-            <span className="text-slate-400 text-[10px] uppercase">Rate:</span>
+            <span className="text-slate-400 text-[10px] uppercase">Alert Rate:</span>
             <strong className="text-emerald-400 font-bold">
               {((activeOp?.alerts_per_10k ?? 0) / 10).toFixed(1)} / 1k
             </strong>
@@ -103,7 +120,7 @@ export const OperatingPointSelector: React.FC<OperatingPointSelectorProps> = ({
 
       {/* Primary Operating Modes: Three High-Contrast Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3.5">
-        {/* Mode 1: Fixed Canonical Threshold */}
+        {/* Mode 1: Fixed Serving Threshold */}
         <button
           type="button"
           onClick={() => onSelectPoint('frozen')}
@@ -128,7 +145,7 @@ export const OperatingPointSelector: React.FC<OperatingPointSelectorProps> = ({
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 font-sans pl-5.5">
-                Calibrated serving cutoff ($\theta^* = {(frozenOp?.threshold ?? defaultThreshold).toFixed(4)}$). Flags all scores exceeding threshold.
+                Calibrated operational cutoff (θ* = {(frozenOp?.threshold ?? defaultThreshold).toFixed(4)}). Standalone Federated LSTM champion.
               </p>
             </div>
             <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-indigo-950/80 text-indigo-300 border border-indigo-800 shrink-0">
@@ -173,13 +190,13 @@ export const OperatingPointSelector: React.FC<OperatingPointSelectorProps> = ({
           </div>
         </button>
 
-        {/* Mode 2: Fixed Alert Capacity (50 alerts / 1,000 transactions) */}
+        {/* Mode 2: Hybrid Ensemble (Replacing Fixed Capacity) */}
         <button
           type="button"
-          onClick={() => onSelectPoint('budget_500')}
-          className={`relative text-left p-4 rounded-2xl transition-all border cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
-            isFixedCapacity50
-              ? 'bg-gradient-to-br from-emerald-950/70 to-slate-900 border-emerald-500 shadow-lg shadow-emerald-600/20 ring-1 ring-emerald-500/50'
+          onClick={() => onSelectPoint('ensemble_hybrid')}
+          className={`relative text-left p-4 rounded-2xl transition-all border cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 ${
+            isHybridEnsemble
+              ? 'bg-gradient-to-br from-purple-950/70 to-slate-900 border-purple-500 shadow-lg shadow-purple-600/20 ring-1 ring-purple-500/50'
               : 'bg-slate-900/60 hover:bg-slate-900 border-slate-800 hover:border-slate-700'
           }`}
         >
@@ -188,58 +205,58 @@ export const OperatingPointSelector: React.FC<OperatingPointSelectorProps> = ({
               <div className="flex items-center space-x-2">
                 <span
                   className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                    isFixedCapacity50 ? 'border-emerald-400 bg-emerald-500' : 'border-slate-600 bg-slate-950'
+                    isHybridEnsemble ? 'border-purple-400 bg-purple-500' : 'border-slate-600 bg-slate-950'
                   }`}
                 >
-                  {isFixedCapacity50 && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                  {isHybridEnsemble && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
                 </span>
-                <span className="text-sm font-bold text-white group-hover:text-emerald-200 transition">
-                  Fixed Capacity (50/1k)
+                <span className="text-sm font-bold text-white group-hover:text-purple-200 transition">
+                  Phase 7 Hybrid Ensemble
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 font-sans pl-5.5">
-                Strict top-K workload ceiling (50 alerts / 1,000 tx). Effective cutoff adjusts dynamically.
+                Convex combination: P_ens = 1.0·P_IID + 0.0·P_NonIID at θ* = {(frozenOp?.threshold ?? defaultThreshold).toFixed(4)}. Optimal policy preventing negative transfer.
               </p>
             </div>
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-950/80 text-emerald-300 border border-emerald-800 shrink-0">
-              Capacity Cap
+            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-purple-950/80 text-purple-300 border border-purple-800 shrink-0">
+              α* = 1.00 Policy
             </span>
           </div>
 
           {/* Key Metrics Preview Strip */}
           <div className="mt-3.5 pt-3 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-center font-mono">
             <div className="p-1.5 rounded-xl bg-slate-950/80 border border-slate-800/60">
-              <span className="text-[9px] text-slate-400 uppercase block">Effective Cutoff</span>
+              <span className="text-[9px] text-slate-400 uppercase block">Ensemble Cutoff</span>
               <span className="text-xs font-black text-amber-300 block">
-                {budget500Op?.threshold !== undefined ? budget500Op.threshold.toFixed(4) : '--'}
+                {(frozenOp?.threshold ?? defaultThreshold).toFixed(4)}
               </span>
             </div>
             <div className="p-1.5 rounded-xl bg-slate-950/80 border border-slate-800/60">
               <span className="text-[9px] text-slate-400 uppercase block">Alerts</span>
               <span className="text-xs font-black text-white block">
-                {budget500Op?.alerts !== undefined ? budget500Op.alerts.toLocaleString() : '--'}
+                {frozenOp?.alerts !== undefined ? frozenOp.alerts.toLocaleString() : '--'}
               </span>
             </div>
             <div className="p-1.5 rounded-xl bg-slate-950/80 border border-slate-800/60">
               <span className="text-[9px] text-slate-400 uppercase block">Precision</span>
               <span className="text-xs font-black text-emerald-400 block">
-                {budget500Op?.precision !== undefined && budget500Op?.precision !== null ? formatPercent(budget500Op.precision, 2) : '--'}
+                {frozenOp?.precision !== undefined && frozenOp?.precision !== null ? formatPercent(frozenOp.precision, 2) : '--'}
               </span>
             </div>
             <div className="p-1.5 rounded-xl bg-slate-950/80 border border-slate-800/60">
               <span className="text-[9px] text-slate-400 uppercase block">Recall</span>
-              <span className="text-xs font-black text-indigo-300 block">
-                {budget500Op?.recall !== undefined && budget500Op?.recall !== null ? formatPercent(budget500Op.recall, 2) : '--'}
+              <span className="text-xs font-black text-purple-300 block">
+                {frozenOp?.recall !== undefined && frozenOp?.recall !== null ? formatPercent(frozenOp.recall, 2) : '--'}
               </span>
             </div>
           </div>
 
           {/* Confusion Counts Footer */}
           <div className="mt-2 text-[10px] font-mono text-slate-400 flex flex-wrap items-center justify-between gap-1 px-1">
-            <span>TP: <strong className="text-emerald-300">{budget500Op?.tp?.toLocaleString() ?? '--'}</strong></span>
-            <span>FP: <strong className="text-amber-300">{budget500Op?.fp?.toLocaleString() ?? '--'}</strong></span>
-            <span>FN: <strong className="text-rose-300">{budget500Op?.fn?.toLocaleString() ?? '--'}</strong></span>
-            <span>TN: <strong className="text-slate-300">{budget500Op?.tn?.toLocaleString() ?? '--'}</strong></span>
+            <span>TP: <strong className="text-emerald-300">{frozenOp?.tp?.toLocaleString() ?? '--'}</strong></span>
+            <span>FP: <strong className="text-amber-300">{frozenOp?.fp?.toLocaleString() ?? '--'}</strong></span>
+            <span>FN: <strong className="text-rose-300">{frozenOp?.fn?.toLocaleString() ?? '--'}</strong></span>
+            <span>TN: <strong className="text-slate-300">{frozenOp?.tn?.toLocaleString() ?? '--'}</strong></span>
           </div>
         </button>
 
@@ -268,7 +285,7 @@ export const OperatingPointSelector: React.FC<OperatingPointSelectorProps> = ({
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 font-sans pl-5.5">
-                Diagnostic baseline ($\theta = 0.0000$). Flags all valid non-negative scores; does not change serving threshold.
+                Diagnostic baseline (θ = 0.0000). Flags all valid non-negative scores; does not change serving threshold.
               </p>
             </div>
             <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-amber-950/80 text-amber-300 border border-amber-800 shrink-0">
@@ -319,8 +336,8 @@ export const OperatingPointSelector: React.FC<OperatingPointSelectorProps> = ({
         className={`p-3.5 rounded-2xl border text-xs leading-relaxed transition-all ${
           isFixedThreshold
             ? 'bg-indigo-950/30 border-indigo-800/50 text-indigo-200'
-            : isFixedCapacity50
-            ? 'bg-emerald-950/30 border-emerald-800/50 text-emerald-200'
+            : isHybridEnsemble
+            ? 'bg-purple-950/30 border-purple-800/50 text-purple-200'
             : isZeroDiagnostic
             ? 'bg-amber-950/30 border-amber-800/50 text-amber-200'
             : 'bg-slate-900/60 border-slate-800 text-slate-300'
@@ -329,8 +346,8 @@ export const OperatingPointSelector: React.FC<OperatingPointSelectorProps> = ({
         <div className="flex items-start space-x-2">
           {isFixedThreshold ? (
             <Target className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
-          ) : isFixedCapacity50 ? (
-            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+          ) : isHybridEnsemble ? (
+            <Scale className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
           ) : isZeroDiagnostic ? (
             <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
           ) : (
@@ -340,8 +357,8 @@ export const OperatingPointSelector: React.FC<OperatingPointSelectorProps> = ({
             <strong className="text-white block font-mono text-[11px] uppercase">
               {isFixedThreshold
                 ? 'Operational Serving Threshold Active'
-                : isFixedCapacity50
-                ? 'Fixed Capacity Policy Active (50 alerts / 1,000 tx)'
+                : isHybridEnsemble
+                ? 'Phase 7 Hybrid Ensemble Active (α* = 1.00 Convex Combination)'
                 : isZeroDiagnostic
                 ? 'Diagnostic Only — Not the Serving Threshold'
                 : `Custom Operating Point Active (${selectedPoint})`}
@@ -349,12 +366,68 @@ export const OperatingPointSelector: React.FC<OperatingPointSelectorProps> = ({
             <p className="mt-0.5 text-[11px] text-slate-300">
               {isFixedThreshold
                 ? `Fixed threshold evaluates probability >= ${(frozenOp?.threshold ?? defaultThreshold).toFixed(4)} without alert caps. Alert volume floats dynamically with batch risk (${frozenOp?.alerts?.toLocaleString() ?? 0} alerts flagged on this upload).`
-                : isFixedCapacity50
-                ? `Fixed capacity enforces a strict top-K investigative capacity ceiling (50 alerts per 1,000 transactions, capping at ${budget500Op?.alerts?.toLocaleString() ?? 0} alerts). Effective cutoff adjusts dynamically to ${budget500Op?.threshold !== undefined ? budget500Op.threshold.toFixed(4) : '--'}.`
+                : isHybridEnsemble
+                ? `Phase 7 Hybrid Ensemble uses the validation-optimized blending parameter α* = 1.00 at threshold θ* = ${(frozenOp?.threshold ?? defaultThreshold).toFixed(4)}. In rigorous benchmark experiments, blending non-IID weights caused negative transfer due to label distribution shift; freezing α* = 1.00 preserves standalone champion efficacy with zero privacy loss.`
                 : isZeroDiagnostic
                 ? `Threshold 0 diagnostic evaluates decision rule probability >= 0.0 across all valid non-negative scores (${zeroOp?.alerts?.toLocaleString() ?? 0} alerts flagged). It captures 100% of labeled laundering cases (TP = ${zeroOp?.tp?.toLocaleString() ?? 0}, FN = 0) at the expense of zero specificity (FP = ${zeroOp?.fp?.toLocaleString() ?? 0}, TN = 0). This view is diagnostic only and does not change or overwrite the operational serving threshold.`
                 : `Operating point '${selectedPoint}' is active with effective cutoff ${activeCutoff.toFixed(4)}.`}
             </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Decision Policy Guidance: When to Select Threshold 0 vs. Threshold 0.333 */}
+      <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 space-y-3">
+        <div className="flex items-center space-x-2">
+          <Activity className="w-4 h-4 text-indigo-400" />
+          <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
+            Decision Policy Guide: When to Select Threshold 0 vs. Threshold 0.333
+          </h4>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          {/* Card 1: When to choose Threshold 0.333 / 0.3378 */}
+          <div className="rounded-xl border border-indigo-500/40 bg-indigo-950/20 p-3.5 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-indigo-300 flex items-center space-x-1.5 font-mono">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>Threshold 0.333 / 0.3378 (Production Champion)</span>
+              </span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 border border-emerald-700/60 text-emerald-300 font-bold">
+                OPERATIONAL
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-300 leading-relaxed">
+              <strong>When to select:</strong> Live operational transaction screening, production deployment, and automated alerts feeding into FIU investigator queues.
+            </p>
+            <ul className="text-[11px] text-slate-400 space-y-1 list-disc list-inside">
+              <li><strong className="text-slate-200">Optimal F1 / PR-AUC Balance:</strong> Mathematically derived on validation split to maximize detection while suppressing false alarms.</li>
+              <li><strong className="text-slate-200">Investigator Workload Bounded:</strong> Generates ~6.4 alerts per 10k transactions, aligning strictly with compliance team capacity.</li>
+              <li><strong className="text-slate-200">High Precision (~90.2%):</strong> Over 9 out of 10 flagged alerts represent confirmed illicit laundering networks, eliminating investigator fatigue.</li>
+              <li><strong className="text-slate-200">Decision Rule:</strong> Score &ge; 0.3378 &rarr; <span className="text-rose-400 font-semibold">FLAG</span>; Score &lt; 0.3378 &rarr; <span className="text-emerald-400 font-semibold">CLEAR</span>.</li>
+            </ul>
+          </div>
+
+          {/* Card 2: When to choose Threshold 0.0000 */}
+          <div className="rounded-xl border border-amber-500/40 bg-amber-950/20 p-3.5 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-amber-300 flex items-center space-x-1.5 font-mono">
+                <AlertTriangle className="w-4 h-4 text-amber-400" />
+                <span>Threshold 0.0000 (Diagnostic Baseline)</span>
+              </span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-950 border border-amber-700/60 text-amber-300 font-bold">
+                DIAGNOSTIC ONLY
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-300 leading-relaxed">
+              <strong>When to select:</strong> Pipeline sanity testing, feature ingestion debugging, and auditing model reachability on labeled benchmark sets.
+            </p>
+            <ul className="text-[11px] text-slate-400 space-y-1 list-disc list-inside">
+              <li><strong className="text-slate-200">Data & Ingestion Verification:</strong> Confirms that data loading and preprocessing assign valid non-negative probabilities (P &ge; 0.0) across all transactions.</li>
+              <li><strong className="text-slate-200">Zero False Negatives (FN = 0):</strong> Yields 100% Recall on labeled positives, proving that the model architecture can register all known laundering cases.</li>
+              <li><strong className="text-rose-300">Zero Specificity (Caution):</strong> Flags 100% of all evaluated transactions as suspicious (10,000 alerts per 10k transactions; FP = total negatives).</li>
+              <li><strong className="text-amber-300">DO NOT DEPLOY:</strong> Never use in production; flooding queues with every single customer transaction violates AML regulatory guidelines.</li>
+            </ul>
           </div>
         </div>
       </div>
@@ -366,7 +439,7 @@ export const OperatingPointSelector: React.FC<OperatingPointSelectorProps> = ({
           onClick={() => setShowAdvanced(!showAdvanced)}
           className="flex items-center space-x-2 text-xs font-mono text-slate-400 hover:text-slate-200 cursor-pointer transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 rounded-lg px-2 py-1"
         >
-          <span>{showAdvanced ? 'Hide Additional Operating Points' : 'View Other Alert Capacities (10/10k, 50/10k, 100/10k, Best F1)'}</span>
+          <span>{showAdvanced ? 'Hide Additional Operating Points' : 'View Other Research Capacities (10/10k, 50/10k, 100/10k, Best F1)'}</span>
           {showAdvanced ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
         </button>
 
