@@ -1019,7 +1019,9 @@ class CsvEvaluationService:
                 "model_checkpoint_sha256": ckpt_sha,
                 "created_at": time.time(),
                 "created_at_iso": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "total_rows": total_rows,
                 "row_count": len(predictions),
+                "flagged_count": flagged_count,
                 "model_id": model_meta.model_id,
                 "model_name": model_name,
                 "dataset": target_dataset,
@@ -2061,6 +2063,18 @@ class CsvEvaluationService:
                 total_r = meta.get("total_rows", meta.get("row_count", 0))
                 if total_r <= 0:
                     continue
+                metrics_obj = meta.get("eval_metrics") or meta.get("evaluation_metrics") or {}
+                raw_flagged = meta.get("flagged_count")
+                if raw_flagged is None or int(raw_flagged) == 0:
+                    tp_val = metrics_obj.get("tp")
+                    fp_val = metrics_obj.get("fp")
+                    if tp_val is not None and fp_val is not None:
+                        calc_flagged = int(tp_val) + int(fp_val)
+                    else:
+                        calc_flagged = int(raw_flagged or 0)
+                else:
+                    calc_flagged = int(raw_flagged)
+
                 runs.append({
                     "prediction_id": pid,
                     "filename": meta.get("raw_filename", meta.get("filename", "upload.csv")),
@@ -2068,11 +2082,11 @@ class CsvEvaluationService:
                     "model_name": meta.get("model_name", "Tabular Fallback"),
                     "decision_threshold": float(meta.get("decision_threshold", 0.337784)),
                     "total_rows": total_r,
-                    "flagged_count": int(meta.get("flagged_count", 0)),
+                    "flagged_count": calc_flagged,
                     "has_labels": bool(meta.get("has_labels", meta.get("has_ground_truth", False))),
                     "created_at": float(meta.get("created_at", meta_path.stat().st_mtime)),
                     "created_at_iso": meta.get("created_at_iso", time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(meta_path.stat().st_mtime))),
-                    "eval_metrics": meta.get("eval_metrics") or meta.get("evaluation_metrics"),
+                    "eval_metrics": metrics_obj,
                 })
             except Exception:
                 continue
