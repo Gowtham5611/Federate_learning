@@ -13,6 +13,7 @@ import { OperatingPointSelector, OperatingPointKey } from '../components/Operati
 import { EvaluationMetricsGrid } from '../components/EvaluationMetricsGrid';
 import { ModelRoutingCard } from '../components/ModelRoutingCard';
 import { MultiModelComparisonTable } from '../components/MultiModelComparisonTable';
+import { KeyFindingsStrip } from '../components/KeyFindingsStrip';
 
 const MODEL_DEFAULT_THRESHOLDS: Record<string, number> = {
   auto: 0.337784,
@@ -113,7 +114,38 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
   // Execution states
   const [evaluating, setEvaluating] = useState<boolean>(false);
   const [multiModelEvaluating, setMultiModelEvaluating] = useState<boolean>(false);
+  const [loadingDemo, setLoadingDemo] = useState<boolean>(false);
   const [apiError, setApiError] = useState<string | null>(null);
+
+  const handleLoadDemo = async () => {
+    setLoadingDemo(true);
+    setApiError(null);
+    try {
+      const response = await fetch('/demo_slices/test_slice_500.csv');
+      if (!response.ok) {
+        throw new Error('Could not retrieve demo slice from static server.');
+      }
+      const text = await response.text();
+      setCsvContent(text);
+      setFileName('test_slice_500.csv');
+      setFileSizeStr(formatFileSize(new Blob([text]).size));
+      await analyzeUploadedCsv(text, 'test_slice_500.csv');
+
+      // Auto-evaluate against HI-Small champion model
+      const resp = await apiService.predictCsv({
+        csv_content: text,
+        model_id: 'HI-Small',
+        filename: 'test_slice_500.csv',
+        threshold: 0.337784,
+      });
+      onEvaluationComplete(resp);
+    } catch (err: unknown) {
+      const msg = err instanceof ApiError ? err.message : err instanceof Error ? err.message : 'Demo slice evaluation failed';
+      setApiError(msg);
+    } finally {
+      setLoadingDemo(false);
+    }
+  };
 
   // Operating point selection state
   const [selectedOperatingPoint, setSelectedOperatingPoint] = useState<OperatingPointKey>('frozen');
@@ -555,13 +587,13 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center space-x-2">
-            <FileSpreadsheet className="w-7 h-7 text-indigo-400" />
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center space-x-2">
+            <FileSpreadsheet className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
             <span>Universal AML CSV Evaluation & Prediction</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Universal reader for arbitrary rows, columns, delimiters, encodings, and feature schemas. Predict with frozen federated models or train custom classifiers.
           </p>
         </div>
@@ -593,15 +625,29 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
         )}
       </div>
 
+      {/* Executive Key Findings Strip with 1-Click Demo Mode Button */}
+      <KeyFindingsStrip onLoadDemo={handleLoadDemo} loadingDemo={loadingDemo} />
+
       {/* Main Upload & Configuration Container */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-6">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-xl space-y-6">
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
           {/* Dropzone & Universal Format Banner */}
           <div className="flex-1 space-y-4">
-            <label className="block text-xs font-mono uppercase text-slate-400 font-semibold">
-              Select or Drop Any Transaction CSV
-            </label>
-            <div className="border-2 border-dashed border-slate-700 hover:border-indigo-500/80 rounded-2xl p-6 text-center transition bg-slate-950/40 relative">
+            <div className="flex items-center justify-between">
+              <label className="block text-xs font-mono uppercase text-slate-500 dark:text-slate-400 font-semibold">
+                Select or Drop Any Transaction CSV
+              </label>
+              <button
+                type="button"
+                onClick={handleLoadDemo}
+                disabled={loadingDemo}
+                className="text-[11px] font-mono text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer"
+              >
+                <Sparkles className="w-3 h-3" />
+                <span>Load Sample Slice (test_slice_500.csv)</span>
+              </button>
+            </div>
+            <div className="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-500/80 dark:hover:border-indigo-500/80 rounded-2xl p-6 text-center transition bg-slate-50/60 dark:bg-slate-950/40 relative">
               <input
                 type="file"
                 accept=".csv,.txt"
@@ -609,12 +655,12 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
               <div className="space-y-2 pointer-events-none">
-                <div className="w-10 h-10 rounded-xl bg-indigo-950/80 text-indigo-400 flex items-center justify-center mx-auto border border-indigo-700/50">
+                <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto border border-indigo-200 dark:border-indigo-700/50">
                   <Upload className="w-5 h-5" />
                 </div>
-                <div className="text-sm font-medium text-slate-200">
+                <div className="text-sm font-medium text-slate-800 dark:text-slate-200">
                   {fileName ? (
-                    <span className="text-indigo-400 font-bold">
+                    <span className="text-indigo-600 dark:text-indigo-400 font-bold">
                       {fileName} {fileSizeStr ? `(${fileSizeStr})` : ''}
                     </span>
                   ) : (
@@ -622,12 +668,12 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
                   )}
                 </div>
                 {isInspecting ? (
-                  <p className="text-xs text-indigo-400 flex items-center justify-center space-x-1 animate-pulse">
+                  <p className="text-xs text-indigo-600 dark:text-indigo-400 flex items-center justify-center space-x-1 animate-pulse">
                     <RefreshCw className="w-3.5 h-3.5 animate-spin inline" />
                     <span>Inspecting CSV schema & validating compatibility...</span>
                   </p>
                 ) : (
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Supports comma (,), semicolon (;), tab (\t), pipe (|) · UTF-8, UTF-8 BOM, Latin-1 · Any row or column count
                   </p>
                 )}
@@ -636,24 +682,24 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
 
             {/* Inspection & Metadata Summary Bar */}
             {inspection && (
-              <div className="p-4 rounded-2xl border bg-slate-950/80 border-slate-800 space-y-3">
+              <div className="p-4 rounded-2xl border bg-slate-50 dark:bg-slate-950/80 border-slate-200 dark:border-slate-800 space-y-3">
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-                  <span className="text-slate-300 font-bold flex items-center space-x-1.5">
-                    <Database className="w-4 h-4 text-indigo-400" />
+                  <span className="text-slate-800 dark:text-slate-300 font-bold flex items-center space-x-1.5">
+                    <Database className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                     <span>Schema: {schemaTypeStr}</span>
                   </span>
-                  <div className="flex items-center space-x-2 text-[11px] text-slate-400">
-                    <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">
-                      Delimiter: <span className="text-indigo-300 font-bold">"{detectedDelimiter === '\t' ? '\\t' : detectedDelimiter}"</span>
+                  <div className="flex items-center space-x-2 text-[11px] text-slate-600 dark:text-slate-400">
+                    <span className="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                      Delimiter: <span className="text-indigo-600 dark:text-indigo-300 font-bold">"{detectedDelimiter === '\t' ? '\\t' : detectedDelimiter}"</span>
                     </span>
-                    <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">
-                      Encoding: <span className="text-indigo-300 font-bold">{detectedEncoding}</span>
+                    <span className="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                      Encoding: <span className="text-indigo-600 dark:text-indigo-300 font-bold">{detectedEncoding}</span>
                     </span>
-                    <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">
+                    <span className="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
                       {totalRowsCount} rows · {totalColsCount} cols
                     </span>
                     {hasGroundTruthFlag && (
-                      <span className="px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-600/50 text-emerald-300 font-bold">
+                      <span className="px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-600/50 text-emerald-800 dark:text-emerald-300 font-bold">
                         Target: {targetColName || 'Detected'}
                       </span>
                     )}
@@ -667,11 +713,11 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
                       key={concept}
                       className={`px-2 py-0.5 rounded border ${
                         col
-                          ? 'bg-slate-900 border-slate-700 text-slate-300'
-                          : 'bg-slate-950 border-slate-800 text-slate-500 line-through'
+                          ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-300'
+                          : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 line-through'
                       }`}
                     >
-                      {concept}: <span className="text-indigo-400 font-semibold">{col || 'not detected'}</span>
+                      {concept}: <span className="text-indigo-600 dark:text-indigo-400 font-semibold">{col || 'not detected'}</span>
                     </span>
                   ))}
                 </div>

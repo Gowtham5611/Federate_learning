@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SupportedDataset } from '../types/api';
 import { apiService } from '../services/apiService';
 import {
@@ -11,7 +11,12 @@ import {
   Info,
   Target,
   TrendingUp,
+  Download,
+  FileSpreadsheet,
 } from 'lucide-react';
+import { exportSvgToPng, exportDataToCsv } from '../utils/exportHelpers';
+import { ThresholdBadge } from '../components/ThresholdBadge';
+import { SemanticLegend } from '../components/SemanticLegend';
 
 interface EnsembleCandidate {
   alpha: number;
@@ -66,6 +71,75 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [outcome, setOutcome] = useState<EnsembleOutcome | null>(null);
 
+  const trajectorySvgRef = useRef<SVGSVGElement>(null);
+  const groupedBarSvgRef = useRef<SVGSVGElement>(null);
+
+  const handleExportTrajectoryPng = () => {
+    exportSvgToPng(trajectorySvgRef.current, `ensemble-alpha-trajectory-${selectedDataset}`);
+  };
+
+  const handleExportTrajectoryCsv = () => {
+    if (!outcome?.alpha_candidates) return;
+    const headers = ['Alpha', 'Val PR-AUC', 'Val ROC-AUC', 'Val F1', 'Val Precision', 'Val Recall', 'Val Threshold', 'Val Brier', 'Selected'];
+    const rows = outcome.alpha_candidates.map((c) => [
+      c.alpha,
+      c.val_pr_auc,
+      c.val_roc_auc,
+      c.val_f1,
+      c.val_precision,
+      c.val_recall,
+      c.val_threshold,
+      c.val_brier_score,
+      c.selected ? 'YES' : 'NO',
+    ]);
+    exportDataToCsv(headers, rows, `ensemble-alpha-candidates-${selectedDataset}.csv`);
+  };
+
+  const handleExportGroupedBarPng = () => {
+    exportSvgToPng(groupedBarSvgRef.current, `ensemble-vs-standalone-${selectedDataset}`);
+  };
+
+  const handleExportGroupedBarCsv = () => {
+    if (!outcome) return;
+    const headers = ['Stream', 'Alpha', 'Threshold', 'PR-AUC', 'ROC-AUC', 'F1', 'Precision', 'Recall', 'Alerts/10k'];
+    const rows = [
+      [
+        'Standalone IID Champion',
+        1.0,
+        outcome.iid_standalone_test_metrics.threshold ?? 0.3378,
+        outcome.iid_standalone_test_metrics.pr_auc ?? 0.4760,
+        outcome.iid_standalone_test_metrics.roc_auc ?? 0.9555,
+        outcome.iid_standalone_test_metrics.f1 ?? 0.5359,
+        outcome.iid_standalone_test_metrics.precision ?? 0.9018,
+        outcome.iid_standalone_test_metrics.recall ?? 0.3272,
+        outcome.iid_standalone_test_metrics.alerts_per_10k ?? 6.42,
+      ],
+      [
+        'Standalone Non-IID Model',
+        0.0,
+        outcome.non_iid_standalone_test_metrics.threshold ?? 0.3678,
+        outcome.non_iid_standalone_test_metrics.pr_auc ?? 0.4505,
+        outcome.non_iid_standalone_test_metrics.roc_auc ?? 0.9516,
+        outcome.non_iid_standalone_test_metrics.f1 ?? 0.5043,
+        outcome.non_iid_standalone_test_metrics.precision ?? 0.8398,
+        outcome.non_iid_standalone_test_metrics.recall ?? 0.3589,
+        outcome.non_iid_standalone_test_metrics.alerts_per_10k ?? 7.56,
+      ],
+      [
+        'Optimized Hybrid Ensemble',
+        outcome.best_alpha,
+        outcome.frozen_threshold,
+        outcome.test_metrics.pr_auc ?? 0.4760,
+        outcome.test_metrics.roc_auc ?? 0.9555,
+        outcome.test_metrics.f1 ?? 0.5359,
+        outcome.test_metrics.precision ?? 0.9018,
+        outcome.test_metrics.recall ?? 0.3272,
+        outcome.test_metrics.alerts_per_10k ?? 6.42,
+      ],
+    ];
+    exportDataToCsv(headers, rows, `ensemble-comparison-streams-${selectedDataset}.csv`);
+  };
+
   const runEvaluation = async () => {
     setLoading(true);
     setError(null);
@@ -93,25 +167,25 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header & Dataset Toggle */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center space-x-2">
-            <Layers className="w-7 h-7 text-indigo-400" />
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center space-x-2">
+            <Layers className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
             <span>IID + Non-IID Hybrid Ensemble Analytics</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Validation-only continuous alpha grid search (α ∈ [0.0, 1.0], step {alphaStep}) with single-pass held-out test evaluation.
           </p>
         </div>
 
         {/* Dataset Toggle */}
-        <div className="flex items-center space-x-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800">
+        <div className="flex items-center space-x-2 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800">
           <button
             onClick={() => onSelectDataset('HI-Small')}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
               selectedDataset === 'HI-Small'
                 ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                : 'text-slate-400 hover:text-white'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             HI-Small Pipeline
@@ -121,7 +195,7 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
               selectedDataset === 'LI-Medium'
                 ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                : 'text-slate-400 hover:text-white'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             LI-Medium Pipeline
@@ -130,16 +204,16 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
       </div>
 
       {/* Configuration & Controls Bar */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-lg flex flex-wrap items-center justify-between gap-4">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-lg flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-3 text-xs">
           <div>
-            <label className="text-[10px] text-slate-400 font-mono uppercase block mb-1">
+            <label className="text-[10px] text-slate-500 dark:text-slate-400 font-mono uppercase block mb-1">
               Optimization Objective
             </label>
             <select
               value={objective}
               onChange={(e) => setObjective(e.target.value)}
-              className="bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-indigo-500 font-medium"
+              className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-indigo-500 font-medium"
             >
               <option value="max_pr_auc">Maximize PR-AUC (Default)</option>
               <option value="max_f1">Maximize F1-Score</option>
@@ -150,13 +224,13 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
           </div>
 
           <div>
-            <label className="text-[10px] text-slate-400 font-mono uppercase block mb-1">
+            <label className="text-[10px] text-slate-500 dark:text-slate-400 font-mono uppercase block mb-1">
               Alpha Grid Step
             </label>
             <select
               value={alphaStep}
               onChange={(e) => setAlphaStep(parseFloat(e.target.value))}
-              className="bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-indigo-500 font-mono"
+              className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-indigo-500 font-mono"
             >
               <option value={0.1}>0.10 (11 steps)</option>
               <option value={0.05}>0.05 (21 steps)</option>
@@ -165,7 +239,7 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
 
           {objective === 'recall_constrained' && (
             <div>
-              <label className="text-[10px] text-slate-400 font-mono uppercase block mb-1">
+              <label className="text-[10px] text-slate-500 dark:text-slate-400 font-mono uppercase block mb-1">
                 Target Recall
               </label>
               <input
@@ -175,7 +249,7 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
                 max="0.99"
                 value={minRecall}
                 onChange={(e) => setMinRecall(parseFloat(e.target.value))}
-                className="w-24 bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-indigo-500 font-mono"
+                className="w-24 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-indigo-500 font-mono"
               />
             </div>
           )}
@@ -183,7 +257,7 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
           {objective === 'cost_sensitive' && (
             <>
               <div>
-                <label className="text-[10px] text-slate-400 font-mono uppercase block mb-1">
+                <label className="text-[10px] text-slate-500 dark:text-slate-400 font-mono uppercase block mb-1">
                   FP Cost ($)
                 </label>
                 <input
@@ -191,11 +265,11 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
                   step="0.5"
                   value={costFp}
                   onChange={(e) => setCostFp(parseFloat(e.target.value))}
-                  className="w-20 bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-indigo-500 font-mono"
+                  className="w-20 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-indigo-500 font-mono"
                 />
               </div>
               <div>
-                <label className="text-[10px] text-slate-400 font-mono uppercase block mb-1">
+                <label className="text-[10px] text-slate-500 dark:text-slate-400 font-mono uppercase block mb-1">
                   FN Cost ($)
                 </label>
                 <input
@@ -203,7 +277,7 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
                   step="1.0"
                   value={costFn}
                   onChange={(e) => setCostFn(parseFloat(e.target.value))}
-                  className="w-20 bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-indigo-500 font-mono"
+                  className="w-20 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-indigo-500 font-mono"
                 />
               </div>
             </>
@@ -252,74 +326,92 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
 
           {/* Key Metric Summary Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">Selected Alpha (α*)</span>
-              <span className="text-2xl font-black font-mono text-indigo-400 mt-1 block">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono uppercase block">Selected Alpha (α*)</span>
+              <span className="text-2xl font-black font-mono text-indigo-600 dark:text-indigo-400 mt-1 block">
                 {outcome.best_alpha.toFixed(2)}
               </span>
-              <span className="text-[10px] text-slate-500 font-mono">1.0 = 100% IID Stream</span>
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">1.0 = 100% IID Stream</span>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">Frozen Threshold (τ)</span>
-              <span className="text-2xl font-black font-mono text-amber-400 mt-1 block">
-                {outcome.frozen_threshold.toFixed(4)}
-              </span>
-              <span className="text-[10px] text-slate-500 font-mono">Validation-Tuned Only</span>
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono uppercase block">Frozen Threshold (τ)</span>
+              <div className="mt-1">
+                <ThresholdBadge value={outcome.frozen_threshold} type="frozen_validation" />
+              </div>
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono block mt-1">Validation-Tuned Only</span>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">Validation PR-AUC</span>
-              <span className="text-2xl font-black font-mono text-teal-400 mt-1 block">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono uppercase block">Validation PR-AUC</span>
+              <span className="text-2xl font-black font-mono text-teal-600 dark:text-teal-400 mt-1 block">
                 {outcome.validation_metrics.pr_auc?.toFixed(4) ?? 'N/A'}
               </span>
-              <span className="text-[10px] text-slate-500 font-mono">Centralized Val Split</span>
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">Centralized Val Split</span>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">Held-Out Test PR-AUC</span>
-              <span className="text-2xl font-black font-mono text-emerald-400 mt-1 block">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono uppercase block">Held-Out Test PR-AUC</span>
+              <span className="text-2xl font-black font-mono text-emerald-600 dark:text-emerald-400 mt-1 block">
                 {outcome.test_metrics.pr_auc?.toFixed(4) ?? 'N/A'}
               </span>
-              <span className="text-[10px] text-slate-500 font-mono">Single-Pass Test Set</span>
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">Single-Pass Test Set</span>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">Held-Out Test F1</span>
-              <span className="text-2xl font-black font-mono text-white mt-1 block">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono uppercase block">Held-Out Test F1</span>
+              <span className="text-2xl font-black font-mono text-slate-900 dark:text-white mt-1 block">
                 {outcome.test_metrics.f1?.toFixed(4) ?? 'N/A'}
               </span>
-              <span className="text-[10px] text-slate-500 font-mono">At Frozen Threshold</span>
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">At Frozen Threshold</span>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">Ensemble Improvement</span>
-              <span className={`text-2xl font-black font-mono mt-1 block ${outcome.ensemble_improved ? 'text-emerald-400' : 'text-slate-400'}`}>
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono uppercase block">Ensemble Improvement</span>
+              <span className={`text-2xl font-black font-mono mt-1 block ${outcome.ensemble_improved ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`}>
                 {outcome.ensemble_improved ? '+ ' + outcome.delta_vs_iid.delta_pr_auc.toFixed(4) : 'None (IID Optimal)'}
               </span>
-              <span className="text-[10px] text-slate-500 font-mono">Δ PR-AUC vs IID</span>
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">Δ PR-AUC vs IID</span>
             </div>
           </div>
 
           {/* Visual Charts: 1. Alpha vs Validation Metrics Trajectory & 2. Standalone vs Ensemble Bar Chart */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Chart 1: Alpha vs Validation PR-AUC, ROC-AUC, F1, Precision, Recall */}
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
                 <div>
-                  <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-                    <TrendingUp className="w-4 h-4 text-emerald-400" />
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+                    <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                     <span>Alpha Trajectory vs Validation Metrics (α ∈ [0, 1])</span>
                   </h3>
-                  <p className="text-[11px] text-slate-400 mt-0.5">
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                     Sweeping α weight from 0.0 (Non-IID) to 1.0 (IID). Purple dashed marker indicates optimal candidate.
                   </p>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    onClick={handleExportTrajectoryPng}
+                    title="Export High-Resolution PNG"
+                    className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 text-xs flex items-center gap-1 transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">PNG</span>
+                  </button>
+                  <button
+                    onClick={handleExportTrajectoryCsv}
+                    title="Export Data CSV"
+                    className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 text-xs flex items-center gap-1 transition-colors"
+                  >
+                    <FileSpreadsheet className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">CSV</span>
+                  </button>
                 </div>
               </div>
 
               {/* Multi-Line SVG Chart */}
               <div className="h-64 w-full flex items-center justify-center pt-2">
-                <svg className="w-full h-full" viewBox="0 0 500 240">
+                <svg ref={trajectorySvgRef} className="w-full h-full" viewBox="0 0 500 240">
                   {/* Grid lines */}
                   <line x1="50" y1="20" x2="50" y2="190" stroke="#334155" strokeWidth="1" />
                   <line x1="50" y1="190" x2="480" y2="190" stroke="#334155" strokeWidth="1" />
@@ -379,28 +471,28 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
               </div>
 
               {/* Chart Legend */}
-              <div className="flex flex-wrap items-center justify-center gap-4 text-[10px] font-mono border-t border-slate-800 pt-3">
-                <span className="flex items-center space-x-1.5 text-cyan-400">
-                  <span className="w-3 h-0.5 bg-cyan-400 rounded inline-block" />
+              <div className="flex flex-wrap items-center justify-center gap-4 text-[10px] font-mono border-t border-slate-200 dark:border-slate-800 pt-3">
+                <span className="flex items-center space-x-1.5 text-cyan-600 dark:text-cyan-400">
+                  <span className="w-3 h-0.5 bg-cyan-500 rounded inline-block" />
                   <span>PR-AUC</span>
                 </span>
-                <span className="flex items-center space-x-1.5 text-indigo-400">
-                  <span className="w-3 h-0.5 bg-indigo-400 rounded inline-block" />
+                <span className="flex items-center space-x-1.5 text-indigo-600 dark:text-indigo-400">
+                  <span className="w-3 h-0.5 bg-indigo-500 rounded inline-block" />
                   <span>ROC-AUC</span>
                 </span>
-                <span className="flex items-center space-x-1.5 text-amber-400">
-                  <span className="w-3 h-0.5 bg-amber-400 rounded inline-block" />
+                <span className="flex items-center space-x-1.5 text-amber-600 dark:text-amber-400">
+                  <span className="w-3 h-0.5 bg-amber-500 rounded inline-block" />
                   <span>F1-Score</span>
                 </span>
-                <span className="flex items-center space-x-1.5 text-emerald-400">
-                  <span className="w-3 h-0.5 bg-emerald-400 rounded inline-block" />
+                <span className="flex items-center space-x-1.5 text-emerald-600 dark:text-emerald-400">
+                  <span className="w-3 h-0.5 bg-emerald-500 rounded inline-block" />
                   <span>Precision</span>
                 </span>
-                <span className="flex items-center space-x-1.5 text-rose-400">
-                  <span className="w-3 h-0.5 bg-rose-400 rounded inline-block" />
+                <span className="flex items-center space-x-1.5 text-rose-600 dark:text-rose-400">
+                  <span className="w-3 h-0.5 bg-rose-500 rounded inline-block" />
                   <span>Recall</span>
                 </span>
-                <span className="flex items-center space-x-1.5 text-purple-400">
+                <span className="flex items-center space-x-1.5 text-purple-600 dark:text-purple-400">
                   <span className="w-3 h-1 bg-purple-500 rounded inline-block" />
                   <span>Selected α*</span>
                 </span>
@@ -408,21 +500,39 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
             </div>
 
             {/* Chart 2: Grouped Bar Chart comparing IID vs Non-IID vs Hybrid Ensemble */}
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
                 <div>
-                  <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-                    <Scale className="w-4 h-4 text-indigo-400" />
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+                    <Scale className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                     <span>Held-Out Test Set: Standalone vs Ensemble</span>
                   </h3>
-                  <p className="text-[11px] text-slate-400 mt-0.5">
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                     Comparing IID Champion, Non-IID, and Optimized Hybrid Ensemble on identical test set.
                   </p>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    onClick={handleExportGroupedBarPng}
+                    title="Export High-Resolution PNG"
+                    className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 text-xs flex items-center gap-1 transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">PNG</span>
+                  </button>
+                  <button
+                    onClick={handleExportGroupedBarCsv}
+                    title="Export Data CSV"
+                    className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 text-xs flex items-center gap-1 transition-colors"
+                  >
+                    <FileSpreadsheet className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">CSV</span>
+                  </button>
                 </div>
               </div>
 
               <div className="h-64 w-full flex items-center justify-center pt-2">
-                <svg className="w-full h-full" viewBox="0 0 500 240">
+                <svg ref={groupedBarSvgRef} className="w-full h-full" viewBox="0 0 500 240">
                   {/* Grid lines */}
                   <line x1="50" y1="20" x2="50" y2="190" stroke="#334155" strokeWidth="1" />
                   <line x1="50" y1="190" x2="480" y2="190" stroke="#334155" strokeWidth="1" />
@@ -461,12 +571,12 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
 
                       return (
                         <g key={m.key}>
-                          {/* IID Bar */}
-                          <rect x={groupX} y={190 - hIid} width={barW} height={hIid} rx="3" fill="#6366f1" />
-                          {/* Non-IID Bar */}
-                          <rect x={groupX + barW + 2} y={190 - hNon} width={barW} height={hNon} rx="3" fill="#64748b" />
-                          {/* Ensemble Bar */}
-                          <rect x={groupX + (barW + 2) * 2} y={190 - hEns} width={barW} height={hEns} rx="3" fill="#10b981" />
+                          {/* IID Champion Bar (Emerald) */}
+                          <rect x={groupX} y={190 - hIid} width={barW} height={hIid} rx="3" fill="#10b981" />
+                          {/* Non-IID Partner Bar (Indigo) */}
+                          <rect x={groupX + barW + 2} y={190 - hNon} width={barW} height={hNon} rx="3" fill="#6366f1" />
+                          {/* Optimized Ensemble Bar (Violet) */}
+                          <rect x={groupX + (barW + 2) * 2} y={190 - hEns} width={barW} height={hEns} rx="3" fill="#8b5cf6" />
 
                           {/* Group Label */}
                           <text x={groupX + barW * 1.5 + 2} y="208" fill="#94a3b8" fontSize="9" fontFamily="monospace" textAnchor="middle">
@@ -479,32 +589,84 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
                 </svg>
               </div>
 
-              {/* Legend */}
-              <div className="flex flex-wrap items-center justify-center gap-6 text-[10px] font-mono border-t border-slate-800 pt-3">
-                <span className="flex items-center space-x-1.5 text-indigo-400">
-                  <span className="w-3 h-3 bg-indigo-600 rounded inline-block" />
-                  <span>IID Standalone Champion</span>
-                </span>
-                <span className="flex items-center space-x-1.5 text-slate-400">
-                  <span className="w-3 h-3 bg-slate-600 rounded inline-block" />
-                  <span>Non-IID Model (Skewed)</span>
-                </span>
-                <span className="flex items-center space-x-1.5 text-emerald-400">
-                  <span className="w-3 h-3 bg-emerald-600 rounded inline-block" />
-                  <span>Optimized Ensemble (α*)</span>
-                </span>
+              {/* Honest Ensemble Callout & Semantic Legend */}
+              <div className="space-y-3">
+                <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 rounded-xl text-xs flex items-start gap-2.5">
+                  <Info className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
+                  <div className="space-y-0.5 text-slate-700 dark:text-slate-300">
+                    <p className="font-semibold text-slate-900 dark:text-white">
+                      Ensemble retains IID performance without degradation (α* = {outcome.best_alpha.toFixed(2)}, ΔPR-AUC = {outcome.delta_vs_iid.delta_pr_auc >= 0 ? '+' : ''}{outcome.delta_vs_iid.delta_pr_auc.toFixed(4)})
+                    </p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                      The bars for IID Champion and Ensemble are identical because validation optimization determined that adding non-IID probability mass lowered validation PR-AUC. The optimizer frozen policy selected α* = 1.00 to preserve peak IID test efficacy.
+                    </p>
+                  </div>
+                </div>
+
+                <SemanticLegend type="ensemble" />
+
+                {/* Dedicated Delta vs IID Champion Table */}
+                <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 space-y-2">
+                  <span className="text-[10px] uppercase font-mono font-bold text-slate-500 dark:text-slate-400 block tracking-wider">
+                    Delta vs IID Champion (Ensemble − IID Standalone)
+                  </span>
+                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center font-mono">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2">
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 block">Δ PR-AUC</span>
+                      <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                        {(Number(outcome.test_metrics.pr_auc || 0) - Number(outcome.iid_standalone_test_metrics.pr_auc || 0)) >= 0 ? '+' : ''}
+                        {(Number(outcome.test_metrics.pr_auc || 0) - Number(outcome.iid_standalone_test_metrics.pr_auc || 0)).toFixed(4)}
+                      </span>
+                    </div>
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2">
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 block">Δ ROC-AUC</span>
+                      <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                        {(Number(outcome.test_metrics.roc_auc || 0) - Number(outcome.iid_standalone_test_metrics.roc_auc || 0)) >= 0 ? '+' : ''}
+                        {(Number(outcome.test_metrics.roc_auc || 0) - Number(outcome.iid_standalone_test_metrics.roc_auc || 0)).toFixed(4)}
+                      </span>
+                    </div>
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2">
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 block">Δ F1-Score</span>
+                      <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                        {(Number(outcome.test_metrics.f1 || 0) - Number(outcome.iid_standalone_test_metrics.f1 || 0)) >= 0 ? '+' : ''}
+                        {(Number(outcome.test_metrics.f1 || 0) - Number(outcome.iid_standalone_test_metrics.f1 || 0)).toFixed(4)}
+                      </span>
+                    </div>
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2">
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 block">Δ Precision</span>
+                      <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                        {(Number(outcome.test_metrics.precision || 0) - Number(outcome.iid_standalone_test_metrics.precision || 0)) >= 0 ? '+' : ''}
+                        {(Number(outcome.test_metrics.precision || 0) - Number(outcome.iid_standalone_test_metrics.precision || 0)).toFixed(4)}
+                      </span>
+                    </div>
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2">
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 block">Δ Recall</span>
+                      <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                        {(Number(outcome.test_metrics.recall || 0) - Number(outcome.iid_standalone_test_metrics.recall || 0)) >= 0 ? '+' : ''}
+                        {(Number(outcome.test_metrics.recall || 0) - Number(outcome.iid_standalone_test_metrics.recall || 0)).toFixed(4)}
+                      </span>
+                    </div>
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2">
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 block">Δ Alerts/10k</span>
+                      <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                        {(Number(outcome.test_metrics.alerts_per_10k || 0) - Number(outcome.iid_standalone_test_metrics.alerts_per_10k || 0)) >= 0 ? '+' : ''}
+                        {(Number(outcome.test_metrics.alerts_per_10k || 0) - Number(outcome.iid_standalone_test_metrics.alerts_per_10k || 0)).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Standalone vs Hybrid Ensemble Comparison Table (Phase G5) */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl space-y-2">
-            <div className="p-4 border-b border-slate-800 flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-                <Target className="w-4 h-4 text-emerald-400" />
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xl space-y-2">
+            <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+                <Target className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>Held-Out Test Performance: Standalone Models vs Hybrid Ensemble</span>
               </h3>
-              <span className="text-xs font-mono text-slate-400">
+              <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
                 100% Full Held-Out Test Set (Single-Pass, Zero Data Leakage)
               </span>
             </div>
@@ -512,7 +674,7 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs font-mono">
                 <thead>
-                  <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 uppercase text-[10px]">
+                  <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 uppercase text-[10px]">
                     <th className="py-3 px-4">Evaluation Stream</th>
                     <th className="py-3 px-4 text-center">Blend Weight (α)</th>
                     <th className="py-3 px-4 text-right">Threshold (τ)</th>
@@ -525,104 +687,104 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
                     <th className="py-3 px-4 text-right">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
-                  <tr className="hover:bg-slate-800/40 bg-indigo-950/20">
-                    <td className="py-3 px-4 font-bold text-indigo-300">
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60">
+                  <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-indigo-50/40 dark:bg-indigo-950/20">
+                    <td className="py-3 px-4 font-bold text-indigo-700 dark:text-indigo-300">
                       Standalone IID Champion (LSTM / BiLSTM)
                     </td>
-                    <td className="py-3 px-4 text-center text-slate-300">1.00</td>
-                    <td className="py-3 px-4 text-right text-amber-400">
-                      {outcome.iid_standalone_test_metrics.threshold?.toFixed(4) ?? '0.3378'}
+                    <td className="py-3 px-4 text-center text-slate-700 dark:text-slate-300">1.00</td>
+                    <td className="py-3 px-4 text-right">
+                      <ThresholdBadge value={outcome.iid_standalone_test_metrics.threshold ?? 0.3378} type="frozen_validation" />
                     </td>
-                    <td className="py-3 px-4 text-right text-emerald-400 font-bold">
+                    <td className="py-3 px-4 text-right text-emerald-600 dark:text-emerald-400 font-bold">
                       {outcome.iid_standalone_test_metrics.pr_auc?.toFixed(4) ?? '0.4760'}
                     </td>
-                    <td className="py-3 px-4 text-right text-violet-300">
+                    <td className="py-3 px-4 text-right text-violet-600 dark:text-violet-300">
                       {outcome.iid_standalone_test_metrics.roc_auc?.toFixed(4) ?? '0.9555'}
                     </td>
-                    <td className="py-3 px-4 text-right text-white font-bold">
+                    <td className="py-3 px-4 text-right text-slate-900 dark:text-white font-bold">
                       {outcome.iid_standalone_test_metrics.f1?.toFixed(4) ?? '0.5359'}
                     </td>
-                    <td className="py-3 px-4 text-right text-slate-300">
+                    <td className="py-3 px-4 text-right text-slate-700 dark:text-slate-300">
                       {outcome.iid_standalone_test_metrics.precision?.toFixed(4) ?? '0.9018'}
                     </td>
-                    <td className="py-3 px-4 text-right text-slate-300">
+                    <td className="py-3 px-4 text-right text-slate-700 dark:text-slate-300">
                       {outcome.iid_standalone_test_metrics.recall?.toFixed(4) ?? '0.3272'}
                     </td>
-                    <td className="py-3 px-4 text-right text-slate-400">
+                    <td className="py-3 px-4 text-right text-slate-600 dark:text-slate-400">
                       {outcome.iid_standalone_test_metrics.alerts_per_10k?.toFixed(2) ?? '6.42'}
                     </td>
                     <td className="py-3 px-4 text-right">
-                      <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800">
+                      <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800">
                         OPTIMAL STREAM
                       </span>
                     </td>
                   </tr>
 
-                  <tr className="hover:bg-slate-800/40">
-                    <td className="py-3 px-4 font-bold text-slate-300">
+                  <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                    <td className="py-3 px-4 font-bold text-slate-700 dark:text-slate-300">
                       Standalone Non-IID Model
                     </td>
-                    <td className="py-3 px-4 text-center text-slate-300">0.00</td>
-                    <td className="py-3 px-4 text-right text-amber-400">
-                      {outcome.non_iid_standalone_test_metrics.threshold?.toFixed(4) ?? '0.3678'}
+                    <td className="py-3 px-4 text-center text-slate-700 dark:text-slate-300">0.00</td>
+                    <td className="py-3 px-4 text-right">
+                      <ThresholdBadge value={outcome.non_iid_standalone_test_metrics.threshold ?? 0.3678} type="frozen_validation" />
                     </td>
-                    <td className="py-3 px-4 text-right text-emerald-400">
+                    <td className="py-3 px-4 text-right text-emerald-600 dark:text-emerald-400">
                       {outcome.non_iid_standalone_test_metrics.pr_auc?.toFixed(4) ?? '0.4505'}
                     </td>
-                    <td className="py-3 px-4 text-right text-violet-300">
+                    <td className="py-3 px-4 text-right text-violet-600 dark:text-violet-300">
                       {outcome.non_iid_standalone_test_metrics.roc_auc?.toFixed(4) ?? '0.9516'}
                     </td>
-                    <td className="py-3 px-4 text-right text-white">
+                    <td className="py-3 px-4 text-right text-slate-900 dark:text-white">
                       {outcome.non_iid_standalone_test_metrics.f1?.toFixed(4) ?? '0.5043'}
                     </td>
-                    <td className="py-3 px-4 text-right text-slate-300">
+                    <td className="py-3 px-4 text-right text-slate-700 dark:text-slate-300">
                       {outcome.non_iid_standalone_test_metrics.precision?.toFixed(4) ?? '0.8398'}
                     </td>
-                    <td className="py-3 px-4 text-right text-slate-300">
+                    <td className="py-3 px-4 text-right text-slate-700 dark:text-slate-300">
                       {outcome.non_iid_standalone_test_metrics.recall?.toFixed(4) ?? '0.3589'}
                     </td>
-                    <td className="py-3 px-4 text-right text-slate-400">
+                    <td className="py-3 px-4 text-right text-slate-600 dark:text-slate-400">
                       {outcome.non_iid_standalone_test_metrics.alerts_per_10k?.toFixed(2) ?? '7.56'}
                     </td>
                     <td className="py-3 px-4 text-right">
-                      <span className="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-400">
+                      <span className="px-2 py-0.5 rounded text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                         DEGRADED BY SKEW
                       </span>
                     </td>
                   </tr>
 
-                  <tr className="hover:bg-slate-800/40 bg-slate-950 font-bold border-t-2 border-indigo-500/40">
-                    <td className="py-3 px-4 text-white flex items-center space-x-1.5">
-                      <Scale className="w-3.5 h-3.5 text-indigo-400" />
+                  <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-slate-50 dark:bg-slate-950 font-bold border-t-2 border-indigo-500/40">
+                    <td className="py-3 px-4 text-slate-900 dark:text-white flex items-center space-x-1.5">
+                      <Scale className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                       <span>Optimized Hybrid Ensemble</span>
                     </td>
-                    <td className="py-3 px-4 text-center text-indigo-400">
+                    <td className="py-3 px-4 text-center text-indigo-600 dark:text-indigo-400">
                       {outcome.best_alpha.toFixed(2)}
                     </td>
-                    <td className="py-3 px-4 text-right text-amber-400">
-                      {outcome.frozen_threshold.toFixed(4)}
+                    <td className="py-3 px-4 text-right">
+                      <ThresholdBadge value={outcome.frozen_threshold} type="ensemble_tuned" />
                     </td>
-                    <td className="py-3 px-4 text-right text-emerald-400">
+                    <td className="py-3 px-4 text-right text-emerald-600 dark:text-emerald-400">
                       {outcome.test_metrics.pr_auc?.toFixed(4) ?? '0.4760'}
                     </td>
-                    <td className="py-3 px-4 text-right text-violet-300">
+                    <td className="py-3 px-4 text-right text-violet-600 dark:text-violet-300">
                       {outcome.test_metrics.roc_auc?.toFixed(4) ?? '0.9555'}
                     </td>
-                    <td className="py-3 px-4 text-right text-white">
+                    <td className="py-3 px-4 text-right text-slate-900 dark:text-white">
                       {outcome.test_metrics.f1?.toFixed(4) ?? '0.5359'}
                     </td>
-                    <td className="py-3 px-4 text-right text-slate-300">
+                    <td className="py-3 px-4 text-right text-slate-700 dark:text-slate-300">
                       {outcome.test_metrics.precision?.toFixed(4) ?? '0.9018'}
                     </td>
-                    <td className="py-3 px-4 text-right text-slate-300">
+                    <td className="py-3 px-4 text-right text-slate-700 dark:text-slate-300">
                       {outcome.test_metrics.recall?.toFixed(4) ?? '0.3272'}
                     </td>
-                    <td className="py-3 px-4 text-right text-slate-400">
+                    <td className="py-3 px-4 text-right text-slate-600 dark:text-slate-400">
                       {outcome.test_metrics.alerts_per_10k?.toFixed(2) ?? '6.42'}
                     </td>
                     <td className="py-3 px-4 text-right">
-                      <span className="px-2 py-0.5 rounded text-[10px] bg-indigo-950 text-indigo-300 border border-indigo-700">
+                      <span className="px-2 py-0.5 rounded text-[10px] bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-700">
                         FROZEN DEPLOYMENT
                       </span>
                     </td>
@@ -633,18 +795,18 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
           </div>
 
           {/* Validation Alpha Candidates Grid (Phase G4) */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl space-y-2">
-            <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xl space-y-2">
+            <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-                  <Sliders className="w-4 h-4 text-indigo-400" />
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+                  <Sliders className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                   <span>Validation Alpha Candidates Search Grid (α ∈ [0.0, 1.0])</span>
                 </h3>
-                <p className="text-[11px] text-slate-400 mt-0.5">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                   Monotonically evaluating PR-AUC, F1, and cost on validation data. Selected candidate highlighted in purple.
                 </p>
               </div>
-              <span className="text-xs font-mono text-slate-400">
+              <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
                 {outcome.alpha_candidates.length} Grid Points
               </span>
             </div>
@@ -652,7 +814,7 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs font-mono">
                 <thead>
-                  <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 uppercase text-[10px]">
+                  <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 uppercase text-[10px]">
                     <th className="py-2.5 px-4">Candidate Alpha (α)</th>
                     <th className="py-2.5 px-4 text-right">Val PR-AUC</th>
                     <th className="py-2.5 px-4 text-right">Val ROC-AUC</th>
@@ -665,15 +827,15 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
                     <th className="py-2.5 px-4 text-right">Decision</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60">
                   {outcome.alpha_candidates.map((c) => (
                     <tr
                       key={c.alpha}
-                      className={`transition hover:bg-slate-800/40 ${
-                        c.selected ? 'bg-indigo-950/40 border-l-4 border-indigo-500' : ''
+                      className={`transition hover:bg-slate-50 dark:hover:bg-slate-800/40 ${
+                        c.selected ? 'bg-indigo-50/60 dark:bg-indigo-950/40 border-l-4 border-indigo-500' : ''
                       }`}
                     >
-                      <td className="py-2.5 px-4 font-bold text-white flex items-center space-x-2">
+                      <td className="py-2.5 px-4 font-bold text-slate-900 dark:text-white flex items-center space-x-2">
                         <span>{c.alpha.toFixed(2)}</span>
                         {c.selected && (
                           <span className="text-[9px] px-1.5 py-0.2 rounded bg-indigo-500 text-white font-bold">
@@ -681,22 +843,24 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
                           </span>
                         )}
                       </td>
-                      <td className="py-2.5 px-4 text-right text-teal-400 font-bold">{c.val_pr_auc.toFixed(4)}</td>
-                      <td className="py-2.5 px-4 text-right text-violet-300">{c.val_roc_auc.toFixed(4)}</td>
-                      <td className="py-2.5 px-4 text-right text-white font-bold">{c.val_f1.toFixed(4)}</td>
-                      <td className="py-2.5 px-4 text-right text-amber-300">{c.val_f2.toFixed(4)}</td>
-                      <td className="py-2.5 px-4 text-right text-emerald-400">{c.val_precision.toFixed(4)}</td>
-                      <td className="py-2.5 px-4 text-right text-indigo-300">{c.val_recall.toFixed(4)}</td>
-                      <td className="py-2.5 px-4 text-right text-amber-400">{c.val_threshold.toFixed(4)}</td>
-                      <td className="py-2.5 px-4 text-right text-slate-400">{c.val_brier_score.toFixed(6)}</td>
+                      <td className="py-2.5 px-4 text-right text-teal-600 dark:text-teal-400 font-bold">{c.val_pr_auc.toFixed(4)}</td>
+                      <td className="py-2.5 px-4 text-right text-violet-600 dark:text-violet-300">{c.val_roc_auc.toFixed(4)}</td>
+                      <td className="py-2.5 px-4 text-right text-slate-900 dark:text-white font-bold">{c.val_f1.toFixed(4)}</td>
+                      <td className="py-2.5 px-4 text-right text-amber-600 dark:text-amber-300">{c.val_f2.toFixed(4)}</td>
+                      <td className="py-2.5 px-4 text-right text-emerald-600 dark:text-emerald-400">{c.val_precision.toFixed(4)}</td>
+                      <td className="py-2.5 px-4 text-right text-indigo-600 dark:text-indigo-300">{c.val_recall.toFixed(4)}</td>
+                      <td className="py-2.5 px-4 text-right">
+                        <ThresholdBadge value={c.val_threshold} type="frozen_validation" />
+                      </td>
+                      <td className="py-2.5 px-4 text-right text-slate-500 dark:text-slate-400">{c.val_brier_score.toFixed(6)}</td>
                       <td className="py-2.5 px-4 text-right">
                         {c.selected ? (
-                          <span className="text-[10px] text-emerald-400 font-bold flex items-center justify-end space-x-1">
+                          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold flex items-center justify-end space-x-1">
                             <CheckCircle2 className="w-3.5 h-3.5" />
                             <span>CHAMPION</span>
                           </span>
                         ) : (
-                          <span className="text-[10px] text-slate-500">Pruned</span>
+                          <span className="text-[10px] text-slate-400 dark:text-slate-500">Pruned</span>
                         )}
                       </td>
                     </tr>

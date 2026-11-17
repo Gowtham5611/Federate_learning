@@ -36,7 +36,8 @@ def capture_suite(out_dir: str, tabs=("models", "history", "evaluation"), themes
                 page = context.new_page()
                 
                 # Navigate and set theme cleanly via localStorage
-                page.goto("http://127.0.0.1:5173", wait_until="networkidle")
+                page.goto("http://127.0.0.1:5173", wait_until="domcontentloaded")
+                time.sleep(1.0)
                 page.evaluate(f"""() => {{
                     localStorage.setItem('fedsecureai_theme', '{theme}');
                     if ('{theme}' === 'light') {{
@@ -61,7 +62,7 @@ def capture_suite(out_dir: str, tabs=("models", "history", "evaluation"), themes
                     filename = f"{tab}_{vp_name}_{theme}.png"
                     filepath = out_path / filename
                     page.screenshot(path=str(filepath), full_page=False)
-                    print(f"Captured: {filepath}")
+                    print(f"Captured: {filepath}", flush=True)
                 
                 context.close()
         

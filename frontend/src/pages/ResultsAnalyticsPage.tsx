@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { apiService } from '../services/apiService';
-import { CsvEvaluateResponse, MultiModelEvaluateResponse } from '../types/api';
+import { CsvEvaluateResponse, MultiModelEvaluateResponse, BenchmarkModelRecord } from '../types/api';
 import { ValidityBanner } from '../components/ValidityBanner';
 import { WhyNoAlertsCard } from '../components/WhyNoAlertsCard';
 import { type OperatingPointKey } from '../components/OperatingPointSelector';
@@ -1172,6 +1172,10 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
           models={multiModelResult.models.map((m) => ({
             ...m,
             config_id: m.model_name,
+            dataset: 'HI-Small' as const,
+            architecture: (m.model_name.includes('bilstm') ? 'BiLSTM' : m.model_name.includes('lstm') ? 'LSTM' : 'GRU') as any,
+            distribution: (m.model_name.includes('non_iid') ? 'Non-IID' : m.model_name.includes('iid') ? 'IID' : 'Centralized') as any,
+            algorithm: (m.model_name.includes('fedprox') ? 'FedProx' : m.model_name.includes('fedavg') ? 'FedAvg' : 'Centralized') as any,
             test_pr_auc: m.pr_auc,
             test_roc_auc: m.roc_auc,
             test_f1: m.f1_score,
@@ -1184,7 +1188,7 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
             test_cohen_kappa: m.cohen_kappa,
             brier_score: m.brier_score,
             alerts_per_10k: m.laundering_percentage != null ? m.laundering_percentage * 100 : undefined,
-          }))}
+          })) as unknown as BenchmarkModelRecord[]}
           title={`Multi-Model Evaluation Matrix (${multiModelResult.models_evaluated_count} Models)`}
           subtitle={`Evaluated on ${multiModelResult.total_transactions.toLocaleString()} preprocessed sequences across centralized and federated architectures.`}
         />

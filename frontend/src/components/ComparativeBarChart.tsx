@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { BarChart2, Maximize2, Minimize2 } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { BarChart2, Maximize2, Minimize2, Download, FileSpreadsheet } from 'lucide-react';
 import { BenchmarkModelRecord } from '../types/api';
+import { exportSvgToPng, exportDataToCsv } from '../utils/exportHelpers';
 
 export type ChartMetricKey =
   | 'test_pr_auc'
@@ -96,6 +97,7 @@ export const ComparativeBarChart: React.FC<ComparativeBarChartProps> = ({
 }) => {
   const [selectedMetricKey, setSelectedMetricKey] = useState<ChartMetricKey>('test_pr_auc');
   const [autoScaleY, setAutoScaleY] = useState<boolean>(false);
+  const svgRef = useRef<SVGSVGElement | null>(null);
   const [hoveredBar, setHoveredBar] = useState<{
     model: BenchmarkModelRecord;
     value: number;
@@ -170,12 +172,40 @@ export const ComparativeBarChart: React.FC<ComparativeBarChartProps> = ({
               </button>
             ))}
           </div>
+          {/* Export Actions */}
+          <div className="flex items-center space-x-1.5">
+            <button
+              type="button"
+              onClick={() => exportSvgToPng(svgRef.current, `fedsecureai_${selectedDataset}_${selectedMetricKey}`)}
+              title="Export Bar Chart as High-DPI PNG"
+              className="flex items-center space-x-1 px-2.5 py-1 rounded-xl text-[11px] font-mono border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition cursor-pointer"
+            >
+              <Download className="w-3 h-3" />
+              <span>PNG</span>
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                exportDataToCsv(
+                  ['Config ID', 'Model Name', 'Architecture', 'Distribution', 'Algorithm', 'Threshold', activeMetric.label],
+                  models.map((m) => [m.config_id, m.model_name, m.architecture, m.distribution, m.algorithm, m.threshold, m[selectedMetricKey] ?? 'N/A']),
+                  `fedsecureai_${selectedDataset}_${selectedMetricKey}.csv`
+                )
+              }
+              title="Export Visualization Data as CSV"
+              className="flex items-center space-x-1 px-2.5 py-1 rounded-xl text-[11px] font-mono border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition cursor-pointer"
+            >
+              <FileSpreadsheet className="w-3 h-3" />
+              <span>CSV</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* SVG Bar Chart with Tooltip */}
       <div className="relative w-full overflow-hidden pt-2">
         <svg
+          ref={svgRef}
           className="w-full h-80 sm:h-96"
           viewBox="0 0 880 290"
           preserveAspectRatio="xMidYMid meet"

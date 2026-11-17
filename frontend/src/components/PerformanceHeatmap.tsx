@@ -5,7 +5,9 @@ import {
   HelpCircle,
   Eye,
   EyeOff,
+  Info,
 } from 'lucide-react';
+import { BenchmarkModelRecord } from '../types/api';
 
 export interface MetricDefinition {
   key: string;
@@ -50,16 +52,6 @@ export const HEATMAP_METRICS: MetricDefinition[] = [
     description: 'Harmonic mean of precision and recall at serving threshold.',
   },
   {
-    key: 'test_f2',
-    name: 'F2-Score (Recall-Weighted)',
-    shortLabel: 'F2',
-    category: 'performance',
-    higherIsBetter: true,
-    units: 'Ratio [0 - 1]',
-    format: (v) => (v != null ? Number(v).toFixed(4) : 'N/A'),
-    description: 'Recall-weighted harmonic mean prioritizing missed-money-laundering detection.',
-  },
-  {
     key: 'test_precision',
     name: 'Precision (Positive Predictive Value)',
     shortLabel: 'Precision',
@@ -80,56 +72,6 @@ export const HEATMAP_METRICS: MetricDefinition[] = [
     description: 'Proportion of all true laundering cases captured by the model.',
   },
   {
-    key: 'test_specificity',
-    name: 'Specificity (True Negative Rate)',
-    shortLabel: 'Specificity',
-    category: 'performance',
-    higherIsBetter: true,
-    units: 'Ratio [0 - 1]',
-    format: (v) => (v != null ? Number(v).toFixed(4) : 'N/A'),
-    description: 'Proportion of legitimate transactions correctly cleared without an alert.',
-  },
-  {
-    key: 'test_accuracy',
-    name: 'Accuracy',
-    shortLabel: 'Accuracy',
-    category: 'performance',
-    higherIsBetter: true,
-    units: 'Ratio [0 - 1]',
-    format: (v) => (v != null ? Number(v).toFixed(4) : 'N/A'),
-    description: 'Overall classification accuracy (caution: uninformative under 0.18% class prevalence).',
-  },
-  {
-    key: 'test_balanced_accuracy',
-    name: 'Balanced Accuracy',
-    shortLabel: 'Bal. Acc',
-    category: 'performance',
-    higherIsBetter: true,
-    units: 'Ratio [0 - 1]',
-    format: (v) => (v != null ? Number(v).toFixed(4) : 'N/A'),
-    description: 'Unweighted macro-average of sensitivity and specificity.',
-  },
-  {
-    key: 'test_mcc',
-    name: "Matthews Correlation Coefficient (MCC)",
-    shortLabel: 'MCC',
-    category: 'performance',
-    higherIsBetter: true,
-    units: 'Ratio [-1 to +1]',
-    format: (v) => (v != null ? Number(v).toFixed(4) : 'N/A'),
-    description: 'Contingency matrix correlation coefficient accounting for TP, FP, FN, and TN.',
-  },
-  {
-    key: 'test_cohen_kappa',
-    name: "Cohen's Kappa (κ)",
-    shortLabel: 'Kappa',
-    category: 'performance',
-    higherIsBetter: true,
-    units: 'Ratio [-1 to +1]',
-    format: (v) => (v != null ? Number(v).toFixed(4) : 'N/A'),
-    description: 'Inter-rater agreement above chance between predictions and actual labels.',
-  },
-  {
     key: 'alerts_per_10k',
     name: 'Alerts per 10,000 Transactions',
     shortLabel: 'Alerts/10k',
@@ -137,7 +79,7 @@ export const HEATMAP_METRICS: MetricDefinition[] = [
     higherIsBetter: false,
     units: 'Alerts / 10k tx',
     format: (v) => (v != null ? Number(v).toFixed(1) : 'N/A'),
-    description: 'Investigator workload density evaluated against capacity policies; reflects operational volume without intrinsic detection judgment.',
+    description: 'Investigator workload volume density evaluated against capacity policies; reflects operational volume without intrinsic detection judgment.',
   },
   {
     key: 'brier_score',
@@ -149,43 +91,23 @@ export const HEATMAP_METRICS: MetricDefinition[] = [
     format: (v) => (v != null ? Number(v).toFixed(4) : 'N/A'),
     description: 'Mean squared error of probabilistic predictions (0.0 is perfect probability calibration).',
   },
-  {
-    key: 'test_ece',
-    name: 'Expected Calibration Error (ECE)',
-    shortLabel: 'ECE',
-    category: 'error',
-    higherIsBetter: false,
-    units: 'Error [0 - 1]',
-    format: (v) => (v != null ? Number(v).toFixed(4) : 'N/A'),
-    description: 'Bin-weighted difference between confidence and empirical accuracy.',
-  },
-  {
-    key: 'log_loss',
-    name: 'Log Loss (Binary Cross-Entropy)',
-    shortLabel: 'Log Loss',
-    category: 'error',
-    higherIsBetter: false,
-    units: 'Nats',
-    format: (v) => (v != null ? Number(v).toFixed(4) : 'N/A'),
-    description: 'Cross-entropy penalizing confident incorrect classifications.',
-  },
 ];
 
 interface PerformanceHeatmapProps {
-  models: Array<Record<string, any>>;
-  title?: string;
-  subtitle?: string;
+  models: BenchmarkModelRecord[];
   selectedModelId?: string | null;
   onSelectModel?: (configId: string) => void;
+  title?: string;
+  subtitle?: string;
   className?: string;
 }
 
 export const PerformanceHeatmap: React.FC<PerformanceHeatmapProps> = ({
   models,
-  title = 'Cross-Configuration Performance Heatmap',
-  subtitle = 'Metric-aware color encoding across all evaluated model configurations. Hover or focus for exact values and ranks.',
   selectedModelId,
   onSelectModel,
+  title = 'Model Performance Heatmap',
+  subtitle = 'Metric-aware color encoding across all evaluated model configurations. Hover or focus for exact values and ranks.',
   className = '',
 }) => {
   const [viewMode, setViewMode] = useState<'heatmap' | 'table'>('heatmap');
@@ -197,55 +119,35 @@ export const PerformanceHeatmap: React.FC<PerformanceHeatmapProps> = ({
     value: number | null;
   } | null>(null);
 
-  // Compute column-wise min and max across all provided models
+  // Compute column statistics for continuous normalization
   const columnStats = useMemo(() => {
-    const stats: Record<
-      string,
-      {
-        min: number;
-        max: number;
-        values: number[];
-        availableCount: number;
-      }
-    > = {};
+    const stats: Record<string, { min: number; max: number; count: number }> = {};
 
     HEATMAP_METRICS.forEach((m) => {
-      const validEntries: Array<{ configId: string; val: number }> = [];
+      const validValues = models
+        .map((model) => ((model as any)[m.key] != null ? Number((model as any)[m.key]) : null))
+        .filter((v): v is number => v !== null && !isNaN(v));
 
-      models.forEach((row) => {
-        const raw = row[m.key];
-        if (raw != null && !isNaN(Number(raw))) {
-          validEntries.push({ configId: row.config_id || row.model_id || row.model_name, val: Number(raw) });
-        }
-      });
-
-      if (validEntries.length > 0) {
-        const nums = validEntries.map((e) => e.val);
+      if (validValues.length > 0) {
         stats[m.key] = {
-          min: Math.min(...nums),
-          max: Math.max(...nums),
-          values: nums,
-          availableCount: validEntries.length,
+          min: Math.min(...validValues),
+          max: Math.max(...validValues),
+          count: validValues.length,
         };
       } else {
-        stats[m.key] = {
-          min: 0,
-          max: 1,
-          values: [],
-          availableCount: 0,
-        };
+        stats[m.key] = { min: 0, max: 1, count: 0 };
       }
     });
 
     return stats;
   }, [models]);
 
-  // Color calculation: metric-aware color scale
-  const getCellStyling = (metric: MetricDefinition, val: number | null, _configId: string) => {
+  // Continuous, colorblind-safe sequential scale per column (zero uncolored cells)
+  const getCellStyling = (metric: MetricDefinition, val: number | null) => {
     if (val == null || isNaN(val)) {
       return {
-        bgClass: 'bg-slate-950/60',
-        textClass: 'text-slate-600 italic',
+        bgClass: 'bg-slate-100 dark:bg-slate-950/60',
+        textClass: 'text-slate-400 italic',
         inlineStyle: {},
       };
     }
@@ -253,109 +155,63 @@ export const PerformanceHeatmap: React.FC<PerformanceHeatmapProps> = ({
     const stat = columnStats[metric.key];
     if (!stat || stat.min === stat.max) {
       return {
-        bgClass: 'bg-slate-900',
-        textClass: 'text-slate-200',
+        bgClass: 'bg-slate-100 dark:bg-slate-900',
+        textClass: 'text-slate-800 dark:text-slate-200',
         inlineStyle: {},
       };
     }
 
-    // 1. Operational Workload Scale (Neutral Slate -> Cyan)
-    if (metric.category === 'workload') {
-      const ratio = Math.max(0.0, Math.min(1.0, (val - stat.min) / (stat.max - stat.min)));
-      if (ratio >= 0.7) {
-        return {
-          bgClass: 'bg-sky-950/80 border-sky-600/40',
-          textClass: 'text-sky-300 font-semibold',
-          inlineStyle: { backgroundColor: `rgba(12, 74, 110, ${0.4 + ratio * 0.4})` },
-        };
-      }
-      if (ratio >= 0.35) {
-        return {
-          bgClass: 'bg-cyan-950/60 border-cyan-700/30',
-          textClass: 'text-cyan-200',
-          inlineStyle: { backgroundColor: `rgba(22, 78, 99, ${0.35 + ratio * 0.35})` },
-        };
-      }
-      return {
-        bgClass: 'bg-slate-900 border-slate-700',
-        textClass: 'text-slate-300',
-        inlineStyle: { backgroundColor: 'rgba(30, 41, 59, 0.7)' },
-      };
-    }
+    const rawRatio = Math.max(0.0, Math.min(1.0, (val - stat.min) / Math.max(0.000001, stat.max - stat.min)));
+    const scoreRatio = metric.higherIsBetter ? rawRatio : (1.0 - rawRatio);
 
-    // 2. Calibration & Loss Error Metrics (Emerald = lowest error -> Amber -> Rose)
-    if (metric.category === 'error') {
-      const scoreRatio = Math.max(0.0, Math.min(1.0, 1.0 - (val - stat.min) / (stat.max - stat.min)));
-      if (scoreRatio >= 0.8) {
-        return {
-          bgClass: 'bg-emerald-950/80 border-emerald-500/40',
-          textClass: 'text-emerald-300 font-bold',
-          inlineStyle: { backgroundColor: `rgba(6, 78, 59, ${0.4 + scoreRatio * 0.45})` },
-        };
-      }
-      if (scoreRatio >= 0.45) {
-        return {
-          bgClass: 'bg-amber-950/60 border-amber-600/30',
-          textClass: 'text-amber-200',
-          inlineStyle: { backgroundColor: `rgba(120, 53, 15, ${0.35 + (1 - scoreRatio) * 0.35})` },
-        };
-      }
+    // Continuous color scale with perceptually clear, colorblind-safe tints
+    if (scoreRatio >= 0.75) {
       return {
-        bgClass: 'bg-rose-950/70 border-rose-600/40',
-        textClass: 'text-rose-300',
-        inlineStyle: { backgroundColor: `rgba(136, 19, 55, ${0.4 + (1 - scoreRatio) * 0.45})` },
+        bgClass: 'bg-emerald-100/80 dark:bg-emerald-950/80',
+        textClass: 'text-emerald-900 dark:text-emerald-300 font-bold',
+        inlineStyle: { backgroundColor: `rgba(16, 185, 129, ${0.18 + scoreRatio * 0.45})` },
       };
     }
-
-    // 3. Detection Performance Metrics (Navy -> Indigo -> Emerald = highest)
-    const scoreRatio = Math.max(0.0, Math.min(1.0, (val - stat.min) / (stat.max - stat.min)));
-    if (scoreRatio >= 0.85) {
+    if (scoreRatio >= 0.45) {
       return {
-        bgClass: 'bg-emerald-950/80 border-emerald-500/40',
-        textClass: 'text-emerald-300 font-bold',
-        inlineStyle: { backgroundColor: `rgba(6, 78, 59, ${0.45 + scoreRatio * 0.45})` },
+        bgClass: 'bg-teal-100/70 dark:bg-teal-950/70',
+        textClass: 'text-teal-900 dark:text-teal-200 font-semibold',
+        inlineStyle: { backgroundColor: `rgba(13, 148, 136, ${0.15 + scoreRatio * 0.35})` },
       };
     }
-    if (scoreRatio >= 0.55) {
+    if (scoreRatio >= 0.20) {
       return {
-        bgClass: 'bg-indigo-950/70 border-indigo-500/30',
-        textClass: 'text-indigo-200',
-        inlineStyle: { backgroundColor: `rgba(49, 46, 129, ${0.35 + scoreRatio * 0.4})` },
+        bgClass: 'bg-indigo-100/60 dark:bg-indigo-950/60',
+        textClass: 'text-indigo-900 dark:text-indigo-200',
+        inlineStyle: { backgroundColor: `rgba(99, 102, 241, ${0.12 + scoreRatio * 0.28})` },
       };
     }
-    if (scoreRatio >= 0.3) {
-      return {
-        bgClass: 'bg-slate-900 border-slate-700',
-        textClass: 'text-slate-300',
-        inlineStyle: { backgroundColor: `rgba(30, 41, 59, ${0.4 + scoreRatio * 0.3})` },
-      };
-    }
+    // Lowest tier (0.0 to 0.20): muted slate-blue tint so config_1/config_6 are never uncolored
     return {
-      bgClass: 'bg-slate-950 border-slate-800',
-      textClass: 'text-slate-400',
-      inlineStyle: { backgroundColor: 'rgba(15, 23, 42, 0.85)' },
+      bgClass: 'bg-slate-200/50 dark:bg-slate-900',
+      textClass: 'text-slate-700 dark:text-slate-400',
+      inlineStyle: { backgroundColor: `rgba(148, 163, 184, ${0.12 + scoreRatio * 0.16})` },
     };
   };
 
   return (
-    <div className={`bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4 ${className}`}>
+    <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-xl space-y-4 ${className}`}>
       {/* Header with Title and View Controls */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
         <div>
           <div className="flex items-center space-x-2">
-            <Layers className="w-5 h-5 text-indigo-400" />
-            <h3 className="text-base font-bold text-white tracking-tight">{title}</h3>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">
+            <Layers className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
+            <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">{title}</h3>
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
               {models.length} Configurations
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1 max-w-2xl leading-relaxed">{subtitle}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-2xl leading-relaxed">{subtitle}</p>
         </div>
 
         {/* View Mode & Visibility Controls */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* Heatmap / Table Switcher */}
-          <div className="inline-flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-semibold">
+          <div className="inline-flex bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-semibold">
             <button
               onClick={() => {
                 setViewMode('heatmap');
@@ -364,7 +220,7 @@ export const PerformanceHeatmap: React.FC<PerformanceHeatmapProps> = ({
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition cursor-pointer ${
                 viewMode === 'heatmap' && isVisible
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-bold'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
@@ -378,7 +234,7 @@ export const PerformanceHeatmap: React.FC<PerformanceHeatmapProps> = ({
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition cursor-pointer ${
                 viewMode === 'table' && isVisible
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-bold'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <TableIcon className="w-3.5 h-3.5" />
@@ -386,75 +242,73 @@ export const PerformanceHeatmap: React.FC<PerformanceHeatmapProps> = ({
             </button>
           </div>
 
-          {/* Show / Hide Toggle */}
           <button
-            onClick={() => setIsVisible((prev) => !prev)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs text-slate-300 transition cursor-pointer font-medium"
-            title={isVisible ? 'Hide Heatmap section' : 'Show Heatmap section'}
+            onClick={() => setIsVisible(!isVisible)}
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs transition cursor-pointer"
           >
-            {isVisible ? <EyeOff className="w-3.5 h-3.5 text-slate-400" /> : <Eye className="w-3.5 h-3.5 text-indigo-400" />}
-            <span>{isVisible ? 'Hide' : 'Show'}</span>
+            {isVisible ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+            <span>{isVisible ? 'Collapse' : 'Expand'}</span>
           </button>
         </div>
       </div>
 
       {isVisible && (
-        <div className="space-y-4 animate-fade-in">
-          {/* Active Hover / Focus Detail Bar */}
-          <div className="min-h-[44px] bg-slate-950/80 p-2.5 rounded-2xl border border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+        <div className="space-y-4">
+          {/* Active Hover / Focus Detail Inspector */}
+          <div className="p-3 bg-slate-50 dark:bg-slate-950/80 rounded-2xl border border-slate-200 dark:border-slate-800/80 min-h-[46px] flex items-center justify-between transition">
             {hoveredCell ? (
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                <span className="text-white font-bold bg-slate-800 px-2 py-0.5 rounded">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
+                <span className="font-mono font-bold text-indigo-600 dark:text-indigo-300">
                   {hoveredCell.configId}
                 </span>
-                <span className="text-slate-300 font-semibold">
+                <span className="text-slate-600 dark:text-slate-300 font-semibold">
                   {hoveredCell.metric.name}:
                 </span>
                 {hoveredCell.value != null ? (
-                  <strong className="text-emerald-400 text-sm">
+                  <strong className="text-emerald-600 dark:text-emerald-400 font-mono text-sm">
                     {hoveredCell.metric.format(hoveredCell.value)} {hoveredCell.metric.units}
                   </strong>
                 ) : (
-                  <span className="text-slate-500 italic text-xs">
-                    Value not recorded for this model configuration
+                  <span className="text-slate-400 italic text-xs">
+                    Value not recorded
                   </span>
                 )}
-                <span className="px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-300 border border-slate-700">
-                  {hoveredCell.metric.category === 'performance'
-                    ? 'Performance: Higher is better'
-                    : hoveredCell.metric.category === 'error'
-                    ? 'Error: Lower is better'
-                    : 'Workload: Volume density vs capacity policy'}
+                <span className="px-2 py-0.5 rounded-full text-[10px] bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
+                  {hoveredCell.metric.higherIsBetter ? 'Higher is better' : 'Lower is better'}
                 </span>
-                <span className="text-slate-400 text-[11px] font-sans">
+                <span className="text-slate-500 dark:text-slate-400 text-[11px] font-sans">
                   {hoveredCell.metric.description}
                 </span>
               </div>
             ) : (
-              <div className="text-slate-500 flex items-center space-x-2 text-[11px] font-sans">
-                <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
-                <span>Hover or navigate with keyboard focus over any metric cell to inspect exact source values, units, and operational definitions.</span>
+              <div className="text-slate-500 dark:text-slate-400 flex items-center space-x-2 text-[11px] font-sans">
+                <HelpCircle className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <span>Hover or navigate with keyboard focus over any cell to inspect exact source values, units, and definitions.</span>
               </div>
             )}
           </div>
 
           {/* MAIN HEATMAP OR TABLE VIEW */}
           {models.length === 0 ? (
-            <div className="p-8 text-center bg-slate-950/40 rounded-2xl border border-slate-800 text-xs text-slate-400">
+            <div className="p-8 text-center bg-slate-50 dark:bg-slate-950/40 rounded-2xl border border-slate-200 dark:border-slate-800 text-xs text-slate-400">
               No model comparison records match the active filter criteria.
             </div>
           ) : viewMode === 'heatmap' ? (
             /* HEATMAP VIEW */
-            <div className="overflow-x-auto rounded-2xl border border-slate-800 scrollbar-thin">
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
               <table className="w-full text-left border-collapse text-xs font-mono select-none">
                 <thead>
-                  <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 uppercase text-[10px]">
-                    <th className="py-3 px-3.5 sticky left-0 bg-slate-950 z-20 min-w-[130px] border-r border-slate-800">
+                  <tr className="bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 uppercase text-[10px]">
+                    <th className="py-3 px-3.5 sticky left-0 bg-slate-100 dark:bg-slate-950 z-20 min-w-[130px] border-r border-slate-200 dark:border-slate-800">
                       Configuration
                     </th>
                     <th className="py-3 px-2.5 min-w-[70px]">Arch</th>
                     <th className="py-3 px-2.5 min-w-[70px]">Dist</th>
                     <th className="py-3 px-2.5 min-w-[80px]">Algo</th>
+                    {/* Explicit Operating Threshold Column */}
+                    <th className="py-3 px-3 text-center min-w-[95px] text-amber-700 dark:text-amber-400 font-bold whitespace-nowrap">
+                      Operating θ
+                    </th>
                     {HEATMAP_METRICS.map((m) => (
                       <th
                         key={m.key}
@@ -471,36 +325,40 @@ export const PerformanceHeatmap: React.FC<PerformanceHeatmapProps> = ({
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60">
                   {models.map((m) => {
-                    const cfgId = m.config_id || m.model_id || m.model_name || 'c_unknown';
+                    const cfgId = m.config_id || (m as any).model_id || m.model_name || 'c_unknown';
                     const isSelected = selectedModelId === cfgId;
                     const isChampion =
                       String(m.model_name || '').includes('hi_small_lstm_fedavg_iid_seed42') ||
                       cfgId === 'config_5' ||
-                      m.is_champion;
+                      Boolean((m as any).is_champion);
 
                     return (
                       <tr
                         key={cfgId}
                         onClick={() => onSelectModel && onSelectModel(cfgId)}
                         className={`transition cursor-pointer ${
-                          isSelected ? 'bg-indigo-950/40 ring-1 ring-indigo-500' : 'hover:bg-slate-800/40'
+                          isSelected ? 'bg-indigo-50/60 dark:bg-indigo-950/40 ring-1 ring-indigo-500' : 'hover:bg-slate-50 dark:hover:bg-slate-800/40'
                         }`}
                       >
-                        <td className="py-2.5 px-3.5 font-bold text-white sticky left-0 bg-slate-900 z-10 border-r border-slate-800 truncate max-w-[150px]">
+                        <td className="py-2.5 px-3.5 font-bold text-slate-900 dark:text-white sticky left-0 bg-white dark:bg-slate-900 z-10 border-r border-slate-200 dark:border-slate-800 truncate max-w-[150px]">
                           <div className="flex items-center space-x-1.5">
-                            {isChampion && <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" title="Serving Champion" />}
+                            {isChampion && <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" title="Serving Champion" />}
                             <span className="truncate">{cfgId}</span>
                           </div>
                         </td>
-                        <td className="py-2.5 px-2.5 text-slate-300">{m.architecture || 'N/A'}</td>
-                        <td className="py-2.5 px-2.5 text-slate-400">{m.distribution || 'N/A'}</td>
-                        <td className="py-2.5 px-2.5 text-slate-400">{m.algorithm || 'N/A'}</td>
+                        <td className="py-2.5 px-2.5 text-slate-700 dark:text-slate-300">{m.architecture || 'N/A'}</td>
+                        <td className="py-2.5 px-2.5 text-slate-500 dark:text-slate-400">{m.distribution || 'N/A'}</td>
+                        <td className="py-2.5 px-2.5 text-slate-500 dark:text-slate-400">{m.algorithm || 'N/A'}</td>
+                        {/* Operating Threshold Cell */}
+                        <td className="py-2.5 px-3 text-center whitespace-nowrap font-bold text-amber-700 dark:text-amber-400">
+                          θ = {Number(m.threshold ?? 0.3378).toFixed(4)}
+                        </td>
 
                         {HEATMAP_METRICS.map((metric) => {
-                          const val = m[metric.key] != null ? Number(m[metric.key]) : null;
-                          const styling = getCellStyling(metric, val, cfgId);
+                          const val = (m as any)[metric.key] != null ? Number((m as any)[metric.key]) : null;
+                          const styling = getCellStyling(metric, val);
 
                           return (
                             <td
@@ -523,7 +381,7 @@ export const PerformanceHeatmap: React.FC<PerformanceHeatmapProps> = ({
                                 })
                               }
                               onMouseLeave={() => setHoveredCell(null)}
-                              className={`py-2 px-3 text-right transition border border-transparent font-mono ${styling.bgClass} ${styling.textClass}`}
+                              className={`py-2 px-3 text-right font-mono transition-all ${styling.bgClass} ${styling.textClass}`}
                               style={styling.inlineStyle}
                             >
                               {metric.format(val)}
@@ -537,16 +395,16 @@ export const PerformanceHeatmap: React.FC<PerformanceHeatmapProps> = ({
               </table>
             </div>
           ) : (
-            /* ACCESSIBLE DATA TABLE VIEW */
-            <div className="overflow-x-auto rounded-2xl border border-slate-800">
+            /* ACCESSIBLE TABLE VIEW */
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
               <table className="w-full text-left border-collapse text-xs font-mono">
                 <thead>
-                  <tr className="bg-slate-950 border-b border-slate-800 text-slate-300 uppercase text-[10px]">
-                    <th className="py-3 px-3">Configuration</th>
-                    <th className="py-3 px-3">Model Name</th>
-                    <th className="py-3 px-3">Architecture</th>
-                    <th className="py-3 px-3">Distribution</th>
-                    <th className="py-3 px-3">Algorithm</th>
+                  <tr className="bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 uppercase text-[10px]">
+                    <th className="py-3 px-3.5">Config</th>
+                    <th className="py-3 px-2.5">Arch</th>
+                    <th className="py-3 px-2.5">Dist</th>
+                    <th className="py-3 px-2.5">Algo</th>
+                    <th className="py-3 px-3 text-center text-amber-700 dark:text-amber-400 font-bold">Operating θ</th>
                     {HEATMAP_METRICS.map((m) => (
                       <th key={m.key} className="py-3 px-3 text-right">
                         {m.shortLabel}
@@ -554,19 +412,21 @@ export const PerformanceHeatmap: React.FC<PerformanceHeatmapProps> = ({
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/80">
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60">
                   {models.map((m) => {
-                    const cfgId = m.config_id || m.model_id || m.model_name || 'c_unknown';
+                    const cfgId = m.config_id || (m as any).model_id || 'c_unknown';
                     return (
-                      <tr key={cfgId} className="hover:bg-slate-800/30 transition">
-                        <td className="py-2.5 px-3 font-bold text-white">{cfgId}</td>
-                        <td className="py-2.5 px-3 text-slate-300 truncate max-w-[160px]">{m.model_name || cfgId}</td>
-                        <td className="py-2.5 px-3 text-slate-400">{m.architecture || 'N/A'}</td>
-                        <td className="py-2.5 px-3 text-slate-400">{m.distribution || 'N/A'}</td>
-                        <td className="py-2.5 px-3 text-slate-400">{m.algorithm || 'N/A'}</td>
+                      <tr key={cfgId} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                        <td className="py-2.5 px-3.5 font-bold text-slate-900 dark:text-white">{cfgId}</td>
+                        <td className="py-2.5 px-2.5 text-slate-700 dark:text-slate-300">{m.architecture}</td>
+                        <td className="py-2.5 px-2.5 text-slate-500 dark:text-slate-400">{m.distribution}</td>
+                        <td className="py-2.5 px-2.5 text-slate-500 dark:text-slate-400">{m.algorithm}</td>
+                        <td className="py-2.5 px-3 text-center font-bold text-amber-700 dark:text-amber-400">
+                          θ = {Number(m.threshold ?? 0.3378).toFixed(4)}
+                        </td>
                         {HEATMAP_METRICS.map((metric) => (
-                          <td key={metric.key} className="py-2.5 px-3 text-right text-slate-200">
-                            {metric.format(m[metric.key])}
+                          <td key={metric.key} className="py-2.5 px-3 text-right font-mono text-slate-800 dark:text-slate-200">
+                            {metric.format((m as any)[metric.key] != null ? Number((m as any)[metric.key]) : null)}
                           </td>
                         ))}
                       </tr>
@@ -577,66 +437,17 @@ export const PerformanceHeatmap: React.FC<PerformanceHeatmapProps> = ({
             </div>
           )}
 
-          {/* COLOR LEGEND & METRIC SCALE EXPLANATION */}
-          <div className="p-4 bg-slate-950/70 rounded-2xl border border-slate-800 space-y-3 text-xs">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <span className="font-bold text-slate-200 text-xs">Metric-Aware Color Legend & Directional Interpretation:</span>
-              <span className="text-[11px] text-slate-400 font-sans">
-                Normalized min-to-max within each column across loaded benchmark models.
-              </span>
+          {/* Continuous Color Scale Legend & Discrepancy Note */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-200 dark:border-slate-800 text-xs font-mono">
+            <div className="flex items-center space-x-2">
+              <span className="text-slate-500 dark:text-slate-400 text-[11px]">Continuous Scale:</span>
+              <span className="text-[10px] text-slate-500 font-medium">Lowest rank</span>
+              <div className="w-24 sm:w-32 h-2.5 rounded-full bg-gradient-to-r from-slate-400 via-teal-500 to-emerald-500" />
+              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">Highest rank</span>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Scale 1: Performance Metrics (Higher is Better) */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-[11px] text-slate-300 font-mono">
-                  <span>Detection Quality:</span>
-                  <span className="text-emerald-400 font-bold">Higher = Better</span>
-                </div>
-                <div className="flex items-center space-x-1.5 h-3 rounded-md overflow-hidden bg-gradient-to-r from-slate-900 via-indigo-900 to-emerald-600 border border-slate-700" />
-                <div className="flex justify-between text-[10px] text-slate-500 font-mono">
-                  <span>Lowest (Slate)</span>
-                  <span>Median (Indigo)</span>
-                  <span>Highest (Emerald)</span>
-                </div>
-                <p className="text-[10px] text-slate-400 font-sans leading-tight">
-                  PR-AUC, ROC-AUC, F1, F2, Precision, Recall, Specificity, Bal. Acc, MCC, κ
-                </p>
-              </div>
-
-              {/* Scale 2: Loss & Calibration Metrics (Lower is Better) */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-[11px] text-slate-300 font-mono">
-                  <span>Calibration Error & Loss:</span>
-                  <span className="text-emerald-400 font-bold">Lower = Better</span>
-                </div>
-                <div className="flex items-center space-x-1.5 h-3 rounded-md overflow-hidden bg-gradient-to-r from-emerald-600 via-amber-700 to-rose-700 border border-slate-700" />
-                <div className="flex justify-between text-[10px] text-slate-500 font-mono">
-                  <span>Lowest / Optimal (Emerald)</span>
-                  <span>Moderate (Amber)</span>
-                  <span>High Error (Rose)</span>
-                </div>
-                <p className="text-[10px] text-slate-400 font-sans leading-tight">
-                  Brier Score, Expected Calibration Error (ECE), Log Loss
-                </p>
-              </div>
-
-              {/* Scale 3: Investigator Workload Density (Neutral Policy Scale) */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-[11px] text-slate-300 font-mono">
-                  <span>Investigator Workload:</span>
-                  <span className="text-cyan-400 font-bold">Volume vs Policy</span>
-                </div>
-                <div className="flex items-center space-x-1.5 h-3 rounded-md overflow-hidden bg-gradient-to-r from-slate-900 via-cyan-900 to-sky-700 border border-slate-700" />
-                <div className="flex justify-between text-[10px] text-slate-500 font-mono">
-                  <span>Low Vol (Slate)</span>
-                  <span>Medium (Cyan)</span>
-                  <span>High Vol (Sky)</span>
-                </div>
-                <p className="text-[10px] text-slate-400 font-sans leading-tight">
-                  Alerts/10k tx: evaluated against review capacity (e.g. 50/1k). Not intrinsically good/bad.
-                </p>
-              </div>
+            <div className="flex items-center space-x-1.5 text-slate-500 dark:text-slate-400 text-[11px] font-sans">
+              <Info className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+              <span>Operating metrics are calculated at each model's frozen validation cutoff θ. PR-AUC and ROC-AUC are ranking metrics invariant to threshold.</span>
             </div>
           </div>
         </div>
