@@ -5,6 +5,18 @@
   "outputDirectory": "frontend/dist",
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "https://fedsecureai-api.onrender.com/api/:path*"
+    },
+    {
+      "source": "/health",
+      "destination": "https://fedsecureai-api.onrender.com/health"
+    },
+    {
+      "source": "/research/:path*",
+      "destination": "https://fedsecureai-api.onrender.com/research/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
