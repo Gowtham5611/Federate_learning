@@ -1,0 +1,11 @@
+{
+  "name": "federate-learning",
+  "private": true,
+  "version": "1.0.0",
+  "description": "FedSecureAI — Universal Privacy-Preserving Federated AML Detection Platform",
+  "scripts": {
+    "build": "npm --prefix frontend install && npm --prefix frontend run build",
+    "dev": "npm --prefix frontend run dev",
+    "start": "npm --prefix frontend run preview"
+  }
+}
