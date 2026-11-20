@@ -88,6 +88,13 @@ export const App: React.FC = () => {
   useEffect(() => {
     checkHealth();
     loadResearchModels();
+
+    // Keep cloud server warm while dashboard is active (prevents Render 15-min idle spin-down)
+    const keepWarmInterval = setInterval(() => {
+      apiService.getHealth().catch(() => {});
+    }, 3.5 * 60 * 1000); // ping every 3.5 minutes
+
+    return () => clearInterval(keepWarmInterval);
   }, []);
 
   const handleEvaluationComplete = (evalResult: CsvEvaluateResponse) => {

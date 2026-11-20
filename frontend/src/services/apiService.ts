@@ -34,10 +34,24 @@ const resolveApiBase = (): string => {
   if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
     return 'http://127.0.0.1:8000';
   }
-  return '/api';
+  return '';
 };
 
 const API_BASE = resolveApiBase();
+
+/**
+ * Builds a clean canonical URL for API requests, avoiding double '/api/api' segments.
+ */
+const buildUrl = (endpoint: string): string => {
+  const ep = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  if (!API_BASE) {
+    return ep;
+  }
+  if (API_BASE.endsWith('/api') && ep.startsWith('/api/')) {
+    return `${API_BASE.slice(0, -4)}${ep}`;
+  }
+  return `${API_BASE}${ep}`;
+};
 
 export class ApiError extends Error {
   constructor(
@@ -50,53 +64,76 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-  const url = `${API_BASE}${cleanEndpoint}`;
+/**
+ * Executes a JSON HTTP request with automatic retry for cold-start resiliency.
+ */
+async function request<T>(endpoint: string, options: RequestInit = {}, retries: number = 3): Promise<T> {
+  const url = buildUrl(endpoint);
   const headers = {
     'Content-Type': 'application/json',
     ...(options.headers || {}),
   };
 
-  try {
-    const response = await fetch(url, { ...options, headers });
+  let lastError: unknown = null;
 
-    if (!response.ok) {
-      let errorMessage = `HTTP ${response.status} (${response.statusText})`;
-      let errorDetails: unknown = null;
-      try {
-        const errorData = await response.json();
-        errorDetails = errorData;
-        if (errorData.detail) {
-          errorMessage =
-            typeof errorData.detail === 'string'
-              ? errorData.detail
-              : JSON.stringify(errorData.detail);
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      const response = await fetch(url, { ...options, headers });
+
+      if (!response.ok) {
+        // Render free-tier cold-start recovery (502 / 503 / 504 during wakeup)
+        if ([502, 503, 504].includes(response.status) && attempt < retries - 1) {
+          const delayMs = 2000 * (attempt + 1);
+          console.warn(`[apiService] Cloud service warming up (HTTP ${response.status}). Retrying in ${delayMs}ms (attempt ${attempt + 1}/${retries})...`);
+          await new Promise((res) => setTimeout(res, delayMs));
+          continue;
         }
-      } catch {
-        // Response was not JSON
+
+        let errorMessage = `HTTP ${response.status} (${response.statusText})`;
+        let errorDetails: unknown = null;
+        try {
+          const errorData = await response.json();
+          errorDetails = errorData;
+          if (errorData.detail) {
+            errorMessage =
+              typeof errorData.detail === 'string'
+                ? errorData.detail
+                : JSON.stringify(errorData.detail);
+          }
+        } catch {
+          // Response was not JSON
+        }
+
+        if (response.status === 404) {
+          errorMessage = `API route not found at ${url}. Ensure the FastAPI server is running with all route handlers registered.`;
+        } else if (response.status === 503) {
+          errorMessage = `Backend model service unavailable: ${errorMessage}`;
+        }
+
+        throw new ApiError(response.status, errorMessage, errorDetails);
       }
 
-      if (response.status === 404) {
-        errorMessage = `API route not found at ${url}. Ensure the FastAPI server is running with all route handlers registered.`;
-      } else if (response.status === 503) {
-        errorMessage = `Backend model service unavailable: ${errorMessage}`;
+      return (await response.json()) as T;
+    } catch (err) {
+      if (err instanceof ApiError) {
+        throw err;
       }
-
-      throw new ApiError(response.status, errorMessage, errorDetails);
+      lastError = err;
+      // Network drop / socket timeout while cloud instance is waking up
+      if (attempt < retries - 1) {
+        const delayMs = 2500 * (attempt + 1);
+        console.warn(`[apiService] Network blip or cold-start at ${url}. Retrying in ${delayMs}ms (attempt ${attempt + 1}/${retries})...`);
+        await new Promise((res) => setTimeout(res, delayMs));
+        continue;
+      }
     }
-
-    return (await response.json()) as T;
-  } catch (err) {
-    if (err instanceof ApiError) {
-      throw err;
-    }
-    throw new ApiError(
-      0,
-      `Backend connection error at ${url}. Ensure the FastAPI server is reachable.`,
-      err
-    );
   }
+
+  throw new ApiError(
+    0,
+    `Backend connection error at ${url}. The cloud server may be waking up from an idle state. Please try again in a moment.`,
+    lastError
+  );
 }
 
 export const apiService = {
