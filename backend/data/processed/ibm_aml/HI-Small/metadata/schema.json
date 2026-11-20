@@ -1,0 +1,156 @@
+{
+  "columns": [
+    {
+      "allowed_values": [],
+      "data_type": "datetime",
+      "description": "Transaction time to the minute, formatted 'YYYY/MM/DD HH:MM'. Observed range 2022/09/01 00:00 to 2022/09/18 16:18 across 15,018 distinct values. Rows are NOT stored in timestamp order.",
+      "maximum": null,
+      "minimum": null,
+      "name": "Timestamp",
+      "nullable": false,
+      "required": true
+    },
+    {
+      "allowed_values": [],
+      "data_type": "integer",
+      "description": "Sending bank identifier. Observed 1 to 356,303.",
+      "maximum": null,
+      "minimum": 0,
+      "name": "From Bank",
+      "nullable": false,
+      "required": true
+    },
+    {
+      "allowed_values": [],
+      "data_type": "string",
+      "description": "Sending account identifier; 9 hexadecimal characters. First of the two columns the raw header names 'Account'.",
+      "maximum": null,
+      "minimum": null,
+      "name": "Account",
+      "nullable": false,
+      "required": true
+    },
+    {
+      "allowed_values": [],
+      "data_type": "integer",
+      "description": "Receiving bank identifier. Observed 1 to 356,294.",
+      "maximum": null,
+      "minimum": 0,
+      "name": "To Bank",
+      "nullable": false,
+      "required": true
+    },
+    {
+      "allowed_values": [],
+      "data_type": "string",
+      "description": "Receiving account identifier; 9 hexadecimal characters. Second column the raw header names 'Account'; pandas de-duplicates it to 'Account.1' when parsing.",
+      "maximum": null,
+      "minimum": null,
+      "name": "Account.1",
+      "nullable": false,
+      "required": true
+    },
+    {
+      "allowed_values": [],
+      "data_type": "float",
+      "description": "Amount credited, denominated in 'Receiving Currency'. Observed 1e-06 to 1.0463e+12; no non-positive value exists.",
+      "maximum": null,
+      "minimum": 0,
+      "name": "Amount Received",
+      "nullable": false,
+      "required": true
+    },
+    {
+      "allowed_values": [
+        "Australian Dollar",
+        "Bitcoin",
+        "Brazil Real",
+        "Canadian Dollar",
+        "Euro",
+        "Mexican Peso",
+        "Ruble",
+        "Rupee",
+        "Saudi Riyal",
+        "Shekel",
+        "Swiss Franc",
+        "UK Pound",
+        "US Dollar",
+        "Yen",
+        "Yuan"
+      ],
+      "data_type": "string",
+      "description": "Currency of 'Amount Received'. 15 observed values.",
+      "maximum": null,
+      "minimum": null,
+      "name": "Receiving Currency",
+      "nullable": false,
+      "required": true
+    },
+    {
+      "allowed_values": [],
+      "data_type": "float",
+      "description": "Amount debited, denominated in 'Payment Currency'. Observed 1e-06 to 1.0463e+12; no non-positive value exists.",
+      "maximum": null,
+      "minimum": 0,
+      "name": "Amount Paid",
+      "nullable": false,
+      "required": true
+    },
+    {
+      "allowed_values": [
+        "Australian Dollar",
+        "Bitcoin",
+        "Brazil Real",
+        "Canadian Dollar",
+        "Euro",
+        "Mexican Peso",
+        "Ruble",
+        "Rupee",
+        "Saudi Riyal",
+        "Shekel",
+        "Swiss Franc",
+        "UK Pound",
+        "US Dollar",
+        "Yen",
+        "Yuan"
+      ],
+      "data_type": "string",
+      "description": "Currency of 'Amount Paid'. 15 observed values.",
+      "maximum": null,
+      "minimum": null,
+      "name": "Payment Currency",
+      "nullable": false,
+      "required": true
+    },
+    {
+      "allowed_values": [
+        "ACH",
+        "Bitcoin",
+        "Cash",
+        "Cheque",
+        "Credit Card",
+        "Reinvestment",
+        "Wire"
+      ],
+      "data_type": "string",
+      "description": "Payment instrument. 7 observed values.",
+      "maximum": null,
+      "minimum": null,
+      "name": "Payment Format",
+      "nullable": false,
+      "required": true
+    },
+    {
+      "allowed_values": [],
+      "data_type": "integer",
+      "description": "Target. Verified binary: 0 appears 5,073,168 times (99.8981%) and 1 appears 5,177 times (0.1019%). No other value occurs. 1 marks a transaction the dataset labels as laundering.",
+      "maximum": 1,
+      "minimum": 0,
+      "name": "Is Laundering",
+      "nullable": false,
+      "required": true
+    }
+  ],
+  "name": "ibm_aml_hi_small_transactions",
+  "unexpected_column_policy": "reject"
+}

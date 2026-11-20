@@ -1,0 +1,45 @@
+{
+  "dataset_name": "IBM AML Combined (HI-Small + LI-Medium)",
+  "created_at_utc": "2026-10-18T05:43:44.827628+00:00",
+  "design": "Balanced Chronological Composite for Controlled Empirical Comparison",
+  "per_split": [
+    {
+      "name": "train",
+      "rows": 300000,
+      "positive": 15,
+      "negative": 299985,
+      "positive_rate": 5e-05,
+      "first_timestamp": "2022-09-01 00:00:00",
+      "last_timestamp": "2022-09-01 00:13:00"
+    },
+    {
+      "name": "validation",
+      "rows": 100000,
+      "positive": 78,
+      "negative": 99922,
+      "positive_rate": 0.00078,
+      "first_timestamp": "2022-09-06 13:37:00",
+      "last_timestamp": "2022-09-09 21:08:00"
+    },
+    {
+      "name": "test",
+      "rows": 100000,
+      "positive": 94,
+      "negative": 99906,
+      "positive_rate": 0.00094,
+      "first_timestamp": "2022-09-08 16:13:00",
+      "last_timestamp": "2022-09-14 06:19:00"
+    }
+  ],
+  "target": {
+    "source_column": "is_laundering",
+    "mapping": {
+      "0": 0,
+      "1": 1
+    },
+    "class_counts": {
+      "0": 499813,
+      "1": 187
+    }
+  }
+}

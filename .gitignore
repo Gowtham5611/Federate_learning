@@ -48,6 +48,9 @@ backend/data/interim/*
 !backend/data/interim/.gitkeep
 backend/data/processed/*
 !backend/data/processed/.gitkeep
+!backend/data/processed/ibm_aml/
+!backend/data/processed/ibm_aml/*/metadata/
+!backend/data/processed/ibm_aml/*/metadata/**
 backend/data/partitions/*
 !backend/data/partitions/.gitkeep
 backend/data/cache/*
@@ -58,10 +61,13 @@ backend/data/cache/*
 # =============================================================================
 models/checkpoints/*
 !models/checkpoints/.gitkeep
+!models/checkpoints/**/best.pt
 models/artifacts/*
 !models/artifacts/.gitkeep
 backend/models/checkpoints/*
 !backend/models/checkpoints/.gitkeep
+!backend/models/checkpoints/*/
+!backend/models/checkpoints/**/best.pt
 backend/models/artifacts/*
 !backend/models/artifacts/.gitkeep
 backend/results/uploads/*
@@ -134,6 +140,14 @@ scratch/
 
 # Small curated test inputs are the one exception - review before adding.
 !backend/tests/fixtures/**/*.csv
+
+# Live inference runtime metadata and champion model weights
+!backend/data/processed/ibm_aml/*/metadata/**
+!data/processed/ibm_aml/*/metadata/**
+!backend/results/HI_Small_Results/checkpoints/*/*_global_best.pt
+!backend/results/LI_Medium_Results/checkpoints/*/*global_best.pt
+!backend/models/checkpoints/*/*best.pt
+!backend/models/baselines/lightgbm_baseline.txt
 
 # =============================================================================
 # Node / Frontend

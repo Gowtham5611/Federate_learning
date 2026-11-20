@@ -1,0 +1,158 @@
+{
+  "cleaning": {
+    "duplicate_rows_detected": 9,
+    "duplicate_rows_removed": 0,
+    "reconciles": true,
+    "removals": [
+      {
+        "description": "any of the 11 verified columns was null. The verification report measured zero nulls across the whole file, so a non-zero count here means the input differs from the file that was verified.",
+        "reason": "missing_required_value",
+        "rows_removed": 0
+      },
+      {
+        "description": "the timestamp did not match the verified format '%Y/%m/%d %H:%M'. A row with no usable time cannot be placed in a chronological split at all.",
+        "reason": "unparseable_timestamp",
+        "rows_removed": 0
+      },
+      {
+        "description": "an amount was below zero. Large amounts are kept - unusual values carry signal in AML and are never treated as outliers to remove - but a negative transferred amount is not a magnitude.",
+        "reason": "negative_amount",
+        "rows_removed": 0
+      },
+      {
+        "description": "the label was neither 0 nor 1, the only two values found in the verified file. Such a row has no ground truth to learn from.",
+        "reason": "unknown_target_value",
+        "rows_removed": 0
+      }
+    ],
+    "rows_read": 5078345,
+    "rows_removed": 0,
+    "rows_written": 5078345
+  },
+  "columns": {
+    "features": [
+      "amount_paid_log",
+      "amount_received_log",
+      "amount_mismatch",
+      "same_currency",
+      "same_bank",
+      "self_transfer",
+      "payment_format_code",
+      "payment_currency_code",
+      "receiving_currency_code",
+      "minute_of_day_sin",
+      "minute_of_day_cos",
+      "day_of_week_sin",
+      "day_of_week_cos",
+      "is_weekend",
+      "is_night",
+      "sender_prior_count_log",
+      "sender_prior_amount_log",
+      "sender_seconds_since_prior_log",
+      "sender_has_prior",
+      "receiver_prior_count_log",
+      "receiver_prior_amount_log",
+      "receiver_seconds_since_prior_log",
+      "receiver_has_prior"
+    ],
+    "identifiers": [
+      "timestamp",
+      "from_account",
+      "to_account"
+    ]
+  },
+  "dataset_fingerprint": {
+    "file_name": "HI-Small_Trans.csv",
+    "sha256": "b19d39f515523373f991b689c07e11e7b0b95c17a2c27a87d91584ae16c5b040",
+    "size_bytes": 475664283,
+    "verified_unchanged_after_run": true
+  },
+  "excluded_features": {
+    "account_degree_over_window": "A rolling distinct-counterparty count needs a per-account window buffer, making state grow with window length times account count. Deferred rather than rejected outright, but not implemented in this phase.",
+    "account_total_transaction_count": "A whole-dataset count per account uses transactions that happen after the row it would describe. That is future information; the causal 'prior count' features replace it.",
+    "amount_difference": "'Amount Received' and 'Amount Paid' are denominated in different currencies in 1.42% of rows, so their arithmetic difference is not a quantity. No exchange-rate table exists in the dataset and inventing one would fabricate data. The boolean 'amount_mismatch' captures the same signal without asserting a conversion.",
+    "amount_in_common_currency": "Would require exchange rates that the dataset does not contain. Rates for 2022-09 could be fetched externally, but that would silently introduce data from outside the dataset into a preprocessing step.",
+    "bank_identifier_encoded": "356,303 distinct bank identifiers. See HIGH_CARDINALITY_REFUSALS in the categorical encoder: an integer bank id has no magnitude, so it is neither scaled nor encoded. 'same_bank' keeps the part that carries signal.",
+    "calendar_month": "The verified data spans a single month (September 2022), so the feature is constant and carries no information.",
+    "counterparty_pair_prior_count": "Would need state keyed by (sender, receiver) pair. The number of distinct pairs is unbounded by anything measured and can approach the row count, so the state would grow with the dataset rather than with the account population - the exact property that keeps this builder memory-safe.",
+    "days_since_dataset_start": "A monotonically increasing index whose training range (days 0-5) and test range (days 7-17) are disjoint under the chronological split. A model could fit a trend it can only extrapolate at test time, so every test metric would measure extrapolation instead of detection.",
+    "is_fraud_ring_member": "Any feature derived from the label leaks the target directly. Not implemented under any windowing scheme.",
+    "time_to_next_transaction": "Requires a later row to compute a value for an earlier one. That is future information by construction and is exactly the leakage this pipeline exists to prevent."
+  },
+  "output_directory": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\data\\processed\\ibm_aml\\HI-Small",
+  "performance": {
+    "distinct_accounts_tracked": 515080,
+    "peak_chunk_rows": 200000,
+    "rows_per_second": 27717.321014940266,
+    "seconds_per_stage": {
+      "boundaries": 0.005937900044955313,
+      "engineer": 98.02228789997753,
+      "finalize_train": 58.546328699972946,
+      "fingerprint": 0.47114489995874465,
+      "partition": 25.496716899971943,
+      "verify": 0.6767699000192806
+    },
+    "total_seconds": 183.2191861999454
+  },
+  "preprocessing_version": "1.0.0",
+  "source_file": "C:\\Users\\Acer\\OneDrive\\Desktop\\Federate_learning\\data\\raw\\ibm_aml\\HI-Small_Trans.csv",
+  "splits": {
+    "chronology_holds": true,
+    "per_split": [
+      {
+        "first_timestamp": "2022-09-01 00:00:00",
+        "last_timestamp": "2022-09-06 13:36:00",
+        "name": "train",
+        "negative": 3044917,
+        "positive": 2299,
+        "positive_rate": 0.0007544591522228815,
+        "rows": 3047216,
+        "share": 0.6000411551401096
+      },
+      {
+        "first_timestamp": "2022-09-06 13:37:00",
+        "last_timestamp": "2022-09-08 16:12:00",
+        "name": "validation",
+        "negative": 1014484,
+        "positive": 1081,
+        "positive_rate": 0.0010644321141433585,
+        "rows": 1015565,
+        "share": 0.19997952088721818
+      },
+      {
+        "first_timestamp": "2022-09-08 16:13:00",
+        "last_timestamp": "2022-09-18 16:18:00",
+        "name": "test",
+        "negative": 1013767,
+        "positive": 1797,
+        "positive_rate": 0.0017694601226510588,
+        "rows": 1015564,
+        "share": 0.1999793239726722
+      }
+    ],
+    "tie_policy": "whole_timestamp_to_earlier_split",
+    "train_last_timestamp": "2022-09-06 13:36:00",
+    "validation_last_timestamp": "2022-09-08 16:12:00"
+  },
+  "target": {
+    "class_counts": {
+      "0": 5073168,
+      "1": 5177
+    },
+    "class_percentages": {
+      "0": 99.89805733954664,
+      "1": 0.10194266045335636
+    },
+    "mapping": {
+      "0": 0,
+      "1": 1
+    },
+    "observed_values": [
+      "0",
+      "1"
+    ],
+    "output_column": "is_laundering",
+    "positive_label": 1,
+    "source_column": "Is Laundering"
+  }
+}
