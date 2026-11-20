@@ -93,7 +93,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     }
     throw new ApiError(
       0,
-      `Backend connection error at ${url}. Ensure the FastAPI server is running on ${API_BASE}.`,
+      `Backend connection error at ${url}. Ensure the FastAPI server is reachable.`,
       err
     );
   }
