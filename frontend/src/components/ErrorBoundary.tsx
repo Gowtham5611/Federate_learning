@@ -41,7 +41,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   };
 
   handleReload = (): void => {
-    window.location.reload();
+    // Force a fresh fetch from the server bypassing browser cache
+    window.location.href = window.location.origin + window.location.pathname + '?_nocache=' + Date.now();
   };
 
   render(): ReactNode {

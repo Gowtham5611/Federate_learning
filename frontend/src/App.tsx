@@ -11,8 +11,8 @@ import { BenchmarkModelRecord, CsvEvaluateResponse, HealthResponse, MultiModelEv
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 const APP_BUILD_INFO = {
-  gitSha: 'ab9c6df',
-  buildTime: '2026-11-03 08:00 UTC',
+  gitSha: '0831659',
+  buildTime: '2026-11-21 20:35 UTC',
 };
 
 export const App: React.FC = () => {
