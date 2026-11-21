@@ -2,12 +2,20 @@
 
 from __future__ import annotations
 
+import gc
 import logging
 import os
 import sys
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import AsyncGenerator
+
+# Configure bounded threading for cloud environments (prevents memory spikes on 512MB instances)
+try:
+    import torch
+    torch.set_num_threads(2)
+except Exception:
+    pass
 
 # Ensure backend and repository root are always on sys.path
 _BACKEND_DIR = Path(__file__).resolve().parents[2]
@@ -56,6 +64,7 @@ def create_app(preload_models: bool = True) -> FastAPI:
             try:
                 model_service = ModelService()
                 model_service.load_all_models()
+                gc.collect()
                 logger.info("All federated AML models successfully loaded and verified.")
             except Exception as e:
                 logger.error("Failed to load models during startup: %s", e)

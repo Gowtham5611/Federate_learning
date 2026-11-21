@@ -12,6 +12,7 @@ Supports:
 
 from __future__ import annotations
 
+import gc
 import hashlib
 import io
 import json
@@ -513,12 +514,12 @@ class CsvEvaluationService:
         # Resolve PyTorch model instance
         model = self.model_service.get_model(model_meta.model_id)
 
-        # Device selection & PyTorch batch inference (batch_size=4096)
+        # Device selection & PyTorch batch inference (batch_size=512 for memory safety on cloud tiers)
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model = model.to(device)
         model.eval()
 
-        batch_size = 4096
+        batch_size = 512
         total_samples = len(batch_features)
         probs_list = []
 
@@ -529,8 +530,11 @@ class CsvEvaluationService:
                 logits = model(b_feat, b_len).view(-1)
                 b_probs = torch.sigmoid(logits).cpu().numpy()
                 probs_list.append(b_probs)
+                del b_feat, b_len, logits
 
         probs = np.concatenate(probs_list, axis=0) if probs_list else np.array([], dtype=float)
+        del probs_list
+        gc.collect()
 
         if isinstance(probs, float) or probs.ndim == 0:
             probs = np.array([float(probs)])
@@ -680,7 +684,7 @@ class CsvEvaluationService:
                 "missing_feature_ratio": round(float(diag["missing_feature_counts"][idx] / diag["total_cols"]), 4),
                 "is_history_sufficient": is_history_usable,
                 "usable_history_note": None if is_history_usable else "Insufficient historical context (< 3 prior transactions for this account in slice).",
-                "sequence_features": np.round(batch_features[idx], 6).tolist(),
+                "sequence_features": np.round(batch_features[idx], 4).tolist() if (is_suspicious or idx < 10) else None,
             })
 
         # Verification check: output row count equals input evaluated row count
@@ -2201,7 +2205,7 @@ class CsvEvaluationService:
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         comparison_results = []
-        batch_size = 4096
+        batch_size = 512
         total_samples = len(batch_features)
 
         for mid in target_model_ids:
@@ -2233,8 +2237,11 @@ class CsvEvaluationService:
                             logits = model(b_feat, b_len).view(-1)
                             b_probs = torch.sigmoid(logits).cpu().numpy()
                             probs_list.append(b_probs)
+                            del b_feat, b_len, logits
 
                     probs = np.concatenate(probs_list, axis=0) if probs_list else np.array([], dtype=float)
+                    del probs_list
+                    gc.collect()
                 eff_threshold = threshold if threshold is not None else model_meta.frozen_threshold
 
                 metrics = self._calculate_metrics(labels, probs, eff_threshold) if labels is not None else None
