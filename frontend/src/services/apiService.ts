@@ -28,11 +28,20 @@ import {
 } from '../types/api';
 
 const resolveApiBase = (): string => {
+  // In the browser:
+  if (typeof window !== 'undefined') {
+    // If local dev, talk directly to local FastAPI server
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      return 'http://127.0.0.1:8000';
+    }
+    // In production (Vercel / Cloud): Always use same-origin relative URLs ('')
+    // This allows Vercel's edge proxy to route requests server-to-server,
+    // permanently eliminating browser cross-origin CORS blocks, preflight failures,
+    // and network drops.
+    return '';
+  }
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, '');
-  }
-  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-    return 'http://127.0.0.1:8000';
   }
   return '';
 };
