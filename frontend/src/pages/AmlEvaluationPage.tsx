@@ -286,7 +286,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
     }
   };
 
-  // Handle local file selection with auto-predict
+  // Handle local file selection - inspects schema and enables manual prediction button
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -306,36 +306,20 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
     setFileName(file.name);
     setFileSizeStr(formatFileSize(file.size));
     setTrainSuccessMessage(null);
-    setEvaluating(true);
     setApiError(null);
 
     try {
       const text = await file.text();
       setCsvContent(text);
       await analyzeUploadedCsv(text, file.name);
-
-      // Auto-predict immediately on upload
-      const modelToUse = selectedModelId || 'auto';
-      const thresholdVal = customThreshold !== '' ? parseFloat(customThreshold) : undefined;
-      const resp = await apiService.predictCsv({
-        csv_content: text,
-        model_id: modelToUse,
-        filename: file.name,
-        column_mapping: Object.keys(customMappings || {}).length > 0 ? customMappings : undefined,
-        row_limit: rowLimit,
-        threshold: thresholdVal,
-      });
-      onEvaluationComplete(resp);
     } catch (err: unknown) {
-      let msg = 'Evaluation request failed';
+      let msg = 'Failed to inspect CSV file';
       if (err instanceof ApiError) {
         msg = err.message;
       } else if (err instanceof Error) {
         msg = err.message;
       }
       setApiError(msg);
-    } finally {
-      setEvaluating(false);
     }
   };
 
@@ -628,7 +612,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
           <div className="flex-1 space-y-4">
             <div className="flex items-center justify-between">
               <label className="block text-xs font-mono uppercase text-slate-500 dark:text-slate-400 font-semibold">
-                Select or Drop Any Transaction CSV (Auto-Predicts on Upload)
+                Select or Drop Any Transaction CSV
               </label>
             </div>
             <div className="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-500/80 dark:hover:border-indigo-500/80 rounded-2xl p-6 text-center transition bg-slate-50/60 dark:bg-slate-950/40 relative">

@@ -357,12 +357,12 @@ export const ComparativeBarChart: React.FC<ComparativeBarChartProps> = ({
               </strong>
             </div>
             <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-[10px] text-slate-300 pt-1 border-t border-slate-800">
-              <div>Threshold: <strong className="text-amber-400">{hoveredBar.model.threshold.toFixed(4)}</strong></div>
-              <div>PR-AUC: <strong className="text-white">{hoveredBar.model.test_pr_auc.toFixed(4)}</strong></div>
-              <div>ROC-AUC: <strong className="text-white">{hoveredBar.model.test_roc_auc.toFixed(4)}</strong></div>
-              <div>F1-Score: <strong className="text-white">{hoveredBar.model.test_f1.toFixed(4)}</strong></div>
-              <div>Precision: <strong className="text-white">{hoveredBar.model.test_precision.toFixed(4)}</strong></div>
-              <div>Recall: <strong className="text-white">{hoveredBar.model.test_recall.toFixed(4)}</strong></div>
+              <div>Threshold: <strong className="text-amber-400">{hoveredBar.model?.threshold != null ? hoveredBar.model.threshold.toFixed(4) : 'N/A'}</strong></div>
+              <div>PR-AUC: <strong className="text-white">{hoveredBar.model?.test_pr_auc != null ? hoveredBar.model.test_pr_auc.toFixed(4) : 'N/A'}</strong></div>
+              <div>ROC-AUC: <strong className="text-white">{hoveredBar.model?.test_roc_auc != null ? hoveredBar.model.test_roc_auc.toFixed(4) : 'N/A'}</strong></div>
+              <div>F1-Score: <strong className="text-white">{hoveredBar.model?.test_f1 != null ? hoveredBar.model.test_f1.toFixed(4) : 'N/A'}</strong></div>
+              <div>Precision: <strong className="text-white">{hoveredBar.model?.test_precision != null ? hoveredBar.model.test_precision.toFixed(4) : 'N/A'}</strong></div>
+              <div>Recall: <strong className="text-white">{hoveredBar.model?.test_recall != null ? hoveredBar.model.test_recall.toFixed(4) : 'N/A'}</strong></div>
             </div>
           </div>
         )}
