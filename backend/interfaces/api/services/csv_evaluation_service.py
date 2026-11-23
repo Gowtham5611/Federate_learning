@@ -106,6 +106,44 @@ BASE_DIR = _BACKEND_DIR if (_BACKEND_DIR / "results").exists() else _ROOT_DIR
 UPLOAD_DIR = BASE_DIR / "results" / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
+
+def _resolve_dataset_meta_dir(target_dataset: str) -> Path:
+    """Resolve the metadata directory across repo root and backend directory structures."""
+    candidates = [
+        _BACKEND_DIR / f"data/processed/ibm_aml/{target_dataset}/metadata",
+        _ROOT_DIR / f"backend/data/processed/ibm_aml/{target_dataset}/metadata",
+        _ROOT_DIR / f"data/processed/ibm_aml/{target_dataset}/metadata",
+        BASE_DIR / f"data/processed/ibm_aml/{target_dataset}/metadata",
+        _BACKEND_DIR / "data/processed/ibm_aml/HI-Small/metadata",
+        _ROOT_DIR / "backend/data/processed/ibm_aml/HI-Small/metadata",
+    ]
+    for c in candidates:
+        if c.exists() and (c / "transformers.json").exists():
+            return c
+    for c in candidates:
+        if c.exists():
+            return c
+    return candidates[0]
+
+
+def _resolve_dataset_dir(dataset: str) -> Path:
+    """Resolve the dataset processed root across repo root and backend directory structures."""
+    candidates = [
+        _BACKEND_DIR / f"data/processed/ibm_aml/{dataset}",
+        _ROOT_DIR / f"backend/data/processed/ibm_aml/{dataset}",
+        _ROOT_DIR / f"data/processed/ibm_aml/{dataset}",
+        BASE_DIR / f"data/processed/ibm_aml/{dataset}",
+        _BACKEND_DIR / "data/processed/ibm_aml/HI-Small",
+        _ROOT_DIR / "backend/data/processed/ibm_aml/HI-Small",
+    ]
+    for c in candidates:
+        if c.exists() and ((c / "metadata" / "transformers.json").exists() or (c / "metadata").exists()):
+            return c
+    for c in candidates:
+        if c.exists():
+            return c
+    return candidates[0]
+
 MAX_CSV_BYTES = 250 * 1024 * 1024  # 250 MB
 DEFAULT_ROW_LIMIT = 1000000
 MAX_ROW_LIMIT = 1000000
