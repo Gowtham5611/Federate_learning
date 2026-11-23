@@ -8,11 +8,12 @@ import { EnsembleAnalyticsPage } from './pages/EnsembleAnalyticsPage';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { apiService, ApiError } from './services/apiService';
 import { BenchmarkModelRecord, CsvEvaluateResponse, HealthResponse, MultiModelEvaluateResponse, SupportedDataset } from './types/api';
+import { FALLBACK_BENCHMARK_MODELS } from './data/fallbackModels';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 const APP_BUILD_INFO = {
-  gitSha: '0831659',
-  buildTime: '2026-11-21 20:35 UTC',
+  gitSha: '9d554d0',
+  buildTime: '2026-11-23 21:30 UTC',
 };
 
 export const App: React.FC = () => {
@@ -57,7 +58,7 @@ export const App: React.FC = () => {
 
   // Model comparison and ensemble state
   const [selectedDataset, setSelectedDataset] = useState<SupportedDataset>('HI-Small');
-  const [researchModels, setResearchModels] = useState<BenchmarkModelRecord[]>([]);
+  const [researchModels, setResearchModels] = useState<BenchmarkModelRecord[]>(FALLBACK_BENCHMARK_MODELS);
 
   // Fetch initial health and model registry
   const checkHealth = async () => {

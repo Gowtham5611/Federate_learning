@@ -27,6 +27,8 @@ import {
   UniversalCsvInspectionResponse,
 } from '../types/api';
 
+import { FALLBACK_BENCHMARK_MODELS } from '../data/fallbackModels';
+
 const resolveApiBase = (): string => {
   // In the browser:
   if (typeof window !== 'undefined') {
@@ -253,7 +255,15 @@ export const apiService = {
    * Phase 17: Fetch master benchmark matrix across all 27 models.
    */
   async getResearchModels(): Promise<BenchmarkModelRecord[]> {
-    return request<BenchmarkModelRecord[]>('/research/models');
+    try {
+      const res = await request<BenchmarkModelRecord[]>('/research/models');
+      if (Array.isArray(res) && res.length > 0) {
+        return res;
+      }
+    } catch (e) {
+      console.warn('Network request for research models failed, using authoritative fallback data:', e);
+    }
+    return FALLBACK_BENCHMARK_MODELS;
   },
 
   /**

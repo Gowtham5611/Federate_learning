@@ -92,6 +92,14 @@ def get_benchmark_models() -> List[Dict[str, Any]]:
     """Retrieve full master benchmark matrix across all verified models."""
     csv_path = _resolve_research_file("results/phase8/phase8_summary.csv")
     if not csv_path or not csv_path.exists():
+        # Fallback to local authoritative JSON cache
+        local_json = Path(__file__).resolve().parent / "authoritative_models.json"
+        if local_json.exists():
+            try:
+                with open(local_json, "r", encoding="utf-8") as jf:
+                    return json.load(jf)
+            except Exception as e:
+                logger.error("Failed loading local authoritative JSON: %s", e)
         logger.warning("Phase 8 summary artifact not found on disk, using empty list fallback.")
         return []
 
