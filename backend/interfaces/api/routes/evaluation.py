@@ -10,12 +10,14 @@ from pydantic import BaseModel, Field
 
 try:
     from interfaces.api.services.csv_evaluation_service import CsvEvaluationService
+    from interfaces.api.services.evaluation_job_service import EvaluationJobService
     from infrastructure.models.registry.universal_model_registry import UniversalModelRegistry
     from infrastructure.data.validators.csv_data_quality_auditor import CsvDataQualityAuditor
     from infrastructure.aml.investigation_report_generator import InvestigationReportGenerator
     from application.services.ensemble_experiment_service import EnsembleExperimentService
 except ModuleNotFoundError:
     from backend.interfaces.api.services.csv_evaluation_service import CsvEvaluationService
+    from backend.interfaces.api.services.evaluation_job_service import EvaluationJobService
     from backend.infrastructure.models.registry.universal_model_registry import UniversalModelRegistry
     from backend.infrastructure.data.validators.csv_data_quality_auditor import CsvDataQualityAuditor
     from backend.infrastructure.aml.investigation_report_generator import InvestigationReportGenerator
@@ -256,6 +258,83 @@ def predict_csv(request: CsvPredictRequest) -> Dict[str, Any]:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Prediction failed: {str(e)}",
         )
+
+
+@router.post("/predict/jobs", status_code=status.HTTP_202_ACCEPTED)
+@router.post("/api/predict/jobs", status_code=status.HTTP_202_ACCEPTED)
+@router.post("/api/v1/predict/jobs", status_code=status.HTTP_202_ACCEPTED)
+@router.post("/evaluate/jobs", status_code=status.HTTP_202_ACCEPTED)
+@router.post("/api/evaluate/jobs", status_code=status.HTTP_202_ACCEPTED)
+@router.post("/api/v1/evaluate/jobs", status_code=status.HTTP_202_ACCEPTED)
+def submit_evaluation_job(request: CsvPredictRequest) -> Dict[str, Any]:
+    """Submit a CSV evaluation job to run in the background.
+
+    Returns immediately with 202 Accepted and a job/run ID to prevent reverse-proxy timeouts.
+    Client can poll /api/v1/predict/jobs/{job_id} for progress and results.
+    """
+    if not request.csv_content or len(request.csv_content.strip()) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Uploaded CSV content is empty.",
+        )
+
+    job_service = EvaluationJobService()
+    fname = request.filename or "upload.csv"
+    mappings = request.user_mappings or request.column_mapping
+    csv_bytes = request.csv_content.encode("utf-8")
+
+    job_id, is_new = job_service.submit_job(
+        csv_bytes=csv_bytes,
+        filename=fname,
+        dataset=request.dataset,
+        model_id=request.model_id or request.dataset or "auto",
+        row_limit=request.row_limit,
+        threshold=request.threshold,
+        user_mappings=mappings,
+        tenant_id=request.tenant_id or "default_tenant",
+        enable_persistent_history=bool(request.enable_persistent_history),
+        fallback_model=request.fallback_model,
+    )
+
+    job_info = job_service.get_job(job_id) or {}
+    return {
+        "status": "accepted",
+        "job_id": job_id,
+        "run_id": job_id,
+        "is_new": is_new,
+        "job_status": job_info.get("status", "queued"),
+        "progress": job_info.get("progress", 0.05),
+        "phase": job_info.get("phase", "queued"),
+        "message": "Evaluation job accepted and processing in background.",
+    }
+
+
+@router.get("/predict/jobs/{job_id}")
+@router.get("/api/predict/jobs/{job_id}")
+@router.get("/api/v1/predict/jobs/{job_id}")
+@router.get("/evaluate/jobs/{job_id}")
+@router.get("/api/evaluate/jobs/{job_id}")
+@router.get("/api/v1/evaluate/jobs/{job_id}")
+def get_evaluation_job_status(job_id: str) -> Dict[str, Any]:
+    """Query progress and result of an evaluation job by ID."""
+    job_service = EvaluationJobService()
+    job = job_service.get_job(job_id)
+    if not job:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Evaluation job '{job_id}' not found.",
+        )
+    return job
+
+
+@router.get("/predict/jobs")
+@router.get("/api/v1/predict/jobs")
+@router.get("/evaluate/jobs")
+@router.get("/api/v1/evaluate/jobs")
+def list_evaluation_jobs(limit: int = 20) -> List[Dict[str, Any]]:
+    """List recent evaluation jobs."""
+    job_service = EvaluationJobService()
+    return job_service.list_recent_jobs(limit=limit)
 
 
 @router.post("/evaluate/multi-model")

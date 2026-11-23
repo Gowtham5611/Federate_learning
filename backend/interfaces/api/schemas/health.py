@@ -17,6 +17,19 @@ class HealthResponse(BaseModel):
     timestamp: str = Field(..., description="ISO 8601 UTC timestamp.")
 
 
+class ReadinessResponse(BaseModel):
+    """Detailed readiness verification of inference engines, models, and metadata."""
+    status: str = Field(..., description="Readiness status ('ready' or 'degraded').")
+    models_ready: bool = Field(..., description="Whether all champion models are verified and in memory.")
+    evaluation_ready: bool = Field(..., description="Whether CSV preprocessing and inference pipelines are operational.")
+    device: str = Field("cpu", description="Execution device.")
+    verified_models_count: int = Field(..., description="Total verified models in universal registry.")
+    loaded_models: List[str] = Field(..., description="Names of active preloaded models.")
+    datasets_ready: List[str] = Field(..., description="Datasets with verified metadata on disk.")
+    missing_components: List[str] = Field(default_factory=list, description="List of unverified components if degraded.")
+    timestamp: str = Field(..., description="ISO 8601 UTC timestamp.")
+
+
 class ModelMetadataResponse(BaseModel):
     """Metadata describing a single verified model."""
     dataset: str = Field(..., description="Target AML dataset ('HI-Small' or 'LI-Medium').")

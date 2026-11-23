@@ -20,6 +20,7 @@ try:
         DatasetMetadataResponse,
         HealthResponse,
         ModelMetadataResponse,
+        ReadinessResponse,
     )
     from interfaces.api.services.model_service import ModelService
 except ModuleNotFoundError:
@@ -33,6 +34,7 @@ except ModuleNotFoundError:
         DatasetMetadataResponse,
         HealthResponse,
         ModelMetadataResponse,
+        ReadinessResponse,
     )
     from backend.interfaces.api.services.model_service import ModelService
 
@@ -88,6 +90,66 @@ def get_health() -> HealthResponse:
         loaded_models=loaded_models,
         device="cpu",
         readiness="ready" if is_ready else "initializing",
+        timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    )
+
+
+@router.get("/ready", response_model=ReadinessResponse)
+@router.get("/api/v1/ready", response_model=ReadinessResponse)
+def get_readiness() -> ReadinessResponse:
+    """Comprehensive readiness probe verifying models, preprocessors, and metadata.
+
+    Distinguishes liveness ('process is up') from operational readiness
+    ('models loaded and verified, preprocessing metadata available, ready for CSV evaluation').
+    """
+    model_service = ModelService()
+    is_ready = model_service.is_ready()
+    loaded_models = model_service.get_loaded_models()
+
+    missing: List[str] = []
+    datasets_ready: List[str] = []
+
+    # Check HI-Small and LI-Medium metadata
+    for ds in ("HI-Small", "LI-Medium"):
+        meta_dir = BASE_DIR / f"data/processed/ibm_aml/{ds}"
+        if not meta_dir.exists():
+            meta_dir = _ROOT_DIR / f"data/processed/ibm_aml/{ds}"
+        if not meta_dir.exists():
+            meta_dir = _BACKEND_DIR / f"data/processed/ibm_aml/{ds}"
+
+        if (meta_dir / "metadata/feature_metadata.json").exists() or (meta_dir / "feature_metadata.json").exists():
+            datasets_ready.append(ds)
+        else:
+            missing.append(f"metadata_{ds}")
+
+    # Check universal model registry
+    try:
+        from infrastructure.models.registry.universal_model_registry import UniversalModelRegistry
+        reg = UniversalModelRegistry()
+        total_models = len(reg.list_all_models())
+    except Exception:
+        try:
+            from backend.infrastructure.models.registry.universal_model_registry import UniversalModelRegistry
+            reg = UniversalModelRegistry()
+            total_models = len(reg.list_all_models())
+        except Exception:
+            total_models = len(loaded_models)
+
+    # Check if models are loaded
+    if not is_ready:
+        missing.append("champion_models_not_fully_loaded")
+
+    overall_ready = is_ready and len(datasets_ready) > 0
+
+    return ReadinessResponse(
+        status="ready" if overall_ready else "degraded",
+        models_ready=is_ready,
+        evaluation_ready=overall_ready,
+        device="cpu",
+        verified_models_count=total_models,
+        loaded_models=loaded_models,
+        datasets_ready=datasets_ready,
+        missing_components=missing,
         timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
     )
 

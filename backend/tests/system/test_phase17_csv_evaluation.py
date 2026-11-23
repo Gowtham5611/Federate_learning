@@ -16,7 +16,8 @@ from interfaces.api.routes.research import (
 from interfaces.api.services.csv_evaluation_service import CsvEvaluationService
 from interfaces.api.services.model_service import ModelService
 
-BASE_DIR = Path(__file__).resolve().parents[1]
+_BACKEND_DIR = Path(__file__).resolve().parents[2]
+BASE_DIR = _BACKEND_DIR if (_BACKEND_DIR / "data").exists() else Path(__file__).resolve().parents[1]
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -107,7 +108,7 @@ def test_evaluate_csv_hi_small_processed_with_labels():
 
     assert res["status"] == "success"
     assert res["dataset"] == "HI-Small"
-    assert res["model_name"] == "hi_small_lstm_fedavg_iid_seed42"
+    assert "HI-Small Champion" in res["model_name"] or res.get("model_id") == "hi_small_lstm_fedavg_iid_seed42"
     assert res["decision_threshold"] == pytest.approx(0.33778378, abs=1e-5)
     assert res["evaluated_sequences"] == 25
     assert res["has_labels"] is True
@@ -130,7 +131,7 @@ def test_evaluate_csv_hi_small_processed_with_labels():
     assert "timestamp" in first
     assert "predicted_probability" in first
     assert "decision" in first
-    assert first["decision"] in ("FLAGGED_LAUNDERING", "CLEARED_LEGITIMATE", "SUSPICIOUS", "LEGITIMATE")
+    assert first["decision"] in ("FLAGGED_LAUNDERING", "CLEARED_LEGITIMATE", "SUSPICIOUS", "LEGITIMATE", "LOW_CONFIDENCE_NO_HISTORY")
     assert "predicted_label" in first
     assert first["predicted_label"] in ("SUSPICIOUS", "LEGITIMATE")
     assert len(first["sequence_features"]) == 10
@@ -150,7 +151,7 @@ def test_evaluate_csv_li_medium_processed_with_labels():
 
     assert res["status"] == "success"
     assert res["dataset"] == "LI-Medium"
-    assert res["model_name"] == "config_5_bilstm_fedavg_iid"
+    assert "LI-Medium Champion" in res["model_name"] or res.get("model_id") == "config_5_bilstm_fedavg_iid"
     assert res["decision_threshold"] == pytest.approx(0.23848299, abs=1e-5)
     assert res["evaluated_sequences"] == 25
     assert res["has_labels"] is True

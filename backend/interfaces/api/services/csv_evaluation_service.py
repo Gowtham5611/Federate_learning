@@ -1061,7 +1061,7 @@ class CsvEvaluationService:
                 "model_checkpoint_sha256": ckpt_sha,
                 "created_at": time.time(),
                 "created_at_iso": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-                "total_rows": total_rows,
+                "total_rows": total_uploaded_rows,
                 "row_count": len(predictions),
                 "flagged_count": flagged_count,
                 "model_id": model_meta.model_id,

@@ -32,20 +32,22 @@ import { FALLBACK_BENCHMARK_MODELS } from '../data/fallbackModels';
 const resolveApiBase = (): string => {
   // In the browser:
   if (typeof window !== 'undefined') {
-    // If local dev, talk directly to local FastAPI server
+    // 1. Local development: connect directly to local FastAPI server
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
       return 'http://127.0.0.1:8000';
     }
-    // In production (Vercel / Cloud): Always use same-origin relative URLs ('')
-    // This allows Vercel's edge proxy to route requests server-to-server,
-    // permanently eliminating browser cross-origin CORS blocks, preflight failures,
-    // and network drops.
-    return '';
+    // 2. Explicit environment variable override
+    if (import.meta.env.VITE_API_BASE_URL !== undefined) {
+      return String(import.meta.env.VITE_API_BASE_URL).replace(/\/+$/, '');
+    }
+    // 3. In production: direct connection to live Render backend
+    // Bypasses Vercel edge/serverless proxy 10s request limits while utilizing verified CORS
+    return 'https://federate-learning.onrender.com';
   }
   if (import.meta.env.VITE_API_BASE_URL) {
-    return import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, '');
+    return String(import.meta.env.VITE_API_BASE_URL).replace(/\/+$/, '');
   }
-  return '';
+  return 'https://federate-learning.onrender.com';
 };
 
 const API_BASE = resolveApiBase();
@@ -112,13 +114,18 @@ async function request<T>(endpoint: string, options: RequestInit = {}, retries: 
                 : JSON.stringify(errorData.detail);
           }
         } catch {
-          // Response was not JSON
+          // Response was not JSON (e.g. gateway HTML/plaintext 502)
         }
 
-        if (response.status === 404) {
-          errorMessage = `API route not found at ${url}. Ensure the FastAPI server is running with all route handlers registered.`;
+        if (response.status === 502) {
+          const rndrId = response.headers.get('rndr-id') || response.headers.get('x-render-id') || '';
+          errorMessage = `Gateway Error (HTTP 502 Bad Gateway): The hosting reverse proxy failed to reach the backend instance (at ${url}). The backend container may be cold-starting or restarting after memory limits. ${rndrId ? `[Trace: ${rndrId}]` : ''} Please check service readiness at /ready and retry.`;
+        } else if (response.status === 504) {
+          errorMessage = `Gateway Timeout (HTTP 504 Gateway Timeout): The hosting gateway timed out waiting for sequence evaluation to complete. Try evaluating with a smaller row slice or using the background job flow.`;
         } else if (response.status === 503) {
-          errorMessage = `Backend model service unavailable: ${errorMessage}`;
+          errorMessage = `Service Unavailable (HTTP 503): Backend model service is initializing or verifying model checkpoints: ${errorMessage}`;
+        } else if (response.status === 404) {
+          errorMessage = `API route not found at ${url}. Ensure the FastAPI server is running with all route handlers registered.`;
         }
 
         throw new ApiError(response.status, errorMessage, errorDetails);
@@ -357,16 +364,77 @@ export const apiService = {
 
   /**
    * Predict on a CSV batch using a specific or automatically selected model.
+   * Utilizes background job execution when available to eliminate gateway timeouts (HTTP 502/504).
    */
-  async predictCsv(payload: {
-    csv_content: string;
-    model_id?: string;
-    filename?: string;
-    column_mapping?: Record<string, string>;
-    row_limit?: number;
-    threshold?: number;
-    fallback_model?: string;
-  }): Promise<CsvEvaluateResponse> {
+  async predictCsv(
+    payload: {
+      csv_content: string;
+      model_id?: string;
+      filename?: string;
+      column_mapping?: Record<string, string>;
+      row_limit?: number;
+      threshold?: number;
+      fallback_model?: string;
+    },
+    onProgress?: (progress: number, phase: string) => void
+  ): Promise<CsvEvaluateResponse> {
+    // 1. Try background job flow
+    try {
+      const submitRes = await request<{
+        status: string;
+        job_id: string;
+        run_id: string;
+        job_status: string;
+        progress: number;
+        phase: string;
+      }>('/api/v1/predict/jobs', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+
+      if (submitRes && submitRes.job_id) {
+        const jobId = submitRes.job_id;
+        if (onProgress) onProgress(submitRes.progress || 0.1, submitRes.phase || 'queued');
+
+        // Poll job status until complete (up to 120 attempts / 60 seconds)
+        const maxAttempts = 120;
+        for (let i = 0; i < maxAttempts; i++) {
+          await new Promise((res) => setTimeout(res, 500));
+          const job = await request<{
+            job_id: string;
+            status: 'queued' | 'running' | 'complete' | 'failed';
+            progress: number;
+            phase: string;
+            result?: CsvEvaluateResponse;
+            error?: string;
+            error_phase?: string;
+          }>(`/api/v1/predict/jobs/${jobId}`);
+
+          if (onProgress) onProgress(job.progress, job.phase);
+
+          if (job.status === 'complete' && job.result) {
+            return job.result;
+          }
+          if (job.status === 'failed') {
+            throw new ApiError(
+              400,
+              job.error || 'Evaluation job failed during execution.',
+              { phase: job.error_phase, jobId }
+            );
+          }
+        }
+        throw new ApiError(504, 'Evaluation processing timed out on server. Please check status later.', { jobId });
+      }
+    } catch (err) {
+      // If jobs endpoint is not found (404), fall back to direct synchronous prediction
+      if (err instanceof ApiError && err.status === 404) {
+        // Fall back below
+      } else {
+        throw err;
+      }
+    }
+
+    // Fallback: direct synchronous prediction
     try {
       return await request<CsvEvaluateResponse>('/api/v1/predict/csv', {
         method: 'POST',

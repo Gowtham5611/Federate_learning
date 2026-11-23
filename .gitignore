@@ -48,6 +48,8 @@ backend/data/interim/*
 !backend/data/interim/.gitkeep
 backend/data/processed/*
 !backend/data/processed/.gitkeep
+backend/data/results_store/*
+!backend/data/results_store/.gitkeep
 !backend/data/processed/ibm_aml/
 !backend/data/processed/ibm_aml/*/metadata/
 !backend/data/processed/ibm_aml/*/metadata/**

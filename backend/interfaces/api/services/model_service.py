@@ -256,10 +256,10 @@ class ModelService:
 
     @staticmethod
     def _resolve_checkpoint_path(dataset: str, default_path: Path) -> Path:
-        """Resolve model checkpoint path from environment variables or fallback to default."""
+        """Resolve model checkpoint path from environment variables, working directories, or default."""
         env_key = f"FEDSECUREAI_{dataset.upper().replace('-', '_')}_CHECKPOINT"
         override = os.getenv(env_key)
-        if override:
+        if override and Path(override).exists():
             return Path(override)
         ckpt_dir = os.getenv("FEDSECUREAI_CHECKPOINT_DIR")
         if ckpt_dir:
@@ -269,6 +269,23 @@ class ModelService:
             candidate_nested = Path(ckpt_dir) / dataset / default_path.name
             if candidate_nested.exists():
                 return candidate_nested
+
+        if default_path.exists():
+            return default_path
+
+        # Search across alternative workspace base directories
+        for base in [_BACKEND_DIR, _ROOT_DIR, _ROOT_DIR / "backend", BASE_DIR]:
+            try:
+                rel = default_path.relative_to(BASE_DIR)
+                c1 = base / rel
+                if c1.exists():
+                    return c1
+            except Exception:
+                pass
+            c2 = base / default_path.name
+            if c2.exists():
+                return c2
+
         return default_path
 
     def _load_single_model(self, dataset: str) -> None:
