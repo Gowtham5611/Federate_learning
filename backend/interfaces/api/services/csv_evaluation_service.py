@@ -2333,17 +2333,23 @@ class CsvEvaluationService:
             for idx, val in enumerate(pd.to_numeric(mapped_df[COL_AMOUNT_PAID], errors="coerce")):
                 raw_amounts[idx] = float(val) if pd.notna(val) else 0.0
 
-        meta_dir = BASE_DIR / f"data/processed/ibm_aml/{target_dataset}/metadata"
-        if not meta_dir.exists():
-            raise ValueError(f"Metadata directory for dataset '{target_dataset}' not found at {meta_dir}")
+        meta_dir = _resolve_dataset_meta_dir(target_dataset)
+        transformers_path = meta_dir / "transformers.json" if meta_dir.exists() else None
+        if not transformers_path or not transformers_path.exists():
+            fallback_meta = _resolve_dataset_meta_dir("HI-Small")
+            if (fallback_meta / "transformers.json").exists():
+                meta_dir = fallback_meta
+                transformers_path = fallback_meta / "transformers.json"
 
-        transformers_path = meta_dir / "transformers.json"
-        tf_dict = json.loads(transformers_path.read_text(encoding="utf-8"))
-
-        encoder = OrdinalCategoricalEncoder.from_mapping(
-            {c: d["mapping"] for c, d in tf_dict["categorical_encoding"]["columns"].items()}
-        )
-        standardizer = RunningStandardizer.from_parameters(tf_dict["scaling_parameters"])
+        if transformers_path and transformers_path.exists():
+            tf_dict = json.loads(transformers_path.read_text(encoding="utf-8"))
+            encoder = OrdinalCategoricalEncoder.from_mapping(
+                {c: d["mapping"] for c, d in tf_dict["categorical_encoding"]["columns"].items()}
+            )
+            standardizer = RunningStandardizer.from_parameters(tf_dict["scaling_parameters"])
+        else:
+            encoder = OrdinalCategoricalEncoder()
+            standardizer = RunningStandardizer()
 
         builder = AccountHistoryBuilder()
         if enable_persistent_history:
@@ -2380,7 +2386,11 @@ class CsvEvaluationService:
         self, df: pd.DataFrame, dataset: str
     ) -> Tuple[np.ndarray, np.ndarray, pd.DataFrame, Dict[str, Any]]:
         """Construct (N, 10, 57) sequences from processed dataframe with diagnostics."""
-        meta_dir = BASE_DIR / f"data/processed/ibm_aml/{dataset}"
+        meta_dir = _resolve_dataset_dir(dataset)
+        if not (meta_dir / "metadata" / "transformers.json").exists():
+            fallback_dir = _resolve_dataset_dir("HI-Small")
+            if (fallback_dir / "metadata" / "transformers.json").exists():
+                meta_dir = fallback_dir
         meta = ProcessedFeatureMetadata.read(meta_dir)
         nominal_map = {nom.column: nom for nom in meta.nominal_columns}
         width = meta.feature_dimension(one_hot_nominal_codes=True)
