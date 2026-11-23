@@ -19,6 +19,17 @@ _ROOT_DIR = _BACKEND_DIR.parent
 BASE_DIR = _BACKEND_DIR if (_BACKEND_DIR / "results").exists() else _ROOT_DIR
 
 
+def _resolve_research_file(rel_path: str) -> Optional[Path]:
+    for base in [_BACKEND_DIR, _ROOT_DIR, BASE_DIR]:
+        c1 = base / rel_path
+        if c1.exists():
+            return c1
+        c2 = base / "backend" / rel_path
+        if c2.exists():
+            return c2
+    return None
+
+
 @router.get("/overview")
 def get_research_overview() -> Dict[str, Any]:
     """Retrieve verified high-level metadata and dataset pipeline summaries."""
@@ -79,12 +90,10 @@ def get_research_overview() -> Dict[str, Any]:
 @router.get("/models")
 def get_benchmark_models() -> List[Dict[str, Any]]:
     """Retrieve full master benchmark matrix across all verified models."""
-    csv_path = BASE_DIR / "results/phase8/phase8_summary.csv"
-    if not csv_path.exists():
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Phase 8 summary artifact not found on disk.",
-        )
+    csv_path = _resolve_research_file("results/phase8/phase8_summary.csv")
+    if not csv_path or not csv_path.exists():
+        logger.warning("Phase 8 summary artifact not found on disk, using empty list fallback.")
+        return []
 
     records: List[Dict[str, Any]] = []
     with open(csv_path, "r", encoding="utf-8") as f:
@@ -110,8 +119,8 @@ def get_benchmark_models() -> List[Dict[str, Any]]:
             })
 
     # Add Centralized baselines for HI-Small
-    cent_csv = BASE_DIR / "results/phase8/centralized_vs_federated.csv"
-    if cent_csv.exists():
+    cent_csv = _resolve_research_file("results/phase8/centralized_vs_federated.csv")
+    if cent_csv and cent_csv.exists():
         with open(cent_csv, "r", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for row in reader:
@@ -141,12 +150,9 @@ def get_benchmark_models() -> List[Dict[str, Any]]:
 @router.get("/curves")
 def get_convergence_curves() -> List[Dict[str, Any]]:
     """Retrieve verified round-by-round federated convergence curves."""
-    curves_csv = BASE_DIR / "results/phase8/round_level_analysis.csv"
-    if not curves_csv.exists():
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Round-level analysis artifact not found on disk.",
-        )
+    curves_csv = _resolve_research_file("results/phase8/round_level_analysis.csv")
+    if not curves_csv or not curves_csv.exists():
+        return []
 
     records: List[Dict[str, Any]] = []
     with open(curves_csv, "r", encoding="utf-8") as f:
@@ -169,8 +175,8 @@ def get_convergence_curves() -> List[Dict[str, Any]]:
 @router.get("/thresholds")
 def get_threshold_tradeoffs() -> List[Dict[str, Any]]:
     """Retrieve operational threshold tradeoff analysis."""
-    thresh_csv = BASE_DIR / "results/phase8/threshold_tradeoff_analysis.csv"
-    if not thresh_csv.exists():
+    thresh_csv = _resolve_research_file("results/phase8/threshold_tradeoff_analysis.csv")
+    if not thresh_csv or not thresh_csv.exists():
         return []
 
     records: List[Dict[str, Any]] = []

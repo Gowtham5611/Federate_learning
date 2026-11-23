@@ -149,6 +149,15 @@ scratch/
 !backend/models/checkpoints/*/*best.pt
 !backend/models/baselines/lightgbm_baseline.txt
 
+# Phase 7 & 8 research benchmarks, ensemble validation, and demo data
+!backend/results/phase8/**/*.csv
+!backend/results/phase7/**/*.csv
+!backend/results/phase7/**/*.json
+!backend/results/phase7/**/*.npz
+!backend/data/demo/**/*.csv
+!backend/data/demo_samples/**/*.csv
+!backend/data/demo_slices/**/*.csv
+
 # =============================================================================
 # Node / Frontend
 # =============================================================================
