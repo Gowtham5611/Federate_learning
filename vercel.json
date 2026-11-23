@@ -6,35 +6,35 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://fedsecureai-api.onrender.com/api/:path*"
+      "destination": "https://federate-learning.onrender.com/api/:path*"
     },
     {
       "source": "/health",
-      "destination": "https://fedsecureai-api.onrender.com/health"
+      "destination": "https://federate-learning.onrender.com/health"
     },
     {
       "source": "/models",
-      "destination": "https://fedsecureai-api.onrender.com/models"
+      "destination": "https://federate-learning.onrender.com/models"
     },
     {
       "source": "/metadata/:path*",
-      "destination": "https://fedsecureai-api.onrender.com/metadata/:path*"
+      "destination": "https://federate-learning.onrender.com/metadata/:path*"
     },
     {
       "source": "/predict/:path*",
-      "destination": "https://fedsecureai-api.onrender.com/predict/:path*"
+      "destination": "https://federate-learning.onrender.com/predict/:path*"
     },
     {
       "source": "/csv/:path*",
-      "destination": "https://fedsecureai-api.onrender.com/csv/:path*"
+      "destination": "https://federate-learning.onrender.com/csv/:path*"
     },
     {
       "source": "/evaluate/:path*",
-      "destination": "https://fedsecureai-api.onrender.com/evaluate/:path*"
+      "destination": "https://federate-learning.onrender.com/evaluate/:path*"
     },
     {
       "source": "/research/:path*",
-      "destination": "https://fedsecureai-api.onrender.com/research/:path*"
+      "destination": "https://federate-learning.onrender.com/research/:path*"
     },
     {
       "source": "/(.*)",
