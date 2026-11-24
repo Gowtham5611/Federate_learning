@@ -74,6 +74,8 @@ def _get_expanded_feature_names(dataset: str) -> List[str]:
 
 
 @router.get("/health", response_model=HealthResponse)
+@router.get("/api/health", response_model=HealthResponse)
+@router.get("/api/v1/health", response_model=HealthResponse)
 def get_health() -> HealthResponse:
     """Check service liveness and model readiness state.
 
@@ -95,6 +97,7 @@ def get_health() -> HealthResponse:
 
 
 @router.get("/ready", response_model=ReadinessResponse)
+@router.get("/api/ready", response_model=ReadinessResponse)
 @router.get("/api/v1/ready", response_model=ReadinessResponse)
 def get_readiness() -> ReadinessResponse:
     """Comprehensive readiness probe verifying models, preprocessors, and metadata.

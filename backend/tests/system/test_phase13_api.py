@@ -24,7 +24,9 @@ except ModuleNotFoundError:
     from backend.interfaces.api.schemas.predict import PredictRequest, BatchPredictRequest
     from backend.interfaces.api.schemas.explain import ExplainRequest
 
-BASE_DIR = Path(__file__).resolve().parents[1]
+_BACKEND_DIR = Path(__file__).resolve().parents[2]
+_ROOT_DIR = _BACKEND_DIR.parent
+BASE_DIR = _ROOT_DIR
 
 
 class SimpleResponse:

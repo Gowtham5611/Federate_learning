@@ -15,6 +15,7 @@ import {
   ExplainRequest,
   ExplainResponse,
   HealthResponse,
+  ReadinessResponse,
   ModelCompatibilityResult,
   ModelMetadataResponse,
   PredictRequest,
@@ -156,10 +157,38 @@ async function request<T>(endpoint: string, options: RequestInit = {}, retries: 
 
 export const apiService = {
   /**
-   * Check API liveness and model loading state.
+   * Check API liveness (process is running and responsive).
+   * Canonical endpoint: /health with automatic /api/health and /api/v1/health fallbacks.
    */
   async getHealth(): Promise<HealthResponse> {
-    return request<HealthResponse>('/health');
+    try {
+      return await request<HealthResponse>('/health');
+    } catch (e1) {
+      try {
+        return await request<HealthResponse>('/api/health');
+      } catch {
+        try {
+          return await request<HealthResponse>('/api/v1/health');
+        } catch {
+          throw e1;
+        }
+      }
+    }
+  },
+
+  /**
+   * Check detailed service operational readiness (models in memory and verified, datasets ready).
+   */
+  async getReady(): Promise<ReadinessResponse> {
+    try {
+      return await request<ReadinessResponse>('/ready');
+    } catch {
+      try {
+        return await request<ReadinessResponse>('/api/ready');
+      } catch {
+        return await request<ReadinessResponse>('/api/v1/ready');
+      }
+    }
   },
 
   /**

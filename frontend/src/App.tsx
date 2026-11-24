@@ -12,8 +12,8 @@ import { FALLBACK_BENCHMARK_MODELS } from './data/fallbackModels';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 const APP_BUILD_INFO = {
-  gitSha: '9d554d0',
-  buildTime: '2026-11-23 21:30 UTC',
+  gitSha: '9016344',
+  buildTime: '2026-11-24 13:30 UTC',
 };
 
 export const App: React.FC = () => {
@@ -68,6 +68,13 @@ export const App: React.FC = () => {
     try {
       const h = await apiService.getHealth();
       setHealth(h);
+      setError(null);
+      // Asynchronously probe readiness
+      apiService.getReady().then((r) => {
+        if (r && r.status === 'degraded' && h) {
+          setHealth({ ...h, readiness: 'initializing' });
+        }
+      }).catch(() => {});
     } catch (err: unknown) {
       const msg = err instanceof ApiError ? err.message : err instanceof Error ? err.message : 'Backend connection error';
       setError(msg);
@@ -145,6 +152,7 @@ export const App: React.FC = () => {
       <Header
         health={health}
         loadingHealth={loadingHealth}
+        serviceError={error}
         onRefreshHealth={checkHealth}
         activeTab={activeTab}
         onSelectTab={setActiveTab}

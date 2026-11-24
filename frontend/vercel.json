@@ -13,6 +13,10 @@
       "destination": "https://federate-learning.onrender.com/health"
     },
     {
+      "source": "/ready",
+      "destination": "https://federate-learning.onrender.com/ready"
+    },
+    {
       "source": "/models",
       "destination": "https://federate-learning.onrender.com/models"
     },

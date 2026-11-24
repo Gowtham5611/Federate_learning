@@ -18,6 +18,18 @@ export interface HealthResponse {
   timestamp: string;
 }
 
+export interface ReadinessResponse {
+  status: 'ready' | 'degraded';
+  models_ready: boolean;
+  evaluation_ready: boolean;
+  device: string;
+  verified_models_count: number;
+  loaded_models: string[];
+  datasets_ready: string[];
+  missing_components: string[];
+  timestamp: string;
+}
+
 export interface ModelMetadataResponse {
   dataset: SupportedDataset;
   model_name: string;
