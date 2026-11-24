@@ -1306,17 +1306,17 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
                           <td className="py-2 px-3 text-slate-300">{tx.to_account}</td>
                           <td className="py-2 px-3 text-right text-slate-200">${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                           <td className="py-2 px-3">
-                            <span className={`font-bold ${tx.predicted_probability >= result.decision_threshold ? 'text-rose-400' : 'text-amber-400'}`}>
+                            <span className={`font-bold ${tx.predicted_probability >= displayedThreshold ? 'text-rose-400' : 'text-amber-400'}`}>
                               {(tx.predicted_probability * 100).toFixed(2)}%
                             </span>
                           </td>
                           <td className="py-2 px-3 text-center">
                             <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                              tx.predicted_probability >= result.decision_threshold
+                              tx.predicted_probability >= displayedThreshold
                                 ? 'bg-rose-950 text-rose-300 border border-rose-800'
                                 : 'bg-amber-950 text-amber-300 border border-amber-800'
                             }`}>
-                              {tx.predicted_probability >= result.decision_threshold ? 'HIGH RISK' : 'MEDIUM RISK'}
+                              {tx.predicted_probability >= displayedThreshold ? 'FLAGGED (Alert)' : 'CLEARED'}
                             </span>
                           </td>
                           <td className="py-2 px-3 text-center">
@@ -1355,7 +1355,7 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
               <div className="space-y-2">
                 <div className="grid grid-cols-10 gap-1.5 h-32 items-end pt-4 pb-1 bg-slate-950 p-3 rounded-2xl border border-slate-800">
                   {result.risk_distribution.map((bin, idx) => {
-                    const isAboveThreshold = bin.upper > result.decision_threshold;
+                    const isAboveThreshold = bin.upper > displayedThreshold;
                     const maxPct = Math.max(...(result.risk_distribution?.map((b) => b.percentage) || [1]));
                     const barHeightPct = Math.max(4, (bin.percentage / (maxPct || 1)) * 100);
 
@@ -1385,7 +1385,7 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
                 <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono px-1">
                   <span>Probability: 0.0 (Clean)</span>
                   <span className="text-amber-400">
-                    ▲ Cutoff ({result.decision_threshold.toFixed(4)})
+                    ▲ Cutoff ({displayedThreshold.toFixed(4)})
                   </span>
                   <span>1.0 (Laundering)</span>
                 </div>

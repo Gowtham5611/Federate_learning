@@ -17,8 +17,25 @@ import pandas as pd
 
 logger = logging.getLogger(__name__)
 
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
-MODEL_PATH = PROJECT_ROOT / "models" / "baselines" / "lightgbm_baseline.txt"
+_BACKEND_DIR = Path(__file__).resolve().parents[2]
+_ROOT_DIR = _BACKEND_DIR.parent
+
+
+def _resolve_model_path() -> Path:
+    candidates = [
+        _BACKEND_DIR / "models" / "baselines" / "lightgbm_baseline.txt",
+        _ROOT_DIR / "backend" / "models" / "baselines" / "lightgbm_baseline.txt",
+        _ROOT_DIR / "models" / "baselines" / "lightgbm_baseline.txt",
+        Path("backend/models/baselines/lightgbm_baseline.txt").resolve(),
+        Path("models/baselines/lightgbm_baseline.txt").resolve(),
+    ]
+    for c in candidates:
+        if c.exists():
+            return c
+    return _BACKEND_DIR / "models" / "baselines" / "lightgbm_baseline.txt"
+
+
+MODEL_PATH = _resolve_model_path()
 
 FEATURE_COLS = [
     "amount_paid_log", "amount_received_log", "amount_mismatch",
@@ -45,8 +62,12 @@ class TabularFallbackModel:
 
     def _load_model(self) -> None:
         if not self.model_file.exists():
-            logger.warning("Tabular fallback model file not found at %s", self.model_file)
-            return
+            resolved = _resolve_model_path()
+            if resolved.exists():
+                self.model_file = resolved
+            else:
+                logger.warning("Tabular fallback model file not found at %s", self.model_file)
+                return
 
         try:
             import lightgbm as lgb

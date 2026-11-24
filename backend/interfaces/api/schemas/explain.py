@@ -76,6 +76,10 @@ class ExplainRequest(BaseModel):
         le=20,
         description="Number of top positive and negative drivers to return.",
     )
+    threshold: float | None = Field(
+        default=None,
+        description="Active decision threshold override.",
+    )
 
     @model_validator(mode="after")
     def validate_inputs(self) -> ExplainRequest:

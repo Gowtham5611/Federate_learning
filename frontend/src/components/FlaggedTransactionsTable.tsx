@@ -618,18 +618,23 @@ export const FlaggedTransactionsTable: React.FC<FlaggedTransactionsTableProps> =
               </div>
 
               <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
-                <span className="text-[10px] text-slate-500 block uppercase">Risk Probability</span>
+                <span className="text-[10px] text-slate-500 block uppercase">Risk Probability Score</span>
                 <span className="font-bold text-teal-300">
-                  {Number(inspectItem.predicted_probability ?? 0).toFixed(6)}
+                  {Number(inspectItem.predicted_probability ?? 0).toFixed(4)}
+                </span>
+                <span className="text-[9px] text-slate-500 block font-normal">
+                  Difference: {((Number(inspectItem.predicted_probability ?? 0) - activeThreshold) >= 0 ? '+' : '') + (Number(inspectItem.predicted_probability ?? 0) - activeThreshold).toFixed(4)}
                 </span>
               </div>
 
               <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
-                <span className="text-[10px] text-slate-500 block uppercase">Model Verdict</span>
+                <span className="text-[10px] text-slate-500 block uppercase">Model Verdict & Cutoff</span>
                 <span className={`font-bold ${Number(inspectItem.predicted_probability ?? 0) >= activeThreshold ? 'text-rose-400' : 'text-emerald-400'}`}>
                   {Number(inspectItem.predicted_probability ?? 0) >= activeThreshold ? 'FLAGGED (Alert)' : 'CLEARED'}
                 </span>
-                <span className="text-[9px] text-slate-500 block font-normal">Cutoff threshold θ* = {activeThreshold.toFixed(4)}</span>
+                <span className="text-[9px] text-slate-500 block font-normal">
+                  Cutoff θ = {activeThreshold.toFixed(4)} ({Number(inspectItem.predicted_probability ?? 0) >= activeThreshold ? 'Score ≥ θ' : 'Score < θ'})
+                </span>
               </div>
 
               <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800">

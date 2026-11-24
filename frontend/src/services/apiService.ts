@@ -195,10 +195,20 @@ export const apiService = {
    * Run Integrated Gradients feature attribution on a sequence.
    */
   async explain(payload: ExplainRequest): Promise<ExplainResponse> {
-    return request<ExplainResponse>('/explain', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
+    try {
+      return await request<ExplainResponse>('/api/v1/explain', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 404) {
+        return await request<ExplainResponse>('/explain', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+      }
+      throw err;
+    }
   },
 
   /**

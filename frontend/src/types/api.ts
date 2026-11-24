@@ -82,6 +82,7 @@ export interface ExplainRequest {
   row_id?: number;
   steps?: number;
   top_k?: number;
+  threshold?: number;
 }
 
 export interface ExplainResponse {

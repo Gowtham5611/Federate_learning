@@ -93,6 +93,8 @@ def predict_batch(request: BatchPredictRequest) -> BatchPredictResponse:
 
 
 @router.post("/explain", response_model=ExplainResponse)
+@router.post("/api/explain", response_model=ExplainResponse)
+@router.post("/api/v1/explain", response_model=ExplainResponse)
 def explain(request: ExplainRequest) -> ExplainResponse:
     """Generate Integrated Gradients feature attributions for a transaction sequence."""
     explain_service = ExplanationService()

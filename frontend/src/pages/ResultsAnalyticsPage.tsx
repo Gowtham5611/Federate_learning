@@ -98,27 +98,27 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
     const ops = result.operating_points || result.evaluation_metrics?.operating_points;
     if (!ops) return;
 
+    let targetThresh = defaultThreshold;
     if (point === 'zero_diagnostic') {
-      if (ops.zero_diagnostic) {
-        setThreshold(ops.zero_diagnostic.threshold);
-      } else {
-        setThreshold(0.0);
-      }
+      targetThresh = ops.zero_diagnostic ? ops.zero_diagnostic.threshold : 0.0;
     } else if (point === 'ensemble_hybrid') {
-      setThreshold(ops.frozen ? ops.frozen.threshold : defaultThreshold);
+      targetThresh = ops.frozen ? ops.frozen.threshold : defaultThreshold;
     } else if (point === 'budget_10' && ops.alert_budgets?.['10']) {
-      setThreshold(ops.alert_budgets['10'].threshold);
+      targetThresh = ops.alert_budgets['10'].threshold;
     } else if (point === 'budget_50' && ops.alert_budgets?.['50']) {
-      setThreshold(ops.alert_budgets['50'].threshold);
+      targetThresh = ops.alert_budgets['50'].threshold;
     } else if (point === 'budget_100' && ops.alert_budgets?.['100']) {
-      setThreshold(ops.alert_budgets['100'].threshold);
+      targetThresh = ops.alert_budgets['100'].threshold;
     } else if (point === 'best_f1' && ops.best_f1_on_file) {
-      setThreshold(ops.best_f1_on_file.threshold);
+      targetThresh = ops.best_f1_on_file.threshold;
     } else if (ops.frozen) {
-      setThreshold(ops.frozen.threshold);
+      targetThresh = ops.frozen.threshold;
     } else {
-      setThreshold(defaultThreshold);
+      targetThresh = defaultThreshold;
     }
+
+    setThreshold(targetThresh);
+    setSliderDisplayVal(targetThresh);
   };
 
   const hasMetrics = Boolean(result.has_labels && result.evaluation_metrics);
