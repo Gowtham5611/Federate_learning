@@ -37,16 +37,30 @@ const resolveApiBase = (): string => {
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
       return 'http://127.0.0.1:8000';
     }
-    // 2. Explicit environment variable override
-    if (import.meta.env.VITE_API_BASE_URL !== undefined) {
-      return String(import.meta.env.VITE_API_BASE_URL).replace(/\/+$/, '');
+    // 2. Explicit environment variable override (ignore localhost in cloud production)
+    const envBase = import.meta.env.VITE_API_BASE_URL;
+    if (
+      envBase &&
+      typeof envBase === 'string' &&
+      envBase.trim() !== '' &&
+      !envBase.includes('localhost') &&
+      !envBase.includes('127.0.0.1')
+    ) {
+      return envBase.trim().replace(/\/+$/, '');
     }
     // 3. In production: direct connection to live Render backend
     // Bypasses Vercel edge/serverless proxy 10s request limits while utilizing verified CORS
     return 'https://federate-learning.onrender.com';
   }
-  if (import.meta.env.VITE_API_BASE_URL) {
-    return String(import.meta.env.VITE_API_BASE_URL).replace(/\/+$/, '');
+  const envBase = import.meta.env.VITE_API_BASE_URL;
+  if (
+    envBase &&
+    typeof envBase === 'string' &&
+    envBase.trim() !== '' &&
+    !envBase.includes('localhost') &&
+    !envBase.includes('127.0.0.1')
+  ) {
+    return envBase.trim().replace(/\/+$/, '');
   }
   return 'https://federate-learning.onrender.com';
 };
