@@ -41,6 +41,18 @@
       "destination": "https://federate-learning.onrender.com/research/:path*"
     },
     {
+      "source": "/ensemble/:path*",
+      "destination": "https://federate-learning.onrender.com/ensemble/:path*"
+    },
+    {
+      "source": "/train/:path*",
+      "destination": "https://federate-learning.onrender.com/train/:path*"
+    },
+    {
+      "source": "/predictions/:path*",
+      "destination": "https://federate-learning.onrender.com/predictions/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
