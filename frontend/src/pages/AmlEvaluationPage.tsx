@@ -116,6 +116,82 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
   const [multiModelEvaluating, setMultiModelEvaluating] = useState<boolean>(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
+  // Render free-tier cold-start & readiness recovery states
+  const [isWakingUp, setIsWakingUp] = useState<boolean>(false);
+  const [wakeUpAttempt, setWakeUpAttempt] = useState<number>(0);
+  const [failedStage, setFailedStage] = useState<string | null>(null);
+  const [failedRequestId, setFailedRequestId] = useState<string | null>(null);
+  const wakeupPollRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (wakeupPollRef.current) {
+        clearInterval(wakeupPollRef.current);
+      }
+    };
+  }, []);
+
+  const startBoundedWakeupCheck = (stageName: string, retryCallback: () => Promise<void>) => {
+    if (wakeupPollRef.current) {
+      clearInterval(wakeupPollRef.current);
+    }
+    setIsWakingUp(true);
+    setWakeUpAttempt(1);
+    setFailedStage(stageName);
+
+    let attempt = 1;
+    const maxAttempts = 12;
+
+    wakeupPollRef.current = setInterval(async () => {
+      attempt += 1;
+      setWakeUpAttempt(attempt);
+
+      try {
+        const readyStatus = await apiService.getReady();
+        if (readyStatus && readyStatus.models_ready) {
+          if (wakeupPollRef.current) {
+            clearInterval(wakeupPollRef.current);
+            wakeupPollRef.current = null;
+          }
+          setIsWakingUp(false);
+          setApiError(null);
+          await retryCallback();
+          return;
+        }
+      } catch {
+        // Continue polling while backend finishes booting
+      }
+
+      if (attempt >= maxAttempts) {
+        if (wakeupPollRef.current) {
+          clearInterval(wakeupPollRef.current);
+          wakeupPollRef.current = null;
+        }
+        setIsWakingUp(false);
+        setApiError(`Backend readiness check timed out after ${maxAttempts * 4}s during ${stageName}. The Render instance may still be starting up. Please click 'Retry Now'.`);
+      }
+    }, 4000);
+  };
+
+  const handleManualRetry = async () => {
+    if (wakeupPollRef.current) {
+      clearInterval(wakeupPollRef.current);
+      wakeupPollRef.current = null;
+    }
+    setIsWakingUp(false);
+    setApiError(null);
+
+    if (failedStage === 'CSV Schema Inspection' && csvContent) {
+      await analyzeUploadedCsv(csvContent, fileName || 'transactions.csv');
+    } else if (failedStage === 'Model Inference' && csvContent) {
+      await handleRunPrediction();
+    } else if (failedStage === 'Multi-Model Benchmark' && csvContent) {
+      await handleRunMultiModelEvaluation();
+    } else {
+      await refreshModelList();
+    }
+  };
+
   // Operating point selection state
   const [selectedOperatingPoint, setSelectedOperatingPoint] = useState<OperatingPointKey>('frozen');
 
@@ -241,14 +317,19 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
       setCompatibilities({});
       return;
     }
+    if (isInspecting) return;
 
     setIsInspecting(true);
     setApiError(null);
 
+    // Fast schema inspection on first 500 lines to avoid sending multi-MB raw strings
+    const lines = content.split('\n');
+    const sampleContent = lines.length > 500 ? lines.slice(0, 500).join('\n') : content;
+
     try {
       // 1. Deep Schema Inspection
       const inspectRes = await apiService.inspectCsv({
-        csv_content: content,
+        csv_content: sampleContent,
         filename: name,
       });
       setInspection(inspectRes);
@@ -260,7 +341,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
 
       // 2. Compatibility check across all models
       const compatRes = await apiService.checkModelCompatibility({
-        csv_content: content,
+        csv_content: sampleContent,
         filename: name,
         model_id: selectedModelId || 'auto',
       });
@@ -279,8 +360,18 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
       });
       setCustomMappings(initialMappings);
     } catch (err: unknown) {
+      const isCold = err instanceof ApiError ? err.isColdStart : false;
+      const reqId = err instanceof ApiError ? err.requestId : undefined;
       const msg = err instanceof ApiError ? err.message : err instanceof Error ? err.message : 'Inspection failed';
       setApiError(msg);
+      setFailedStage('CSV Schema Inspection');
+      if (reqId) setFailedRequestId(reqId);
+
+      if (isCold) {
+        startBoundedWakeupCheck('CSV Schema Inspection', async () => {
+          await analyzeUploadedCsv(content, name);
+        });
+      }
     } finally {
       setIsInspecting(false);
     }
@@ -355,13 +446,18 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
       });
       onEvaluationComplete(resp);
     } catch (err: unknown) {
-      let msg = 'Evaluation request failed';
-      if (err instanceof ApiError) {
-        msg = err.message;
-      } else if (err instanceof Error) {
-        msg = err.message;
-      }
+      const isCold = err instanceof ApiError ? err.isColdStart : false;
+      const reqId = err instanceof ApiError ? err.requestId : undefined;
+      const msg = err instanceof ApiError ? err.message : err instanceof Error ? err.message : 'Evaluation request failed';
       setApiError(msg);
+      setFailedStage('Model Inference');
+      if (reqId) setFailedRequestId(reqId);
+
+      if (isCold) {
+        startBoundedWakeupCheck('Model Inference', async () => {
+          await handleRunPrediction();
+        });
+      }
     } finally {
       setEvaluating(false);
     }
@@ -402,13 +498,18 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
         onEvaluationComplete(singleResp);
       }
     } catch (err: unknown) {
-      let msg = 'Multi-model evaluation request failed';
-      if (err instanceof ApiError) {
-        msg = err.message;
-      } else if (err instanceof Error) {
-        msg = err.message;
-      }
+      const isCold = err instanceof ApiError ? err.isColdStart : false;
+      const reqId = err instanceof ApiError ? err.requestId : undefined;
+      const msg = err instanceof ApiError ? err.message : err instanceof Error ? err.message : 'Multi-model evaluation request failed';
       setApiError(msg);
+      setFailedStage('Multi-Model Benchmark');
+      if (reqId) setFailedRequestId(reqId);
+
+      if (isCold) {
+        startBoundedWakeupCheck('Multi-Model Benchmark', async () => {
+          await handleRunMultiModelEvaluation();
+        });
+      }
     } finally {
       setMultiModelEvaluating(false);
     }
@@ -1098,14 +1199,55 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
         </div>
       </div>
 
-      {/* Backend API Error Banner */}
-      {apiError && (
-        <div className="p-4 bg-rose-950/60 border border-rose-500/50 rounded-2xl flex items-start space-x-3 text-rose-200 text-sm">
-          <AlertTriangle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
-          <div>
-            <h4 className="font-semibold text-rose-300">CSV Evaluation Notice</h4>
-            <p className="text-xs text-rose-200/90 mt-1 font-mono">{apiError}</p>
+      {/* Render Free-Tier Cold-Start & Wakeup Banner */}
+      {isWakingUp && (
+        <div className="p-4 bg-amber-950/70 border border-amber-500/60 rounded-2xl flex items-center justify-between gap-3 text-amber-200 text-sm shadow-lg shadow-amber-950/40">
+          <div className="flex items-center space-x-3">
+            <RefreshCw className="w-5 h-5 text-amber-400 shrink-0 animate-spin" />
+            <div>
+              <h4 className="font-semibold text-amber-300">Backend waking up...</h4>
+              <p className="text-xs text-amber-200/90 mt-0.5">
+                The Render free instance spins down when inactive and is currently booting (readiness check {wakeUpAttempt}/12). {failedStage ? `Stage: ${failedStage}.` : ''} Your request will resume automatically once ready.
+              </p>
+            </div>
           </div>
+          <button
+            onClick={handleManualRetry}
+            className="px-3 py-1.5 bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500/50 rounded-xl text-xs font-semibold text-amber-200 transition shrink-0 cursor-pointer"
+          >
+            Retry Now
+          </button>
+        </div>
+      )}
+
+      {/* Backend API Error Banner */}
+      {apiError && !isWakingUp && (
+        <div className="p-4 bg-rose-950/70 border border-rose-500/60 rounded-2xl flex items-start justify-between gap-3 text-rose-200 text-sm shadow-lg shadow-rose-950/40">
+          <div className="flex items-start space-x-3">
+            <AlertTriangle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+            <div>
+              <div className="flex items-center space-x-2">
+                <h4 className="font-semibold text-rose-300">CSV Evaluation Notice</h4>
+                {failedStage && (
+                  <span className="text-[10px] font-mono bg-rose-900/60 border border-rose-700/60 px-2 py-0.5 rounded-full text-rose-200">
+                    Stage: {failedStage}
+                  </span>
+                )}
+                {failedRequestId && (
+                  <span className="text-[10px] font-mono bg-slate-900/80 border border-slate-700 px-2 py-0.5 rounded-full text-slate-300">
+                    ID: {failedRequestId.slice(0, 16)}
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-rose-200/90 mt-1 font-mono break-all">{apiError}</p>
+            </div>
+          </div>
+          <button
+            onClick={handleManualRetry}
+            className="px-3 py-1.5 bg-rose-600/30 hover:bg-rose-600/50 border border-rose-500/50 rounded-xl text-xs font-semibold text-rose-200 transition shrink-0 cursor-pointer"
+          >
+            Retry Now
+          </button>
         </div>
       )}
 

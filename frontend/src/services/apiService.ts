@@ -85,7 +85,9 @@ export class ApiError extends Error {
   constructor(
     public status: number,
     message: string,
-    public details?: unknown
+    public details?: unknown,
+    public requestId?: string,
+    public isColdStart: boolean = false
   ) {
     super(message);
     this.name = 'ApiError';
@@ -111,7 +113,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}, retries: 
       if (!response.ok) {
         // Render free-tier cold-start recovery (502 / 503 / 504 during wakeup)
         if ([502, 503, 504].includes(response.status) && attempt < retries - 1) {
-          const delayMs = 2000 * (attempt + 1);
+          const delayMs = 2500 * (attempt + 1);
           console.warn(`[apiService] Cloud service warming up (HTTP ${response.status}). Retrying in ${delayMs}ms (attempt ${attempt + 1}/${retries})...`);
           await new Promise((res) => setTimeout(res, delayMs));
           continue;
@@ -132,8 +134,15 @@ async function request<T>(endpoint: string, options: RequestInit = {}, retries: 
           // Response was not JSON (e.g. gateway HTML/plaintext 502)
         }
 
+        const rndrId =
+          response.headers.get('rndr-id') ||
+          response.headers.get('x-render-id') ||
+          response.headers.get('x-request-id') ||
+          '';
+
+        const isCold = [502, 503, 504].includes(response.status);
+
         if (response.status === 502) {
-          const rndrId = response.headers.get('rndr-id') || response.headers.get('x-render-id') || '';
           errorMessage = `Gateway Error (HTTP 502 Bad Gateway): The hosting reverse proxy failed to reach the backend instance (at ${url}). The backend container may be cold-starting or restarting after memory limits. ${rndrId ? `[Trace: ${rndrId}]` : ''} Please check service readiness at /ready and retry.`;
         } else if (response.status === 504) {
           errorMessage = `Gateway Timeout (HTTP 504 Gateway Timeout): The hosting gateway timed out waiting for sequence evaluation to complete. Try evaluating with a smaller row slice or using the background job flow.`;
@@ -143,7 +152,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}, retries: 
           errorMessage = `API route not found at ${url}. Ensure the FastAPI server is running with all route handlers registered.`;
         }
 
-        throw new ApiError(response.status, errorMessage, errorDetails);
+        throw new ApiError(response.status, errorMessage, errorDetails, rndrId || undefined, isCold);
       }
 
       return (await response.json()) as T;
@@ -154,7 +163,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}, retries: 
       lastError = err;
       // Network drop / socket timeout while cloud instance is waking up
       if (attempt < retries - 1) {
-        const delayMs = 2500 * (attempt + 1);
+        const delayMs = 3000 * (attempt + 1);
         console.warn(`[apiService] Network blip or cold-start at ${url}. Retrying in ${delayMs}ms (attempt ${attempt + 1}/${retries})...`);
         await new Promise((res) => setTimeout(res, delayMs));
         continue;
@@ -164,8 +173,10 @@ async function request<T>(endpoint: string, options: RequestInit = {}, retries: 
 
   throw new ApiError(
     0,
-    `Backend connection error at ${url}. The cloud server may be waking up from an idle state. Please try again in a moment.`,
-    lastError
+    `Backend connection error at ${url}. The cloud server may be waking up from an idle state.`,
+    lastError,
+    undefined,
+    true
   );
 }
 
@@ -370,25 +381,16 @@ export const apiService = {
 
   /**
    * Inspect CSV structure, delimiter, encoding, semantic fields and sequence constructibility.
+   * Directly targets canonical /api/v1/csv/inspect without duplicate retries on failure.
    */
   async inspectCsv(payload: {
     csv_content: string;
     filename?: string;
   }): Promise<UniversalCsvInspectionResponse> {
-    try {
-      return await request<UniversalCsvInspectionResponse>('/api/v1/csv/inspect', {
-        method: 'POST',
-        body: JSON.stringify(payload),
-      });
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 404) {
-        return await request<UniversalCsvInspectionResponse>('/csv/inspect', {
-          method: 'POST',
-          body: JSON.stringify(payload),
-        });
-      }
-      throw err;
-    }
+    return request<UniversalCsvInspectionResponse>('/api/v1/csv/inspect', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
   },
 
   /**
@@ -399,20 +401,10 @@ export const apiService = {
     filename?: string;
     model_id?: string;
   }): Promise<{ results: ModelCompatibilityResult[] }> {
-    try {
-      return await request<{ results: ModelCompatibilityResult[] }>('/api/v1/models/compatibility', {
-        method: 'POST',
-        body: JSON.stringify(payload),
-      });
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 404) {
-        return await request<{ results: ModelCompatibilityResult[] }>('/models/compatibility', {
-          method: 'POST',
-          body: JSON.stringify(payload),
-        });
-      }
-      throw err;
-    }
+    return request<{ results: ModelCompatibilityResult[] }>('/api/v1/models/compatibility', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
   },
 
   /**
