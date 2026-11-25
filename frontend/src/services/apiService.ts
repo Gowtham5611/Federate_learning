@@ -217,6 +217,13 @@ export const apiService = {
   },
 
   /**
+   * Single-shot readiness probe for bounded cold-start polling (no retry cascade).
+   */
+  async probeReady(): Promise<ReadinessResponse> {
+    return request<ReadinessResponse>('/ready', {}, 1);
+  },
+
+  /**
    * List verified model catalog with parameter counts and thresholds.
    */
   async getModels(): Promise<ModelMetadataResponse[]> {

@@ -121,62 +121,70 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
   const [wakeUpAttempt, setWakeUpAttempt] = useState<number>(0);
   const [failedStage, setFailedStage] = useState<string | null>(null);
   const [failedRequestId, setFailedRequestId] = useState<string | null>(null);
-  const wakeupPollRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
+  const wakeupTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wakeupSessionRef = React.useRef<number>(0);
 
   useEffect(() => {
     return () => {
-      if (wakeupPollRef.current) {
-        clearInterval(wakeupPollRef.current);
+      wakeupSessionRef.current += 1;
+      if (wakeupTimerRef.current) {
+        clearTimeout(wakeupTimerRef.current);
       }
     };
   }, []);
 
   const startBoundedWakeupCheck = (stageName: string, retryCallback: () => Promise<void>) => {
-    if (wakeupPollRef.current) {
-      clearInterval(wakeupPollRef.current);
+    wakeupSessionRef.current += 1;
+    const sessionId = wakeupSessionRef.current;
+    if (wakeupTimerRef.current) {
+      clearTimeout(wakeupTimerRef.current);
+      wakeupTimerRef.current = null;
     }
     setIsWakingUp(true);
     setWakeUpAttempt(1);
     setFailedStage(stageName);
 
-    let attempt = 1;
-    const maxAttempts = 12;
+    const maxAttempts = 20;
 
-    wakeupPollRef.current = setInterval(async () => {
-      attempt += 1;
+    const pollOnce = async (attempt: number) => {
+      if (wakeupSessionRef.current !== sessionId) return;
       setWakeUpAttempt(attempt);
 
       try {
-        const readyStatus = await apiService.getReady();
-        if (readyStatus && readyStatus.models_ready) {
-          if (wakeupPollRef.current) {
-            clearInterval(wakeupPollRef.current);
-            wakeupPollRef.current = null;
-          }
+        const readyStatus = await apiService.probeReady();
+        if (wakeupSessionRef.current !== sessionId) return;
+        if (readyStatus && (readyStatus.models_ready || readyStatus.status === 'ready')) {
           setIsWakingUp(false);
           setApiError(null);
           await retryCallback();
           return;
         }
       } catch {
-        // Continue polling while backend finishes booting
+        // Backend still booting; proceed to next bounded attempt
       }
 
+      if (wakeupSessionRef.current !== sessionId) return;
       if (attempt >= maxAttempts) {
-        if (wakeupPollRef.current) {
-          clearInterval(wakeupPollRef.current);
-          wakeupPollRef.current = null;
-        }
         setIsWakingUp(false);
-        setApiError(`Backend readiness check timed out after ${maxAttempts * 4}s during ${stageName}. The Render instance may still be starting up. Please click 'Retry Now'.`);
+        setApiError(`Backend readiness check timed out after ${maxAttempts * 5}s during ${stageName}. The Render instance may still be starting up. Please click 'Retry Now'.`);
+        return;
       }
-    }, 4000);
+
+      wakeupTimerRef.current = setTimeout(() => {
+        void pollOnce(attempt + 1);
+      }, 5000);
+    };
+
+    wakeupTimerRef.current = setTimeout(() => {
+      void pollOnce(2);
+    }, 5000);
   };
 
   const handleManualRetry = async () => {
-    if (wakeupPollRef.current) {
-      clearInterval(wakeupPollRef.current);
-      wakeupPollRef.current = null;
+    wakeupSessionRef.current += 1;
+    if (wakeupTimerRef.current) {
+      clearTimeout(wakeupTimerRef.current);
+      wakeupTimerRef.current = null;
     }
     setIsWakingUp(false);
     setApiError(null);
@@ -1207,7 +1215,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
             <div>
               <h4 className="font-semibold text-amber-300">Backend waking up...</h4>
               <p className="text-xs text-amber-200/90 mt-0.5">
-                The Render free instance spins down when inactive and is currently booting (readiness check {wakeUpAttempt}/12). {failedStage ? `Stage: ${failedStage}.` : ''} Your request will resume automatically once ready.
+                The Render free instance spins down when inactive and is currently booting (readiness check {wakeUpAttempt}/20). {failedStage ? `Stage: ${failedStage}.` : ''} Your request will resume automatically once ready.
               </p>
             </div>
           </div>
