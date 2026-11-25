@@ -630,6 +630,14 @@ export const apiService = {
   },
 
   /**
+   * Get direct Legitimate (Non-Flagged / Cleared) CSV download URL.
+   */
+  getLegitimateCsvDownloadUrl(id: string, threshold?: number): string {
+    const q = threshold !== undefined ? `?threshold=${threshold}` : '';
+    return `${API_BASE}/api/v1/predict/download/${id}/legitimate${q}`;
+  },
+
+  /**
    * Get direct evaluation PDF report download URL with selected operating mode and filter.
    */
   getPdfReportUrl(id: string, operatingPoint?: string, filter?: string): string {

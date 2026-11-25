@@ -57,7 +57,6 @@ import {
   ShieldAlert,
   ShieldCheck,
   Zap,
-  Download,
   Settings,
   Cpu,
   Database,
@@ -217,30 +216,6 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
     if (selectedOperatingPoint === 'best_f1') return ops.best_f1_on_file || null;
     return ops.frozen || null;
   }, [currentResult, selectedOperatingPoint]);
-
-  const handleDownloadPdfReport = () => {
-    if (!currentResult) return;
-    const pid = currentResult.prediction_id || currentResult.download_id;
-    if (pid) {
-      window.open(apiService.getPdfReportUrl(pid, selectedOperatingPoint), '_blank');
-    }
-  };
-
-  const handleDownloadFlaggedCsv = () => {
-    if (!currentResult) return;
-    const pid = currentResult.prediction_id || currentResult.download_id;
-    if (pid) {
-      window.open(apiService.getFlaggedCsvDownloadUrl(pid), '_blank');
-    }
-  };
-
-  const handleDownloadNeedsReviewCsv = () => {
-    if (!currentResult) return;
-    const pid = currentResult.prediction_id || currentResult.download_id;
-    if (pid) {
-      window.open(apiService.getNeedsReviewCsvDownloadUrl(pid), '_blank');
-    }
-  };
 
   const handleRunFallbackModel = async () => {
     if (!csvContent || csvContent.trim().length === 0) return;
@@ -607,61 +582,6 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
     }
   };
 
-  // Direct export of predictions CSV
-  const handleDownloadPredictions = () => {
-    if (!currentResult) return;
-
-    if (currentResult.download_url) {
-      window.open(currentResult.download_url, '_blank');
-      return;
-    }
-
-    if (currentResult.download_id) {
-      window.open(apiService.getPredictionsDownloadUrl(currentResult.download_id), '_blank');
-      return;
-    }
-
-    // Fallback client-side generation
-    const headers = [
-      'Row_ID',
-      'Timestamp',
-      'From_Account',
-      'To_Account',
-      'Amount',
-      'Risk_Score',
-      'Risk_Level',
-      'Decision_Threshold',
-      'Decision',
-      'Ground_Truth',
-    ];
-
-    const rows = currentResult.predictions.map((p) => [
-      p.row_id,
-      p.timestamp,
-      p.from_account,
-      p.to_account,
-      p.amount,
-      p.predicted_probability,
-      (p as any).risk_level || (p.predicted_probability >= 0.7 ? 'High Risk' : p.predicted_probability >= 0.3 ? 'Medium Risk' : 'Low Risk'),
-      p.decision_threshold,
-      p.decision,
-      p.ground_truth_label !== null ? p.ground_truth_label : 'UNLABELED',
-    ]);
-
-    const csvContentStr = [
-      headers.join(','),
-      ...rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')),
-    ].join('\n');
-
-    const blob = new Blob([csvContentStr], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `fedsecureai_${currentResult.dataset.toLowerCase()}_predictions.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
   const selectedModelCompat =
     selectedModelId !== 'auto' && compatibilities[selectedModelId]
       ? compatibilities[selectedModelId]
@@ -695,13 +615,6 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
 
         {currentResult && (
           <div className="flex items-center space-x-3">
-            <button
-              onClick={handleDownloadPredictions}
-              className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-lg shadow-emerald-600/30 transition cursor-pointer"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>Download CSV</span>
-            </button>
             <button
               onClick={() => onNavigateTab('analytics')}
               className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition cursor-pointer"
@@ -1289,36 +1202,11 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
             </h2>
             <div className="flex flex-wrap items-center gap-2">
               <button
-                onClick={handleDownloadFlaggedCsv}
-                className="text-xs bg-rose-950/80 hover:bg-rose-900 border border-rose-700/60 text-rose-300 px-3 py-1.5 rounded-xl font-semibold flex items-center space-x-1.5 transition cursor-pointer"
-                title="Download CSV containing all transactions flagged by active model threshold or documented rule"
+                onClick={() => onNavigateTab('history')}
+                className="text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3.5 py-1.5 rounded-xl font-semibold flex items-center space-x-1.5 transition cursor-pointer"
               >
-                <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
-                <span>Download Flagged CSV</span>
-              </button>
-              {currentResult.has_labels && ((currentResult.evaluation_metrics as any)?.fn > 0 || (currentResult.evaluation_metrics?.confusion_matrix?.fn ?? 0) > 0) && (
-                <button
-                  onClick={handleDownloadNeedsReviewCsv}
-                  className="text-xs bg-amber-950/80 hover:bg-amber-900 border border-amber-700/60 text-amber-300 px-3 py-1.5 rounded-xl font-semibold flex items-center space-x-1.5 transition cursor-pointer"
-                  title="Download CSV containing ground-truth positive laundering cases cleared by model"
-                >
-                  <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Download Needs Review CSV</span>
-                </button>
-              )}
-              <button
-                onClick={handleDownloadPdfReport}
-                className="text-xs bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/60 text-indigo-300 px-3 py-1.5 rounded-xl font-semibold flex items-center space-x-1.5 transition cursor-pointer"
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span>Download Report (PDF)</span>
-              </button>
-              <button
-                onClick={handleDownloadPredictions}
-                className="text-xs bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 px-3 py-1.5 rounded-xl font-semibold flex items-center space-x-1.5 transition cursor-pointer"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>Master CSV</span>
+                <History className="w-3.5 h-3.5 text-indigo-400" />
+                <span>Prediction History & Downloads</span>
               </button>
               <button
                 onClick={() => onNavigateTab('analytics')}

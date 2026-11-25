@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { CsvEvaluateResponse, TransactionPredictionItem } from '../types/api';
 import {
   History,
-  Download,
   Search,
   Eye,
   Upload,
@@ -10,30 +9,13 @@ import {
   ShieldCheck,
   X,
   FileText,
-  RotateCcw,
-  CheckCircle2,
   Trash2,
-  Sliders,
   AlertTriangle,
   Info,
 } from 'lucide-react';
 import { apiService } from '../services/apiService';
 
 export type PredictionFilterMode = 'ALL' | 'PRED_SUSPICIOUS' | 'PRED_LEGITIMATE' | 'NEEDS_REVIEW_FN';
-
-interface HistoricalRunItem {
-  prediction_id: string;
-  filename: string;
-  model_id: string;
-  model_name: string;
-  decision_threshold: number;
-  total_rows: number;
-  flagged_count: number;
-  has_labels: boolean;
-  created_at: number;
-  created_at_iso: string;
-  eval_metrics?: any;
-}
 
 interface PredictionHistoryPageProps {
   result: CsvEvaluateResponse | null;
@@ -45,11 +27,8 @@ interface PredictionHistoryPageProps {
 export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
   result,
   onNavigateToUpload,
-  onSelectHistoricalRun,
   onClearSavedResults,
 }) => {
-  const [historyRuns, setHistoryRuns] = useState<HistoricalRunItem[]>([]);
-  const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
   const [statusFilter, setStatusFilter] = useState<PredictionFilterMode>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -70,33 +49,9 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
   } | null>(null);
   const [explainError, setExplainError] = useState<string | null>(null);
 
-  // Load historical runs from backend
-  const fetchRuns = async () => {
-    setLoadingHistory(true);
-    try {
-      const runs = await apiService.getPredictionHistory();
-      setHistoryRuns(runs || []);
-    } catch (err) {
-      console.warn('Failed to fetch prediction history:', err);
-    } finally {
-      setLoadingHistory(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchRuns();
-  }, [result?.prediction_id]);
-
   const canonicalThreshold = result?.decision_threshold ?? 0.337784;
-  const [activeThreshold, setActiveThreshold] = useState<number>(canonicalThreshold);
-  const [sliderVal, setSliderVal] = useState<number>(canonicalThreshold);
+  const activeThreshold = canonicalThreshold;
   const hasLabels = Boolean(result?.has_labels);
-
-  useEffect(() => {
-    const t = result?.decision_threshold ?? 0.337784;
-    setActiveThreshold(t);
-    setSliderVal(t);
-  }, [result?.decision_threshold, result?.prediction_id]);
 
   // Dynamically recomputed metrics and reconciled confusion counts from real active run data
   const {
@@ -104,9 +59,6 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
     predSuspiciousCount,
     predLegitimateCount,
     missedFnCount,
-    tpCount,
-    fpCount,
-    tnCount,
     totalCount,
   } = useMemo(() => {
     const preds = result?.predictions || [];
@@ -190,16 +142,6 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
     return filteredRows.slice(start, start + pageSize);
   }, [filteredRows, currentPage, pageSize]);
 
-  // Handle Export CSV
-  const handleExportCsv = () => {
-    if (!result) return;
-    const pid = result.prediction_id || result.download_id;
-    if (pid) {
-      window.open(apiService.getPredictionsDownloadUrl(pid), '_blank');
-      return;
-    }
-  };
-
   // Inspect attribution
   const handleInspect = async (item: TransactionPredictionItem) => {
     if (!result) return;
@@ -258,10 +200,12 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center space-x-2">
             <History className="w-7 h-7 text-indigo-400" />
-            <span>Evaluation Run History & Triage</span>
+            <span>Prediction History & Downloads</span>
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Persisted evaluation run artifacts, compliance triage queues, and auditable transaction-level records.
+            {result
+              ? `Uploaded CSV: ${result.filename} · Model Used: ${result.model_name || result.model_id}`
+              : 'Upload a CSV file to view its summary, triage queues, and downloadable reports.'}
           </p>
         </div>
 
@@ -282,11 +226,25 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
                 onClick={() => {
                   const pid = result.prediction_id || result.download_id;
                   if (pid) {
+                    window.open(apiService.getPdfReportUrl(pid), '_blank');
+                  }
+                }}
+                className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/60 text-indigo-300 text-xs font-semibold transition cursor-pointer"
+                title="Download evaluation metrics report (PDF) for uploaded CSV"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>Report (Metrics PDF)</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  const pid = result.prediction_id || result.download_id;
+                  if (pid) {
                     window.open(apiService.getFlaggedCsvDownloadUrl(pid, activeThreshold), '_blank');
                   }
                 }}
                 className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-rose-950/80 hover:bg-rose-900 border border-rose-700/60 text-rose-300 text-xs font-semibold transition cursor-pointer"
-                title="Download CSV containing only transactions flagged by active model threshold"
+                title="Download Flagged transactions CSV separately"
               >
                 <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
                 <span>Flagged CSV</span>
@@ -301,10 +259,10 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
                     }
                   }}
                   className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-amber-950/80 hover:bg-amber-900 border border-amber-700/60 text-amber-300 text-xs font-semibold transition cursor-pointer"
-                  title="Download CSV containing false negatives: CSV laundering rows cleared by model"
+                  title="Download Under Review (False Negatives) transactions CSV separately"
                 >
                   <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Needs Review CSV</span>
+                  <span>Under Review CSV</span>
                 </button>
               )}
 
@@ -312,260 +270,43 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
                 onClick={() => {
                   const pid = result.prediction_id || result.download_id;
                   if (pid) {
-                    window.open(apiService.getPdfReportUrl(pid), '_blank');
+                    window.open(apiService.getLegitimateCsvDownloadUrl(pid, activeThreshold), '_blank');
                   }
                 }}
-                className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/60 text-indigo-300 text-xs font-semibold transition cursor-pointer"
+                className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-300 text-xs font-semibold transition cursor-pointer"
+                title="Download Legitimate (Non-Flagged) transactions CSV separately"
               >
-                <FileText className="w-3.5 h-3.5" />
-                <span>PDF Report</span>
-              </button>
-
-              <button
-                onClick={handleExportCsv}
-                className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>Master CSV</span>
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Legitimate CSV</span>
               </button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Section 1: Saved Evaluation Runs Table */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2.5">
-            <RotateCcw className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
-            <div>
-              <h2 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">
-                Persisted Evaluation Runs
-              </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Saved run artifacts available in backend storage. Selecting a run restores its exact evaluated state and metrics without re-computation.
-              </p>
-            </div>
-          </div>
-
-          <span className="text-xs font-mono text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50 dark:bg-indigo-950/80 px-2.5 py-1 rounded-xl border border-indigo-200 dark:border-indigo-800/60">
-            {historyRuns.length} Runs Available
-          </span>
-        </div>
-
-        <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
-          <table className="w-full text-left border-collapse text-xs font-mono">
-            <thead>
-              <tr className="bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 uppercase text-[10px]">
-                <th className="py-3 px-3">Run ID</th>
-                <th className="py-3 px-3">Source CSV File</th>
-                <th className="py-3 px-3">Model Architecture</th>
-                <th className="py-3 px-3 text-center">Threshold</th>
-                <th className="py-3 px-3 text-right">Rows</th>
-                <th className="py-3 px-3 text-right">Model Alerts (TP + FP)</th>
-                <th className="py-3 px-3 text-center">Outcomes (TP / FP / FN)</th>
-                <th className="py-3 px-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60">
-              {historyRuns.length === 0 ? (
-                <tr>
-                  <td colSpan={8} className="py-6 text-center text-slate-500 text-xs">
-                    {loadingHistory ? 'Loading saved evaluation runs...' : 'No historical evaluation runs found in storage.'}
-                  </td>
-                </tr>
-              ) : (
-                historyRuns.slice(0, 8).map((run) => {
-                  const isActive = result?.prediction_id === run.prediction_id;
-                  const metrics = run.eval_metrics || {};
-                  const modelAlerts = run.flagged_count > 0
-                    ? run.flagged_count
-                    : (metrics.tp !== undefined && metrics.fp !== undefined ? (Number(metrics.tp) + Number(metrics.fp)) : 0);
-
-                  return (
-                    <tr
-                      key={run.prediction_id}
-                      className={`hover:bg-slate-50 dark:hover:bg-slate-800/40 transition ${isActive ? 'bg-indigo-50/50 dark:bg-indigo-950/20' : ''}`}
-                    >
-                      <td className="py-2.5 px-3 font-bold text-slate-900 dark:text-white whitespace-nowrap">
-                        <div className="flex items-center space-x-1.5">
-                          {isActive && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400 shrink-0" />}
-                          <span className={isActive ? 'text-indigo-600 dark:text-indigo-300 font-bold' : 'text-slate-700 dark:text-slate-300'}>
-                            {run.prediction_id}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-2.5 px-3 text-slate-700 dark:text-slate-200 font-medium truncate max-w-[180px]">
-                        {run.filename}
-                      </td>
-                      <td className="py-2.5 px-3 text-slate-500 dark:text-slate-400 text-[11px] truncate max-w-[180px]">
-                        {run.model_name}
-                      </td>
-                      <td className="py-2.5 px-3 text-center font-bold text-amber-600 dark:text-amber-300 whitespace-nowrap">
-                        θ = {run.decision_threshold.toFixed(4)}
-                      </td>
-                      <td className="py-2.5 px-3 text-right font-bold text-slate-900 dark:text-white whitespace-nowrap">
-                        {run.total_rows.toLocaleString()}
-                      </td>
-                      <td className="py-2.5 px-3 text-right font-bold whitespace-nowrap">
-                        <span className={modelAlerts > 0 ? 'text-rose-600 dark:text-rose-400 font-bold' : 'text-slate-400'}>
-                          {modelAlerts.toLocaleString()}
-                        </span>
-                      </td>
-                      <td className="py-2.5 px-3 text-center text-[10px] whitespace-nowrap">
-                        {run.has_labels && metrics.tp !== undefined ? (
-                          <span className="text-slate-600 dark:text-slate-300">
-                            TP: <strong className="text-emerald-600 dark:text-emerald-400">{metrics.tp}</strong> · FP: <strong className="text-rose-600 dark:text-rose-400">{metrics.fp}</strong> · FN: <strong className="text-amber-600 dark:text-amber-400">{metrics.fn}</strong>
-                          </span>
-                        ) : (
-                          <span className="text-slate-400 italic">Score-Only</span>
-                        )}
-                      </td>
-                      <td className="py-2.5 px-3 text-right whitespace-nowrap">
-                        <div className="flex items-center justify-end space-x-1.5">
-                          {onSelectHistoricalRun && (
-                            <button
-                              onClick={() => onSelectHistoricalRun(run.prediction_id)}
-                              className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition cursor-pointer ${
-                                isActive
-                                  ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/60'
-                                  : 'bg-indigo-600 hover:bg-indigo-500 text-white'
-                              }`}
-                            >
-                              {isActive ? 'Active Run' : 'Load Run'}
-                            </button>
-                          )}
-                          <button
-                            onClick={() => window.open(apiService.getPdfReportUrl(run.prediction_id), '_blank')}
-                            title="Download PDF Report"
-                            className="p-1 rounded-lg bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800 transition"
-                          >
-                            <FileText className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Section 2: Active Run Itemized Transaction Triage Table */}
+      {/* Active Uploaded CSV Summary & Triage Queue */}
       {result ? (
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
             <div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 flex-wrap gap-y-1">
                 <ShieldAlert className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
                 <h2 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">
-                  Itemized Transactions for Run <span className="font-mono text-indigo-600 dark:text-indigo-300">{result.prediction_id}</span>
+                  {result.filename}
                 </h2>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60">
+                  Model: {result.model_name || result.model_id}
+                </span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                   {filteredRows.length.toLocaleString()} Matches
                 </span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700/60">
-                  θ = {activeThreshold.toFixed(4)}
-                </span>
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Decisions evaluated dynamically: <code className="text-amber-600 dark:text-amber-300 font-bold">flagged = score ≥ {activeThreshold.toFixed(4)}</code>. Transactions below cutoff remain model-cleared regardless of CSV label.
+                CSV Summary: {totalCount.toLocaleString()} evaluated transactions · {predSuspiciousCount.toLocaleString()} Flagged · {predLegitimateCount.toLocaleString()} Non-Flagged{hasLabels ? ` · ${missedFnCount.toLocaleString()} Under Review` : ''}.
               </p>
             </div>
 
-            {/* Threshold Interactive Presets & Slider */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 bg-slate-50 dark:bg-slate-950 p-2.5 rounded-2xl border border-slate-200 dark:border-slate-800">
-              <div className="flex items-center space-x-1.5">
-                <Sliders className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
-                <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 font-mono">Cutoff θ:</span>
-              </div>
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <button
-                  onClick={() => {
-                    setActiveThreshold(canonicalThreshold);
-                    setSliderVal(canonicalThreshold);
-                  }}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-mono font-semibold transition cursor-pointer border ${
-                    Math.abs(activeThreshold - canonicalThreshold) < 1e-4
-                      ? 'bg-indigo-600 text-white border-indigo-500 shadow-sm'
-                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-white'
-                  }`}
-                >
-                  Canonical ({canonicalThreshold.toFixed(4)})
-                </button>
-                <button
-                  onClick={() => {
-                    setActiveThreshold(0.20);
-                    setSliderVal(0.20);
-                  }}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-mono font-semibold transition cursor-pointer border ${
-                    Math.abs(activeThreshold - 0.20) < 1e-4
-                      ? 'bg-amber-600 text-white border-amber-500 shadow-sm'
-                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-white'
-                  }`}
-                >
-                  High Recall (0.20)
-                </button>
-                <button
-                  onClick={() => {
-                    setActiveThreshold(0.50);
-                    setSliderVal(0.50);
-                  }}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-mono font-semibold transition cursor-pointer border ${
-                    Math.abs(activeThreshold - 0.50) < 1e-4
-                      ? 'bg-rose-600 text-white border-rose-500 shadow-sm'
-                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-white'
-                  }`}
-                >
-                  Strict (0.50)
-                </button>
-              </div>
-              <div className="flex items-center space-x-2 flex-1 min-w-[120px]">
-                <input
-                  type="range"
-                  min="0.00"
-                  max="1.00"
-                  step="0.005"
-                  value={sliderVal}
-                  onChange={(e) => {
-                    const v = parseFloat(e.target.value);
-                    setSliderVal(v);
-                    setActiveThreshold(v);
-                  }}
-                  className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
-                />
-                <span className="text-[11px] font-mono font-bold text-amber-600 dark:text-amber-400 min-w-[42px] text-right">
-                  {activeThreshold.toFixed(3)}
-                </span>
-              </div>
-            </div>
-
-            {/* Reconciled Confusion & Operating Counts */}
-            {hasLabels && (
-              <div className="flex flex-wrap items-center gap-2.5 text-[11px] font-mono px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400">
-                <span className="font-bold text-slate-800 dark:text-slate-200">Reconciled Counts:</span>
-                <span className="text-emerald-600 dark:text-emerald-400 font-bold" title="True Positives: CSV Laundering and Score >= θ">
-                  TP: {tpCount.toLocaleString()}
-                </span>
-                <span className="text-rose-600 dark:text-rose-400 font-bold" title="False Positives: CSV Legitimate and Score >= θ">
-                  FP: {fpCount.toLocaleString()}
-                </span>
-                <span className="text-amber-600 dark:text-amber-400 font-bold" title="False Negatives (Needs Review): CSV Laundering and Score < θ">
-                  FN: {missedFnCount.toLocaleString()}
-                </span>
-                <span className="text-indigo-600 dark:text-indigo-400 font-bold" title="True Negatives: CSV Legitimate and Score < θ">
-                  TN: {tnCount.toLocaleString()}
-                </span>
-                <span className="text-slate-400 dark:text-slate-600">|</span>
-                <span>Flagged (TP+FP): <strong className="text-rose-600 dark:text-rose-400">{(tpCount + fpCount).toLocaleString()}</strong></span>
-                <span>Cleared (TN+FN): <strong className="text-emerald-600 dark:text-emerald-400">{(tnCount + missedFnCount).toLocaleString()}</strong></span>
-                <span>Total: <strong className="text-slate-800 dark:text-slate-200">{totalCount.toLocaleString()}</strong></span>
-              </div>
-            )}
-
-            {/* Status Filter Tabs (Dynamic Counts) */}
+            {/* Status Filter Tabs (Keep ONLY Flagged, Non-Flagged, Under Review) */}
             <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800 text-xs">
               {/* Tab 1: All */}
               <button
@@ -587,7 +328,7 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
                 </span>
               </button>
 
-              {/* Tab 2: Predicted Suspicious (Alerts) */}
+              {/* Tab 2: Flagged */}
               <button
                 onClick={() => {
                   setStatusFilter('PRED_SUSPICIOUS');
@@ -599,7 +340,7 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                <span>Model Flagged</span>
+                <span>Flagged</span>
                 <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
                   statusFilter === 'PRED_SUSPICIOUS' ? 'bg-rose-800 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                 }`}>
@@ -607,7 +348,7 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
                 </span>
               </button>
 
-              {/* Tab 3: Predicted Legitimate (Cleared) */}
+              {/* Tab 3: Non-Flagged */}
               <button
                 onClick={() => {
                   setStatusFilter('PRED_LEGITIMATE');
@@ -619,7 +360,7 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                <span>Model Cleared</span>
+                <span>Non-Flagged</span>
                 <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
                   statusFilter === 'PRED_LEGITIMATE' ? 'bg-emerald-800 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                 }`}>
@@ -627,7 +368,7 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
                 </span>
               </button>
 
-              {/* Tab 4: Needs Review (False Negatives) */}
+              {/* Tab 4: Under Review */}
               {hasLabels && (
                 <button
                   onClick={() => {
@@ -639,10 +380,10 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
                       ? 'bg-amber-600 text-white font-bold shadow-sm'
                       : 'text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200'
                   }`}
-                  title="False Negatives: CSV laundering rows where model score is below active cutoff"
+                  title="Under Review: CSV laundering rows cleared by model"
                 >
                   <AlertTriangle className="w-3.5 h-3.5" />
-                  <span>Needs Review (False Negatives)</span>
+                  <span>Under Review</span>
                   <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
                     statusFilter === 'NEEDS_REVIEW_FN' ? 'bg-amber-800 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                   }`}>

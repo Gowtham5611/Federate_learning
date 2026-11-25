@@ -15,9 +15,7 @@ import {
   Target,
   Sliders,
   RefreshCw,
-  Download,
   HelpCircle,
-  FileText,
 } from 'lucide-react';
 import { formatMetric, formatPercent, formatRatioPercent } from '../utils/formatters';
 import { FlaggedTransactionsTable, TableFilterMode } from '../components/FlaggedTransactionsTable';
@@ -64,7 +62,7 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
   const [selectedOperatingPoint, setSelectedOperatingPoint] = useState<OperatingPointKey>('frozen');
   const [isManualSliderActive, setIsManualSliderActive] = useState<boolean>(false);
   const [showExplainPanel, setShowExplainPanel] = useState<boolean>(false);
-  const [activeTableFilter, setActiveTableFilter] = useState<TableFilterMode>('flagged');
+  const [, setActiveTableFilter] = useState<TableFilterMode>('flagged');
   const [heatmapCellFilter, setHeatmapCellFilter] = useState<{
     timeBucket: string;
     riskBand: string;
@@ -318,57 +316,6 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
     };
   }, [result, threshold, hasMetrics, defaultThreshold, staticMetrics]);
 
-  // Download predictions CSV with active threshold applied
-  const handleDownloadPredictions = () => {
-    const headers = [
-      'Row_ID',
-      'Timestamp',
-      'From_Account',
-      'To_Account',
-      'Amount',
-      'predicted_probability',
-      'predicted_label',
-      'prediction_status',
-      'model_name',
-      'classification_threshold',
-      'is_laundering',
-    ];
-
-    const preds = result.predictions || [];
-    const rows = preds.map((p) => {
-      const prob = p.predicted_probability ?? 0;
-      const isAlert = prob >= threshold;
-      return [
-        p.row_id,
-        p.timestamp || '',
-        p.from_account || '',
-        p.to_account || '',
-        p.amount ?? 0,
-        prob.toFixed(6),
-        isAlert ? 'SUSPICIOUS' : 'LEGITIMATE',
-        isAlert ? 'FLAGGED_LAUNDERING' : 'CLEARED_LEGITIMATE',
-        result.model_name || 'FedSecureAI',
-        threshold.toFixed(6),
-        p.ground_truth_label !== null && p.ground_truth_label !== undefined
-          ? p.ground_truth_label
-          : 'UNLABELED',
-      ];
-    });
-
-    const csvContent = [
-      headers.join(','),
-      ...rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')),
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `fedsecureai_${(result.dataset || 'dataset').toLowerCase()}_predictions_thr${threshold.toFixed(2)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
@@ -414,27 +361,6 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
               <span>Download Needs Review CSV</span>
             </button>
           )}
-
-          <button
-            onClick={() => {
-              const pid = result.prediction_id || result.download_id;
-              if (pid) {
-                window.open(apiService.getPdfReportUrl(pid, selectedOperatingPoint, activeTableFilter), '_blank');
-              }
-            }}
-            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/60 text-indigo-300 text-xs font-semibold transition cursor-pointer"
-          >
-            <FileText className="w-3.5 h-3.5" />
-            <span>Download Report (PDF)</span>
-          </button>
-
-          <button
-            onClick={handleDownloadPredictions}
-            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>Master CSV</span>
-          </button>
 
           <button
             onClick={onNavigateToUpload}

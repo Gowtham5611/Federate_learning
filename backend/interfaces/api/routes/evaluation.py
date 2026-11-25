@@ -524,8 +524,33 @@ def download_needs_review_csv(
     )
 
 
-# ==============================================================================
-# 6b. Prediction History & Stored Evaluation Runs
+@router.get("/predict/download/{prediction_id}/legitimate")
+@router.get("/api/v1/predict/download/{prediction_id}/legitimate")
+@router.get("/predictions/{prediction_id}/download/legitimate")
+@router.get("/api/v1/predictions/{prediction_id}/download/legitimate")
+def download_legitimate_csv(
+    prediction_id: str,
+    threshold: Optional[float] = Query(None, description="Optional custom threshold override"),
+) -> Response:
+    """Download non-flagged (legitimate / model-cleared) transactions."""
+    service = CsvEvaluationService()
+    res = service.get_filtered_csv(prediction_id, filter_type="legitimate", threshold=threshold)
+    if not res:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Prediction session '{prediction_id}' not found.",
+        )
+    if res[0] == "EXPIRED":
+        raise HTTPException(
+            status_code=status.HTTP_410_GONE,
+            detail=f"Prediction session '{prediction_id}' has expired.",
+        )
+    csv_content, filename = res
+    return Response(
+        content=csv_content,
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
+    )
 # ==============================================================================
 
 
