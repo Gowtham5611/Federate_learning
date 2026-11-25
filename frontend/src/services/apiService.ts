@@ -448,10 +448,10 @@ export const apiService = {
         const jobId = submitRes.job_id;
         if (onProgress) onProgress(submitRes.progress || 0.1, submitRes.phase || 'queued');
 
-        // Poll job status until complete (up to 120 attempts / 60 seconds)
-        const maxAttempts = 120;
+        // Poll job status until complete (up to 300 attempts / 5 minutes at 1s intervals)
+        const maxAttempts = 300;
         for (let i = 0; i < maxAttempts; i++) {
-          await new Promise((res) => setTimeout(res, 500));
+          await new Promise((res) => setTimeout(res, 1000));
           const job = await request<{
             job_id: string;
             status: 'queued' | 'running' | 'complete' | 'failed';
@@ -475,7 +475,7 @@ export const apiService = {
             );
           }
         }
-        throw new ApiError(504, 'Evaluation processing timed out on server. Please check status later.', { jobId });
+        throw new ApiError(504, 'Evaluation processing timed out after 5 minutes on server. Please check status later or try a smaller row limit.', { jobId });
       }
     } catch (err) {
       // If jobs endpoint is not found (404), fall back to direct synchronous prediction

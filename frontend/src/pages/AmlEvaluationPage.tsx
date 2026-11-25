@@ -113,6 +113,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
 
   // Execution states
   const [evaluating, setEvaluating] = useState<boolean>(false);
+  const [evalProgressText, setEvalProgressText] = useState<string>('Evaluating Transactions...');
   const [multiModelEvaluating, setMultiModelEvaluating] = useState<boolean>(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
@@ -439,19 +440,27 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
     }
 
     setEvaluating(true);
+    setEvalProgressText('Evaluating Transactions...');
     setApiError(null);
 
     try {
       const modelToUse = selectedModelId || 'auto';
       const thresholdVal = customThreshold !== '' ? parseFloat(customThreshold) : undefined;
-      const resp = await apiService.predictCsv({
-        csv_content: csvContent,
-        model_id: modelToUse,
-        filename: fileName || 'transactions.csv',
-        column_mapping: Object.keys(customMappings || {}).length > 0 ? customMappings : undefined,
-        row_limit: rowLimit,
-        threshold: thresholdVal,
-      });
+      const resp = await apiService.predictCsv(
+        {
+          csv_content: csvContent,
+          model_id: modelToUse,
+          filename: fileName || 'transactions.csv',
+          column_mapping: Object.keys(customMappings || {}).length > 0 ? customMappings : undefined,
+          row_limit: rowLimit,
+          threshold: thresholdVal,
+        },
+        (prog, phase) => {
+          const pct = Math.round((prog || 0) * 100);
+          const cleanPhase = (phase || 'processing').replace(/_/g, ' ');
+          setEvalProgressText(`Evaluating (${pct}% — ${cleanPhase})...`);
+        }
+      );
       onEvaluationComplete(resp);
     } catch (err: unknown) {
       const isCold = err instanceof ApiError ? err.isColdStart : false;
@@ -1194,7 +1203,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
               {evaluating ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin text-white" />
-                  <span>Evaluating Transactions...</span>
+                  <span>{evalProgressText}</span>
                 </>
               ) : (
                 <>
