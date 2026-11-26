@@ -15,6 +15,28 @@ import { ModelRoutingCard } from '../components/ModelRoutingCard';
 import { MultiModelComparisonTable } from '../components/MultiModelComparisonTable';
 import { KeyFindingsStrip } from '../components/KeyFindingsStrip';
 
+const DEMO_SAMPLE_20_CSV = `Timestamp,From Bank,Account,To Bank,Account.1,Amount Received,Receiving Currency,Amount Paid,Payment Currency,Payment Format,Is Laundering
+2022/09/01 00:05,010,8000EBD30,010,8000EBD30,3697.34,US Dollar,3697.34,US Dollar,Reinvestment,0
+2022/09/01 00:10,03208,8000F4580,001,8000F5340,1250.50,US Dollar,1250.50,US Dollar,Cheque,0
+2022/09/01 00:15,0121,800123450,024,800543210,15000.00,US Dollar,15000.00,US Dollar,ACH,1
+2022/09/01 00:20,024,800543210,089,800987650,14850.00,US Dollar,14850.00,US Dollar,ACH,1
+2022/09/01 00:25,089,800987650,012,800112230,14700.00,US Dollar,14700.00,US Dollar,Wire,1
+2022/09/01 00:30,005,800223340,005,800223340,420.00,US Dollar,420.00,US Dollar,Credit Card,0
+2022/09/01 00:35,019,800334450,044,800445560,89.99,US Dollar,89.99,US Dollar,Credit Card,0
+2022/09/01 00:40,031,800556670,017,800667780,2500.00,US Dollar,2500.00,US Dollar,ACH,0
+2022/09/01 00:45,0121,800123450,055,800778890,9900.00,US Dollar,9900.00,US Dollar,Cash,1
+2022/09/01 00:50,055,800778890,077,800889900,9850.00,US Dollar,9850.00,US Dollar,Wire,1
+2022/09/01 00:55,002,800990010,008,800102030,310.25,US Dollar,310.25,US Dollar,Cheque,0
+2022/09/01 01:00,014,800203040,014,800203040,1200.00,US Dollar,1200.00,US Dollar,Reinvestment,0
+2022/09/01 01:05,028,800304050,061,800405060,540.75,US Dollar,540.75,US Dollar,Credit Card,0
+2022/09/01 01:10,042,800506070,019,800607080,4500.00,US Dollar,4500.00,US Dollar,ACH,0
+2022/09/01 01:15,077,800889900,099,800998870,9800.00,US Dollar,9800.00,US Dollar,ACH,1
+2022/09/01 01:20,011,800708090,011,800708090,75.00,US Dollar,75.00,US Dollar,Reinvestment,0
+2022/09/01 01:25,033,800809010,022,800901020,620.40,US Dollar,620.40,US Dollar,Cheque,0
+2022/09/01 01:30,009,800010203,015,800020304,1850.00,US Dollar,1850.00,US Dollar,ACH,0
+2022/09/01 01:35,064,800030405,048,800040506,210.00,US Dollar,210.00,US Dollar,Credit Card,0
+2022/09/01 01:40,099,800998870,012,800112230,9750.00,US Dollar,9750.00,US Dollar,Wire,1`;
+
 const MODEL_DEFAULT_THRESHOLDS: Record<string, number> = {
   auto: 0.337784,
   ensemble_hybrid: 0.337784,
@@ -641,10 +663,25 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
           {/* Dropzone & Universal Format Banner */}
           <div className="flex-1 space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
               <label className="block text-xs font-mono uppercase text-slate-500 dark:text-slate-400 font-semibold">
                 Select or Drop Any Transaction CSV
               </label>
+              <button
+                type="button"
+                onClick={() => {
+                  setFileName('sample_demo_20_rows.csv');
+                  setFileSizeStr('1.6 KB');
+                  setTrainSuccessMessage(null);
+                  setApiError(null);
+                  setCsvContent(DEMO_SAMPLE_20_CSV);
+                  void analyzeUploadedCsv(DEMO_SAMPLE_20_CSV, 'sample_demo_20_rows.csv');
+                }}
+                disabled={isInspecting || evaluating}
+                className="px-2.5 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/40 border border-indigo-500/40 text-indigo-300 text-[11px] font-semibold transition cursor-pointer disabled:opacity-50"
+              >
+                Load Demo Sample (20 Rows)
+              </button>
             </div>
             <div className="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-500/80 dark:hover:border-indigo-500/80 rounded-2xl p-6 text-center transition bg-slate-50/60 dark:bg-slate-950/40 relative">
               <input
@@ -1135,9 +1172,9 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
           <div className="flex items-center space-x-3">
             <RefreshCw className="w-5 h-5 text-amber-400 shrink-0 animate-spin" />
             <div>
-              <h4 className="font-semibold text-amber-300">Backend waking up...</h4>
+              <h4 className="font-semibold text-amber-300">Server is waking up, please wait...</h4>
               <p className="text-xs text-amber-200/90 mt-0.5">
-                The Render free instance spins down when inactive and is currently booting (readiness check {wakeUpAttempt}/20). {failedStage ? `Stage: ${failedStage}.` : ''} Your request will resume automatically once ready.
+                Render free tier sleeps when inactive and is currently booting (readiness check {wakeUpAttempt}/20). {failedStage ? `Stage: ${failedStage}.` : ''} Your request will resume automatically once ready.
               </p>
             </div>
           </div>

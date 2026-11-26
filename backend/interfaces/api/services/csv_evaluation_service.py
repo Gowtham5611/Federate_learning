@@ -85,7 +85,6 @@ from infrastructure.data.sequences.account_sequence_dataset import (
     build_previous_row_index,
 )
 from infrastructure.data.sequences.processed_feature_metadata import ProcessedFeatureMetadata
-from infrastructure.models.dynamic_model_trainer import DynamicModelTrainer
 from infrastructure.models.registry.universal_model_registry import (
     ModelSchemaMetadata,
     UniversalModelRegistry,
@@ -145,7 +144,7 @@ def _resolve_dataset_dir(dataset: str) -> Path:
     return candidates[0]
 
 MAX_CSV_BYTES = 250 * 1024 * 1024  # 250 MB
-DEFAULT_ROW_LIMIT = 1000000
+DEFAULT_ROW_LIMIT = 1000
 MAX_ROW_LIMIT = 1000000
 
 
@@ -167,7 +166,14 @@ class CsvEvaluationService:
         self.adaptive_detector = AdaptiveSchemaDetector()
         self.universal_detector = UniversalSchemaDetector()
         self.model_registry = UniversalModelRegistry()
-        self.dynamic_trainer = DynamicModelTrainer()
+        self._dynamic_trainer = None
+
+    @property
+    def dynamic_trainer(self) -> Any:
+        if self._dynamic_trainer is None:
+            from infrastructure.models.dynamic_model_trainer import DynamicModelTrainer
+            self._dynamic_trainer = DynamicModelTrainer()
+        return self._dynamic_trainer
 
     def inspect_csv_bytes(
         self,
@@ -514,11 +520,14 @@ class CsvEvaluationService:
         target_dataset = model_meta.dataset_name
 
         # Schema adaptation using AdaptiveSchemaDetector
-        detection = self.adaptive_detector.inspect_and_adapt(
-            df=df,
-            filename=filename,
-            requested_dataset=target_dataset,
-        )
+        try:
+            detection = self.adaptive_detector.inspect_and_adapt(
+                df=df,
+                filename=filename,
+                requested_dataset=target_dataset,
+            )
+        except Exception as e:
+            raise ValueError(f"Column mapping / schema detection failed: {e}") from e
 
         if detection.status != DetectionStatus.COMPATIBLE:
             raise ValueError(detection.user_message)
@@ -536,43 +545,51 @@ class CsvEvaluationService:
             model_name = model_meta.model_name or SUPPORTED_MODELS_BY_DATASET.get(target_dataset, "FedSecureAI Lead Model")
 
         # Preprocess to Model-Ready Processed Features
-        processed_df, has_labels, raw_amounts, builder_accounts = self._preprocess_adapted_frame(
-            detection=detection,
-            orig_df=df,
-            target_dataset=target_dataset,
-            tenant_id=tenant_id,
-            enable_persistent_history=enable_persistent_history,
-        )
+        try:
+            processed_df, has_labels, raw_amounts, builder_accounts = self._preprocess_adapted_frame(
+                detection=detection,
+                orig_df=df,
+                target_dataset=target_dataset,
+                tenant_id=tenant_id,
+                enable_persistent_history=enable_persistent_history,
+            )
+        except Exception as e:
+            raise ValueError(f"CSV preprocessing failed (check missing values or column dtypes): {e}") from e
 
         # Sequence Construction
-        batch_features, batch_lengths, final_df, diag = self._construct_sequences(
-            processed_df, target_dataset
-        )
+        try:
+            batch_features, batch_lengths, final_df, diag = self._construct_sequences(
+                processed_df, target_dataset
+            )
+        except Exception as e:
+            raise ValueError(f"Sequence construction failed for uploaded CSV: {e}") from e
 
-        # Resolve PyTorch model instance
-        model = self.model_service.get_model(model_meta.model_id)
+        # Resolve PyTorch model instance & run inference
+        try:
+            model = self.model_service.get_model(model_meta.model_id)
 
-        # Device selection & PyTorch batch inference (batch_size=512 for memory safety on cloud tiers)
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        model = model.to(device)
-        model.eval()
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            model = model.to(device)
+            model.eval()
 
-        batch_size = 512
-        total_samples = len(batch_features)
-        probs_list = []
+            batch_size = 512
+            total_samples = len(batch_features)
+            probs_list = []
 
-        with torch.inference_mode():
-            for i in range(0, total_samples, batch_size):
-                b_feat = torch.from_numpy(batch_features[i : i + batch_size]).to(device)
-                b_len = torch.tensor(batch_lengths[i : i + batch_size], dtype=torch.int64, device=device)
-                logits = model(b_feat, b_len).view(-1)
-                b_probs = torch.sigmoid(logits).cpu().numpy()
-                probs_list.append(b_probs)
-                del b_feat, b_len, logits
+            with torch.inference_mode():
+                for i in range(0, total_samples, batch_size):
+                    b_feat = torch.from_numpy(batch_features[i : i + batch_size]).to(device)
+                    b_len = torch.tensor(batch_lengths[i : i + batch_size], dtype=torch.int64, device=device)
+                    logits = model(b_feat, b_len).view(-1)
+                    b_probs = torch.sigmoid(logits).cpu().numpy()
+                    probs_list.append(b_probs)
+                    del b_feat, b_len, logits
 
-        probs = np.concatenate(probs_list, axis=0) if probs_list else np.array([], dtype=float)
-        del probs_list
-        gc.collect()
+            probs = np.concatenate(probs_list, axis=0) if probs_list else np.array([], dtype=float)
+            del probs_list
+            gc.collect()
+        except Exception as e:
+            raise ValueError(f"Model inference failed: {e}") from e
 
         if isinstance(probs, float) or probs.ndim == 0:
             probs = np.array([float(probs)])

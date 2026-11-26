@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, HTTPException, Query, Response, status
+from fastapi import APIRouter, File, Form, HTTPException, Query, Response, UploadFile, status
 from pydantic import BaseModel, Field
 
 try:
@@ -254,6 +254,41 @@ def predict_csv(request: CsvPredictRequest) -> Dict[str, Any]:
         )
     except Exception as e:
         logger.error("Error during CSV prediction: %s", e, exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Prediction failed: {str(e)}",
+        )
+
+
+@router.post("/predict/upload")
+@router.post("/api/predict/upload")
+@router.post("/api/v1/predict/upload")
+async def predict_csv_multipart(
+    file: UploadFile = File(...),
+    model_id: Optional[str] = Form("auto"),
+    row_limit: Optional[int] = Form(None),
+    threshold: Optional[float] = Form(None),
+) -> Dict[str, Any]:
+    """Run AML prediction on a multipart/form-data uploaded CSV file ('file' field)."""
+    service = CsvEvaluationService()
+    try:
+        csv_bytes = await file.read()
+        if not csv_bytes or len(csv_bytes.strip()) == 0:
+            raise ValueError("Uploaded CSV file is empty.")
+        return service.evaluate_csv_bytes(
+            csv_bytes=csv_bytes,
+            filename=file.filename or "upload.csv",
+            row_limit=row_limit,
+            model_id=model_id or "auto",
+            threshold=threshold,
+        )
+    except ValueError as ve:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(ve),
+        )
+    except Exception as e:
+        logger.error("Error during multipart CSV prediction: %s", e, exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Prediction failed: {str(e)}",

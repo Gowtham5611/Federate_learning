@@ -97,10 +97,18 @@ export const App: React.FC = () => {
     checkHealth();
     loadResearchModels();
 
-    // Keep cloud server warm while dashboard is active (prevents Render 15-min idle spin-down)
+    // Keep cloud server warm while dashboard is active (non-overlapping 3.5-min ping)
+    let pingInFlight = false;
     const keepWarmInterval = setInterval(() => {
-      apiService.getHealth().catch(() => {});
-    }, 3.5 * 60 * 1000); // ping every 3.5 minutes
+      if (pingInFlight) return;
+      pingInFlight = true;
+      apiService
+        .probeHealth()
+        .catch(() => {})
+        .finally(() => {
+          pingInFlight = false;
+        });
+    }, 3.5 * 60 * 1000);
 
     return () => clearInterval(keepWarmInterval);
   }, []);

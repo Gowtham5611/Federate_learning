@@ -85,10 +85,11 @@ def create_app(preload_models: bool = True) -> FastAPI:
     # 1. Privacy and timing middleware
     app.add_middleware(RequestTimingAndPrivacyMiddleware)
 
-    # 2. CORS middleware (supporting local interfaces and Vercel cloud deployments)
+    # 2. CORS middleware (supporting local interfaces, Vercel deployments, and "*" for testing)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[
+            "*",
             "http://localhost:3000",
             "http://127.0.0.1:3000",
             "http://localhost:5173",
@@ -96,7 +97,7 @@ def create_app(preload_models: bool = True) -> FastAPI:
             "https://federate-learning.vercel.app",
         ],
         allow_origin_regex=r"https://.*\.vercel\.app",
-        allow_credentials=True,
+        allow_credentials=False,
         allow_methods=["*"],
         allow_headers=["*"],
     )

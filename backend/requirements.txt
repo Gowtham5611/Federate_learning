@@ -15,4 +15,5 @@ httpx==0.28.1
 requests==2.34.2
 tqdm==4.70.0
 reportlab>=5.1.0
+python-multipart>=0.0.9
 

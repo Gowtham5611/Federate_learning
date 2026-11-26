@@ -38,7 +38,7 @@ const resolveApiBase = (): string => {
       return 'http://127.0.0.1:8000';
     }
     // 2. Explicit environment variable override (ignore localhost in cloud production)
-    const envBase = import.meta.env.VITE_API_BASE_URL;
+    const envBase = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL;
     if (
       envBase &&
       typeof envBase === 'string' &&
@@ -52,7 +52,7 @@ const resolveApiBase = (): string => {
     // Bypasses Vercel edge/serverless proxy 10s request limits while utilizing verified CORS
     return 'https://federate-learning.onrender.com';
   }
-  const envBase = import.meta.env.VITE_API_BASE_URL;
+  const envBase = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL;
   if (
     envBase &&
     typeof envBase === 'string' &&
@@ -97,7 +97,12 @@ export class ApiError extends Error {
 /**
  * Executes a JSON HTTP request with automatic retry for cold-start resiliency.
  */
-async function request<T>(endpoint: string, options: RequestInit = {}, retries: number = 3): Promise<T> {
+async function request<T>(
+  endpoint: string,
+  options: RequestInit = {},
+  retries: number = 3,
+  timeoutMs: number = 90000
+): Promise<T> {
   const url = buildUrl(endpoint);
   const headers = {
     'Content-Type': 'application/json',
@@ -107,8 +112,11 @@ async function request<T>(endpoint: string, options: RequestInit = {}, retries: 
   let lastError: unknown = null;
 
   for (let attempt = 0; attempt < retries; attempt++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
-      const response = await fetch(url, { ...options, headers });
+      const response = await fetch(url, { ...options, headers, signal: controller.signal });
+      clearTimeout(timer);
 
       if (!response.ok) {
         // Render free-tier cold-start recovery (502 / 503 / 504 during wakeup)
@@ -157,8 +165,18 @@ async function request<T>(endpoint: string, options: RequestInit = {}, retries: 
 
       return (await response.json()) as T;
     } catch (err) {
+      clearTimeout(timer);
       if (err instanceof ApiError) {
         throw err;
+      }
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        throw new ApiError(
+          504,
+          `Request timed out after ${Math.round(timeoutMs / 1000)}s. Server may be waking up, please wait and retry.`,
+          err,
+          undefined,
+          true
+        );
       }
       lastError = err;
       // Network drop / socket timeout while cloud instance is waking up
@@ -199,6 +217,13 @@ export const apiService = {
         }
       }
     }
+  },
+
+  /**
+   * Single-shot non-cascading health probe for background keep-alive pings.
+   */
+  async probeHealth(): Promise<HealthResponse> {
+    return request<HealthResponse>('/health', {}, 1, 15000);
   },
 
   /**
@@ -431,8 +456,17 @@ export const apiService = {
     onProgress?: (progress: number, phase: string) => void
   ): Promise<CsvEvaluateResponse> {
     // 1. Try background job flow
+    let submitRes: {
+      status: string;
+      job_id: string;
+      run_id: string;
+      job_status: string;
+      progress: number;
+      phase: string;
+    } | null = null;
+
     try {
-      const submitRes = await request<{
+      submitRes = await request<{
         status: string;
         job_id: string;
         run_id: string;
@@ -443,47 +477,59 @@ export const apiService = {
         method: 'POST',
         body: JSON.stringify(payload),
       });
-
-      if (submitRes && submitRes.job_id) {
-        const jobId = submitRes.job_id;
-        if (onProgress) onProgress(submitRes.progress || 0.1, submitRes.phase || 'queued');
-
-        // Poll job status until complete (up to 300 attempts / 5 minutes at 1s intervals)
-        const maxAttempts = 300;
-        for (let i = 0; i < maxAttempts; i++) {
-          await new Promise((res) => setTimeout(res, 1000));
-          const job = await request<{
-            job_id: string;
-            status: 'queued' | 'running' | 'complete' | 'failed';
-            progress: number;
-            phase: string;
-            result?: CsvEvaluateResponse;
-            error?: string;
-            error_phase?: string;
-          }>(`/api/v1/predict/jobs/${jobId}`);
-
-          if (onProgress) onProgress(job.progress, job.phase);
-
-          if (job.status === 'complete' && job.result) {
-            return job.result;
-          }
-          if (job.status === 'failed') {
-            throw new ApiError(
-              400,
-              job.error || 'Evaluation job failed during execution.',
-              { phase: job.error_phase, jobId }
-            );
-          }
-        }
-        throw new ApiError(504, 'Evaluation processing timed out after 5 minutes on server. Please check status later or try a smaller row limit.', { jobId });
-      }
     } catch (err) {
-      // If jobs endpoint is not found (404), fall back to direct synchronous prediction
+      // Only fall back to synchronous /predict/csv if the /predict/jobs route itself is 404
       if (err instanceof ApiError && err.status === 404) {
-        // Fall back below
+        submitRes = null;
       } else {
         throw err;
       }
+    }
+
+    if (submitRes && submitRes.job_id) {
+      const jobId = submitRes.job_id;
+      if (onProgress) onProgress(submitRes.progress || 0.1, submitRes.phase || 'queued');
+
+      // Poll job status until complete (up to 90 attempts / 90 seconds at 1s intervals)
+      const maxAttempts = 90;
+      for (let i = 0; i < maxAttempts; i++) {
+        await new Promise((res) => setTimeout(res, 1000));
+        let job: {
+          job_id: string;
+          status: 'queued' | 'running' | 'complete' | 'failed';
+          progress: number;
+          phase: string;
+          result?: CsvEvaluateResponse;
+          error?: string;
+          error_phase?: string;
+        };
+        try {
+          job = await request(`/api/v1/predict/jobs/${jobId}`);
+        } catch (pollErr) {
+          if (pollErr instanceof ApiError && pollErr.status === 404) {
+            throw new ApiError(
+              404,
+              'Evaluation job was lost because the server restarted. Please click Retry Now.',
+              { jobId }
+            );
+          }
+          throw pollErr;
+        }
+
+        if (onProgress) onProgress(job.progress, job.phase);
+
+        if (job.status === 'complete' && job.result) {
+          return job.result;
+        }
+        if (job.status === 'failed') {
+          throw new ApiError(
+            400,
+            job.error || 'Evaluation job failed during execution.',
+            { phase: job.error_phase, jobId }
+          );
+        }
+      }
+      throw new ApiError(504, 'Evaluation timed out after 90 seconds. The server may be waking up or the CSV is too large — please retry or reduce the row limit.', { jobId });
     }
 
     // Fallback: direct synchronous prediction

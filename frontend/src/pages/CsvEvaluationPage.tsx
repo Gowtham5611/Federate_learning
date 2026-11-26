@@ -290,7 +290,7 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
         if (err.status === 404) {
           msg = `Evaluation route not found on backend (${err.message}). Verify FastAPI service is running with evaluation router registered.`;
         } else if (err.status === 0) {
-          msg = `Cannot reach FedSecureAI backend. Ensure the FastAPI service is running at http://127.0.0.1:8000.`;
+          msg = `Cannot reach FedSecureAI backend. Server may be waking up, please wait and try again.`;
         } else {
           msg = err.message;
         }

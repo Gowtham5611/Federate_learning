@@ -142,6 +142,7 @@ scratch/
 
 # Small curated test inputs are the one exception - review before adding.
 !backend/tests/fixtures/**/*.csv
+!data/sample_demo_20_rows.csv
 
 # Live inference runtime metadata and champion model weights
 !backend/data/processed/ibm_aml/*/metadata/**
