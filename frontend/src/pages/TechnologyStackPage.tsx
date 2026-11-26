@@ -78,7 +78,7 @@ const TECH_ITEMS: TechItem[] = [
     description:
       'Builds the responsive single-page dashboard for CSV inspection, async job progress polling, threshold visualization, and downloads.',
     usedIn: 'frontend/src/App.tsx, frontend/src/pages/AmlEvaluationPage.tsx, frontend/src/services/apiService.ts, frontend/package.json',
-    howToVerify: 'Open the AML Evaluation tab, click "Load Demo Sample (20 Rows)", and inspect network calls in Browser DevTools.',
+    howToVerify: 'Open the AML Evaluation tab, upload a transaction CSV, and inspect network calls in Browser DevTools.',
     limitation: 'Requires VITE_API_URL / VITE_API_BASE_URL to be baked in at Vercel build time.',
     badgeText: 'TS/React',
     accentColor: '#38bdf8',
