@@ -490,10 +490,10 @@ export const apiService = {
       const jobId = submitRes.job_id;
       if (onProgress) onProgress(submitRes.progress || 0.1, submitRes.phase || 'queued');
 
-      // Poll job status until complete (up to 90 attempts / 90 seconds at 1s intervals)
-      const maxAttempts = 90;
-      for (let i = 0; i < maxAttempts; i++) {
-        await new Promise((res) => setTimeout(res, 1000));
+      // Poll job status as long as it is queued/running (no fixed 90s cap for large CSVs)
+      let consecutivePollErrors = 0;
+      while (true) {
+        await new Promise((res) => setTimeout(res, 1500));
         let job: {
           job_id: string;
           status: 'queued' | 'running' | 'complete' | 'failed';
@@ -504,16 +504,21 @@ export const apiService = {
           error_phase?: string;
         };
         try {
-          job = await request(`/api/v1/predict/jobs/${jobId}`);
+          job = await request(`/api/v1/predict/jobs/${jobId}`, {}, 2, 20000);
+          consecutivePollErrors = 0;
         } catch (pollErr) {
           if (pollErr instanceof ApiError && pollErr.status === 404) {
             throw new ApiError(
               404,
-              'Evaluation job was lost because the server restarted. Please click Retry Now.',
+              'Evaluation job was lost because the server restarted or ran out of memory. Please click Retry Now.',
               { jobId }
             );
           }
-          throw pollErr;
+          consecutivePollErrors += 1;
+          if (consecutivePollErrors >= 5) {
+            throw pollErr;
+          }
+          continue;
         }
 
         if (onProgress) onProgress(job.progress, job.phase);
@@ -529,7 +534,6 @@ export const apiService = {
           );
         }
       }
-      throw new ApiError(504, 'Evaluation timed out after 90 seconds. The server may be waking up or the CSV is too large — please retry or reduce the row limit.', { jobId });
     }
 
     // Fallback: direct synchronous prediction

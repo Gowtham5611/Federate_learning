@@ -256,6 +256,12 @@ class EvaluationJobService:
                 self._jobs[job_id].progress = 0.40
                 self._jobs[job_id].phase = "sequence_construction"
 
+            def _update_progress(prog: float, phase_name: str) -> None:
+                with self._state_lock:
+                    if job_id in self._jobs:
+                        self._jobs[job_id].progress = min(0.89, max(0.05, float(prog)))
+                        self._jobs[job_id].phase = phase_name
+
             # Execute evaluation
             result = service.evaluate_csv_bytes(
                 csv_bytes=csv_bytes,
@@ -268,6 +274,7 @@ class EvaluationJobService:
                 enable_persistent_history=enable_persistent_history,
                 threshold=threshold,
                 fallback_model=fallback_model,
+                progress_callback=_update_progress,
             )
 
             with self._state_lock:

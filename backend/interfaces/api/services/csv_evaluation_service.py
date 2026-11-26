@@ -143,8 +143,47 @@ def _resolve_dataset_dir(dataset: str) -> Path:
             return c
     return candidates[0]
 
+def _get_rss_mb() -> float:
+    """Return current process RSS in MB (Linux /proc/self/status or Windows psapi)."""
+    try:
+        status_path = Path("/proc/self/status")
+        if status_path.exists():
+            for line in status_path.read_text(encoding="utf-8", errors="ignore").splitlines():
+                if line.startswith("VmRSS:"):
+                    parts = line.split()
+                    if len(parts) >= 2:
+                        return float(parts[1]) / 1024.0
+    except Exception:
+        pass
+    try:
+        import ctypes, ctypes.wintypes
+        class _PMC(ctypes.Structure):
+            _fields_ = [
+                ("cb", ctypes.wintypes.DWORD),
+                ("PageFaultCount", ctypes.wintypes.DWORD),
+                ("PeakWorkingSetSize", ctypes.c_size_t),
+                ("WorkingSetSize", ctypes.c_size_t),
+                ("QuotaPeakPagedPoolUsage", ctypes.c_size_t),
+                ("QuotaPagedPoolUsage", ctypes.c_size_t),
+                ("QuotaPeakNonPagedPoolUsage", ctypes.c_size_t),
+                ("QuotaNonPagedPoolUsage", ctypes.c_size_t),
+                ("PagefileUsage", ctypes.c_size_t),
+                ("PeakPagefileUsage", ctypes.c_size_t),
+            ]
+        k32 = ctypes.windll.kernel32
+        k32.GetCurrentProcess.restype = ctypes.wintypes.HANDLE
+        psapi = ctypes.windll.psapi
+        psapi.GetProcessMemoryInfo.argtypes = [ctypes.wintypes.HANDLE, ctypes.POINTER(_PMC), ctypes.wintypes.DWORD]
+        pmc = _PMC()
+        pmc.cb = ctypes.sizeof(_PMC)
+        psapi.GetProcessMemoryInfo(k32.GetCurrentProcess(), ctypes.byref(pmc), pmc.cb)
+        return pmc.WorkingSetSize / (1024.0 * 1024.0)
+    except Exception:
+        return 0.0
+
+
 MAX_CSV_BYTES = 250 * 1024 * 1024  # 250 MB
-DEFAULT_ROW_LIMIT = 1000
+DEFAULT_ROW_LIMIT = 1000000
 MAX_ROW_LIMIT = 1000000
 
 
@@ -396,9 +435,11 @@ class CsvEvaluationService:
         enable_persistent_history: bool = False,
         threshold: Optional[float] = None,
         fallback_model: Optional[str] = None,
+        progress_callback: Optional[Any] = None,
     ) -> Dict[str, Any]:
         """Validate, adapt, preprocess, and evaluate a CSV file provided as bytes."""
         t0 = time.perf_counter()
+        logger.info("[eval] Start '%s' (%d bytes, RSS=%.1f MB)", filename, len(csv_bytes or b""), _get_rss_mb())
 
         if not csv_bytes or len(csv_bytes.strip()) == 0:
             raise ValueError("Uploaded file is empty (0 bytes). Please upload a valid CSV file.")
@@ -545,6 +586,7 @@ class CsvEvaluationService:
             model_name = model_meta.model_name or SUPPORTED_MODELS_BY_DATASET.get(target_dataset, "FedSecureAI Lead Model")
 
         # Preprocess to Model-Ready Processed Features
+        t_prep = time.perf_counter()
         try:
             processed_df, has_labels, raw_amounts, builder_accounts = self._preprocess_adapted_frame(
                 detection=detection,
@@ -555,41 +597,35 @@ class CsvEvaluationService:
             )
         except Exception as e:
             raise ValueError(f"CSV preprocessing failed (check missing values or column dtypes): {e}") from e
+        logger.info("[eval] Preprocess %d rows in %.2fs (RSS=%.1f MB)", len(processed_df), time.perf_counter() - t_prep, _get_rss_mb())
+        if progress_callback:
+            progress_callback(0.35, "sequence_construction")
 
-        # Sequence Construction
+        # Chunked Sequence Construction + PyTorch Inference (keeps peak RSS low on 512 MB RAM)
+        t_seq_inf = time.perf_counter()
         try:
-            batch_features, batch_lengths, final_df, diag = self._construct_sequences(
-                processed_df, target_dataset
-            )
-        except Exception as e:
-            raise ValueError(f"Sequence construction failed for uploaded CSV: {e}") from e
-
-        # Resolve PyTorch model instance & run inference
-        try:
+            try:
+                torch.set_num_threads(1)
+            except Exception:
+                pass
             model = self.model_service.get_model(model_meta.model_id)
-
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             model = model.to(device)
             model.eval()
 
-            batch_size = 512
-            total_samples = len(batch_features)
-            probs_list = []
-
-            with torch.inference_mode():
-                for i in range(0, total_samples, batch_size):
-                    b_feat = torch.from_numpy(batch_features[i : i + batch_size]).to(device)
-                    b_len = torch.tensor(batch_lengths[i : i + batch_size], dtype=torch.int64, device=device)
-                    logits = model(b_feat, b_len).view(-1)
-                    b_probs = torch.sigmoid(logits).cpu().numpy()
-                    probs_list.append(b_probs)
-                    del b_feat, b_len, logits
-
-            probs = np.concatenate(probs_list, axis=0) if probs_list else np.array([], dtype=float)
-            del probs_list
+            probs, batch_lengths, final_df, diag, sample_seq_features = self._construct_sequences_and_infer(
+                processed_df=processed_df,
+                dataset=target_dataset,
+                model=model,
+                device=device,
+                threshold=resolved_threshold,
+                progress_callback=progress_callback,
+            )
+            del processed_df
             gc.collect()
         except Exception as e:
-            raise ValueError(f"Model inference failed: {e}") from e
+            raise ValueError(f"Sequence construction / model inference failed: {e}") from e
+        logger.info("[eval] Chunked sequence+inference (%d rows) in %.2fs (RSS=%.1f MB)", len(probs), time.perf_counter() - t_seq_inf, _get_rss_mb())
 
         if isinstance(probs, float) or probs.ndim == 0:
             probs = np.array([float(probs)])
@@ -647,30 +683,47 @@ class CsvEvaluationService:
             None,
         )
 
+        # Pre-extract column arrays once (eliminates 150k+ slow pandas .iloc lookups)
+        n_final = len(final_df)
+        ts_arr = final_df["timestamp"].astype(str).tolist()
+        from_acc_arr = final_df["from_account"].astype(str).tolist()
+        to_acc_arr = final_df["to_account"].astype(str).tolist()
+        lbl_arr = final_df["is_laundering"].to_numpy(dtype=np.int64) if has_labels and "is_laundering" in final_df.columns else None
+        amt_log_arr = final_df["amount_paid_log"].to_numpy(dtype=np.float32) if not raw_amounts and "amount_paid_log" in final_df.columns else None
+        distinct_accounts_count = int(final_df["from_account"].nunique())
+
+        n_df = len(df)
+        tx_id_arr = [str(v) if pd.notnull(v) else "" for v in df[source_tx_id_col].tolist()] if source_tx_id_col else None
+        sender_name_arr = [str(v).strip() if pd.notnull(v) else None for v in df[source_name_col].tolist()] if source_name_col else None
+        receiver_name_arr = [str(v).strip() if pd.notnull(v) else None for v in df[source_rcv_name_col].tolist()] if source_rcv_name_col else None
+
+        unk_counts_arr = diag["unknown_category_counts"]
+        tot_nom_cols = float(diag["total_nominal_cols"])
+        miss_counts_arr = diag["missing_feature_counts"]
+        tot_diag_cols = float(diag["total_cols"])
+
         # Build itemized prediction records (excluding warm-up context rows if specified)
         predictions: List[Dict[str, Any]] = []
         flagged_count = 0
 
-        # Preserve row-by-row mapping
-        for idx in range(len(final_df)):
+        for idx in range(n_final):
             if has_context_rows and is_context_mask[idx]:
                 continue
             p = float(probs[idx])
             p_adj_val = float(p_adjusted[idx]) if supports_logit_shift else p
-            lbl = int(final_df["is_laundering"].iloc[idx]) if has_labels else None
-            ts_str = str(final_df["timestamp"].iloc[idx])
-            from_acc = str(final_df["from_account"].iloc[idx])
-            to_acc = str(final_df["to_account"].iloc[idx])
+            lbl = int(lbl_arr[idx]) if lbl_arr is not None else None
+            ts_str = ts_arr[idx]
+            from_acc = from_acc_arr[idx]
+            to_acc = to_acc_arr[idx]
 
-            # Resolve actual transaction ID and entity names only if present in uploaded source data
-            tx_id_str = str(df[source_tx_id_col].iloc[idx]) if (source_tx_id_col and idx < len(df) and pd.notnull(df[source_tx_id_col].iloc[idx])) else f"TX_{idx + 1:05d}"
-            sender_name_val = str(df[source_name_col].iloc[idx]).strip() if (source_name_col and idx < len(df) and pd.notnull(df[source_name_col].iloc[idx])) else None
-            receiver_name_val = str(df[source_rcv_name_col].iloc[idx]).strip() if (source_rcv_name_col and idx < len(df) and pd.notnull(df[source_rcv_name_col].iloc[idx])) else None
+            tx_id_str = (tx_id_arr[idx] or f"TX_{idx + 1:05d}") if (tx_id_arr is not None and idx < n_df) else f"TX_{idx + 1:05d}"
+            sender_name_val = sender_name_arr[idx] if (sender_name_arr is not None and idx < n_df) else None
+            receiver_name_val = receiver_name_arr[idx] if (receiver_name_arr is not None and idx < n_df) else None
 
             amount = (
                 float(raw_amounts.get(idx, 0.0))
                 if raw_amounts
-                else float(np.expm1(final_df["amount_paid_log"].iloc[idx]))
+                else (float(np.expm1(amt_log_arr[idx])) if amt_log_arr is not None else 0.0)
             )
 
             is_suspicious = p >= resolved_threshold
@@ -698,7 +751,6 @@ class CsvEvaluationService:
             if has_labels and lbl is not None:
                 actual_label = "SUSPICIOUS" if lbl == 1 else "LEGITIMATE"
 
-            # Risk categorization
             if p >= resolved_threshold:
                 risk_category = "High Risk"
             elif p >= resolved_threshold * 0.5:
@@ -735,12 +787,16 @@ class CsvEvaluationService:
                 "sequence_length": seq_len_val,
                 "valid_history_count": prior_count_val,
                 "padding_ratio": round((MAX_SEQUENCE_LENGTH - seq_len_val) / float(MAX_SEQUENCE_LENGTH), 4),
-                "unknown_category_ratio": round(float(diag["unknown_category_counts"][idx] / diag["total_nominal_cols"]), 4),
-                "missing_feature_ratio": round(float(diag["missing_feature_counts"][idx] / diag["total_cols"]), 4),
+                "unknown_category_ratio": round(float(unk_counts_arr[idx] / tot_nom_cols), 4),
+                "missing_feature_ratio": round(float(miss_counts_arr[idx] / tot_diag_cols), 4),
                 "is_history_sufficient": is_history_usable,
                 "usable_history_note": None if is_history_usable else "Insufficient historical context (< 3 prior transactions for this account in slice).",
-                "sequence_features": np.round(batch_features[idx], 4).tolist() if (is_suspicious or idx < 10) else None,
+                "sequence_features": sample_seq_features.get(idx),
             })
+
+        del ts_arr, from_acc_arr, to_acc_arr, lbl_arr, amt_log_arr, tx_id_arr, sender_name_arr, receiver_name_arr, sample_seq_features
+        if progress_callback:
+            progress_callback(0.88, "finalizing_metrics")
 
         # Verification check: output row count equals input evaluated row count
         expected_eval_rows = int(np.sum(eval_mask)) if has_context_rows else len(final_df)
@@ -1014,7 +1070,7 @@ class CsvEvaluationService:
             "decision_threshold": resolved_threshold,
             "total_rows": total_uploaded_rows,
             "evaluated_sequences": len(predictions),
-            "distinct_accounts": int(final_df["from_account"].nunique()),
+            "distinct_accounts": distinct_accounts_count,
             "flagged_laundering_count": flagged_count,
             "cleared_count": len(predictions) - flagged_count,
             "risk_distribution": risk_distribution,
@@ -1054,10 +1110,12 @@ class CsvEvaluationService:
             "created_at_iso": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         }
 
-        # 1. Update in-memory cache
+        # 1. Update bounded in-memory cache (keep at most 2 recent results; CSV lives on disk)
+        if len(self._prediction_cache) >= 2:
+            oldest_key = min(self._prediction_cache, key=lambda k: self._prediction_cache[k].get("created_at", 0.0))
+            self._prediction_cache.pop(oldest_key, None)
         self._prediction_cache[prediction_id] = {
             "result": result,
-            "csv_content": download_csv_content,
             "filename": f"predictions_{Path(filename).stem}.csv",
             "created_at": time.time(),
             "is_expired": False,
@@ -1068,6 +1126,8 @@ class CsvEvaluationService:
         meta_file_path = UPLOAD_DIR / f"{prediction_id}_meta.json"
         try:
             csv_file_path.write_text(download_csv_content, encoding="utf-8")
+            del download_csv_content, df, final_df
+            gc.collect()
             meta_payload = {
                 "prediction_id": prediction_id,
                 "run_id": prediction_id,
@@ -1701,7 +1761,8 @@ class CsvEvaluationService:
         if cached:
             if cached.get("is_expired"):
                 return "EXPIRED", cached.get("filename", f"{prediction_id}.csv")
-            return cached["csv_content"], cached["filename"]
+            if cached.get("csv_content"):
+                return cached["csv_content"], cached["filename"]
 
         # 2. Check disk persistence in results/uploads/
         csv_file = UPLOAD_DIR / f"{prediction_id}.csv"
@@ -2163,37 +2224,32 @@ class CsvEvaluationService:
         model_checkpoint_hash: Optional[str] = None,
     ) -> str:
         """Create a clean CSV export preserving original records with predictions appended."""
-        export_df = orig_df.copy()
-        pred_records = []
-        for p in predictions:
-            rec = {
-                "predicted_probability": p["predicted_probability"],
-                "predicted_label": p["predicted_label"],
-                "prediction_status": p.get("prediction_status", p["predicted_label"]),
-                "model_name": p.get("model_name", model_name),
-                "classification_threshold": p.get("classification_threshold", threshold),
-                "risk_category": p.get("risk_category", "Low Risk"),
-                "sequence_length": p.get("sequence_length", 1),
-                "is_history_sufficient": p.get("is_history_sufficient", True),
-                # Cryptographic provenance columns
-                "eval_run_id": run_id or "",
-                "eval_file_hash": file_hash or "",
-                "eval_model_checkpoint_sha256": model_checkpoint_hash or "",
-                # Legacy compatibility headers
-                "PRED_PROBABILITY": p["predicted_probability"],
-                "PRED_LABEL": p["predicted_label"],
-                "PRED_DECISION_THRESHOLD": p.get("classification_threshold", threshold),
-            }
-            if "is_laundering" not in export_df.columns and p.get("ground_truth_label") is not None:
-                rec["is_laundering"] = p["ground_truth_label"]
-            pred_records.append(rec)
+        combined = orig_df.reset_index(drop=True).copy()
+        probs_col = [p["predicted_probability"] for p in predictions]
+        labels_col = [p["predicted_label"] for p in predictions]
+        status_col = [p.get("prediction_status", p["predicted_label"]) for p in predictions]
+        thr_col = [p.get("classification_threshold", threshold) for p in predictions]
 
-        pred_sub = pd.DataFrame(pred_records)
+        combined["predicted_probability"] = probs_col
+        combined["predicted_label"] = labels_col
+        combined["prediction_status"] = status_col
+        combined["model_name"] = [p.get("model_name", model_name) for p in predictions]
+        combined["classification_threshold"] = thr_col
+        combined["risk_category"] = [p.get("risk_category", "Low Risk") for p in predictions]
+        combined["sequence_length"] = [p.get("sequence_length", 1) for p in predictions]
+        combined["is_history_sufficient"] = [p.get("is_history_sufficient", True) for p in predictions]
+        combined["eval_run_id"] = run_id or ""
+        combined["eval_file_hash"] = file_hash or ""
+        combined["eval_model_checkpoint_sha256"] = model_checkpoint_hash or ""
+        combined["PRED_PROBABILITY"] = probs_col
+        combined["PRED_LABEL"] = labels_col
+        combined["PRED_DECISION_THRESHOLD"] = thr_col
+        if "is_laundering" not in combined.columns and predictions and predictions[0].get("ground_truth_label") is not None:
+            combined["is_laundering"] = [p.get("ground_truth_label") for p in predictions]
 
-        # Concatenate side-by-side preserving original row order and identifiers
-        combined = pd.concat([export_df.reset_index(drop=True), pred_sub], axis=1)
         buf = io.StringIO()
         combined.to_csv(buf, index=False)
+        del combined
         return buf.getvalue()
 
     def evaluate_multi_model_csv(
@@ -2436,6 +2492,121 @@ class CsvEvaluationService:
             store.save_profiles(tenant_id, updated_profiles)
 
         return transformed, has_labels, raw_amounts, builder.distinct_accounts
+
+    def _construct_sequences_and_infer(
+        self,
+        processed_df: pd.DataFrame,
+        dataset: str,
+        model: Any,
+        device: Any,
+        threshold: float,
+        chunk_rows: int = 4096,
+        progress_callback: Optional[Any] = None,
+    ) -> Tuple[np.ndarray, np.ndarray, pd.DataFrame, Dict[str, Any], Dict[int, Any]]:
+        """Assemble sequences and run PyTorch inference in bounded memory chunks."""
+        meta_dir = _resolve_dataset_dir(dataset)
+        if not (meta_dir / "metadata" / "transformers.json").exists():
+            fallback_dir = _resolve_dataset_dir("HI-Small")
+            if (fallback_dir / "metadata" / "transformers.json").exists():
+                meta_dir = fallback_dir
+        meta = ProcessedFeatureMetadata.read(meta_dir)
+        nominal_map = {nom.column: nom for nom in meta.nominal_columns}
+        width = meta.feature_dimension(one_hot_nominal_codes=True)
+
+        rows = len(processed_df)
+        features = np.zeros((rows, width), dtype=np.float32)
+
+        unknown_cat_counts = np.zeros(rows, dtype=np.float32)
+        total_nominal_cols = max(1, len(meta.nominal_columns))
+
+        offset = 0
+        for col in meta.feature_columns:
+            if col in nominal_map:
+                nom = nominal_map[col]
+                codes_arr = processed_df[col].to_numpy(dtype=np.int64)
+                valid_mask = (codes_arr >= 0) & (codes_arr < nom.vocabulary_size)
+                valid_idx = np.nonzero(valid_mask)[0]
+                features[valid_idx, offset + codes_arr[valid_idx]] = 1.0
+                unknown_cat_counts += (~valid_mask).astype(np.float32)
+                offset += nom.vocabulary_size
+            else:
+                features[:, offset] = processed_df[col].to_numpy(dtype=np.float32)
+                offset += 1
+
+        accounts = processed_df["from_account"]
+        codes, _ = pd.factorize(accounts, sort=False)
+        previous_row = build_previous_row_index(codes.astype(np.int64))
+
+        targets = (
+            processed_df["is_laundering"].to_numpy(dtype=np.float32)
+            if "is_laundering" in processed_df.columns
+            else np.zeros(rows, dtype=np.float32)
+        )
+
+        missing_counts = processed_df.isna().sum(axis=1).to_numpy(dtype=np.float32)
+        total_cols = float(max(1, len(processed_df.columns)))
+
+        seq_dataset = AccountSequenceDataset(
+            split=SplitName.TEST,
+            features=features,
+            targets=targets,
+            previous_row=previous_row,
+            sequence_length=MAX_SEQUENCE_LENGTH,
+            stride=1,
+        )
+
+        target_rows = seq_dataset.target_rows
+        total_targets = len(target_rows)
+        all_probs = np.zeros(total_targets, dtype=np.float32)
+        all_lengths = np.zeros(total_targets, dtype=np.int64)
+        sample_seq_features: Dict[int, Any] = {}
+
+        batch_size = 512
+        with torch.inference_mode():
+            for start in range(0, total_targets, chunk_rows):
+                end = min(start + chunk_rows, total_targets)
+                chunk_batch = seq_dataset._assemble(target_rows[start:end])
+                c_feat = chunk_batch.features
+                c_len = chunk_batch.lengths
+                all_lengths[start:end] = c_len
+
+                c_probs_list = []
+                for b_start in range(0, len(c_feat), batch_size):
+                    b_end = min(b_start + batch_size, len(c_feat))
+                    b_f = torch.from_numpy(c_feat[b_start:b_end]).to(device)
+                    b_l = torch.tensor(c_len[b_start:b_end], dtype=torch.int64, device=device)
+                    logits = model(b_f, b_l).view(-1)
+                    c_probs_list.append(torch.sigmoid(logits).cpu().numpy())
+                    del b_f, b_l, logits
+
+                c_probs = np.concatenate(c_probs_list, axis=0) if c_probs_list else np.array([], dtype=np.float32)
+                all_probs[start:end] = c_probs
+
+                for local_i, p_val in enumerate(c_probs):
+                    global_i = start + local_i
+                    if float(p_val) >= threshold or global_i < 10:
+                        sample_seq_features[global_i] = np.round(c_feat[local_i], 4).tolist()
+
+                del chunk_batch, c_feat, c_len, c_probs_list, c_probs
+                if progress_callback and total_targets > 0:
+                    pct = 0.35 + 0.50 * (end / float(total_targets))
+                    progress_callback(round(pct, 3), f"model_inference ({end:,}/{total_targets:,})")
+
+        del features, seq_dataset, previous_row, targets
+        gc.collect()
+
+        probs = all_probs.astype(float)
+        if not np.all(np.isfinite(probs)):
+            raise ValueError("Sequence model inference produced non-finite (NaN or Inf) probabilities.")
+        probs = np.clip(probs, 0.0, 1.0)
+
+        row_diagnostics = {
+            "unknown_category_counts": unknown_cat_counts,
+            "total_nominal_cols": total_nominal_cols,
+            "missing_feature_counts": missing_counts,
+            "total_cols": total_cols,
+        }
+        return probs, all_lengths, processed_df, row_diagnostics, sample_seq_features
 
     def _construct_sequences(
         self, df: pd.DataFrame, dataset: str
