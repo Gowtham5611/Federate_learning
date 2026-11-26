@@ -5,6 +5,8 @@ import { ResultsAnalyticsPage } from './pages/ResultsAnalyticsPage';
 import { PredictionHistoryPage } from './pages/PredictionHistoryPage';
 import { ModelRegistryPage } from './pages/ModelRegistryPage';
 import { EnsembleAnalyticsPage } from './pages/EnsembleAnalyticsPage';
+import { ComparativeAnalysisPage } from './pages/ComparativeAnalysisPage';
+import { TechnologyStackPage } from './pages/TechnologyStackPage';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { apiService, ApiError } from './services/apiService';
 import { BenchmarkModelRecord, CsvEvaluateResponse, HealthResponse, MultiModelEvaluateResponse, SupportedDataset } from './types/api';
@@ -16,8 +18,49 @@ const APP_BUILD_INFO = {
   buildTime: '2026-11-24 13:30 UTC',
 };
 
+const TAB_TO_PATH: Record<DashboardTab, string> = {
+  evaluation: '/',
+  analytics: '/analytics',
+  models: '/models',
+  ensemble: '/ensemble',
+  history: '/history',
+  comparative: '/comparative-analysis',
+  'tech-stack': '/tech-stack',
+};
+
+const pathToTab = (pathname: string): DashboardTab => {
+  const clean = pathname.replace(/\/+$/, '') || '/';
+  if (clean === '/comparative-analysis') return 'comparative';
+  if (clean === '/tech-stack') return 'tech-stack';
+  if (clean === '/analytics') return 'analytics';
+  if (clean === '/models') return 'models';
+  if (clean === '/ensemble') return 'ensemble';
+  if (clean === '/history') return 'history';
+  return 'evaluation';
+};
+
 export const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<DashboardTab>('evaluation');
+  const [activeTab, setActiveTabState] = useState<DashboardTab>(() =>
+    typeof window !== 'undefined' ? pathToTab(window.location.pathname) : 'evaluation'
+  );
+
+  const setActiveTab = (tab: DashboardTab) => {
+    setActiveTabState(tab);
+    if (typeof window !== 'undefined') {
+      const targetPath = TAB_TO_PATH[tab] || '/';
+      if (window.location.pathname !== targetPath) {
+        window.history.pushState({ tab }, '', targetPath);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const onPopState = () => {
+      setActiveTabState(pathToTab(window.location.pathname));
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [loadingHealth, setLoadingHealth] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -239,6 +282,12 @@ export const App: React.FC = () => {
               onClearSavedResults={handleClearSavedResults}
             />
           )}
+
+          {/* Tab 6: Comparative Analysis (opened via Explore dropdown or /comparative-analysis) */}
+          {activeTab === 'comparative' && <ComparativeAnalysisPage />}
+
+          {/* Tab 7: Technology Stack & Walkthrough (opened via Explore dropdown or /tech-stack) */}
+          {activeTab === 'tech-stack' && <TechnologyStackPage />}
         </ErrorBoundary>
       </main>
 

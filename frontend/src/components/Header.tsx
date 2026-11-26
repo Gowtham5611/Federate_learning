@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { HealthResponse } from '../types/api';
-import { Shield, FileSpreadsheet, BarChart2, History, Database, Layers, CheckCircle2, AlertCircle, RefreshCw, Sun, Moon } from 'lucide-react';
+import { Shield, FileSpreadsheet, BarChart2, History, Database, Layers, CheckCircle2, AlertCircle, RefreshCw, Sun, Moon, ChevronDown, BookOpen, Cpu } from 'lucide-react';
 
-export type DashboardTab = 'evaluation' | 'analytics' | 'models' | 'ensemble' | 'history';
+export type DashboardTab = 'evaluation' | 'analytics' | 'models' | 'ensemble' | 'history' | 'comparative' | 'tech-stack';
 
 interface HeaderProps {
   health: HealthResponse | null;
@@ -27,6 +27,35 @@ export const Header: React.FC<HeaderProps> = ({
   theme = 'dark',
   onToggleTheme,
 }) => {
+  const [exploreOpen, setExploreOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const firstItemRef = useRef<HTMLButtonElement>(null);
+  const secondItemRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const handleOutside = (e: MouseEvent | TouchEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setExploreOpen(false);
+      }
+    };
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && exploreOpen) {
+        setExploreOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+    document.addEventListener('mousedown', handleOutside);
+    document.addEventListener('touchstart', handleOutside);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleOutside);
+      document.removeEventListener('touchstart', handleOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [exploreOpen]);
+
+  const isExploreActive = activeTab === 'comparative' || activeTab === 'tech-stack';
   // Determine exact health state: connected | starting | degraded | offline
   let statusBadge: {
     state: 'connected' | 'starting' | 'degraded' | 'offline';
@@ -184,37 +213,133 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
-          {/* Main Navigation (horizontally scrollable with snap on small screens, unclipped on desktop) */}
-          <nav
-            aria-label="Main Navigation"
-            className="flex items-center space-x-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory w-full md:w-auto max-w-full min-w-0 shrink"
-          >
-            {navItems.map((item) => {
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => onSelectTab(item.id)}
-                  className={`flex items-center space-x-1.5 sm:space-x-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs font-semibold transition shrink-0 cursor-pointer min-h-[38px] snap-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-                    isActive
-                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-bold'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-900/80'
-                  }`}
+          {/* Main Navigation + Closed-by-Default Explore Dropdown */}
+          <div className="flex items-center space-x-1.5 w-full md:w-auto max-w-full min-w-0 shrink">
+            <nav
+              aria-label="Main Navigation"
+              className="flex items-center space-x-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory flex-1 md:flex-initial max-w-full min-w-0 shrink"
+            >
+              {navItems.map((item) => {
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setExploreOpen(false);
+                      onSelectTab(item.id);
+                    }}
+                    className={`flex items-center space-x-1.5 sm:space-x-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs font-semibold transition shrink-0 cursor-pointer min-h-[38px] snap-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+                      isActive
+                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-bold'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-900/80'
+                    }`}
+                  >
+                    {item.icon}
+                    <span className="hidden xl:inline whitespace-nowrap">{item.label}</span>
+                    <span className="hidden md:inline xl:hidden whitespace-nowrap">{item.mediumLabel}</span>
+                    <span className="md:hidden whitespace-nowrap">{item.shortLabel}</span>
+                    {item.badge && !isActive && (
+                      <span className="px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 shrink-0">
+                        {item.badge}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </nav>
+
+            {/* Closed-by-default Explore Dropdown (outside overflow-x-auto so never clipped) */}
+            <div ref={dropdownRef} className="relative shrink-0">
+              <button
+                ref={triggerRef}
+                type="button"
+                aria-haspopup="menu"
+                aria-expanded={exploreOpen}
+                onClick={() => setExploreOpen((prev) => !prev)}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    setExploreOpen(true);
+                    setTimeout(() => firstItemRef.current?.focus(), 0);
+                  }
+                }}
+                className={`flex items-center space-x-1.5 px-3 py-2 rounded-2xl border text-xs font-semibold transition cursor-pointer min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+                  isExploreActive || exploreOpen
+                    ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30'
+                    : 'bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-indigo-500/50'
+                }`}
+              >
+                <span>Explore</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${exploreOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {exploreOpen && (
+                <div
+                  role="menu"
+                  aria-label="Project Pages"
+                  className="absolute right-0 mt-2 w-64 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-1.5 z-50 space-y-1"
                 >
-                  {item.icon}
-                  {/* Full label on wide desktops, medium label on standard desktops, short on mobile */}
-                  <span className="hidden xl:inline whitespace-nowrap">{item.label}</span>
-                  <span className="hidden md:inline xl:hidden whitespace-nowrap">{item.mediumLabel}</span>
-                  <span className="md:hidden whitespace-nowrap">{item.shortLabel}</span>
-                  {item.badge && !isActive && (
-                    <span className="px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 shrink-0">
-                      {item.badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
+                  <button
+                    ref={firstItemRef}
+                    role="menuitem"
+                    type="button"
+                    onClick={() => {
+                      setExploreOpen(false);
+                      onSelectTab('comparative');
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        secondItemRef.current?.focus();
+                      }
+                    }}
+                    className={`w-full flex items-start space-x-2.5 p-2.5 rounded-xl text-left transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+                      activeTab === 'comparative'
+                        ? 'bg-indigo-600/15 text-indigo-600 dark:text-indigo-300'
+                        : 'hover:bg-slate-100 dark:hover:bg-slate-800/70 text-slate-800 dark:text-slate-200'
+                    }`}
+                  >
+                    <BookOpen className="w-4 h-4 text-indigo-500 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="text-xs font-bold">Comparative Analysis</div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                        Research papers, FL frameworks & benchmarks
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    ref={secondItemRef}
+                    role="menuitem"
+                    type="button"
+                    onClick={() => {
+                      setExploreOpen(false);
+                      onSelectTab('tech-stack');
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        firstItemRef.current?.focus();
+                      }
+                    }}
+                    className={`w-full flex items-start space-x-2.5 p-2.5 rounded-xl text-left transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+                      activeTab === 'tech-stack'
+                        ? 'bg-indigo-600/15 text-indigo-600 dark:text-indigo-300'
+                        : 'hover:bg-slate-100 dark:hover:bg-slate-800/70 text-slate-800 dark:text-slate-200'
+                    }`}
+                  >
+                    <Cpu className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="text-xs font-bold">Technology Stack</div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                        Verified modules & end-to-end walkthrough
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
 
           {/* Desktop Backend Status Indicator & Theme Toggle */}
           <div className="hidden md:flex items-center space-x-2.5 shrink-0">
