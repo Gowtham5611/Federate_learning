@@ -67,6 +67,8 @@ const resolveApiBase = (): string => {
 
 const API_BASE = resolveApiBase();
 
+let _hasHealthSucceeded = false;
+
 /**
  * Builds a clean canonical URL for API requests, avoiding double '/api/api' segments.
  */
@@ -200,18 +202,31 @@ async function request<T>(
 
 export const apiService = {
   /**
+   * Returns true once the backend /health or /ready endpoint has responded successfully in this session.
+   */
+  hasBackendWokenUp(): boolean {
+    return _hasHealthSucceeded;
+  },
+
+  /**
    * Check API liveness (process is running and responsive).
    * Canonical endpoint: /health with automatic /api/health and /api/v1/health fallbacks.
    */
   async getHealth(): Promise<HealthResponse> {
     try {
-      return await request<HealthResponse>('/health');
+      const h = await request<HealthResponse>('/health');
+      _hasHealthSucceeded = true;
+      return h;
     } catch (e1) {
       try {
-        return await request<HealthResponse>('/api/health');
+        const h = await request<HealthResponse>('/api/health');
+        _hasHealthSucceeded = true;
+        return h;
       } catch {
         try {
-          return await request<HealthResponse>('/api/v1/health');
+          const h = await request<HealthResponse>('/api/v1/health');
+          _hasHealthSucceeded = true;
+          return h;
         } catch {
           throw e1;
         }
@@ -223,7 +238,9 @@ export const apiService = {
    * Single-shot non-cascading health probe for background keep-alive pings.
    */
   async probeHealth(): Promise<HealthResponse> {
-    return request<HealthResponse>('/health', {}, 1, 15000);
+    const h = await request<HealthResponse>('/health', {}, 1, 15000);
+    _hasHealthSucceeded = true;
+    return h;
   },
 
   /**

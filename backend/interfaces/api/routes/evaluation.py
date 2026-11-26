@@ -72,7 +72,7 @@ class MultiModelEvaluateRequest(BaseModel):
     csv_content: str = Field(..., description="Raw CSV string content")
     model_ids: Optional[List[str]] = Field(None, description="Optional subset of models to compare")
     filename: Optional[str] = Field("upload.csv", description="Origin filename")
-    row_limit: Optional[int] = Field(10000, ge=1, le=1000000, description="Max rows to evaluate")
+    row_limit: Optional[int] = Field(None, ge=1, le=1000000, description="Max rows to evaluate (None for all rows)")
     threshold: Optional[float] = Field(None, ge=0.01, le=0.99, description="Custom classification threshold override")
     user_mappings: Optional[Dict[str, str]] = Field(None, description="Optional field overrides")
     column_mapping: Optional[Dict[str, str]] = Field(None, description="Alias for user_mappings")

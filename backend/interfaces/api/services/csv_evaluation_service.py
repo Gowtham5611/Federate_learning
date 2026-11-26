@@ -605,7 +605,7 @@ class CsvEvaluationService:
         t_seq_inf = time.perf_counter()
         try:
             try:
-                torch.set_num_threads(1)
+                torch.set_num_threads(2)
             except Exception:
                 pass
             model = self.model_service.get_model(model_meta.model_id)

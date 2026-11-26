@@ -332,6 +332,17 @@ class ModelService:
         with torch.no_grad():
             _ = model(dummy_x, dummy_l)
 
+        if len(self._models) >= 2 and dataset not in self._models:
+            # Evict non-champion cached models first to prevent all 13 models accumulating in RAM
+            evict_candidates = [k for k in list(self._models.keys()) if k not in ("HI-Small", "LI-Medium")]
+            if not evict_candidates:
+                evict_candidates = [k for k in list(self._models.keys()) if k != dataset]
+            if evict_candidates:
+                victim = evict_candidates[0]
+                self._models.pop(victim, None)
+                import gc
+                gc.collect()
+
         self._models[dataset] = model
         self._metadata[dataset] = {
             "model_name": model_name,

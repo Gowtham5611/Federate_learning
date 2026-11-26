@@ -5,13 +5,15 @@
 # the inference container build context to ensure minimal image size and zero leakage.
 # =============================================================================
 
-# Version control & IDE
+# Version control, frontend, & IDE
 .git
 .gitignore
 .github
 .vscode
 .idea
 .gemini
+frontend/
+node_modules/
 
 # Python bytecode & environments
 __pycache__/
@@ -34,17 +36,28 @@ kaggle.json
 
 # Raw & Processed Datasets (DO NOT BUNDLE IN IMAGE)
 data/raw/
+backend/data/raw/
 data/processed/ibm_aml/*/train/
 data/processed/ibm_aml/*/validation/
 data/processed/ibm_aml/*/test/
 data/processed/ibm_aml/*/partitions/
 data/processed/ibm_aml/Combined/
+backend/data/processed/ibm_aml/*/train/
+backend/data/processed/ibm_aml/*/validation/
+backend/data/processed/ibm_aml/*/test/
+backend/data/processed/ibm_aml/*/partitions/
+backend/data/processed/ibm_aml/Combined/
 datasets/
 
-# Jupyter & Scratch Work
+# Jupyter, Tests, & Scratch Work
 *.ipynb
 scratch/
+backend/scratch/
 archive/
+backend/archive/
+backend/experiments/
+backend/tests/
+tests/
 "colab work and results"/
 "Colab Results"/
 colab_*.ipynb

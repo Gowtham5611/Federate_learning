@@ -368,15 +368,22 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
     } catch (err: unknown) {
       const isCold = err instanceof ApiError ? err.isColdStart : false;
       const reqId = err instanceof ApiError ? err.requestId : undefined;
-      const msg = err instanceof ApiError ? err.message : err instanceof Error ? err.message : 'Inspection failed';
-      setApiError(msg);
+      const status = err instanceof ApiError ? err.status : 0;
+      const rawMsg = err instanceof ApiError ? err.message : err instanceof Error ? err.message : 'Inspection failed';
       setFailedStage('CSV Schema Inspection');
       if (reqId) setFailedRequestId(reqId);
 
-      if (isCold) {
+      if (isCold && !apiService.hasBackendWokenUp()) {
+        setApiError(rawMsg);
         startBoundedWakeupCheck('CSV Schema Inspection', async () => {
           await analyzeUploadedCsv(content, name);
         });
+      } else if (isCold || status >= 500 || status === 0) {
+        setIsWakingUp(false);
+        setApiError(`The server restarted or ran out of memory during CSV Schema Inspection. Please retry. (${rawMsg})`);
+      } else {
+        setIsWakingUp(false);
+        setApiError(rawMsg);
       }
     } finally {
       setIsInspecting(false);
@@ -462,15 +469,22 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
     } catch (err: unknown) {
       const isCold = err instanceof ApiError ? err.isColdStart : false;
       const reqId = err instanceof ApiError ? err.requestId : undefined;
-      const msg = err instanceof ApiError ? err.message : err instanceof Error ? err.message : 'Evaluation request failed';
-      setApiError(msg);
+      const status = err instanceof ApiError ? err.status : 0;
+      const rawMsg = err instanceof ApiError ? err.message : err instanceof Error ? err.message : 'Evaluation request failed';
       setFailedStage('Model Inference');
       if (reqId) setFailedRequestId(reqId);
 
-      if (isCold) {
+      if (isCold && !apiService.hasBackendWokenUp()) {
+        setApiError(rawMsg);
         startBoundedWakeupCheck('Model Inference', async () => {
           await handleRunPrediction();
         });
+      } else if (isCold || status === 404 || status >= 500 || status === 0) {
+        setIsWakingUp(false);
+        setApiError(`The server restarted or ran out of memory during Model Inference. Please retry. (${rawMsg})`);
+      } else {
+        setIsWakingUp(false);
+        setApiError(rawMsg);
       }
     } finally {
       setEvaluating(false);
@@ -514,15 +528,22 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
     } catch (err: unknown) {
       const isCold = err instanceof ApiError ? err.isColdStart : false;
       const reqId = err instanceof ApiError ? err.requestId : undefined;
-      const msg = err instanceof ApiError ? err.message : err instanceof Error ? err.message : 'Multi-model evaluation request failed';
-      setApiError(msg);
+      const status = err instanceof ApiError ? err.status : 0;
+      const rawMsg = err instanceof ApiError ? err.message : err instanceof Error ? err.message : 'Multi-model evaluation request failed';
       setFailedStage('Multi-Model Benchmark');
       if (reqId) setFailedRequestId(reqId);
 
-      if (isCold) {
+      if (isCold && !apiService.hasBackendWokenUp()) {
+        setApiError(rawMsg);
         startBoundedWakeupCheck('Multi-Model Benchmark', async () => {
           await handleRunMultiModelEvaluation();
         });
+      } else if (isCold || status >= 500 || status === 0) {
+        setIsWakingUp(false);
+        setApiError(`The server restarted or ran out of memory during Multi-Model Benchmark. Please retry. (${rawMsg})`);
+      } else {
+        setIsWakingUp(false);
+        setApiError(rawMsg);
       }
     } finally {
       setMultiModelEvaluating(false);
