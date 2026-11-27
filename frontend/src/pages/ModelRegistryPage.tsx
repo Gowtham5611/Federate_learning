@@ -153,7 +153,6 @@ export const ModelRegistryPage: React.FC<ModelRegistryPageProps> = ({
     datasetConfigsCount,
     distinctArchitecturesCount,
     distinctArchitecturesList,
-    formatCountLabel,
   } = useModelStats(models, selectedDataset);
 
   return (
@@ -340,8 +339,7 @@ export const ModelRegistryPage: React.FC<ModelRegistryPageProps> = ({
         </div>
 
         <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono flex items-center justify-between pt-1 border-t border-slate-200 dark:border-slate-800/60">
-          <span className="font-semibold">{formatCountLabel(filteredModels.length)}</span>
-          <span className="text-slate-400">Source: results/phase8/phase8_summary.csv</span>
+          <span className="font-semibold">Showing {filteredModels.length} configurations</span>
         </div>
       </div>
 
@@ -533,12 +531,6 @@ export const ModelRegistryPage: React.FC<ModelRegistryPageProps> = ({
                   <span className="text-slate-400">Retention vs Best:</span>
                   <span className="font-bold text-emerald-400">
                     {(((championModel?.test_pr_auc ?? 0.4760) / 0.4771) * 100).toFixed(1)}%
-                  </span>
-                </div>
-                <div className="flex justify-between p-2 rounded bg-slate-950 border border-slate-800/80">
-                  <span className="text-slate-400">Retention vs Mean (0.4119):</span>
-                  <span className="font-bold text-teal-300">
-                    {(((championModel?.test_pr_auc ?? 0.4760) / 0.4119) * 100).toFixed(1)}%
                   </span>
                 </div>
               </div>

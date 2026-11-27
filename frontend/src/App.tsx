@@ -11,12 +11,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { apiService, ApiError } from './services/apiService';
 import { BenchmarkModelRecord, CsvEvaluateResponse, HealthResponse, MultiModelEvaluateResponse, SupportedDataset } from './types/api';
 import { FALLBACK_BENCHMARK_MODELS } from './data/fallbackModels';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
-
-const APP_BUILD_INFO = {
-  gitSha: '9016344',
-  buildTime: '2026-11-24 13:30 UTC',
-};
+import { AlertTriangle, RefreshCw, FileSpreadsheet, BarChart2, Database, History, MoreHorizontal, Layers, BookOpen, Cpu, X } from 'lucide-react';
 
 const TAB_TO_PATH: Record<DashboardTab, string> = {
   evaluation: '/',
@@ -43,6 +38,7 @@ export const App: React.FC = () => {
   const [activeTab, setActiveTabState] = useState<DashboardTab>(() =>
     typeof window !== 'undefined' ? pathToTab(window.location.pathname) : 'evaluation'
   );
+  const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
 
   const setActiveTab = (tab: DashboardTab) => {
     setActiveTabState(tab);
@@ -213,7 +209,7 @@ export const App: React.FC = () => {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-24 md:pb-8">
         {/* Connection Notice if backend is offline */}
         {error && (
           <div className="mb-6 p-4 bg-rose-950/70 border border-rose-500/50 rounded-2xl flex items-center justify-between text-rose-200 text-xs shadow-lg">
@@ -243,6 +239,7 @@ export const App: React.FC = () => {
               onEvaluationComplete={handleEvaluationComplete}
               onMultiModelEvaluationComplete={setMultiModelResult}
               onNavigateTab={setActiveTab}
+              onClearEvaluation={handleClearSavedResults}
             />
           )}
 
@@ -291,30 +288,108 @@ export const App: React.FC = () => {
         </ErrorBoundary>
       </main>
 
-      {/* Footer with Build / Version Stamp & Clear Results */}
-      <footer className="border-t border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950 py-6 text-center text-xs text-slate-500 font-mono transition-colors">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center space-x-3">
-            <span>FedSecureAI • Privacy-Preserving AML Detection</span>
-            <span className="text-slate-600">|</span>
-            <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-[11px] text-indigo-400">
-              Build {APP_BUILD_INFO.gitSha} ({APP_BUILD_INFO.buildTime})
-            </span>
-          </div>
-
-          <div className="flex items-center space-x-3">
-            {currentResult && (
-              <button
-                type="button"
-                onClick={handleClearSavedResults}
-                className="text-xs text-slate-400 hover:text-rose-400 font-mono transition cursor-pointer"
-              >
-                Clear Active Evaluation ({currentResult.prediction_id})
-              </button>
-            )}
-          </div>
+      {/* Clean Footer (no build hash or pred_ IDs) */}
+      <footer className="border-t border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950 py-5 pb-20 md:pb-5 text-center text-xs text-slate-500 transition-colors">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <span>FedSecureAI · Federated Anti-Money Laundering Detection</span>
+          <span className="text-slate-400">Sequence Evaluation & Research Dashboard</span>
         </div>
       </footer>
+
+      {/* Mobile Bottom Tab Bar (<768px): 4 Main Tabs + More Sheet */}
+      <nav
+        aria-label="Mobile Navigation"
+        className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-1 py-1 flex items-center justify-around"
+      >
+        {(
+          [
+            { id: 'evaluation', label: 'Evaluate', icon: <FileSpreadsheet className="w-5 h-5" /> },
+            { id: 'analytics', label: 'Results', icon: <BarChart2 className="w-5 h-5" /> },
+            { id: 'models', label: 'Models', icon: <Database className="w-5 h-5" /> },
+            { id: 'history', label: 'History', icon: <History className="w-5 h-5" /> },
+          ] as { id: DashboardTab; label: string; icon: React.ReactNode }[]
+        ).map((item) => {
+          const isActive = activeTab === item.id;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => {
+                setMobileMoreOpen(false);
+                setActiveTab(item.id);
+              }}
+              className={`flex flex-col items-center justify-center min-w-[60px] min-h-[44px] px-2 py-1 rounded-xl text-[11px] font-semibold transition cursor-pointer ${
+                isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'
+              }`}
+            >
+              {item.icon}
+              <span className="mt-0.5">{item.label}</span>
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          onClick={() => setMobileMoreOpen((prev) => !prev)}
+          aria-expanded={mobileMoreOpen}
+          className={`flex flex-col items-center justify-center min-w-[60px] min-h-[44px] px-2 py-1 rounded-xl text-[11px] font-semibold transition cursor-pointer ${
+            ['ensemble', 'comparative', 'tech-stack'].includes(activeTab) || mobileMoreOpen
+              ? 'text-indigo-600 dark:text-indigo-400'
+              : 'text-slate-500 dark:text-slate-400'
+          }`}
+        >
+          <MoreHorizontal className="w-5 h-5" />
+          <span className="mt-0.5">More</span>
+        </button>
+      </nav>
+
+      {/* Mobile "More" Bottom Sheet */}
+      {mobileMoreOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end"
+          onClick={() => setMobileMoreOpen(false)}
+        >
+          <div
+            className="w-full bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 rounded-t-3xl p-5 space-y-2"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
+              <span className="text-sm font-bold text-slate-900 dark:text-white">More Pages</span>
+              <button
+                type="button"
+                onClick={() => setMobileMoreOpen(false)}
+                aria-label="Close menu"
+                className="p-2 rounded-xl text-slate-400 hover:text-white min-h-[44px] min-w-[44px] flex items-center justify-center"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            {(
+              [
+                { id: 'ensemble', label: 'Ensemble Analytics', icon: <Layers className="w-5 h-5 text-violet-400" /> },
+                { id: 'comparative', label: 'Comparative Analysis (Literature)', icon: <BookOpen className="w-5 h-5 text-indigo-400" /> },
+                { id: 'tech-stack', label: 'Technology Stack & Walkthrough', icon: <Cpu className="w-5 h-5 text-emerald-400" /> },
+              ] as { id: DashboardTab; label: string; icon: React.ReactNode }[]
+            ).map((m) => (
+              <button
+                key={m.id}
+                type="button"
+                onClick={() => {
+                  setMobileMoreOpen(false);
+                  setActiveTab(m.id);
+                }}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-semibold min-h-[48px] transition cursor-pointer ${
+                  activeTab === m.id
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-slate-100 dark:bg-slate-800/70 text-slate-800 dark:text-slate-200'
+                }`}
+              >
+                {m.icon}
+                <span>{m.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -338,8 +338,59 @@ export const FlaggedTransactionsTable: React.FC<FlaggedTransactionsTableProps> =
         </div>
       </div>
 
-      {/* Main Table */}
-      <div className="overflow-x-auto rounded-2xl border border-slate-800">
+      {/* Mobile Card List (< 768px) */}
+      <div className="md:hidden space-y-2.5">
+        {paginatedRows.length === 0 ? (
+          <div className="py-8 text-center text-slate-500 text-xs rounded-2xl border border-slate-800 bg-slate-950/60">
+            No transaction records match the current filters.
+          </div>
+        ) : (
+          paginatedRows.map((item) => {
+            const prob = Number(item.predicted_probability ?? 0);
+            const isFlagged = prob >= activeThreshold;
+            const origRowIdx = Number(item.row_id || 1);
+            const rowRefStr = item.transaction_id || `TX_${String(origRowIdx).padStart(5, '0')}`;
+            const amtNum = Number(item.amount || (item as any)['Amount Paid'] || 0);
+            const currStr = (item as any).currency || (item as any)['Payment Currency'] || '';
+            return (
+              <div
+                key={`mob-${origRowIdx}-${rowRefStr}`}
+                className="p-3.5 rounded-2xl border border-slate-800 bg-slate-950/80 space-y-2"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-mono font-bold text-slate-200 truncate">{rowRefStr}</span>
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                      isFlagged
+                        ? 'bg-rose-950 text-rose-300 border border-rose-700/60'
+                        : 'bg-emerald-950 text-emerald-300 border border-emerald-700/60'
+                    }`}
+                  >
+                    {isFlagged ? 'FLAGGED' : 'CLEARED'} · {prob.toFixed(4)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-slate-400 font-mono">
+                  <span className="truncate">{item.from_account || '—'} → {item.to_account || '—'}</span>
+                  <span className="text-slate-200 font-semibold shrink-0 ml-2">
+                    {currStr} {amtNum.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setInspectItem(item)}
+                  className="w-full min-h-[40px] rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-indigo-300 flex items-center justify-center gap-1.5 transition cursor-pointer"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>Inspect Details</span>
+                </button>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Main Table (Desktop & Tablet) */}
+      <div className="hidden md:block overflow-x-auto rounded-2xl border border-slate-800">
         <table className="w-full text-left border-collapse text-xs font-mono">
           <thead>
             <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 uppercase text-[10px]">

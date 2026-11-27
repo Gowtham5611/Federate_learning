@@ -182,21 +182,19 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
         <div className="flex items-center space-x-2 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800">
           <button
             onClick={() => onSelectDataset('HI-Small')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
-              selectedDataset === 'HI-Small'
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${selectedDataset === 'HI-Small'
                 ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
+              }`}
           >
             HI-Small Pipeline
           </button>
           <button
             onClick={() => onSelectDataset('LI-Medium')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
-              selectedDataset === 'LI-Medium'
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${selectedDataset === 'LI-Medium'
                 ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
+              }`}
           >
             LI-Medium Pipeline
           </button>
@@ -303,25 +301,19 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
 
       {outcome && (
         <div className="space-y-6">
-          {/* Scientific Rationale Banner */}
+          {/* 1-Line Key Finding Banner */}
           <div
-            className={`p-5 rounded-2xl border flex items-start space-x-3.5 shadow-lg ${
-              outcome.best_alpha >= 0.99 || !outcome.ensemble_improved
+            className={`px-4 py-3 rounded-xl border flex items-center space-x-3 ${outcome.best_alpha >= 0.99 || !outcome.ensemble_improved
                 ? 'bg-amber-950/30 border-amber-600/50 text-amber-200'
                 : 'bg-emerald-950/30 border-emerald-600/50 text-emerald-200'
-            }`}
+              }`}
           >
-            <Info className="w-5 h-5 mt-0.5 shrink-0" />
-            <div className="space-y-1">
-              <span className="font-bold text-sm block">
-                {outcome.best_alpha >= 0.99
-                  ? 'SCIENTIFIC VERIFICATION: CHAMPION IID ALONE IS OPTIMAL (α* = 1.00)'
-                  : 'SCIENTIFIC VERIFICATION: EMPIRICAL BLEND ADVANTAGE'}
-              </span>
-              <p className="text-slate-300 text-xs leading-relaxed">
-                {outcome.scientific_rationale}
-              </p>
-            </div>
+            <Info className="w-4 h-4 shrink-0" />
+            <span className="text-sm font-medium">
+              {outcome.best_alpha >= 0.99 || !outcome.ensemble_improved
+                ? 'Result: IID model alone is optimal (α* = 1.00); blending with Non-IID did not help.'
+                : `Result: Hybrid blend improved validation performance at α* = ${outcome.best_alpha.toFixed(2)}.`}
+            </span>
           </div>
 
           {/* Key Metric Summary Cards */}
@@ -367,18 +359,18 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
             </div>
 
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono uppercase block">Ensemble Improvement</span>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono uppercase block">Gain over IID</span>
               <span className={`text-2xl font-black font-mono mt-1 block ${outcome.ensemble_improved ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`}>
-                {outcome.ensemble_improved ? '+ ' + outcome.delta_vs_iid.delta_pr_auc.toFixed(4) : 'None (IID Optimal)'}
+                {outcome.ensemble_improved ? `+${outcome.delta_vs_iid.delta_pr_auc.toFixed(4)}` : '0.000'}
               </span>
               <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">Δ PR-AUC vs IID</span>
             </div>
           </div>
 
-          {/* Visual Charts: 1. Alpha vs Validation Metrics Trajectory & 2. Standalone vs Ensemble Bar Chart */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Visual Charts: Equal height */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
             {/* Chart 1: Alpha vs Validation PR-AUC, ROC-AUC, F1, Precision, Recall */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-xl space-y-4 h-full flex flex-col justify-between">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-2">
@@ -500,7 +492,7 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
             </div>
 
             {/* Chart 2: Grouped Bar Chart comparing IID vs Non-IID vs Hybrid Ensemble */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-xl space-y-4 h-full flex flex-col justify-between">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-2">
@@ -589,18 +581,15 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
                 </svg>
               </div>
 
-              {/* Honest Ensemble Callout & Semantic Legend */}
+              {/* Concise Ensemble Summary */}
               <div className="space-y-3">
-                <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 rounded-xl text-xs flex items-start gap-2.5">
-                  <Info className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
-                  <div className="space-y-0.5 text-slate-700 dark:text-slate-300">
-                    <p className="font-semibold text-slate-900 dark:text-white">
-                      Ensemble retains IID performance without degradation (α* = {outcome.best_alpha.toFixed(2)}, ΔPR-AUC = {outcome.delta_vs_iid.delta_pr_auc >= 0 ? '+' : ''}{outcome.delta_vs_iid.delta_pr_auc.toFixed(4)})
-                    </p>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                      The bars for IID Champion and Ensemble are identical because validation optimization determined that adding non-IID probability mass lowered validation PR-AUC. The optimizer frozen policy selected α* = 1.00 to preserve peak IID test efficacy.
-                    </p>
-                  </div>
+                <div className="px-3 py-2.5 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 rounded-xl text-xs flex items-center gap-2">
+                  <Info className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                  <span className="font-semibold text-slate-900 dark:text-white">
+                    {Math.abs(outcome.delta_vs_iid.delta_pr_auc) < 1e-6
+                      ? 'No difference vs IID champion'
+                      : `Ensemble ΔPR-AUC vs IID: ${outcome.delta_vs_iid.delta_pr_auc >= 0 ? '+' : ''}${outcome.delta_vs_iid.delta_pr_auc.toFixed(4)}`}
+                  </span>
                 </div>
 
                 <SemanticLegend type="ensemble" />
@@ -815,33 +804,27 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
               <table className="w-full text-left border-collapse text-xs font-mono">
                 <thead>
                   <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 uppercase text-[10px]">
-                    <th className="py-2.5 px-4">Candidate Alpha (α)</th>
+                    <th className="py-2.5 px-4 sticky left-0 z-10 bg-slate-50 dark:bg-slate-950">Alpha (α)</th>
                     <th className="py-2.5 px-4 text-right">Val PR-AUC</th>
                     <th className="py-2.5 px-4 text-right">Val ROC-AUC</th>
                     <th className="py-2.5 px-4 text-right">Val F1</th>
                     <th className="py-2.5 px-4 text-right">Val F2</th>
                     <th className="py-2.5 px-4 text-right">Val Precision</th>
                     <th className="py-2.5 px-4 text-right">Val Recall</th>
-                    <th className="py-2.5 px-4 text-right">Val Threshold (τ)</th>
+                    <th className="py-2.5 px-4 text-right">θ</th>
                     <th className="py-2.5 px-4 text-right">Val Brier</th>
-                    <th className="py-2.5 px-4 text-right">Decision</th>
+                    <th className="py-2.5 px-4 text-right">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60">
                   {outcome.alpha_candidates.map((c) => (
                     <tr
                       key={c.alpha}
-                      className={`transition hover:bg-slate-50 dark:hover:bg-slate-800/40 ${
-                        c.selected ? 'bg-indigo-50/60 dark:bg-indigo-950/40 border-l-4 border-indigo-500' : ''
-                      }`}
+                      className={`transition hover:bg-slate-50 dark:hover:bg-slate-800/40 ${c.selected ? 'bg-indigo-50/60 dark:bg-indigo-950/40 border-l-4 border-indigo-500' : ''
+                        }`}
                     >
-                      <td className="py-2.5 px-4 font-bold text-slate-900 dark:text-white flex items-center space-x-2">
-                        <span>{c.alpha.toFixed(2)}</span>
-                        {c.selected && (
-                          <span className="text-[9px] px-1.5 py-0.2 rounded bg-indigo-500 text-white font-bold">
-                            SELECTED
-                          </span>
-                        )}
+                      <td className="py-2.5 px-4 font-bold text-slate-900 dark:text-white sticky left-0 z-10 bg-white dark:bg-slate-900">
+                        {c.alpha.toFixed(2)}
                       </td>
                       <td className="py-2.5 px-4 text-right text-teal-600 dark:text-teal-400 font-bold">{c.val_pr_auc.toFixed(4)}</td>
                       <td className="py-2.5 px-4 text-right text-violet-600 dark:text-violet-300">{c.val_roc_auc.toFixed(4)}</td>
@@ -849,18 +832,18 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
                       <td className="py-2.5 px-4 text-right text-amber-600 dark:text-amber-300">{c.val_f2.toFixed(4)}</td>
                       <td className="py-2.5 px-4 text-right text-emerald-600 dark:text-emerald-400">{c.val_precision.toFixed(4)}</td>
                       <td className="py-2.5 px-4 text-right text-indigo-600 dark:text-indigo-300">{c.val_recall.toFixed(4)}</td>
-                      <td className="py-2.5 px-4 text-right">
-                        <ThresholdBadge value={c.val_threshold} type="frozen_validation" />
+                      <td className="py-2.5 px-4 text-right text-amber-400 font-semibold">
+                        {c.val_threshold.toFixed(4)}
                       </td>
                       <td className="py-2.5 px-4 text-right text-slate-500 dark:text-slate-400">{c.val_brier_score.toFixed(6)}</td>
                       <td className="py-2.5 px-4 text-right">
                         {c.selected ? (
-                          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold flex items-center justify-end space-x-1">
+                          <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold inline-flex items-center justify-end space-x-1">
                             <CheckCircle2 className="w-3.5 h-3.5" />
-                            <span>CHAMPION</span>
+                            <span>Selected</span>
                           </span>
                         ) : (
-                          <span className="text-[10px] text-slate-400 dark:text-slate-500">Pruned</span>
+                          <span className="text-xs text-slate-400 dark:text-slate-500">—</span>
                         )}
                       </td>
                     </tr>

@@ -63,6 +63,7 @@ import {
   ChevronDown,
   ChevronUp,
   Layers,
+  Trash2,
 } from 'lucide-react';
 
 
@@ -72,6 +73,7 @@ interface AmlEvaluationPageProps {
   onEvaluationComplete: (result: CsvEvaluateResponse) => void;
   onMultiModelEvaluationComplete?: (result: MultiModelEvaluateResponse) => void;
   onNavigateTab: (tab: 'evaluation' | 'analytics' | 'history' | 'models' | 'ensemble') => void;
+  onClearEvaluation?: () => void;
 }
 
 
@@ -81,6 +83,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
   onEvaluationComplete,
   onMultiModelEvaluationComplete,
   onNavigateTab,
+  onClearEvaluation,
 }) => {
   // File state
   const [csvContent, setCsvContent] = useState<string>('');
@@ -629,8 +632,8 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
             <FileSpreadsheet className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
             <span>Universal AML CSV Evaluation & Prediction</span>
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Universal reader for arbitrary rows, columns, delimiters, encodings, and feature schemas. Predict with frozen federated models or train custom classifiers.
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Upload any transaction CSV to score with federated AML models or train a custom classifier.
           </p>
         </div>
 
@@ -659,15 +662,15 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
 
       {/* Main Upload & Configuration Container */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-xl space-y-6">
-        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Dropzone & Universal Format Banner */}
-          <div className="flex-1 space-y-4">
+          <div className="lg:col-span-6 min-w-0 space-y-4">
             <div className="flex items-center justify-between">
               <label className="block text-xs font-mono uppercase text-slate-500 dark:text-slate-400 font-semibold">
                 Select or Drop Any Transaction CSV
               </label>
             </div>
-            <div className="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-500/80 dark:hover:border-indigo-500/80 rounded-2xl p-6 text-center transition bg-slate-50/60 dark:bg-slate-950/40 relative">
+            <div className="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-500/80 dark:hover:border-indigo-500/80 rounded-2xl p-6 min-h-[148px] flex flex-col items-center justify-center text-center transition bg-slate-50/60 dark:bg-slate-950/40 relative">
               <input
                 type="file"
                 accept=".csv,.txt"
@@ -783,7 +786,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
           </div>
 
           {/* Evaluation Settings & Model Selector */}
-          <div className="w-full lg:w-88 space-y-4">
+          <div className="lg:col-span-6 min-w-0 space-y-4">
             {/* Model Selection Dropdown */}
             <div className="space-y-2">
               <label className="block text-xs font-mono uppercase text-slate-400 font-semibold flex items-center justify-between">
@@ -1132,7 +1135,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
             <button
               onClick={handleRunPrediction}
               disabled={evaluating || multiModelEvaluating || !csvContent}
-              className="flex items-center space-x-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs sm:text-sm transition shadow-lg shadow-indigo-600/30 disabled:opacity-50 cursor-pointer"
+              className="flex items-center justify-center space-x-2 px-6 py-3 min-h-[44px] rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition shadow-lg shadow-indigo-600/30 disabled:opacity-50 cursor-pointer"
             >
               {evaluating ? (
                 <>
@@ -1224,18 +1227,29 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => onNavigateTab('history')}
-                className="text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3.5 py-1.5 rounded-xl font-semibold flex items-center space-x-1.5 transition cursor-pointer"
+                className="text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3.5 py-2 min-h-[40px] rounded-xl font-semibold flex items-center space-x-1.5 transition cursor-pointer"
               >
                 <History className="w-3.5 h-3.5 text-indigo-400" />
                 <span>Prediction History & Downloads</span>
               </button>
               <button
                 onClick={() => onNavigateTab('analytics')}
-                className="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-1.5 rounded-xl font-semibold flex items-center space-x-1 transition cursor-pointer"
+                className="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-2 min-h-[40px] rounded-xl font-semibold flex items-center space-x-1 transition cursor-pointer"
               >
                 <span>Full Analytics</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
+              {onClearEvaluation && (
+                <button
+                  type="button"
+                  onClick={onClearEvaluation}
+                  title="Clear active evaluation"
+                  aria-label="Clear active evaluation"
+                  className="p-2.5 min-h-[40px] min-w-[40px] rounded-xl bg-slate-800 hover:bg-rose-950/70 border border-slate-700 hover:border-rose-600/60 text-slate-400 hover:text-rose-300 flex items-center justify-center transition cursor-pointer"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              )}
             </div>
           </div>
 
@@ -1316,7 +1330,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
                     LABEL-AWARE
                   </span>
                   <span className="px-2.5 py-1 rounded-full text-[11px] font-mono text-slate-400 bg-slate-950 border border-slate-800">
-                    {activeOp?.name || 'Frozen Canonical'}
+                    {activeOp?.name || 'Default Operating Point'}
                   </span>
                 </div>
               </div>
@@ -1383,6 +1397,29 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
               </div>
             </div>
           </div>
+        </div>
+      )}
+      {/* Sticky mobile action bar for Execute AML Prediction */}
+      {csvContent && (
+        <div className="fixed bottom-16 left-0 right-0 z-30 md:hidden px-4 py-2.5 bg-slate-950/95 border-t border-slate-800 backdrop-blur-md">
+          <button
+            type="button"
+            onClick={handleRunPrediction}
+            disabled={evaluating || multiModelEvaluating || !csvContent}
+            className="w-full flex items-center justify-center space-x-2 px-5 py-3 min-h-[44px] rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition shadow-lg shadow-indigo-600/30 disabled:opacity-50 cursor-pointer"
+          >
+            {evaluating ? (
+              <>
+                <RefreshCw className="w-4 h-4 animate-spin text-white" />
+                <span>{evalProgressText}</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4 text-white" />
+                <span>Execute AML Prediction</span>
+              </>
+            )}
+          </button>
         </div>
       )}
     </div>

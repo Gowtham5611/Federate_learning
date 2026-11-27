@@ -117,33 +117,32 @@ export const Header: React.FC<HeaderProps> = ({
     },
     {
       id: 'analytics',
-      label: 'Results & Analytics',
-      mediumLabel: 'Analytics',
-      shortLabel: 'Analytics',
+      label: 'Results',
+      mediumLabel: 'Results',
+      shortLabel: 'Results',
       icon: <BarChart2 className="w-4 h-4 shrink-0" />,
       badge: hasEvaluatedData ? 'Active' : undefined,
     },
     {
       id: 'models',
       label: 'Model Comparison',
-      mediumLabel: 'Model Registry',
+      mediumLabel: 'Models',
       shortLabel: 'Models',
       icon: <Database className="w-4 h-4 shrink-0" />,
     },
     {
       id: 'ensemble',
-      label: 'Ensemble Analytics',
+      label: 'Ensemble',
       mediumLabel: 'Ensemble',
       shortLabel: 'Ensemble',
       icon: <Layers className="w-4 h-4 shrink-0" />,
     },
     {
       id: 'history',
-      label: 'Prediction History',
-      mediumLabel: 'History & Triage',
+      label: 'History',
+      mediumLabel: 'History',
       shortLabel: 'History',
       icon: <History className="w-4 h-4 shrink-0" />,
-      badge: hasEvaluatedData ? 'Loaded' : undefined,
     },
   ];
 
@@ -176,45 +175,51 @@ export const Header: React.FC<HeaderProps> = ({
                     <span>AML DASHBOARD</span>
                   </span>
                 </div>
-                <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">
+                <p className="hidden sm:block text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">
                   Federated Anti-Money Laundering Architecture
                 </p>
               </div>
             </div>
 
-            {/* Mobile Controls: Status & Theme Toggle */}
+            {/* Mobile Controls: Compact Status Dot & Theme Toggle */}
             <div className="md:hidden flex items-center space-x-2">
-              <div
+              <button
+                type="button"
+                onClick={onRefreshHealth}
+                disabled={loadingHealth}
                 title={statusBadge.tooltip}
-                className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-xl border text-[11px] font-mono transition-all ${statusBadge.colorClasses}`}
+                aria-label={`Backend status: ${statusBadge.label}. Tap to refresh.`}
+                className={`flex items-center space-x-1.5 px-2.5 py-2 min-h-[44px] rounded-xl border text-xs font-mono transition-all cursor-pointer ${statusBadge.colorClasses}`}
               >
-                {statusBadge.icon}
-                <span className="font-semibold text-[10px]">{statusBadge.label}</span>
-                <button
-                  type="button"
-                  onClick={onRefreshHealth}
-                  disabled={loadingHealth}
-                  title="Retry / Refresh connection"
-                  className="p-0.5 rounded hover:bg-black/10 dark:hover:bg-white/10 transition cursor-pointer"
-                >
-                  <RefreshCw className={`w-2.5 h-2.5 ${loadingHealth ? 'animate-spin' : ''}`} />
-                </button>
-              </div>
+                <span
+                  className={`w-2.5 h-2.5 rounded-full shrink-0 ${
+                    statusBadge.state === 'connected'
+                      ? 'bg-emerald-500'
+                      : statusBadge.state === 'starting'
+                      ? 'bg-amber-500 animate-pulse'
+                      : statusBadge.state === 'degraded'
+                      ? 'bg-orange-500'
+                      : 'bg-rose-500'
+                  }`}
+                />
+                <span className="sr-only">{statusBadge.label}</span>
+                <RefreshCw className={`w-3.5 h-3.5 ${loadingHealth ? 'animate-spin' : ''}`} />
+              </button>
               {onToggleTheme && (
                 <button
                   type="button"
                   onClick={onToggleTheme}
                   aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-                  className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition"
+                  className="p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition"
                 >
-                  {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-indigo-500" />}
+                  {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-500" />}
                 </button>
               )}
             </div>
           </div>
 
-          {/* Main Navigation + Closed-by-Default Explore Dropdown */}
-          <div className="flex items-center space-x-1.5 w-full md:w-auto max-w-full min-w-0 shrink">
+          {/* Desktop Main Navigation + Closed-by-Default Explore Dropdown (Mobile uses Bottom Tab Bar) */}
+          <div className="hidden md:flex items-center space-x-1.5 min-w-0 shrink">
             <nav
               aria-label="Main Navigation"
               className="flex items-center space-x-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory flex-1 md:flex-initial max-w-full min-w-0 shrink"

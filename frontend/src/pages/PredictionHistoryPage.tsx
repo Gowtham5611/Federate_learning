@@ -11,6 +11,8 @@ import {
   FileText,
   Trash2,
   AlertTriangle,
+  Download,
+  ChevronDown,
   Info,
 } from 'lucide-react';
 import { apiService } from '../services/apiService';
@@ -32,6 +34,7 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
   const [statusFilter, setStatusFilter] = useState<PredictionFilterMode>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [downloadMenuOpen, setDownloadMenuOpen] = useState<boolean>(false);
   const pageSize = 20;
 
   // Explainability inspection modal
@@ -124,6 +127,15 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
       return true;
     });
 
+    filtered.sort((a, b) => {
+      const pa = Number(a.predicted_probability ?? 0);
+      const pb = Number(b.predicted_probability ?? 0);
+      const fa = pa >= activeThreshold ? 1 : 0;
+      const fb = pb >= activeThreshold ? 1 : 0;
+      if (fa !== fb) return fb - fa;
+      return pb - pa;
+    });
+
     return {
       filteredRows: filtered,
       predSuspiciousCount: predSuspicious,
@@ -212,74 +224,146 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
         <div className="flex items-center space-x-2">
           {onClearSavedResults && (
             <button
+              type="button"
               onClick={onClearSavedResults}
-              className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-900 hover:bg-rose-950/60 text-slate-300 hover:text-rose-300 border border-slate-800 hover:border-rose-700/50 text-xs font-semibold transition cursor-pointer"
+              title="Clear saved results"
+              aria-label="Clear saved results"
+              className="p-2.5 min-h-[40px] min-w-[40px] rounded-xl bg-slate-900 hover:bg-rose-950/60 text-slate-300 hover:text-rose-300 border border-slate-800 hover:border-rose-700/50 flex items-center justify-center transition cursor-pointer"
             >
-              <Trash2 className="w-3.5 h-3.5 text-rose-400" />
-              <span>Clear Saved Results</span>
+              <Trash2 className="w-4 h-4 text-rose-400" />
             </button>
           )}
 
           {result && (
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                onClick={() => {
-                  const pid = result.prediction_id || result.download_id;
-                  if (pid) {
-                    window.open(apiService.getPdfReportUrl(pid), '_blank');
-                  }
-                }}
-                className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/60 text-indigo-300 text-xs font-semibold transition cursor-pointer"
-                title="Download evaluation metrics report (PDF) for uploaded CSV"
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span>Report (Metrics PDF)</span>
-              </button>
+            <>
+              {/* Mobile single Download dropdown */}
+              <div className="relative sm:hidden">
+                <button
+                  type="button"
+                  onClick={() => setDownloadMenuOpen((prev) => !prev)}
+                  className="flex items-center space-x-1.5 px-3.5 py-2 min-h-[40px] rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download</span>
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </button>
+                {downloadMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-52 rounded-xl bg-slate-900 border border-slate-700 shadow-xl py-1.5 z-40">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDownloadMenuOpen(false);
+                        const pid = result.prediction_id || result.download_id;
+                        if (pid) window.open(apiService.getPdfReportUrl(pid), '_blank');
+                      }}
+                      className="w-full px-3.5 py-2.5 text-left text-xs text-indigo-300 hover:bg-slate-800 flex items-center gap-2 cursor-pointer"
+                    >
+                      <FileText className="w-3.5 h-3.5" />
+                      <span>Report (Metrics PDF)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDownloadMenuOpen(false);
+                        const pid = result.prediction_id || result.download_id;
+                        if (pid) window.open(apiService.getFlaggedCsvDownloadUrl(pid, activeThreshold), '_blank');
+                      }}
+                      className="w-full px-3.5 py-2.5 text-left text-xs text-rose-300 hover:bg-slate-800 flex items-center gap-2 cursor-pointer"
+                    >
+                      <ShieldAlert className="w-3.5 h-3.5" />
+                      <span>Flagged CSV</span>
+                    </button>
+                    {hasLabels && missedFnCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDownloadMenuOpen(false);
+                          const pid = result.prediction_id || result.download_id;
+                          if (pid) window.open(apiService.getNeedsReviewCsvDownloadUrl(pid, activeThreshold), '_blank');
+                        }}
+                        className="w-full px-3.5 py-2.5 text-left text-xs text-amber-300 hover:bg-slate-800 flex items-center gap-2 cursor-pointer"
+                      >
+                        <AlertTriangle className="w-3.5 h-3.5" />
+                        <span>Under Review CSV</span>
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDownloadMenuOpen(false);
+                        const pid = result.prediction_id || result.download_id;
+                        if (pid) window.open(apiService.getLegitimateCsvDownloadUrl(pid, activeThreshold), '_blank');
+                      }}
+                      className="w-full px-3.5 py-2.5 text-left text-xs text-emerald-300 hover:bg-slate-800 flex items-center gap-2 cursor-pointer"
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <span>Legitimate CSV</span>
+                    </button>
+                  </div>
+                )}
+              </div>
 
-              <button
-                onClick={() => {
-                  const pid = result.prediction_id || result.download_id;
-                  if (pid) {
-                    window.open(apiService.getFlaggedCsvDownloadUrl(pid, activeThreshold), '_blank');
-                  }
-                }}
-                className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-rose-950/80 hover:bg-rose-900 border border-rose-700/60 text-rose-300 text-xs font-semibold transition cursor-pointer"
-                title="Download Flagged transactions CSV separately"
-              >
-                <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
-                <span>Flagged CSV</span>
-              </button>
-
-              {hasLabels && missedFnCount > 0 && (
+              {/* Desktop / Tablet individual download buttons */}
+              <div className="hidden sm:flex flex-wrap items-center gap-2">
                 <button
                   onClick={() => {
                     const pid = result.prediction_id || result.download_id;
                     if (pid) {
-                      window.open(apiService.getNeedsReviewCsvDownloadUrl(pid, activeThreshold), '_blank');
+                      window.open(apiService.getPdfReportUrl(pid), '_blank');
                     }
                   }}
-                  className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-amber-950/80 hover:bg-amber-900 border border-amber-700/60 text-amber-300 text-xs font-semibold transition cursor-pointer"
-                  title="Download Under Review (False Negatives) transactions CSV separately"
+                  className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/60 text-indigo-300 text-xs font-semibold transition cursor-pointer"
+                  title="Download evaluation metrics report (PDF) for uploaded CSV"
                 >
-                  <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Under Review CSV</span>
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>Report (Metrics PDF)</span>
                 </button>
-              )}
 
-              <button
-                onClick={() => {
-                  const pid = result.prediction_id || result.download_id;
-                  if (pid) {
-                    window.open(apiService.getLegitimateCsvDownloadUrl(pid, activeThreshold), '_blank');
-                  }
-                }}
-                className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-300 text-xs font-semibold transition cursor-pointer"
-                title="Download Legitimate (Non-Flagged) transactions CSV separately"
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Legitimate CSV</span>
-              </button>
-            </div>
+                <button
+                  onClick={() => {
+                    const pid = result.prediction_id || result.download_id;
+                    if (pid) {
+                      window.open(apiService.getFlaggedCsvDownloadUrl(pid, activeThreshold), '_blank');
+                    }
+                  }}
+                  className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-rose-950/80 hover:bg-rose-900 border border-rose-700/60 text-rose-300 text-xs font-semibold transition cursor-pointer"
+                  title="Download Flagged transactions CSV separately"
+                >
+                  <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
+                  <span>Flagged CSV</span>
+                </button>
+
+                {hasLabels && missedFnCount > 0 && (
+                  <button
+                    onClick={() => {
+                      const pid = result.prediction_id || result.download_id;
+                      if (pid) {
+                        window.open(apiService.getNeedsReviewCsvDownloadUrl(pid, activeThreshold), '_blank');
+                      }
+                    }}
+                    className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-amber-950/80 hover:bg-amber-900 border border-amber-700/60 text-amber-300 text-xs font-semibold transition cursor-pointer"
+                    title="Download Under Review (False Negatives) transactions CSV separately"
+                  >
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Under Review CSV</span>
+                  </button>
+                )}
+
+                <button
+                  onClick={() => {
+                    const pid = result.prediction_id || result.download_id;
+                    if (pid) {
+                      window.open(apiService.getLegitimateCsvDownloadUrl(pid, activeThreshold), '_blank');
+                    }
+                  }}
+                  className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-300 text-xs font-semibold transition cursor-pointer"
+                  title="Download Legitimate (Non-Flagged) transactions CSV separately"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Legitimate CSV</span>
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>
@@ -411,8 +495,57 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
             </div>
           </div>
 
-          {/* Itemized Table (Horizontally Scrollable with Sticky Inspect Column) */}
-          <div className="overflow-x-auto relative rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          {/* Mobile Card List (< 768px) */}
+          <div className="md:hidden space-y-2.5">
+            {paginatedRows.length === 0 ? (
+              <div className="py-8 text-center text-slate-500 text-xs rounded-2xl border border-slate-800">
+                No transaction records match the current filter.
+              </div>
+            ) : (
+              paginatedRows.map((item) => {
+                const prob = Number(item.predicted_probability ?? 0);
+                const isAlert = prob >= activeThreshold;
+                return (
+                  <div
+                    key={`hist-mob-${item.row_id}`}
+                    className="p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/80 space-y-2"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-mono font-bold text-slate-900 dark:text-white truncate">
+                        {item.transaction_id || `TX_${String(item.row_id).padStart(5, '0')}`}
+                      </span>
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                          isAlert
+                            ? 'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-700/60'
+                            : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700/60'
+                        }`}
+                      >
+                        {isAlert ? 'FLAGGED' : 'CLEARED'} · {prob.toFixed(4)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-mono">
+                      <span className="truncate">{item.from_account} → {item.to_account}</span>
+                      <span className="font-bold text-slate-900 dark:text-white shrink-0 ml-2">
+                        {Number(item.amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleInspect(item)}
+                      className="w-full min-h-[40px] rounded-xl bg-slate-200/70 dark:bg-slate-900 hover:bg-indigo-100 dark:hover:bg-indigo-950 border border-slate-300 dark:border-slate-700 text-xs font-semibold text-indigo-700 dark:text-indigo-300 flex items-center justify-center gap-1.5 transition cursor-pointer"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Inspect Attribution</span>
+                    </button>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Itemized Table (Horizontally Scrollable with Sticky Inspect Column on Desktop/Tablet) */}
+          <div className="hidden md:block overflow-x-auto relative rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
             <table className="w-full text-left border-collapse text-xs font-mono">
               <thead>
                 <tr className="bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 uppercase text-[10px] sticky top-0 z-10">
@@ -526,7 +659,7 @@ export const PredictionHistoryPage: React.FC<PredictionHistoryPageProps> = ({
                             <span className="text-slate-400 text-[10px] italic">Unlabeled</span>
                           )}
                         </td>
-                        <td className="py-2.5 px-3">
+                        <td className="py-2.5 px-3 whitespace-nowrap">
                           {outcomeBadge}
                         </td>
                         <td className="py-2.5 px-3 min-w-[70px] text-center whitespace-nowrap sticky right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm z-10 shadow-[-4px_0_6px_-2px_rgba(0,0,0,0.15)]">

@@ -37,6 +37,7 @@ export const OperatingPointSelector: React.FC<OperatingPointSelectorProps> = ({
   defaultThreshold,
 }) => {
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
+  const [showPolicyGuide, setShowPolicyGuide] = useState<boolean>(false);
 
   if (!operatingPoints) return null;
 
@@ -376,34 +377,45 @@ export const OperatingPointSelector: React.FC<OperatingPointSelectorProps> = ({
         </div>
       </div>
 
-      {/* Decision Policy Guidance: When to Select Threshold 0 vs. Threshold 0.333 */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 space-y-3">
-        <div className="flex items-center space-x-2">
-          <Activity className="w-4 h-4 text-indigo-400" />
-          <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
-            Decision Policy Guide: When to Select Threshold 0 vs. Threshold 0.333
-          </h4>
-        </div>
+      {/* Collapsible Decision Policy Guidance */}
+      <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-3.5 space-y-3">
+        <button
+          type="button"
+          onClick={() => setShowPolicyGuide((prev) => !prev)}
+          className="w-full flex items-center justify-between text-left cursor-pointer min-h-[36px]"
+        >
+          <div className="flex items-center space-x-2">
+            <Activity className="w-4 h-4 text-indigo-400" />
+            <h4 className="text-xs font-semibold text-white">
+              Decision Policy Guide (Threshold 0 vs. 0.3378)
+            </h4>
+          </div>
+          {showPolicyGuide ? (
+            <ChevronUp className="w-4 h-4 text-slate-400" />
+          ) : (
+            <ChevronDown className="w-4 h-4 text-slate-400" />
+          )}
+        </button>
 
+        {showPolicyGuide && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-          {/* Card 1: When to choose Threshold 0.333 / 0.3378 */}
+          {/* Card 1: When to choose Threshold 0.3378 */}
           <div className="rounded-xl border border-indigo-500/40 bg-indigo-950/20 p-3.5 space-y-2">
             <div className="flex items-center justify-between">
               <span className="font-bold text-indigo-300 flex items-center space-x-1.5 font-mono">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>Threshold 0.333 / 0.3378 (Production Champion)</span>
+                <span>Threshold 0.3378 (Production Champion)</span>
               </span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 border border-emerald-700/60 text-emerald-300 font-bold">
                 OPERATIONAL
               </span>
             </div>
             <p className="text-[11px] text-slate-300 leading-relaxed">
-              <strong>When to select:</strong> Live operational transaction screening, production deployment, and automated alerts feeding into FIU investigator queues.
+              <strong>When to select:</strong> Live operational transaction screening and automated alerts for investigator queues.
             </p>
             <ul className="text-[11px] text-slate-400 space-y-1 list-disc list-inside">
-              <li><strong className="text-slate-200">Optimal F1 / PR-AUC Balance:</strong> Mathematically derived on validation split to maximize detection while suppressing false alarms.</li>
-              <li><strong className="text-slate-200">Investigator Workload Bounded:</strong> Generates ~6.4 alerts per 10k transactions, aligning strictly with compliance team capacity.</li>
-              <li><strong className="text-slate-200">High Precision (~90.2%):</strong> Over 9 out of 10 flagged alerts represent confirmed illicit laundering networks, eliminating investigator fatigue.</li>
+              <li><strong className="text-slate-200">Optimal F1 / PR-AUC Balance:</strong> Derived on validation split to maximize detection while suppressing false alarms.</li>
+              <li><strong className="text-slate-200">Investigator Workload Bounded:</strong> Alert capacity calibrated to compliance team capacity.</li>
               <li><strong className="text-slate-200">Decision Rule:</strong> Score &ge; 0.3378 &rarr; <span className="text-rose-400 font-semibold">FLAG</span>; Score &lt; 0.3378 &rarr; <span className="text-emerald-400 font-semibold">CLEAR</span>.</li>
             </ul>
           </div>
@@ -420,16 +432,16 @@ export const OperatingPointSelector: React.FC<OperatingPointSelectorProps> = ({
               </span>
             </div>
             <p className="text-[11px] text-slate-300 leading-relaxed">
-              <strong>When to select:</strong> Pipeline sanity testing, feature ingestion debugging, and auditing model reachability on labeled benchmark sets.
+              <strong>When to select:</strong> Pipeline sanity testing and auditing model reachability on labeled benchmark sets.
             </p>
             <ul className="text-[11px] text-slate-400 space-y-1 list-disc list-inside">
-              <li><strong className="text-slate-200">Data & Ingestion Verification:</strong> Confirms that data loading and preprocessing assign valid non-negative probabilities (P &ge; 0.0) across all transactions.</li>
-              <li><strong className="text-slate-200">Zero False Negatives (FN = 0):</strong> Yields 100% Recall on labeled positives, proving that the model architecture can register all known laundering cases.</li>
-              <li><strong className="text-rose-300">Zero Specificity (Caution):</strong> Flags 100% of all evaluated transactions as suspicious (10,000 alerts per 10k transactions; FP = total negatives).</li>
-              <li><strong className="text-amber-300">DO NOT DEPLOY:</strong> Never use in production; flooding queues with every single customer transaction violates AML regulatory guidelines.</li>
+              <li><strong className="text-slate-200">Data &amp; Ingestion Verification:</strong> Confirms valid non-negative probabilities (P &ge; 0.0) across all rows.</li>
+              <li><strong className="text-slate-200">Zero False Negatives (FN = 0):</strong> Yields 100% Recall on labeled positives for diagnostic checks.</li>
+              <li><strong className="text-amber-300">DO NOT DEPLOY:</strong> Flags 100% of transactions; diagnostic use only.</li>
             </ul>
           </div>
         </div>
+        )}
       </div>
 
       {/* Collapsible Additional Research Capacities */}

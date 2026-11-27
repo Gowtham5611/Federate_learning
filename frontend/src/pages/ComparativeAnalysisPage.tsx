@@ -52,7 +52,7 @@ const COMPARATIVE_ENTRIES: ComparativeEntry[] = [
     shortLabel: 'HI-Small Champion (LSTM FedAvg IID)',
     category: 'This Project',
     publicationStatus: 'Verified Project Artifacts (v1.0)',
-    authorsOrOrg: 'FedSecureAI Repository (backend/results/phase7 & phase8)',
+    authorsOrOrg: 'FedSecureAI Benchmark Suite',
     year: 2026,
     architecture: 'LSTM / BiLSTM / GRU (PyTorch sequence models, 10x57)',
     federatedStrategy: 'Simulated FedAvg & FedProx (IID and Non-IID bank splits)',
@@ -69,7 +69,7 @@ const COMPARATIVE_ENTRIES: ComparativeEntry[] = [
     contribution:
       'End-to-end reproducible artifact pipeline with threshold-frozen inference, chunked memory-safe serving, Integrated Gradients attributions, and downloadable PDF/CSV triage reports.',
     differsFromFedSecureAI: 'Reference baseline for this repository.',
-    sourceLabel: 'Verified in backend/results/phase7/HI_Small/final_test_metrics.csv',
+    sourceLabel: 'FedSecureAI Evaluated Benchmark Metrics',
     isFedSecureAI: true,
   },
   {
@@ -358,21 +358,46 @@ export const ComparativeAnalysisPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Non-Comparability Disclaimer */}
+      {/* 1-Line Methodological Note */}
       <div
         role="note"
-        className="p-4 rounded-2xl bg-amber-950/50 border border-amber-500/40 flex items-start space-x-3 text-xs sm:text-sm text-amber-200"
+        title="Each entry uses different datasets, class balances, split protocols, and thresholds; avoid direct headline-metric ranking."
+        className="px-4 py-3 rounded-xl bg-amber-950/40 border border-amber-500/40 flex items-center justify-between gap-3 text-xs sm:text-sm text-amber-200"
       >
-        <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-        <div className="space-y-1">
-          <p className="font-bold text-amber-300">
-            Methodological Note: Metrics Across Systems Are Not Directly Comparable
-          </p>
-          <p className="text-amber-100/90 leading-relaxed">
-            Each entry uses different datasets (IBM AML, PaySim, VASP crypto graphs, or private bank networks), class balances, split protocols, decision thresholds, and privacy budgets. Do not rank any system as superior solely from headline metrics. Every external link below opens the verified primary source.
+        <div className="flex items-center space-x-2.5 min-w-0">
+          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+          <span className="truncate sm:whitespace-normal">
+            Methodological Note: Metrics across systems reflect different datasets, splits, and thresholds.
+          </span>
+        </div>
+        <span
+          title="Each entry uses different datasets (IBM AML, PaySim, VASP crypto graphs, or private bank networks), class balances, split protocols, decision thresholds, and privacy budgets."
+          className="text-amber-300 shrink-0 cursor-help"
+        >
+          <Info className="w-4 h-4" />
+        </span>
+      </div>
+
+      {/* Pinned This Project Highlight Card */}
+      {COMPARATIVE_ENTRIES.filter((e) => e.category === 'This Project').map((proj) => (
+        <div
+          key={`pinned-${proj.id}`}
+          className="rounded-2xl border-2 border-indigo-500/60 bg-indigo-950/20 dark:bg-indigo-950/30 p-5 shadow-md space-y-2"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-indigo-600 text-white">
+                This Project
+              </span>
+              <h2 className="text-base font-bold text-slate-900 dark:text-white">{proj.name}</h2>
+            </div>
+            <span className="text-xs font-mono text-indigo-400">{proj.dataset}</span>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+            {proj.architecture} · {proj.federatedStrategy} · {proj.explainability}
           </p>
         </div>
-      </div>
+      ))}
 
       {/* Controls: Category Filter + Search */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4">
@@ -412,13 +437,64 @@ export const ComparativeAnalysisPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Comparison Matrix Table */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-xl overflow-hidden">
+      {/* Mobile Card List (< 768px) */}
+      <div className="md:hidden space-y-3">
+        {filteredEntries.length === 0 ? (
+          <div className="py-8 text-center text-slate-500 text-xs rounded-2xl border border-slate-800">
+            No comparative entries match your current filter.
+          </div>
+        ) : (
+          filteredEntries.map((entry) => {
+            const isExpanded = expandedId === entry.id;
+            return (
+              <div
+                key={`comp-mob-${entry.id}`}
+                className={`rounded-2xl border p-4 space-y-2 ${
+                  entry.category === 'This Project'
+                    ? 'border-indigo-500/60 bg-indigo-950/20'
+                    : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">{entry.name}</h3>
+                    <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                      {entry.category} · {entry.year} · {entry.dataset}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setExpandedId(isExpanded ? null : entry.id)}
+                    className="p-2 min-h-[36px] rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 shrink-0 cursor-pointer"
+                    aria-label="Toggle entry details"
+                  >
+                    {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </button>
+                </div>
+                <p className="text-xs text-slate-700 dark:text-slate-300">
+                  {entry.architecture} · {entry.federatedStrategy}
+                </p>
+                {isExpanded && (
+                  <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
+                    <p><strong className="text-slate-900 dark:text-white">Privacy:</strong> {entry.privacyMechanism}</p>
+                    <p><strong className="text-slate-900 dark:text-white">Evaluation:</strong> {entry.evaluationProtocol}</p>
+                    <p><strong className="text-slate-900 dark:text-white">Explainability:</strong> {entry.explainability}</p>
+                    <p><strong className="text-slate-900 dark:text-white">Summary:</strong> {entry.methodSummary}</p>
+                  </div>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Comparison Matrix Table (Desktop/Tablet) */}
+      <div className="hidden md:block bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 uppercase text-[10px] font-mono">
-                <th className="py-3.5 px-4 min-w-[230px]">
+                <th className="py-3.5 px-4 min-w-[230px] sticky left-0 z-10 bg-slate-100 dark:bg-slate-950">
                   <button
                     type="button"
                     onClick={() => handleSort('name')}
@@ -593,11 +669,11 @@ export const ComparativeAnalysisPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Footer Verification Note */}
+      {/* Footer Note */}
       <div className="flex items-start space-x-2 text-xs text-slate-500 dark:text-slate-400">
         <Info className="w-4 h-4 shrink-0 mt-0.5 text-indigo-400" />
         <span>
-          FedSecureAI metrics shown above are read from verified repository test artifacts (`backend/results/phase7/HI_Small/final_test_metrics.csv` and `backend/results/phase8/phase8_summary.csv`).
+          FedSecureAI metrics reflect evaluated held-out test results on the IBM AML benchmark splits.
         </span>
       </div>
     </div>

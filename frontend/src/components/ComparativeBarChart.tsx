@@ -96,7 +96,7 @@ export const ComparativeBarChart: React.FC<ComparativeBarChartProps> = ({
   className = '',
 }) => {
   const [selectedMetricKey, setSelectedMetricKey] = useState<ChartMetricKey>('test_pr_auc');
-  const [autoScaleY, setAutoScaleY] = useState<boolean>(false);
+  const [autoScaleY, setAutoScaleY] = useState<boolean>(true);
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [hoveredBar, setHoveredBar] = useState<{
     model: BenchmarkModelRecord;
@@ -107,21 +107,26 @@ export const ComparativeBarChart: React.FC<ComparativeBarChartProps> = ({
 
   const activeMetric = METRIC_OPTIONS.find((m) => m.key === selectedMetricKey) || METRIC_OPTIONS[0];
 
+  const sortedModels = [...models].sort((a, b) => {
+    const va = Number(a[selectedMetricKey]) || 0;
+    const vb = Number(b[selectedMetricKey]) || 0;
+    return activeMetric.higherIsBetter ? vb - va : va - vb;
+  });
+
   // Dynamic axis maximum calculation with autoScale toggle
-  const rawMax = Math.max(...models.map((m) => Number(m[selectedMetricKey]) || 0), 0.0001);
+  const rawMax = Math.max(...sortedModels.map((m) => Number(m[selectedMetricKey]) || 0), 0.0001);
   const axisMax = autoScaleY
     ? Math.max(0.001, rawMax * 1.15)
     : activeMetric.maxAxis === 1.0
     ? 1.0
     : Math.max(activeMetric.maxAxis, rawMax * 1.15);
 
-  const formatShortLabel = (configId: string): string => {
-    return configId
-      .replace('centralized_bilstm', 'cent_bilstm')
-      .replace('centralized_lstm', 'cent_lstm')
-      .replace('centralized_gru', 'cent_gru')
-      .replace('centralized_', 'cent_')
-      .replace('config_', 'c_');
+  const formatShortLabel = (m: BenchmarkModelRecord): string => {
+    const arch = m.architecture || 'Model';
+    const algo = m.algorithm?.includes('FedProx') ? 'FedProx' : m.algorithm || '';
+    const dist = m.distribution || '';
+    if (dist === 'Centralized' || algo === 'Centralized') return `${arch} · Cent`;
+    return `${arch} · ${algo} · ${dist}`.replace(/\s+·\s+$/, '');
   };
 
   return (
@@ -202,8 +207,64 @@ export const ComparativeBarChart: React.FC<ComparativeBarChartProps> = ({
         </div>
       </div>
 
-      {/* SVG Bar Chart with Tooltip */}
-      <div className="relative w-full overflow-hidden pt-2">
+      {/* Legend */}
+      <div className="flex flex-wrap items-center gap-4 text-[11px] font-mono text-slate-500 dark:text-slate-400">
+        <span className="inline-flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500 inline-block" />
+          Champion
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-sm bg-violet-500 inline-block" />
+          FedAvg IID
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-sm bg-indigo-500 inline-block" />
+          FedAvg Non-IID
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-sm bg-amber-500 inline-block" />
+          FedProx
+        </span>
+      </div>
+
+      {/* Mobile Horizontal Bars (< 768px) */}
+      <div className="md:hidden space-y-2.5 pt-1">
+        {sortedModels.map((m) => {
+          const val = Number(m[selectedMetricKey]) || 0;
+          const pct = Math.max(4, Math.min(100, (val / axisMax) * 100));
+          const isChamp =
+            (selectedDataset === 'HI-Small' && m.model_name.includes('hi_small_lstm_fedavg_iid_seed42')) ||
+            (selectedDataset === 'LI-Medium' && m.config_id === 'config_5');
+          const barBg = isChamp
+            ? 'bg-emerald-500'
+            : m.algorithm.includes('FedProx')
+            ? 'bg-amber-500'
+            : m.distribution === 'Non-IID'
+            ? 'bg-indigo-500'
+            : 'bg-violet-500';
+          return (
+            <button
+              key={`mob-bar-${m.config_id}`}
+              type="button"
+              onClick={() => onSelectModel && onSelectModel(m.config_id)}
+              className="w-full text-left space-y-1 cursor-pointer"
+            >
+              <div className="flex items-center justify-between text-xs font-mono">
+                <span className="text-slate-700 dark:text-slate-200 font-semibold truncate">{formatShortLabel(m)}</span>
+                <span className="text-slate-900 dark:text-white font-bold ml-2 shrink-0">
+                  {selectedMetricKey === 'alerts_per_10k' ? val.toFixed(1) : val.toFixed(4)}
+                </span>
+              </div>
+              <div className="w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+                <div className={`h-full rounded-full ${barBg}`} style={{ width: `${pct}%` }} />
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* SVG Bar Chart with Tooltip (Desktop/Tablet) */}
+      <div className="hidden md:block relative w-full overflow-hidden pt-2">
         <svg
           ref={svgRef}
           className="w-full h-80 sm:h-96"
@@ -243,11 +304,11 @@ export const ComparativeBarChart: React.FC<ComparativeBarChartProps> = ({
 
           {/* Bars */}
           {(() => {
-            if (!models.length) return null;
-            const barSlotWidth = (860 - 80) / models.length;
+            if (!sortedModels.length) return null;
+            const barSlotWidth = (860 - 80) / sortedModels.length;
             const barW = Math.min(36, barSlotWidth * 0.72);
 
-            return models.map((m, idx) => {
+            return sortedModels.map((m, idx) => {
               const x = 85 + idx * barSlotWidth;
               const val = Number(m[selectedMetricKey]) || 0;
               const clampedRatio = Math.max(0, Math.min(1.0, val / axisMax));
@@ -268,9 +329,9 @@ export const ComparativeBarChart: React.FC<ComparativeBarChartProps> = ({
                 ? '#6366f1'
                 : '#8b5cf6';
 
-              const shortName = formatShortLabel(m.config_id);
+              const shortName = formatShortLabel(m);
               // Stagger labels when more than 8 models to prevent collision
-              const staggerOffset = models.length > 8 && idx % 2 !== 0 ? 12 : 0;
+              const staggerOffset = sortedModels.length > 8 && idx % 2 !== 0 ? 12 : 0;
               const labelY = 216 + staggerOffset;
 
               return (

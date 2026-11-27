@@ -780,7 +780,7 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
                     LABEL-AWARE
                   </span>
                   <span className="px-2.5 py-1 rounded-full text-[11px] font-mono text-slate-400 bg-slate-950 border border-slate-800">
-                    {activeOp?.name || 'Frozen Canonical'}
+                    {activeOp?.name || 'Default Operating Point'}
                   </span>
                 </div>
               </div>
@@ -819,7 +819,7 @@ export const CsvEvaluationPage: React.FC<CsvEvaluationPageProps> = ({
                           : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
                       }`}
                     >
-                      Frozen Canonical ({result.decision_threshold.toFixed(4)})
+                      Default Threshold ({result.decision_threshold.toFixed(4)})
                     </button>
 
                     <button

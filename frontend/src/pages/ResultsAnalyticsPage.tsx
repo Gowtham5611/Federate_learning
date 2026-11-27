@@ -62,6 +62,7 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
   const [selectedOperatingPoint, setSelectedOperatingPoint] = useState<OperatingPointKey>('frozen');
   const [isManualSliderActive, setIsManualSliderActive] = useState<boolean>(false);
   const [showExplainPanel, setShowExplainPanel] = useState<boolean>(false);
+  const [showMoreMetrics, setShowMoreMetrics] = useState<boolean>(false);
   const [, setActiveTableFilter] = useState<TableFilterMode>('flagged');
   const [heatmapCellFilter, setHeatmapCellFilter] = useState<{
     timeBucket: string;
@@ -551,45 +552,46 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
             </div>
           )}
 
-          {/* Row 1: Primary AML Metrics (PR-AUC, Precision, Recall, Specificity, F1, F2, Balanced Acc) */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
-            {/* 1. Headline PR-AUC */}
+          {/* Hero Metrics Row (6 key AML metrics) */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {/* 1. PR-AUC */}
             <div className="bg-slate-900 border border-emerald-500/30 rounded-2xl p-4 shadow-md bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/20">
-              <span className="text-[10px] text-emerald-400 font-mono uppercase font-bold block">★ Headline PR-AUC (Threshold-Invariant)</span>
+              <span className="text-[10px] text-emerald-400 font-mono uppercase font-bold block">PR-AUC</span>
               <span className="text-2xl font-black font-mono text-emerald-400 mt-1 block">
                 {formatMetric(staticMetrics.pr_auc, 4)}
               </span>
               <span className="text-[10px] text-slate-400 font-mono block truncate">
-                {staticMetrics.pr_auc_lift ? `${staticMetrics.pr_auc_lift.toFixed(1)}x Lift` : 'Ranking Invariant'}
-                {staticMetrics.pr_auc_ci_lower ? ` [${staticMetrics.pr_auc_ci_lower.toFixed(2)}, ${staticMetrics.pr_auc_ci_upper?.toFixed(2)}]` : ''}
+                {staticMetrics.pr_auc_lift ? `${staticMetrics.pr_auc_lift.toFixed(1)}x Lift` : 'Threshold-Invariant'}
               </span>
             </div>
 
-            {/* 2. Precision */}
+            {/* 2. ROC-AUC */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
+              <span className="text-[10px] text-slate-400 font-mono uppercase block">ROC-AUC</span>
+              <span className="text-2xl font-black font-mono text-indigo-400 mt-1 block">
+                {formatMetric(staticMetrics.roc_auc, 4)}
+              </span>
+              <span className="text-[10px] text-slate-500 font-mono">Ranking Power</span>
+            </div>
+
+            {/* 3. Recall + Missed FN */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
+              <span className="text-[10px] text-slate-400 font-mono uppercase block">Recall</span>
+              <span className="text-2xl font-black font-mono text-indigo-300 mt-1 block">
+                {formatPercent(computed.recall, 1)}
+              </span>
+              <span className="text-[10px] text-amber-400 font-mono">
+                {computed.fn.toLocaleString()} missed (FN)
+              </span>
+            </div>
+
+            {/* 4. Precision */}
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
               <span className="text-[10px] text-slate-400 font-mono uppercase block">Precision</span>
               <span className="text-2xl font-black font-mono text-white mt-1 block">
                 {formatPercent(computed.precision, 1, '0 Alerts')}
               </span>
               <span className="text-[10px] text-slate-500 font-mono">TP / (TP + FP)</span>
-            </div>
-
-            {/* 3. Recall */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">Recall (Sens.)</span>
-              <span className="text-2xl font-black font-mono text-indigo-300 mt-1 block">
-                {formatPercent(computed.recall, 1)}
-              </span>
-              <span className="text-[10px] text-slate-500 font-mono">Laundering Caught</span>
-            </div>
-
-            {/* 4. Specificity */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">Specificity</span>
-              <span className="text-2xl font-black font-mono text-cyan-300 mt-1 block">
-                {formatPercent(computed.specificity, 1)}
-              </span>
-              <span className="text-[10px] text-slate-500 font-mono">True Negative Rate</span>
             </div>
 
             {/* 5. F1-Score */}
@@ -601,82 +603,89 @@ export const ResultsAnalyticsPage: React.FC<ResultsAnalyticsPageProps> = ({
               <span className="text-[10px] text-slate-500 font-mono">Harmonic Mean</span>
             </div>
 
-            {/* 6. F2-Score */}
+            {/* 6. Alerts per 10k */}
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">F2-Score</span>
-              <span className="text-2xl font-black font-mono text-amber-300 mt-1 block">
-                {formatMetric(computed.f2_score, 4, '0 Alerts')}
+              <span className="text-[10px] text-slate-400 font-mono uppercase block">Alerts / 10k</span>
+              <span className="text-2xl font-black font-mono text-rose-400 mt-1 block">
+                {computed.total > 0 ? ((computed.alertCount / computed.total) * 10000).toFixed(1) : '0.0'}
               </span>
-              <span className="text-[10px] text-slate-500 font-mono">Recall-Weighted</span>
-            </div>
-
-            {/* 7. Balanced Accuracy */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">Balanced Acc</span>
-              <span className="text-2xl font-black font-mono text-teal-400 mt-1 block">
-                {formatPercent(computed.balanced_accuracy, 1)}
+              <span className="text-[10px] text-slate-500 font-mono">
+                {computed.alertCount.toLocaleString()} total alerts
               </span>
-              <span className="text-[10px] text-slate-500 font-mono">(Sens + Spec) / 2</span>
             </div>
           </div>
 
-          {/* Row 2: Advanced Metrics (MCC, Cohen's Kappa, PR-AUC, ROC-AUC, Log Loss, Brier, ECE) */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">Accuracy</span>
-              <span className="text-xl font-black font-mono text-slate-200 mt-1 block">
-                {formatPercent(computed.accuracy, 1)}
+          {/* Collapsible More Metrics Drawer */}
+          <div className="bg-slate-900/70 border border-slate-800 rounded-2xl px-4 py-2.5">
+            <button
+              type="button"
+              onClick={() => setShowMoreMetrics((prev) => !prev)}
+              className="w-full flex items-center justify-between text-xs font-semibold text-slate-300 hover:text-white min-h-[36px] cursor-pointer"
+            >
+              <span>More metrics (MCC, Kappa, Brier, ECE, Log Loss, F2, Specificity, Balanced Acc)</span>
+              <span className="text-indigo-400 font-mono text-[11px]">
+                {showMoreMetrics ? 'Hide ▲' : 'Show ▼'}
               </span>
-              <span className="text-[9px] text-slate-500 font-mono block">Caveat: Imbalance</span>
-            </div>
+            </button>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">MCC</span>
-              <span className="text-xl font-black font-mono text-violet-300 mt-1 block">
-                {formatMetric(computed.mcc, 4)}
-              </span>
-              <span className="text-[10px] text-slate-500 font-mono">Matthews Corr.</span>
-            </div>
-
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">Cohen's Kappa</span>
-              <span className="text-xl font-black font-mono text-violet-400 mt-1 block">
-                {formatMetric(computed.cohen_kappa, 4)}
-              </span>
-              <span className="text-[10px] text-slate-500 font-mono">Inter-Rater Agr.</span>
-            </div>
-
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">ROC-AUC (Threshold-Invariant)</span>
-              <span className="text-xl font-black font-mono text-indigo-400 mt-1 block">
-                {formatMetric(staticMetrics.roc_auc, 4)}
-              </span>
-              <span className="text-[10px] text-slate-500 font-mono">Ranking Invariant</span>
-            </div>
-
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">Log Loss</span>
-              <span className="text-xl font-black font-mono text-rose-300 mt-1 block">
-                {formatMetric(staticMetrics.log_loss ?? null, 4, 'N/A')}
-              </span>
-              <span className="text-[10px] text-slate-500 font-mono">Cross-Entropy</span>
-            </div>
-
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">Brier Score</span>
-              <span className="text-xl font-black font-mono text-cyan-400 mt-1 block">
-                {formatMetric(staticMetrics.brier_score, 6)}
-              </span>
-              <span className="text-[10px] text-slate-500 font-mono">Prob. Mean Sq.</span>
-            </div>
-
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">ECE</span>
-              <span className="text-xl font-black font-mono text-cyan-300 mt-1 block">
-                {formatMetric(staticMetrics.expected_calibration_error, 5, 'N/A')}
-              </span>
-              <span className="text-[10px] text-slate-500 font-mono">Expected Calib.</span>
-            </div>
+            {showMoreMetrics && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 pt-3 pb-1 border-t border-slate-800/80 mt-2">
+                <div className="bg-slate-950 border border-slate-800 rounded-xl p-3">
+                  <span className="text-[10px] text-slate-400 font-mono uppercase block">MCC</span>
+                  <span className="text-lg font-bold font-mono text-violet-300 mt-0.5 block">
+                    {formatMetric(computed.mcc, 4)}
+                  </span>
+                </div>
+                <div className="bg-slate-950 border border-slate-800 rounded-xl p-3">
+                  <span className="text-[10px] text-slate-400 font-mono uppercase block">Cohen&apos;s Kappa</span>
+                  <span className="text-lg font-bold font-mono text-violet-400 mt-0.5 block">
+                    {formatMetric(computed.cohen_kappa, 4)}
+                  </span>
+                </div>
+                <div className="bg-slate-950 border border-slate-800 rounded-xl p-3">
+                  <span className="text-[10px] text-slate-400 font-mono uppercase block">Brier Score</span>
+                  <span className="text-lg font-bold font-mono text-cyan-400 mt-0.5 block">
+                    {formatMetric(staticMetrics.brier_score, 6)}
+                  </span>
+                </div>
+                <div className="bg-slate-950 border border-slate-800 rounded-xl p-3">
+                  <span className="text-[10px] text-slate-400 font-mono uppercase block">ECE</span>
+                  <span className="text-lg font-bold font-mono text-cyan-300 mt-0.5 block">
+                    {formatMetric(staticMetrics.expected_calibration_error, 5, 'N/A')}
+                  </span>
+                </div>
+                <div className="bg-slate-950 border border-slate-800 rounded-xl p-3">
+                  <span className="text-[10px] text-slate-400 font-mono uppercase block">Log Loss</span>
+                  <span className="text-lg font-bold font-mono text-rose-300 mt-0.5 block">
+                    {formatMetric(staticMetrics.log_loss ?? null, 4, 'N/A')}
+                  </span>
+                </div>
+                <div className="bg-slate-950 border border-slate-800 rounded-xl p-3">
+                  <span className="text-[10px] text-slate-400 font-mono uppercase block">F2-Score</span>
+                  <span className="text-lg font-bold font-mono text-amber-300 mt-0.5 block">
+                    {formatMetric(computed.f2_score, 4, '0 Alerts')}
+                  </span>
+                </div>
+                <div className="bg-slate-950 border border-slate-800 rounded-xl p-3">
+                  <span className="text-[10px] text-slate-400 font-mono uppercase block">Specificity</span>
+                  <span className="text-lg font-bold font-mono text-cyan-300 mt-0.5 block">
+                    {formatPercent(computed.specificity, 1)}
+                  </span>
+                </div>
+                <div className="bg-slate-950 border border-slate-800 rounded-xl p-3">
+                  <span className="text-[10px] text-slate-400 font-mono uppercase block">Balanced Acc</span>
+                  <span className="text-lg font-bold font-mono text-teal-400 mt-0.5 block">
+                    {formatPercent(computed.balanced_accuracy, 1)}
+                  </span>
+                </div>
+                <div className="bg-slate-950 border border-slate-800 rounded-xl p-3">
+                  <span className="text-[10px] text-slate-400 font-mono uppercase block">Accuracy</span>
+                  <span className="text-lg font-bold font-mono text-slate-200 mt-0.5 block">
+                    {formatPercent(computed.accuracy, 1)}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Zero Alerts Notice */}
