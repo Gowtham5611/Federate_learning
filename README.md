@@ -77,11 +77,11 @@ Anti-money laundering (AML) detection requires identifying suspicious transactio
 
 ## 3. Technology Stack
 
-- **Deep Learning & Numerical Engine:** PyTorch 2.6.0, NumPy 2.2.3, scikit-learn 1.6.1, SciPy 1.15.2.
-- **Backend Inference Microservice:** FastAPI 0.115.11, Uvicorn 0.34.0, Pydantic v2.10.6, Starlette 0.46.1.
-- **Frontend Compliance Dashboard:** React 18.3.1, Vite 6.4.5, TypeScript 5.6.3, Lucide React icons.
-- **Containerization & Deployment:** Docker 29.7.2, Docker Compose v2 (hardened non-root image).
-- **Test & Verification Framework:** Pytest 9.1.1, Pytest-Cov 7.1.0, HTTPX 0.28.1.
+- **Deep Learning & Numerical Engine:** PyTorch 2.6.0, LightGBM, Pandas, NumPy 2.2.3, scikit-learn 1.6.1, SciPy 1.15.2, Integrated Gradients & Tree SHAP.
+- **Backend Inference Microservice:** Python, FastAPI 0.115.11, Uvicorn 0.34.0, Pydantic v2.10.6, Starlette 0.46.1, ReportLab (PDF reports).
+- **Frontend Compliance Dashboard:** React 18.3.1, Vite 6.4.5, TypeScript 5.6.3, Tailwind CSS, Lucide React icons, Simple Icons.
+- **Containerization & Deployment:** Docker, Hugging Face Spaces (16 GB RAM CPU backend), Vercel (frontend), Render (`render.yaml`).
+- **Test & Verification Framework:** Pytest 9.1.1, Pytest-Cov 7.1.0, HTTPX 0.28.1, Ruff, Playwright.
 
 ---
 
@@ -141,20 +141,25 @@ npm --prefix frontend install
 ### 6.3 Run the Application
 1. **Start FastAPI Backend (PowerShell):**
    ```powershell
-   # Standard entrypoint (Recommended)
-   .venv\Scripts\python.exe -m uvicorn backend.interfaces.api.main:app --host 127.0.0.1 --port 8000 --reload
+   # Standard ASGI entrypoint (Recommended)
+   .venv\Scripts\python.exe -m uvicorn asgi:app --host 127.0.0.1 --port 8000
 
-   # Or direct Python execution:
-   .venv\Scripts\python.exe -m backend.interfaces.api.main
-
-   # Or app module alias:
+   # Or module entrypoint with reload:
    .venv\Scripts\python.exe -m uvicorn backend.interfaces.api.app:app --host 127.0.0.1 --port 8000 --reload
    ```
 2. **Start Analyst Dashboard (Vite / React):**
    ```powershell
-   npm --prefix frontend run dev
+   npm --prefix frontend run dev -- --host 127.0.0.1 --port 5173
    ```
-3. Open browser at: `http://localhost:5173` (or `http://localhost:3000`)
+3. Open browser at: `http://127.0.0.1:5173`
+
+### 6.4 Dashboard Pages & CSV Workflow
+- **AML Evaluation:** Upload any transaction CSV (delimiter/encoding auto-detected; full-file chunked scoring with no row cap), inspect schema compatibility, and run inference via `/api/v1/csv/inspect` and `/api/v1/predict/jobs`.
+- **Results & Analytics:** Interactive threshold slider, confusion matrix, PR/ROC curves, hero AML metrics, collapsible secondary metrics, and mobile-responsive transaction cards.
+- **Model Comparison & Ensemble Analytics:** Compare all registered HI-Small / LI-Medium models and inspect the validation α-sweep (`α* = 1.00`).
+- **Prediction History & Downloads:** Review flagged, non-flagged, and under-review queues; download ReportLab evaluation metrics PDFs and separate Flagged, Under Review, and Legitimate CSVs.
+- **Explore → Comparative Analysis:** Visual comparison gallery (`non_iid_robustness.png`, `pipeline_coverage_matrix.png`, `capability_readiness_radar.jpg` with click-to-zoom lightbox and 5-point takeaways) plus 5 verified reference cards (`arXiv:2610.35996`, `arXiv:2603.19314`, `SSRN 4669561`, Flower Hub, Consilient).
+- **Explore → Technology Stack:** End-to-end prediction pipeline diagram, federated learning weight-aggregation diagram, and categorized technology cards.
 
 ### 6.4 Build Production Frontend Distribution
 ```powershell
@@ -232,10 +237,11 @@ Federate_learning/
 │   ├── Dockerfile.inference    # Hardened multi-stage non-root container build
 │   └── env.inference.example   # Container environment template
 ├── frontend/
-│   ├── src/                    # React 18 components, pages, API clients, demo samples
-│   ├── dist/                   # Production build distribution (194 kB bundle)
+│   ├── public/comparative/     # Comparative analysis chart assets (PNG/JPG)
+│   ├── src/                    # React 18 components, pages, API clients
+│   ├── dist/                   # Production build distribution
 │   ├── package.json            # Node dependencies
-│   └── vite.config.ts          # Port 3000 config, /api proxy to FastAPI
+│   └── vite.config.ts          # Vite dev/build configuration
 ├── results/
 │   ├── phase7/                 # Hybrid ensemble grid search & frozen configs
 │   ├── phase8/                 # Master benchmarking, ablation, and comparative reports
@@ -258,7 +264,7 @@ Federate_learning/
 
 ---
 
-## 10. System Limitations and Operational Boundaries
+## 11. System Limitations and Operational Boundaries
 
 To ensure scientific honesty and safe operational deployment, the following limitations are explicitly documented:
 
@@ -284,10 +290,13 @@ To ensure scientific honesty and safe operational deployment, the following limi
 
 ---
 
-## 11. Primary References
+## 12. Primary References
 
 1. McMahan, B., et al. (2017). Communication-Efficient Learning of Deep Networks from Decentralized Data. *AISTATS 2017*.
 2. Li, T., et al. (2020). Federated Optimization in Heterogeneous Networks. *MLSys 2020*.
 3. Sundararajan, M., Taly, A., & Yan, Q. (2017). Axiomatic Attribution for Deep Networks. *ICML 2017*.
 4. Weber, M., et al. (2019). Anti-Money Laundering in Bitcoin: Experimenting with Graph Convolutional Networks. *arXiv:1908.02591*.
 5. Altman, E. (2023). Synthetic IBM Transactions for Anti-Money Laundering (AML). *IBM Research*.
+6. Losavio, L., et al. (2026). Pricing Cross-Bank Context in Federated Anti-Money Laundering. *arXiv:2610.35996* (preprint).
+7. Kanagavelu, R., et al. (2026). DPxFin: Adaptive Differential Privacy for Anti-Money Laundering Detection via Reputation-Weighted Federated Learning. *arXiv:2603.19314* (preprint).
+8. Guembe, B., et al. (2023). A Federated Machine Learning Approaches For Anti-Money Laundering Detection. *SSRN 4669561*.
