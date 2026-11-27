@@ -587,8 +587,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
       });
 
       setTrainSuccessMessage(
-        `Model "${trainRes.model_name}" trained successfully! Validation F1: ${
-          trainRes.validation_metrics.validation_f1 ?? 'N/A'
+        `Model "${trainRes.model_name}" trained successfully! Validation F1: ${trainRes.validation_metrics.validation_f1 ?? 'N/A'
         }, PR-AUC: ${trainRes.validation_metrics.validation_pr_auc ?? 'N/A'}. Model registered as ${trainRes.model_id}.`
       );
 
@@ -662,9 +661,9 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
 
       {/* Main Upload & Configuration Container */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-xl space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
           {/* Dropzone & Universal Format Banner */}
-          <div className="lg:col-span-6 min-w-0 space-y-4">
+          <div className="flex-1 space-y-4">
             <div className="flex items-center justify-between">
               <label className="block text-xs font-mono uppercase text-slate-500 dark:text-slate-400 font-semibold">
                 Select or Drop Any Transaction CSV
@@ -734,11 +733,10 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
                   {Object.entries(semanticMappingsObj).map(([concept, col]) => (
                     <span
                       key={concept}
-                      className={`px-2 py-0.5 rounded border ${
-                        col
-                          ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-300'
-                          : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 line-through'
-                      }`}
+                      className={`px-2 py-0.5 rounded border ${col
+                        ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-300'
+                        : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 line-through'
+                        }`}
                     >
                       {concept}: <span className="text-indigo-600 dark:text-indigo-400 font-semibold">{col || 'not detected'}</span>
                     </span>
@@ -748,13 +746,12 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
                 {/* Compatibility Feedback */}
                 {selectedModelCompat && (
                   <div
-                    className={`p-3 rounded-xl border text-xs font-mono flex items-start space-x-2 ${
-                      selectedModelCompat.status === 'COMPATIBLE'
-                        ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-300'
-                        : selectedModelCompat.status === 'ADAPTABLE'
+                    className={`p-3 rounded-xl border text-xs font-mono flex items-start space-x-2 ${selectedModelCompat.status === 'COMPATIBLE'
+                      ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-300'
+                      : selectedModelCompat.status === 'ADAPTABLE'
                         ? 'bg-amber-950/40 border-amber-500/50 text-amber-300'
                         : 'bg-rose-950/40 border-rose-500/50 text-rose-300'
-                    }`}
+                      }`}
                   >
                     {selectedModelCompat.status === 'COMPATIBLE' ? (
                       <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
@@ -786,7 +783,7 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
           </div>
 
           {/* Evaluation Settings & Model Selector */}
-          <div className="lg:col-span-6 min-w-0 space-y-4">
+          <div className="w-full lg:w-88 space-y-4">
             {/* Model Selection Dropdown */}
             <div className="space-y-2">
               <label className="block text-xs font-mono uppercase text-slate-400 font-semibold flex items-center justify-between">
@@ -843,17 +840,17 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
                   const id = m?.model_id || '';
                   return !id.startsWith('hi_small_') && !id.startsWith('centralized_') && id !== 'auto' && id !== 'ensemble_hybrid';
                 }).length > 0 && (
-                  <optgroup label="Additional / Custom Models">
-                    {models.filter(m => {
-                      const id = m?.model_id || '';
-                      return !id.startsWith('hi_small_') && !id.startsWith('centralized_') && id !== 'auto' && id !== 'ensemble_hybrid';
-                    }).map((m) => (
-                      <option key={m.model_id} value={m.model_id}>
-                        {m.model_name}{m.is_custom ? ' (Custom)' : ''}
-                      </option>
-                    ))}
-                  </optgroup>
-                )}
+                    <optgroup label="Additional / Custom Models">
+                      {models.filter(m => {
+                        const id = m?.model_id || '';
+                        return !id.startsWith('hi_small_') && !id.startsWith('centralized_') && id !== 'auto' && id !== 'ensemble_hybrid';
+                      }).map((m) => (
+                        <option key={m.model_id} value={m.model_id}>
+                          {m.model_name}{m.is_custom ? ' (Custom)' : ''}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
               </select>
 
               {/* Threshold Selection & Quick Presets */}
@@ -868,11 +865,10 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
                   <button
                     type="button"
                     onClick={() => setCustomThreshold('')}
-                    className={`px-2 py-0.5 rounded text-[10px] font-mono transition cursor-pointer ${
-                      customThreshold === ''
-                        ? 'bg-indigo-600 text-white font-bold'
-                        : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-                    }`}
+                    className={`px-2 py-0.5 rounded text-[10px] font-mono transition cursor-pointer ${customThreshold === ''
+                      ? 'bg-indigo-600 text-white font-bold'
+                      : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                      }`}
                     title="Reset to selected model's frozen default threshold"
                   >
                     Model Default ({activeDefaultThreshold.toFixed(2)})
@@ -882,11 +878,10 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
                       key={preset}
                       type="button"
                       onClick={() => setCustomThreshold(preset)}
-                      className={`px-2 py-0.5 rounded text-[10px] font-mono transition cursor-pointer ${
-                        customThreshold === preset
-                          ? 'bg-indigo-600 text-white font-bold'
-                          : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-                      }`}
+                      className={`px-2 py-0.5 rounded text-[10px] font-mono transition cursor-pointer ${customThreshold === preset
+                        ? 'bg-indigo-600 text-white font-bold'
+                        : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                        }`}
                     >
                       {preset}
                     </button>

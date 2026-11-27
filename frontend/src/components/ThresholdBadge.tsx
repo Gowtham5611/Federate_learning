@@ -21,17 +21,17 @@ export const ThresholdBadge: React.FC<ThresholdBadgeProps> = ({
     type === 'frozen_validation'
       ? 'Validation threshold'
       : type === 'ensemble_tuned'
-      ? 'Ensemble threshold'
-      : type === 'capacity_constrained'
-      ? 'Capacity threshold'
-      : 'Operational threshold'
+        ? 'Ensemble threshold'
+        : type === 'capacity_constrained'
+          ? 'Capacity threshold'
+          : 'Operational threshold'
   );
 
   const tooltipText = type === 'frozen_validation'
     ? 'Selected on the validation split and held fixed during evaluation.'
     : type === 'ensemble_tuned'
-    ? 'Selected via validation PR-AUC during grid search.'
-    : 'Probability cutoff applied to model risk scores (p ≥ θ flags transaction).';
+      ? 'Selected via validation PR-AUC during grid search.'
+      : 'Probability cutoff applied to model risk scores (p ≥ θ flags transaction).';
 
   return (
     <span

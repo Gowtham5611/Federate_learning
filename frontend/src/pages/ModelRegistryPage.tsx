@@ -173,22 +173,20 @@ export const ModelRegistryPage: React.FC<ModelRegistryPageProps> = ({
         <div className="flex items-center space-x-2 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 self-start sm:self-auto">
           <button
             onClick={() => onSelectDataset('HI-Small')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${
-              selectedDataset === 'HI-Small'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-            }`}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${selectedDataset === 'HI-Small'
+              ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+              }`}
           >
             <Database className="w-3.5 h-3.5" />
             <span>HI-Small (5M Rows)</span>
           </button>
           <button
             onClick={() => onSelectDataset('LI-Medium')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${
-              selectedDataset === 'LI-Medium'
-                ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-            }`}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${selectedDataset === 'LI-Medium'
+              ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+              }`}
           >
             <Database className="w-3.5 h-3.5" />
             <span>LI-Medium (31M Rows)</span>
@@ -347,11 +345,10 @@ export const ModelRegistryPage: React.FC<ModelRegistryPageProps> = ({
       <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-3">
         <button
           onClick={() => setActiveSection('comparison')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
-            activeSection === 'comparison'
-              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-          }`}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${activeSection === 'comparison'
+            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+            : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+            }`}
         >
           <BarChart2 className="w-3.5 h-3.5" />
           <span>Comparative Bar Charts</span>
@@ -359,11 +356,10 @@ export const ModelRegistryPage: React.FC<ModelRegistryPageProps> = ({
 
         <button
           onClick={() => setActiveSection('heatmap')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
-            activeSection === 'heatmap'
-              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-          }`}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${activeSection === 'heatmap'
+            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+            : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+            }`}
         >
           <Layers className="w-3.5 h-3.5" />
           <span>Performance Heatmap</span>
@@ -371,11 +367,10 @@ export const ModelRegistryPage: React.FC<ModelRegistryPageProps> = ({
 
         <button
           onClick={() => setActiveSection('curves')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
-            activeSection === 'curves'
-              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-          }`}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${activeSection === 'curves'
+            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+            : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+            }`}
         >
           <TrendingUp className="w-3.5 h-3.5" />
           <span>Convergence Curves</span>
@@ -383,11 +378,10 @@ export const ModelRegistryPage: React.FC<ModelRegistryPageProps> = ({
 
         <button
           onClick={() => setActiveSection('tradeoffs')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
-            activeSection === 'tradeoffs'
-              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-          }`}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${activeSection === 'tradeoffs'
+            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+            : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+            }`}
         >
           <Sliders className="w-3.5 h-3.5" />
           <span>Threshold Tradeoffs & Confusion Matrix</span>
@@ -395,11 +389,10 @@ export const ModelRegistryPage: React.FC<ModelRegistryPageProps> = ({
 
         <button
           onClick={() => setActiveSection('communication')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
-            activeSection === 'communication'
-              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-          }`}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${activeSection === 'communication'
+            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+            : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+            }`}
         >
           <Wifi className="w-3.5 h-3.5" />
           <span>Bandwidth & Client Topology</span>

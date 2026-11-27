@@ -175,7 +175,7 @@ export const Header: React.FC<HeaderProps> = ({
                     <span>AML DASHBOARD</span>
                   </span>
                 </div>
-                <p className="hidden sm:block text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">
+                <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">
                   Federated Anti-Money Laundering Architecture
                 </p>
               </div>
@@ -192,15 +192,14 @@ export const Header: React.FC<HeaderProps> = ({
                 className={`flex items-center space-x-1.5 px-2.5 py-2 min-h-[44px] rounded-xl border text-xs font-mono transition-all cursor-pointer ${statusBadge.colorClasses}`}
               >
                 <span
-                  className={`w-2.5 h-2.5 rounded-full shrink-0 ${
-                    statusBadge.state === 'connected'
-                      ? 'bg-emerald-500'
-                      : statusBadge.state === 'starting'
+                  className={`w-2.5 h-2.5 rounded-full shrink-0 ${statusBadge.state === 'connected'
+                    ? 'bg-emerald-500'
+                    : statusBadge.state === 'starting'
                       ? 'bg-amber-500 animate-pulse'
                       : statusBadge.state === 'degraded'
-                      ? 'bg-orange-500'
-                      : 'bg-rose-500'
-                  }`}
+                        ? 'bg-orange-500'
+                        : 'bg-rose-500'
+                    }`}
                 />
                 <span className="sr-only">{statusBadge.label}</span>
                 <RefreshCw className={`w-3.5 h-3.5 ${loadingHealth ? 'animate-spin' : ''}`} />
@@ -233,11 +232,10 @@ export const Header: React.FC<HeaderProps> = ({
                       setExploreOpen(false);
                       onSelectTab(item.id);
                     }}
-                    className={`flex items-center space-x-1.5 sm:space-x-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs font-semibold transition shrink-0 cursor-pointer min-h-[38px] snap-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-                      isActive
-                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-bold'
-                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-900/80'
-                    }`}
+                    className={`flex items-center space-x-1.5 sm:space-x-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs font-semibold transition shrink-0 cursor-pointer min-h-[38px] snap-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${isActive
+                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-bold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-900/80'
+                      }`}
                   >
                     {item.icon}
                     <span className="hidden xl:inline whitespace-nowrap">{item.label}</span>
@@ -268,11 +266,10 @@ export const Header: React.FC<HeaderProps> = ({
                     setTimeout(() => firstItemRef.current?.focus(), 0);
                   }
                 }}
-                className={`flex items-center space-x-1.5 px-3 py-2 rounded-2xl border text-xs font-semibold transition cursor-pointer min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-                  isExploreActive || exploreOpen
-                    ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30'
-                    : 'bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-indigo-500/50'
-                }`}
+                className={`flex items-center space-x-1.5 px-3 py-2 rounded-2xl border text-xs font-semibold transition cursor-pointer min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${isExploreActive || exploreOpen
+                  ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30'
+                  : 'bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-indigo-500/50'
+                  }`}
               >
                 <span>Explore</span>
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform ${exploreOpen ? 'rotate-180' : ''}`} />
@@ -298,11 +295,10 @@ export const Header: React.FC<HeaderProps> = ({
                         secondItemRef.current?.focus();
                       }
                     }}
-                    className={`w-full flex items-start space-x-2.5 p-2.5 rounded-xl text-left transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-                      activeTab === 'comparative'
-                        ? 'bg-indigo-600/15 text-indigo-600 dark:text-indigo-300'
-                        : 'hover:bg-slate-100 dark:hover:bg-slate-800/70 text-slate-800 dark:text-slate-200'
-                    }`}
+                    className={`w-full flex items-start space-x-2.5 p-2.5 rounded-xl text-left transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${activeTab === 'comparative'
+                      ? 'bg-indigo-600/15 text-indigo-600 dark:text-indigo-300'
+                      : 'hover:bg-slate-100 dark:hover:bg-slate-800/70 text-slate-800 dark:text-slate-200'
+                      }`}
                   >
                     <BookOpen className="w-4 h-4 text-indigo-500 shrink-0 mt-0.5" />
                     <div>
@@ -327,11 +323,10 @@ export const Header: React.FC<HeaderProps> = ({
                         firstItemRef.current?.focus();
                       }
                     }}
-                    className={`w-full flex items-start space-x-2.5 p-2.5 rounded-xl text-left transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-                      activeTab === 'tech-stack'
-                        ? 'bg-indigo-600/15 text-indigo-600 dark:text-indigo-300'
-                        : 'hover:bg-slate-100 dark:hover:bg-slate-800/70 text-slate-800 dark:text-slate-200'
-                    }`}
+                    className={`w-full flex items-start space-x-2.5 p-2.5 rounded-xl text-left transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${activeTab === 'tech-stack'
+                      ? 'bg-indigo-600/15 text-indigo-600 dark:text-indigo-300'
+                      : 'hover:bg-slate-100 dark:hover:bg-slate-800/70 text-slate-800 dark:text-slate-200'
+                      }`}
                   >
                     <Cpu className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <div>

@@ -183,8 +183,8 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
           <button
             onClick={() => onSelectDataset('HI-Small')}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${selectedDataset === 'HI-Small'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
           >
             HI-Small Pipeline
@@ -192,8 +192,8 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
           <button
             onClick={() => onSelectDataset('LI-Medium')}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${selectedDataset === 'LI-Medium'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
           >
             LI-Medium Pipeline
@@ -304,8 +304,8 @@ export const EnsembleAnalyticsPage: React.FC<EnsembleAnalyticsPageProps> = ({
           {/* 1-Line Key Finding Banner */}
           <div
             className={`px-4 py-3 rounded-xl border flex items-center space-x-3 ${outcome.best_alpha >= 0.99 || !outcome.ensemble_improved
-                ? 'bg-amber-950/30 border-amber-600/50 text-amber-200'
-                : 'bg-emerald-950/30 border-emerald-600/50 text-emerald-200'
+              ? 'bg-amber-950/30 border-amber-600/50 text-amber-200'
+              : 'bg-emerald-950/30 border-emerald-600/50 text-emerald-200'
               }`}
           >
             <Info className="w-4 h-4 shrink-0" />
