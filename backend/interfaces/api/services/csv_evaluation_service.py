@@ -2316,8 +2316,19 @@ class CsvEvaluationService:
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         comparison_results = []
-        batch_size = 512
+        batch_size = 4096
         total_samples = len(batch_features)
+        features_tensor = (
+            torch.from_numpy(np.ascontiguousarray(batch_features, dtype=np.float32))
+            if total_samples > 0
+            else None
+        )
+        lengths_tensor = (
+            torch.as_tensor(batch_lengths, dtype=torch.int64)
+            if total_samples > 0
+            else None
+        )
+        probs_cache: Dict[str, np.ndarray] = {}
 
         for mid in target_model_ids:
             model_meta = self.model_registry.get_model_metadata(mid)
@@ -2336,26 +2347,43 @@ class CsvEvaluationService:
                         continue
                     probs = tab_model.predict_proba(processed_df[FEATURE_COLS])
                 else:
-                    model = self.model_service.get_model(model_meta.model_id)
-                    model = model.to(device)
-                    model.eval()
+                    resolved_key = (
+                        self.model_service._resolve_model_key(model_meta.model_id)
+                        if hasattr(self.model_service, "_resolve_model_key")
+                        else model_meta.model_id
+                    )
+                    if resolved_key in probs_cache:
+                        probs = probs_cache[resolved_key]
+                    else:
+                        model = self.model_service.get_model(model_meta.model_id)
+                        model = model.to(device)
+                        model.eval()
 
-                    probs_list = []
-                    with torch.inference_mode():
-                        for i in range(0, total_samples, batch_size):
-                            b_feat = torch.from_numpy(batch_features[i : i + batch_size]).to(device)
-                            b_len = torch.tensor(batch_lengths[i : i + batch_size], dtype=torch.int64, device=device)
-                            logits = model(b_feat, b_len).view(-1)
-                            b_probs = torch.sigmoid(logits).cpu().numpy()
-                            probs_list.append(b_probs)
-                            del b_feat, b_len, logits
+                        probs_list = []
+                        if features_tensor is not None and lengths_tensor is not None:
+                            with torch.inference_mode():
+                                for i in range(0, total_samples, batch_size):
+                                    b_feat = features_tensor[i : i + batch_size].to(device)
+                                    b_len = lengths_tensor[i : i + batch_size].to(device)
+                                    logits = model(b_feat, b_len).view(-1)
+                                    b_probs = torch.sigmoid(logits).cpu().numpy()
+                                    probs_list.append(b_probs)
 
-                    probs = np.concatenate(probs_list, axis=0) if probs_list else np.array([], dtype=float)
-                    del probs_list
-                    gc.collect()
+                        probs = np.concatenate(probs_list, axis=0) if probs_list else np.array([], dtype=float)
+                        probs_cache[resolved_key] = probs
                 eff_threshold = threshold if threshold is not None else model_meta.frozen_threshold
 
-                metrics = self._calculate_metrics(labels, probs, eff_threshold) if labels is not None else None
+                metrics = (
+                    self._calculate_metrics(
+                        labels,
+                        probs,
+                        eff_threshold,
+                        include_bootstrap=False,
+                        include_curves=False,
+                    )
+                    if labels is not None
+                    else None
+                )
                 preds = (probs >= eff_threshold).astype(int)
                 flagged = int(np.sum(preds == 1))
 
@@ -2681,6 +2709,8 @@ class CsvEvaluationService:
         probs: np.ndarray,
         threshold: float,
         raw_amounts: Optional[Union[np.ndarray, List[float], Dict[int, float]]] = None,
+        include_bootstrap: bool = True,
+        include_curves: bool = True,
     ) -> Dict[str, Any]:
         """Calculate comprehensive supervised AML metrics using decision threshold."""
         labels = np.asarray(labels, dtype=int)
@@ -2744,28 +2774,29 @@ class CsvEvaluationService:
             except Exception:
                 roc_auc = None
 
-            eval_thresholds = np.linspace(0.01, 0.99, 50)
-            for eth in eval_thresholds:
-                t_preds = (probs >= eth).astype(int)
-                t_tp = int(np.sum((labels == 1) & (t_preds == 1)))
-                t_fp = int(np.sum((labels == 0) & (t_preds == 1)))
-                t_fn = int(np.sum((labels == 1) & (t_preds == 0)))
-                t_tn = int(np.sum((labels == 0) & (t_preds == 0)))
+            if include_curves:
+                eval_thresholds = np.linspace(0.01, 0.99, 50)
+                for eth in eval_thresholds:
+                    t_preds = (probs >= eth).astype(int)
+                    t_tp = int(np.sum((labels == 1) & (t_preds == 1)))
+                    t_fp = int(np.sum((labels == 0) & (t_preds == 1)))
+                    t_fn = int(np.sum((labels == 1) & (t_preds == 0)))
+                    t_tn = int(np.sum((labels == 0) & (t_preds == 0)))
 
-                t_prec = t_tp / (t_tp + t_fp) if (t_tp + t_fp) > 0 else 1.0
-                t_rec = t_tp / (t_tp + t_fn) if (t_tp + t_fn) > 0 else 0.0
-                t_fpr = t_fp / (t_fp + t_tn) if (t_fp + t_tn) > 0 else 0.0
+                    t_prec = t_tp / (t_tp + t_fp) if (t_tp + t_fp) > 0 else 1.0
+                    t_rec = t_tp / (t_tp + t_fn) if (t_tp + t_fn) > 0 else 0.0
+                    t_fpr = t_fp / (t_fp + t_tn) if (t_fp + t_tn) > 0 else 0.0
 
-                pr_curve_points.append({
-                    "threshold": round(float(eth), 4),
-                    "recall": round(float(t_rec), 4),
-                    "precision": round(float(t_prec), 4),
-                })
-                roc_curve_points.append({
-                    "threshold": round(float(eth), 4),
-                    "fpr": round(float(t_fpr), 4),
-                    "tpr": round(float(t_rec), 4),
-                })
+                    pr_curve_points.append({
+                        "threshold": round(float(eth), 4),
+                        "recall": round(float(t_rec), 4),
+                        "precision": round(float(t_prec), 4),
+                    })
+                    roc_curve_points.append({
+                        "threshold": round(float(eth), 4),
+                        "fpr": round(float(t_fpr), 4),
+                        "tpr": round(float(t_rec), 4),
+                    })
         else:
             single_val = int(unique_labels[0])
             val_name = "LEGITIMATE (0)" if single_val == 0 else "LAUNDERING (1)"
@@ -2827,20 +2858,23 @@ class CsvEvaluationService:
             except Exception:
                 pass
 
-        # Compute robust bootstrap metrics, lift, and recall at alert budgets
-        try:
-            n_boot_samples = 100 if total > 10000 else 300
-            robust_res = run_robust_evaluate(labels, probs, thr=threshold, n_boot=n_boot_samples, raw_amounts=amt_arr)
-        except Exception as e:
-            logger.warning("Robust metrics computation fallback: %s", e)
-            robust_res = {}
-
-        operating_points = robust_res.get("operating_points")
-        if not operating_points and len(unique_labels) > 0:
+        robust_res: Dict[str, Any] = {}
+        operating_points = None
+        if include_bootstrap:
+            # Compute robust bootstrap metrics, lift, and recall at alert budgets
             try:
-                operating_points = compute_operating_points(labels, probs, frozen_thr=threshold, raw_amounts=amt_arr)
-            except Exception:
-                operating_points = {}
+                n_boot_samples = 100 if total > 10000 else 300
+                robust_res = run_robust_evaluate(labels, probs, thr=threshold, n_boot=n_boot_samples, raw_amounts=amt_arr)
+            except Exception as e:
+                logger.warning("Robust metrics computation fallback: %s", e)
+                robust_res = {}
+
+            operating_points = robust_res.get("operating_points")
+            if not operating_points and len(unique_labels) > 0:
+                try:
+                    operating_points = compute_operating_points(labels, probs, frozen_thr=threshold, raw_amounts=amt_arr)
+                except Exception:
+                    operating_points = {}
 
         return {
             "total_samples": total,

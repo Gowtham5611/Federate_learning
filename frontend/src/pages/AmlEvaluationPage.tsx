@@ -494,18 +494,6 @@ export const AmlEvaluationPage: React.FC<AmlEvaluationPageProps> = ({
       if (onMultiModelEvaluationComplete) {
         onMultiModelEvaluationComplete(resp);
       }
-      // If we don't have currentResult yet, also fetch single prediction for selected model
-      if (!currentResult) {
-        const singleResp = await apiService.predictCsv({
-          csv_content: csvContent,
-          model_id: selectedModelId || 'auto',
-          filename: fileName || 'transactions.csv',
-          column_mapping: Object.keys(customMappings || {}).length > 0 ? customMappings : undefined,
-          row_limit: rowLimit,
-          threshold: thresholdVal,
-        });
-        onEvaluationComplete(singleResp);
-      }
     } catch (err: unknown) {
       const isCold = err instanceof ApiError ? err.isColdStart : false;
       const reqId = err instanceof ApiError ? err.requestId : undefined;
